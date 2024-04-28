@@ -1,7 +1,8 @@
 const { app, BrowserWindow, ipcMain, nativeTheme } = require('electron/main')
 const path = require('node:path')
 
-require('update-electron-app')()
+const { updateElectronApp } = require('update-electron-app')
+updateElectronApp()
 
 const createWindow = () => {
   const win = new BrowserWindow({

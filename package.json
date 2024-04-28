@@ -7,8 +7,8 @@
     "start": "electron-forge start",
     "test": "echo \"Error: no test specified\" && exit 1",
     "package": "electron-forge package",
-    "make": "electron-forge make",
-    "publish": "electron-forge publish"
+    "make": "env-cmd electron-forge make",
+    "publish": "env-cmd electron-forge publish"
   },
   "repository": {
     "type": "git",
@@ -30,7 +30,8 @@
     "@electron-forge/plugin-fuses": "^7.4.0",
     "@electron-forge/publisher-github": "^7.4.0",
     "@electron/fuses": "^1.8.0",
-    "electron": "^30.0.1"
+    "electron": "^30.0.1",
+    "env-cmd": "^10.1.0"
   },
   "dependencies": {
     "electron-squirrel-startup": "^1.0.0",

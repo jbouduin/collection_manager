@@ -1,0 +1,23 @@
+{
+  "name": "collection_manager",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jbouduin/collection_manager.git"
+  },
+  "author": "Johan Bouduin",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/jbouduin/collection_manager/issues"
+  },
+  "homepage": "https://github.com/jbouduin/collection_manager#readme",
+  "devDependencies": {
+    "electron": "^30.0.1"
+  }
+}

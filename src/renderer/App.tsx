@@ -1,25 +1,22 @@
-import React from 'react';
-import { createRoot } from 'react-dom/client';
-
-function landing() {
-
-  const chromeVersion = window.versions.chrome()
-  const nodeVersion = window.versions.node()
-  const elecVersion = window.versions.electron()
-  const ping = "waiting for ping"
-  return (
-    <div>
-      <h2>💖 Hello from React!</h2>
-      <p>
-      This app is using Chrome ({chromeVersion}), Node.js ({nodeVersion}), and Electron ({elecVersion})
-      </p>
-      {ping}
-    </div>
-  );
-}
-
-const container = document.getElementById('root') as HTMLElement;
-const root = createRoot(container);
-root.render(landing())
-
 import './App.css';
+
+import * as React from "react";
+
+import { BlueprintProvider, FocusStyleManager } from "@blueprintjs/core";
+import { createRoot } from 'react-dom/client';
+import { Desktop } from './components/desktop';
+
+FocusStyleManager.onlyShowFocusOnTabs();
+
+(async () => {
+  // Wait until CSS is loaded before rendering components because some of them (like Table)
+  // rely on those styles to take accurate DOM measurements.
+  // TODO await import("./App.css");
+  const container = document.getElementById('root') as HTMLElement;
+  const root = createRoot(container);
+  root.render(
+    <BlueprintProvider>
+      <Desktop />
+    </BlueprintProvider>
+  );
+})();

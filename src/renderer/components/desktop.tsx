@@ -1,5 +1,7 @@
 import { Button, Classes } from "@blueprintjs/core";
 import * as React from "react";
+import { EQueryType, EUpdateType } from "../../common";
+
 
 const DARK_THEME = Classes.DARK;
 const LIGHT_THEME = "";
@@ -42,6 +44,9 @@ export class Desktop extends React.PureComponent {
         </p>
         <Button text="Toggle" onClick={() => window.ipc.toggle().then((value: boolean) => this.setTheme(value))} />
         <Button intent="success" text="System" onClick={() => window.ipc.system().then((value: boolean) => this.setTheme(value))} />
+        <Button text="Query sets" onClick={() => window.ipc.query(EQueryType.Set)} />
+        <Button text="Query cards" onClick={() => window.ipc.query(EQueryType.Card)} />
+        <Button text="Update" onClick={() => window.ipc.update(EUpdateType.Sets)} />
       </div>
     );
   }

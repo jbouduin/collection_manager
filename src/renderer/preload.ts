@@ -1,4 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
+import { EIpcChannel, EQueryType, EUpdateType } from '../common';
 
 // define
 const versions = {
@@ -8,9 +9,11 @@ const versions = {
 }
 
 const ipc = {
-  ping: () => ipcRenderer.invoke('ping'),
-  toggle: () => ipcRenderer.invoke('dark-mode:toggle'),
-  system: () => ipcRenderer.invoke('dark-mode:system')
+  ping: () => ipcRenderer.invoke(EIpcChannel.ping),
+  toggle: () => ipcRenderer.invoke(EIpcChannel.darkModeToggle),
+  system: () => ipcRenderer.invoke(EIpcChannel.darkModeSystem),
+  query: (queryType: EQueryType) => ipcRenderer.invoke(EIpcChannel.query, queryType),
+  update: (updateType: EUpdateType) => ipcRenderer.invoke(EIpcChannel.update, updateType)
 }
 
 // expose

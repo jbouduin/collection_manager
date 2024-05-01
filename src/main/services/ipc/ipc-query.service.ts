@@ -1,5 +1,5 @@
 import { singleton } from "tsyringe";
-import { EQueryType } from "../../../common";
+import { EQueryType } from "../../../common/enums";
 
 export interface IIpcQueryService {
   handle(queryType: EQueryType): void;

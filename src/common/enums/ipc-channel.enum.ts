@@ -3,5 +3,5 @@ export enum EIpcChannel {
   darkModeSystem = 'dark-mode:system',
   ping = 'ping',
   query = 'query',
-  update = 'update'
+  sync = 'sync'
 }

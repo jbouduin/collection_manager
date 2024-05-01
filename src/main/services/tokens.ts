@@ -1,9 +1,15 @@
 const TOKENS = Object.freeze({
+  // Database
   CustomMigrationProvider: Symbol("CustomMigrationProvider"),
   DatabaseService: Symbol("DatabaseService"),
-  IpcDispatcher: Symbol("IpcDispatcher"),
+  // IPC
+  IpcDispatcherService: Symbol("IpcDispatcherService"),
   IpcQueryService: Symbol("IpcQueryService"),
-  IpcUpdateService: Symbol("IIpcUpdateService")
+  IpcSyncService: Symbol("IIpcSyncService"),
+  // Repositories
+  CatalogRepository: "CatalogRepository",
+  // Sync
+  CatalogSyncService: "CatalogSyncService"
 })
-console.log(TOKENS)
+
 export default TOKENS

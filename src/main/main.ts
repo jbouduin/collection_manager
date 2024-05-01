@@ -3,7 +3,7 @@ import "reflect-metadata";
 import { container } from "tsyringe";
 import { updateElectronApp } from 'update-electron-app';
 import { Di } from "./services/di";
-import { IIpcDispatcher } from "./services/ipc-dispatcher";
+import { IIpcDispatcherService } from "./services/ipc/ipc-dispatcher.service";
 import TOKENS from "./services/tokens";
 import { IDatabaseService } from './services/database/database.service';
 import { MigrationProvider } from 'kysely';
@@ -52,7 +52,7 @@ const createWindow = (): void => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  container.resolve<IIpcDispatcher>(TOKENS.IpcDispatcher).Initialize();
+  container.resolve<IIpcDispatcherService>(TOKENS.IpcDispatcherService).Initialize();
   container.resolve<IDatabaseService>(TOKENS.DatabaseService)
     .connect('c:/data/new-assistant')
     .migrateToLatest(container.resolve<MigrationProvider>(TOKENS.CustomMigrationProvider));

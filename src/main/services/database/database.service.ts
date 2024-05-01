@@ -6,6 +6,7 @@ import { singleton } from "tsyringe";
 import { DatabaseSchema } from "./schema/database.schema";
 
 export interface IDatabaseService {
+  readonly database: Kysely<DatabaseSchema>;
   connect(dataDirectory: string): IDatabaseService;
   migrateToLatest(migrationProvider: MigrationProvider): Promise<IDatabaseService>;
 }
@@ -13,7 +14,16 @@ export interface IDatabaseService {
 @singleton()
 export class DatabaseService implements IDatabaseService {
 
-  private database: Kysely<DatabaseSchema>;
+  constructor() {
+    console.log("database service constructor")
+  }
+
+  private _database: Kysely<DatabaseSchema>;
+
+  public get database(): Kysely<DatabaseSchema> {
+    console.log('in getter', this._database)
+    return this._database;
+  }
 
   public connect(dataDirectory: string): IDatabaseService {
     console.log(dataDirectory)
@@ -26,7 +36,7 @@ export class DatabaseService implements IDatabaseService {
     const dialect = new SqliteDialect({
       database: new SQLite(path.join(dbDirectory, "magic-db.sqlite"))
     });
-    this.database = new Kysely<DatabaseSchema>({ dialect });
+    this._database = new Kysely<DatabaseSchema>({ dialect });
     return this;
   }
 
@@ -34,7 +44,7 @@ export class DatabaseService implements IDatabaseService {
     const migrationPath = path.join(__dirname, './migrations');
     console.log(migrationPath);
     let migrator = new Migrator({
-      db: this.database,
+      db: this._database,
       provider: migrationProvider
     });
     await migrator.migrateToLatest().then((result: MigrationResultSet) => { console.log(result) });

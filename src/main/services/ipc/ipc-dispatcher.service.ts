@@ -1,23 +1,23 @@
 import { ipcMain, nativeTheme } from "electron";
 import { inject, singleton } from "tsyringe";
-import { EIpcChannel } from "../../common";
-import { IIpcQueryService } from "./ipc/ipc-query.service";
-import { IIpcUpdateService } from "./ipc/ipc-update.service";
-import TOKENS from "./tokens";
+import { EIpcChannel } from "../../../common/enums";
+import { IIpcQueryService } from "./ipc-query.service";
+import { IIpcSyncService } from "./ipc-sync.service";
+import TOKENS from "../tokens";
 
-export interface IIpcDispatcher {
+export interface IIpcDispatcherService {
   Initialize(): void
 }
 
 @singleton()
-export class IpcDispatcher implements IIpcDispatcher{
+export class IpcDispatcherService implements IIpcDispatcherService{
 
   private query: IIpcQueryService;
-  private update: IIpcUpdateService;
+  private update: IIpcSyncService;
 
   public constructor(
     @inject(TOKENS.IpcQueryService) query: IIpcQueryService,
-    @inject(TOKENS.IpcUpdateService) update: IIpcUpdateService)
+    @inject(TOKENS.IpcSyncService) update: IIpcSyncService)
   {
     this.query = query;
     this.update = update;
@@ -40,6 +40,6 @@ export class IpcDispatcher implements IIpcDispatcher{
 
     ipcMain.handle(EIpcChannel.ping, () => 'pong');
     ipcMain.handle(EIpcChannel.query, (_event: Electron.IpcMainEvent, ...args: Array<any>) => this.query.handle(args[0]));
-    ipcMain.handle(EIpcChannel.update, (_event: Electron.IpcMainEvent, ...args: Array<any>) => this.update.handle(args[0]));
+    ipcMain.handle(EIpcChannel.sync, (_event: Electron.IpcMainEvent, ...args: Array<any>) => this.update.handle(args[0]));
   }
 }

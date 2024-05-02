@@ -1,7 +1,7 @@
 import { Button, Classes } from "@blueprintjs/core";
 import * as React from "react";
 import { ECatalogType, EQueryType, ESyncType } from "../../common/enums";
-import { ICatalogSyncParam } from "../../common/ipc-params";
+import { ICardSetSyncOptions, ICatalogSyncOptions, ISyncParam } from "../../common/ipc-params";
 
 
 const DARK_THEME = Classes.DARK;
@@ -44,14 +44,21 @@ export class Desktop extends React.PureComponent {
           Theme: {this.theme}
         </p>
         <p>
-          <Button text="Toggle" onClick={() => window.ipc.toggle().then((value: boolean) => this.setTheme(value))} />
-          <Button intent="success" text="System" onClick={() => window.ipc.system().then((value: boolean) => this.setTheme(value))} />
-          <Button text="Query sets" onClick={() => window.ipc.query(EQueryType.Set)} />
-          <Button text="Query cards" onClick={() => window.ipc.query(EQueryType.Card)} />
-          <Button text="Update ability words" onClick={() => {
-            const param: ICatalogSyncParam = {
+          <Button text="Toggle" onClick={() => window.ipc.darkmode("toggle").then((value: boolean) => this.setTheme(value))} />
+          <Button intent="success" text="System" onClick={() => window.ipc.darkmode("toggle").then((value: boolean) => this.setTheme(value))} />
+          <Button text="Query sets" onClick={() => window.ipc.query(EQueryType.CardSet)} />
+          <Button text="Query artifact types" onClick={() => window.ipc.query(EQueryType.Catalog)} />
+          <Button text="Sync some catalogs" onClick={() => {
+            const param: ISyncParam<ICatalogSyncOptions> = {
               type: ESyncType.Catalogs,
-              catalogs: [ECatalogType.AbilityWords, ECatalogType.ArtifactTypes]
+              options: { catalogs: [ECatalogType.AbilityWords, ECatalogType.ArtifactTypes] }
+            }
+            window.ipc.sync(param)
+          }} />
+          <Button text="Sync cardsets" onClick={() => {
+            const param: ISyncParam<ICardSetSyncOptions> = {
+              type: ESyncType.CardSets,
+              options: { code: null }
             }
             window.ipc.sync(param)
           }} />

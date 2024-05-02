@@ -1,10 +1,9 @@
 import { ColumnDefinitionBuilder, Kysely } from 'kysely';
 import { BaseMigration } from './base.migration';
 
-export class V0_0_1_Migration extends BaseMigration {
+export class V0_0_1_Catalog_Migration extends BaseMigration {
 
   public async up(db: Kysely<any>): Promise<void> {
-    console.log('updating');
     let builder = super.createTableWithBasicFields(db, 'catalog')
       .addColumn('name', 'text', (col: ColumnDefinitionBuilder) => col.notNull().unique());
     await super.addLastSynced(builder).execute();

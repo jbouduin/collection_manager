@@ -1,5 +1,5 @@
-import { IBaseSyncParam } from "../../../common/ipc-params";
+import { ICardSetSyncOptions, ICatalogSyncOptions } from "../../../common/ipc-params";
 
-export interface IBaseSyncService<P extends IBaseSyncParam> {
-  sync(params: P): Promise<void>;
+export interface IBaseSyncService<O extends ICardSetSyncOptions | ICatalogSyncOptions> {
+  sync(options: O): Promise<void>;
 }

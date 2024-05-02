@@ -1,4 +1,5 @@
 export enum EQueryType {
-  Set = "Set",
-  Card = "Card"
+  CardSet = "Set",
+  Card = "Card",
+  Catalog = "Catalog"
 }

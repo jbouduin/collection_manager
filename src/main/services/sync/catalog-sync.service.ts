@@ -1,12 +1,12 @@
 import { Catalog } from "scryfall-sdk";
 import { inject, injectable } from "tsyringe";
 import { ECatalogType } from "../../../common/enums";
-import { ICatalogSyncParam } from "../../../common/ipc-params";
+import { ICatalogSyncOptions } from "../../../common/ipc-params";
 import { ICatalogRepository } from "../database/repositories/catalog.repository";
 import TOKENS from "../tokens";
 import { IBaseSyncService } from "./base-sync.service";
 
-export interface ICatalogSyncService extends IBaseSyncService<ICatalogSyncParam> {
+export interface ICatalogSyncService extends IBaseSyncService<ICatalogSyncOptions> {
 
 }
 
@@ -21,8 +21,8 @@ export class CatalogSyncService implements ICatalogSyncService {
     this.catalogRepository = catalogRepository;
   }
 
-  public async sync(params: ICatalogSyncParam): Promise<void> {
-    await Promise.all(params.catalogs.map((catalog: ECatalogType) => this.syncSingleCatalog(catalog)));
+  public async sync(options: ICatalogSyncOptions): Promise<void> {
+    await Promise.all(options.catalogs.map((catalog: ECatalogType) => this.syncSingleCatalog(catalog)));
   }
 
   private async syncSingleCatalog(catalog: ECatalogType): Promise<void> {

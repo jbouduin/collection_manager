@@ -6,25 +6,18 @@ import { IDatabaseService } from "../database.service";
 import { NewCatalogItem } from "../schema/catalog-item.table";
 import { NewCatalog } from "../schema/catalog.table";
 import { DatabaseSchema } from "../schema/database.schema";
+import { BaseRepository } from "./base.repository";
 
 export interface ICatalogRepository {
   sync(name: ECatalogType, items: Array<string>): Promise<void>;
 }
 
 @injectable()
-export class CatalogRepository implements ICatalogRepository {
+export class CatalogRepository extends BaseRepository implements ICatalogRepository {
 
-  private databaseService: IDatabaseService;
 
-  private get database(): Kysely<DatabaseSchema> {
-    return this.databaseService.database;
-  }
-
-  public constructor(
-    @inject(TOKENS.DatabaseService) databaseService: IDatabaseService
-  ) {
-    this.databaseService = databaseService;
-    console.log('constructor:', this.databaseService)
+  public constructor(@inject(TOKENS.DatabaseService) databaseService: IDatabaseService) {
+    super(databaseService);
   }
 
   // TODO remove items that are not on the server anymore

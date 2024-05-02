@@ -1,6 +1,6 @@
 import SQLite from 'better-sqlite3';
-import { existsSync as exists, promises as fs, mkdirSync as mkdir } from 'fs';
-import { FileMigrationProvider, Kysely, MigrationProvider, MigrationResult, MigrationResultSet, Migrator, SqliteDialect } from 'kysely';
+import { existsSync as exists, mkdirSync as mkdir } from 'fs';
+import { Kysely, MigrationProvider, MigrationResultSet, Migrator, SqliteDialect } from 'kysely';
 import path from 'path';
 import { singleton } from "tsyringe";
 import { DatabaseSchema } from "./schema/database.schema";

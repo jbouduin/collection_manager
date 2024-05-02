@@ -14,14 +14,13 @@ export interface IDatabaseService {
 @singleton()
 export class DatabaseService implements IDatabaseService {
 
+  private _database: Kysely<DatabaseSchema>;
+
   constructor() {
     console.log("database service constructor")
   }
 
-  private _database: Kysely<DatabaseSchema>;
-
   public get database(): Kysely<DatabaseSchema> {
-    console.log('in getter', this._database)
     return this._database;
   }
 

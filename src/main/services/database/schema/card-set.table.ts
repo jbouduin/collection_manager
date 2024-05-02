@@ -4,13 +4,9 @@ import { SyncedTable } from "./synced.table";
 // TODO check ColumnType<Date, string | undefined, string> usage in detail
 export interface CardSetTable extends SyncedTable {
   /**
-   * A unique ID for this set on Scryfall that will not change.
-   */
-  scryfall_id: ColumnType<string>;
-  /**
    * The unique three to five-letter code for this set.
    */
-  code: ColumnType<string>;
+  code: ColumnType<string, string, never>;
   /**
    * The unique code for this set on MTGO, which may differ from the regular code.
    */

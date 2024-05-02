@@ -4,17 +4,14 @@ import { BaseMigration } from './base.migration';
 export class V0_0_1_Catalog_Migration extends BaseMigration {
 
   public async up(db: Kysely<any>): Promise<void> {
-    let builder = super.createTableWithBasicFields(db, 'catalog')
-      .addColumn('name', 'text', (col: ColumnDefinitionBuilder) => col.notNull().unique());
-    await super.addLastSynced(builder).execute();
+    await super.createSyncedTable(db, 'catalog')
+      .addColumn('name', 'text', (col: ColumnDefinitionBuilder) => col.notNull().unique())
+      .execute();
 
-    builder = super.createTableWithBasicFields(db, 'catalog_item')
+    await super.createSyncedTable(db, 'catalog_item')
+      .addColumn('catalog_id', 'text', (col: ColumnDefinitionBuilder) => col.references('catalog.id').onDelete('cascade').notNull())
       .addColumn('name', 'text', (col: ColumnDefinitionBuilder) => col.notNull())
-      .addColumn('catalog_id', 'integer', (col: ColumnDefinitionBuilder) =>
-        col.references('catalog.id').onDelete('cascade').notNull()
-      );
-
-    await super.addLastSynced(builder).execute();
+      .execute();
 
     await db.schema
       .createIndex('catalog_item_catalog_id_idx')

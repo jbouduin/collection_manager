@@ -4,9 +4,7 @@ import { BaseMigration } from './base.migration';
 export class V0_0_1_Set_Migration extends BaseMigration {
 
   public async up(db: Kysely<any>): Promise<void> {
-    let builder = super.createTableWithBasicFields(db, 'card_set')
-      // TODO replace id from basetable so this becomes primary id
-      .addColumn('scryfall_id', 'text', (col: ColumnDefinitionBuilder) => col.notNull().unique())
+    let builder = super.createSyncedTable(db, 'card_set')
       .addColumn('code', 'text', (col: ColumnDefinitionBuilder) => col.notNull().unique())
       .addColumn('mtgo_code', 'text', (col: ColumnDefinitionBuilder) => col.unique())
       .addColumn('arena_code', 'text', (col: ColumnDefinitionBuilder) => col.unique())
@@ -25,8 +23,8 @@ export class V0_0_1_Set_Migration extends BaseMigration {
       .addColumn('scryfall_uri', 'text', (col: ColumnDefinitionBuilder) => col.notNull())
       .addColumn('uri', 'text', (col: ColumnDefinitionBuilder) => col.notNull())
       .addColumn('icon_svg_uri', 'text', (col: ColumnDefinitionBuilder) => col.notNull())
-      .addColumn('search_uri', 'text', (col: ColumnDefinitionBuilder) => col.notNull());
-    await super.addLastSynced(builder).execute();
+      .addColumn('search_uri', 'text', (col: ColumnDefinitionBuilder) => col.notNull())
+      .execute();
 
     // TODO maybe add some constraints
   }

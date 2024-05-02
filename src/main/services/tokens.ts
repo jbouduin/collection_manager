@@ -12,6 +12,6 @@ const TOKENS = Object.freeze({
   // Sync
   CardSetSyncService: "CardSetSyncService",
   CatalogSyncService: "CatalogSyncService"
-})
+});
 
-export default TOKENS
+export default TOKENS;

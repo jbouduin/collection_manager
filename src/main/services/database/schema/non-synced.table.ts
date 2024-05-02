@@ -1,4 +1,4 @@
-import { ColumnType, Generated } from "kysely";
+import { ColumnType } from "kysely";
 import { BaseTable } from "./base.table";
 
 export interface NonSyncedTable extends BaseTable{

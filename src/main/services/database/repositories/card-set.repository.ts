@@ -55,7 +55,7 @@ export class CardSetRepository extends BaseRepository implements ICardSetReposit
             .executeTakeFirstOrThrow()
             .catch((reason) => console.log(reason));
         } else {
-          await trx.insertInto('card_set')
+          await trx.insertInto("card_set")
             .values(
               {
                 arena_code: cardSet.arena_code,

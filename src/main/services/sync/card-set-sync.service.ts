@@ -5,7 +5,7 @@ import TOKENS from "../tokens";
 import { IBaseSyncService } from "./base-sync.service";
 import { ICardSetSyncOptions } from "../../../common/ipc-params";
 
-export interface ICardSetSyncService extends IBaseSyncService<ICardSetSyncOptions> { }
+export type ICardSetSyncService = IBaseSyncService<ICardSetSyncOptions>;
 
 @injectable()
 export class CardSetSyncService implements IBaseSyncService<ICardSetSyncOptions> {
@@ -24,7 +24,7 @@ export class CardSetSyncService implements IBaseSyncService<ICardSetSyncOptions>
       sets = await Sets.all();
     }
     else {
-      const set = await Sets.byCode(options.code)
+      const set = await Sets.byCode(options.code);
       sets = new Array<ScryfallCardSet>(set);
     }
     await this.cardSetRepository.sync(sets);

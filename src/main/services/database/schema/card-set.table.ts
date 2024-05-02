@@ -79,7 +79,7 @@ export interface CardSetTable extends SyncedTable {
    * A Scryfall API URI that you can request to begin paginating over the cards in this set.
    */
   search_uri: ColumnType<string>;
-};
+}
 
 export type CardSet = Selectable<CardSetTable>;
 export type NewCardSet = Insertable<CardSetTable>;

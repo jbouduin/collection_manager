@@ -17,20 +17,18 @@ export class Desktop extends React.PureComponent {
 
   private set theme(value: string) {
     this._theme = value;
-    console.log("Theme", this._theme)
-
   }
 
   private setTheme(shouldUseDarkColors: boolean): void {
-    this.theme = shouldUseDarkColors ? DARK_THEME : LIGHT_THEME
+    this.theme = shouldUseDarkColors ? DARK_THEME : LIGHT_THEME;
   }
 
   public render(): React.ReactNode {
-    const chromeVersion = window.versions.chrome()
-    const nodeVersion = window.versions.node()
-    const elecVersion = window.versions.electron()
+    const chromeVersion = window.versions.chrome();
+    const nodeVersion = window.versions.node();
+    const elecVersion = window.versions.electron();
 
-    const ping = "waiting for ping"
+    const ping = "waiting for ping";
     return (
       <div className={this.theme}>
         <h2>💖 Hello from React - Blueprint desktop!</h2>
@@ -52,15 +50,15 @@ export class Desktop extends React.PureComponent {
             const param: ISyncParam<ICatalogSyncOptions> = {
               type: ESyncType.Catalogs,
               options: { catalogs: [ECatalogType.AbilityWords, ECatalogType.ArtifactTypes] }
-            }
-            window.ipc.sync(param)
+            };
+            window.ipc.sync(param);
           }} />
           <Button text="Sync cardsets" onClick={() => {
             const param: ISyncParam<ICardSetSyncOptions> = {
               type: ESyncType.CardSets,
               options: { code: null }
-            }
-            window.ipc.sync(param)
+            };
+            window.ipc.sync(param);
           }} />
         </p>
       </div >

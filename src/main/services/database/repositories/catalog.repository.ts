@@ -21,12 +21,9 @@ export class CatalogRepository extends BaseRepository implements ICatalogReposit
 
   public async sync(name: ECatalogType, items: Array<string>): Promise<void> {
 
-
-    console.log('insert:', name)
-
     await this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
       const existingCatalog = await trx
-        .selectFrom('catalog')
+        .selectFrom("catalog")
         .select("catalog.id")
         .where("catalog.name", "=", name)
         .executeTakeFirst();
@@ -34,7 +31,7 @@ export class CatalogRepository extends BaseRepository implements ICatalogReposit
       if (existingCatalog) {
         console.log("catalog exists", name);
         catalogId = existingCatalog.id;
-        trx.updateTable('catalog')
+        trx.updateTable("catalog")
           .set({ last_synced_at: sql`CURRENT_TIMESTAMP` })
           .where("catalog.id", "=", existingCatalog.id)
           .executeTakeFirstOrThrow()
@@ -42,7 +39,7 @@ export class CatalogRepository extends BaseRepository implements ICatalogReposit
       } else {
         console.log("catalog does not exists", name);
         catalogId = uuidV1();
-        await trx.insertInto('catalog')
+        await trx.insertInto("catalog")
           .values({ name: name, id: catalogId })
           .executeTakeFirstOrThrow()
           .catch((reason) => console.log(reason));
@@ -55,12 +52,12 @@ export class CatalogRepository extends BaseRepository implements ICatalogReposit
   private async syncCatalogItems(trx: Transaction<DatabaseSchema>, catalogId: string, items: Array<string>): Promise<void> {
     items.forEach(async (item: string) => {
       const existingItem = await trx
-        .selectFrom('catalog_item')
+        .selectFrom("catalog_item")
         .select("catalog_item.id")
         .where("catalog_item.catalog_id", "=", catalogId)
         .where("catalog_item.name", "=", item)
         .executeTakeFirst();
-      console.log()
+
       if (existingItem) {
         await trx.updateTable("catalog_item")
           .set({ last_synced_at: sql`CURRENT_TIMESTAMP` })
@@ -68,7 +65,7 @@ export class CatalogRepository extends BaseRepository implements ICatalogReposit
           .executeTakeFirstOrThrow()
           .catch((reason) => console.log(reason));
       } else {
-        await trx.insertInto('catalog_item')
+        await trx.insertInto("catalog_item")
           .values({ id: uuidV1(), name: item, catalog_id: catalogId })
           .executeTakeFirstOrThrow()
           .catch((reason) => console.log(reason));

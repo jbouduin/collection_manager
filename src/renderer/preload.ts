@@ -1,7 +1,7 @@
-import { contextBridge, ipcRenderer } from 'electron';
-import { EIpcChannel, EQueryType } from '../common/enums';
-import { ISyncParam, SyncOptions } from '../common/ipc-params';
-import { DarkmodeOption } from '../common/ipc-params/darkmode.option';
+import { contextBridge, ipcRenderer } from "electron";
+import { EIpcChannel, EQueryType } from "../common/enums";
+import { ISyncParam, SyncOptions } from "../common/ipc-params";
+import { DarkmodeOption } from "../common/ipc-params/darkmode.option";
 
 // define
 const versions = {
@@ -18,8 +18,8 @@ const ipc = {
 };
 
 // expose
-contextBridge.exposeInMainWorld('versions', versions)
-contextBridge.exposeInMainWorld('ipc', ipc)
+contextBridge.exposeInMainWorld("versions", versions);
+contextBridge.exposeInMainWorld("ipc", ipc);
 
 export type Versions = typeof versions;
 export type IPC = typeof ipc;

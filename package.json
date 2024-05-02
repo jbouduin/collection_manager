@@ -19,7 +19,7 @@
     "package": "env-cmd electron-forge package",
     "make": "env-cmd electron-forge make",
     "publish": "env-cmd electron-forge publish",
-    "lint": "eslint --ext .ts,.tsx ."
+    "lint": "eslint ./src"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.4.0",
@@ -32,6 +32,7 @@
     "@electron-forge/plugin-webpack": "^7.4.0",
     "@electron-forge/publisher-github": "^7.4.0",
     "@electron/fuses": "^1.8.0",
+    "@eslint/js": "^9.1.1",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.0",
     "@types/uuid": "^9.0.8",
@@ -43,12 +44,15 @@
     "env-cmd": "^10.1.0",
     "eslint": "^8.57.0",
     "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-react": "^7.34.1",
     "fork-ts-checker-webpack-plugin": "^7.3.0",
+    "globals": "^15.1.0",
     "node-loader": "^2.0.0",
     "style-loader": "^3.3.4",
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
-    "typescript": "~4.5.4"
+    "typescript": "~4.5.4",
+    "typescript-eslint": "^7.8.0"
   },
   "dependencies": {
     "@blueprintjs/core": "^5.10.2",

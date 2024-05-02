@@ -5,4 +5,4 @@ export * from "./card-set-sync.options";
 export * from "./catalog-sync.options";
 export * from "./sync.param";
 
-export type SyncOptions = ICardSetSyncOptions | ICatalogSyncOptions
+export type SyncOptions = ICardSetSyncOptions | ICatalogSyncOptions;

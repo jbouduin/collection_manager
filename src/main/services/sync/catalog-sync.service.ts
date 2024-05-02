@@ -6,9 +6,7 @@ import { ICatalogRepository } from "../database/repositories/catalog.repository"
 import TOKENS from "../tokens";
 import { IBaseSyncService } from "./base-sync.service";
 
-export interface ICatalogSyncService extends IBaseSyncService<ICatalogSyncOptions> {
-
-}
+export type ICatalogSyncService = IBaseSyncService<ICatalogSyncOptions>;
 
 @injectable()
 export class CatalogSyncService implements ICatalogSyncService {

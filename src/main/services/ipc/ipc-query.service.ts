@@ -19,7 +19,6 @@ export class IpcQueryService implements IIpcQueryService {
   }
 
   public async handle(queryType: EQueryType): Promise<void> {
-    console.log('handling query', queryType)
     switch (queryType) {
       case EQueryType.CardSet:
         await this.TestQueryCardSet();
@@ -50,8 +49,8 @@ export class IpcQueryService implements IIpcQueryService {
       .innerJoin("catalog", "catalog.id", "catalog_item.catalog_id")
       .selectAll("catalog_item")
       .where("catalog.name", "=", ECatalogType.ArtifactTypes)
-      .limit(1)
-    console.log(qb.compile().sql)
+      .limit(1);
+
     await qb.execute()
       .then((catalogItem: Array<CatalogItem>) => {
         console.log(typeof catalogItem[0]);

@@ -1,7 +1,6 @@
-import { ColumnType, Generated } from "kysely";
+import { ColumnType } from "kysely";
 
 export interface BaseTable{
-  id: Generated<bigint>;
+  id: ColumnType<string, string,never>;
   created_at: ColumnType<Date, string | undefined, never>;
-  modified_at: ColumnType<Date, string | undefined, string | undefined>;
 }

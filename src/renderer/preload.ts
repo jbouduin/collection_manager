@@ -1,6 +1,7 @@
-import { contextBridge, ipcRenderer } from 'electron';
-import { EIpcChannel, EQueryType } from '../common/enums';
-import { IBaseSyncParam } from '../common/ipc-params';
+import { contextBridge, ipcRenderer } from "electron";
+import { EIpcChannel, EQueryType } from "../common/enums";
+import { ISyncParam, SyncOptions } from "../common/ipc-params";
+import { DarkmodeOption } from "../common/ipc-params/darkmode.option";
 
 // define
 const versions = {
@@ -11,15 +12,14 @@ const versions = {
 
 const ipc = {
   ping: () => ipcRenderer.invoke(EIpcChannel.ping),
-  toggle: () => ipcRenderer.invoke(EIpcChannel.darkModeToggle),
-  system: () => ipcRenderer.invoke(EIpcChannel.darkModeSystem),
+  darkmode: (mode: DarkmodeOption) => ipcRenderer.invoke(EIpcChannel.darkmode, mode),
   query: (queryType: EQueryType) => ipcRenderer.invoke(EIpcChannel.query, queryType),
-  sync: (param: IBaseSyncParam ) => ipcRenderer.invoke(EIpcChannel.sync, param)
+  sync: (param: ISyncParam<SyncOptions> ) => ipcRenderer.invoke(EIpcChannel.sync, param)
 };
 
 // expose
-contextBridge.exposeInMainWorld('versions', versions)
-contextBridge.exposeInMainWorld('ipc', ipc)
+contextBridge.exposeInMainWorld("versions", versions);
+contextBridge.exposeInMainWorld("ipc", ipc);
 
 export type Versions = typeof versions;
 export type IPC = typeof ipc;

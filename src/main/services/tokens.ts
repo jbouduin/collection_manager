@@ -7,9 +7,11 @@ const TOKENS = Object.freeze({
   IpcQueryService: Symbol("IpcQueryService"),
   IpcSyncService: Symbol("IIpcSyncService"),
   // Repositories
+  CardSetRepository: "CardSetRepository",
   CatalogRepository: "CatalogRepository",
   // Sync
+  CardSetSyncService: "CardSetSyncService",
   CatalogSyncService: "CatalogSyncService"
-})
+});
 
-export default TOKENS
+export default TOKENS;

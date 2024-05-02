@@ -1,7 +1,7 @@
 import { Button, Classes } from "@blueprintjs/core";
 import * as React from "react";
 import { ECatalogType, EQueryType, ESyncType } from "../../common/enums";
-import { ICardSetSyncOptions, ICatalogSyncOptions, ISyncParam } from "../../common/ipc-params";
+import { ICardSetSyncOptions, ICardSyncOptions, ICatalogSyncOptions, ISyncParam } from "../../common/ipc-params";
 
 
 const DARK_THEME = Classes.DARK;
@@ -60,6 +60,13 @@ export class Desktop extends React.PureComponent {
             };
             window.ipc.sync(param);
           }} />
+          <Button text="Sync card from MKM" onClick={() => {
+            const param: ISyncParam<ICardSyncOptions> = {
+              type: ESyncType.Cards,
+              options: { setCode: "MKM" }
+            };
+            window.ipc.sync(param);
+          }} />e=mkm
         </p>
       </div >
     );

@@ -7,9 +7,11 @@ const TOKENS = Object.freeze({
   IpcQueryService: Symbol("IpcQueryService"),
   IpcSyncService: Symbol("IIpcSyncService"),
   // Repositories
+  CardRepository: "CardRepository",
   CardSetRepository: "CardSetRepository",
   CatalogRepository: "CatalogRepository",
   // Sync
+  CardSyncService: "CardSyncService",
   CardSetSyncService: "CardSetSyncService",
   CatalogSyncService: "CatalogSyncService"
 });

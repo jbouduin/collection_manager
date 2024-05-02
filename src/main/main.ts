@@ -7,6 +7,7 @@ import { IIpcDispatcherService } from "./services/ipc/ipc-dispatcher.service";
 import TOKENS from "./services/tokens";
 import { IDatabaseService } from "./services/database/database.service";
 import { MigrationProvider } from "kysely";
+import { setCacheLimit } from "scryfall-sdk";
 
 // TODO splash screen and communicate with renderer (is that possible)
 
@@ -16,7 +17,7 @@ import { MigrationProvider } from "kysely";
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
-
+setCacheLimit(0);
 // check for updates
 updateElectronApp();
 

@@ -10,6 +10,8 @@ import { IIpcSyncService, IpcSyncService } from "./ipc/ipc-sync.service";
 import { CardSetSyncService, ICardSetSyncService } from "./sync/card-set-sync.service";
 import { CatalogSyncService, ICatalogSyncService } from "./sync/catalog-sync.service";
 import TOKENS from "./tokens";
+import { CardRepository, ICardRepository } from "./database/repositories/card.repository";
+import { CardSyncService, ICardSyncService } from "./sync/card-sync.service";
 
 
 export class Di {
@@ -24,9 +26,11 @@ export class Di {
     container.register<IIpcSyncService>(TOKENS.IpcSyncService, { useClass: IpcSyncService }, { lifecycle: Lifecycle.Singleton });
     // Repositories
     container.register<ICardSetRepository>(TOKENS.CardSetRepository, { useClass: CardSetRepository }, { lifecycle: Lifecycle.Singleton });
+    container.register<ICardRepository>(TOKENS.CardRepository, { useClass: CardRepository }, { lifecycle: Lifecycle.Singleton });
     container.register<ICatalogRepository>(TOKENS.CatalogRepository, { useClass: CatalogRepository }, { lifecycle: Lifecycle.Singleton });
     // Sync
     container.register<ICardSetSyncService>(TOKENS.CardSetSyncService, { useClass: CardSetSyncService }, { lifecycle: Lifecycle.Singleton });
+    container.register<ICardSyncService>(TOKENS.CardSyncService, { useClass: CardSyncService }, { lifecycle: Lifecycle.Singleton });
     container.register<ICatalogSyncService>(TOKENS.CatalogSyncService, { useClass: CatalogSyncService }, { lifecycle: Lifecycle.Singleton });
   }
 }

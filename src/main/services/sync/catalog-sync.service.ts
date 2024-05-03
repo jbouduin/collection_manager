@@ -1,6 +1,6 @@
 import { Catalog } from "scryfall-sdk";
 import { inject, injectable } from "tsyringe";
-import { ECatalogType } from "../../../common/enums";
+import { CatalogType } from "../../../common/enums";
 import { ICatalogSyncOptions } from "../../../common/ipc-params";
 import { ICatalogRepository } from "../database/repositories/catalog.repository";
 import TOKENS from "../tokens";
@@ -20,61 +20,61 @@ export class CatalogSyncService implements ICatalogSyncService {
   }
 
   public async sync(options: ICatalogSyncOptions): Promise<void> {
-    await Promise.all(options.catalogs.map((catalog: ECatalogType) => this.syncSingleCatalog(catalog)));
+    await Promise.all(options.catalogs.map((catalog: CatalogType) => this.syncSingleCatalog(catalog)));
   }
 
-  private async syncSingleCatalog(catalog: ECatalogType): Promise<void> {
+  private async syncSingleCatalog(catalog: CatalogType): Promise<void> {
     let items: Array<string>;
     switch (catalog) {
-      case ECatalogType.AbilityWords:
+      case "AbilityWords":
         items = await Catalog.abilityWords();
         break;
-      case ECatalogType.ArtifactTypes:
+      case "ArtifactTypes":
         items = await Catalog.artifactTypes();
         break;
-      case ECatalogType.ArtistNames:
+      case "ArtistNames":
         items = await Catalog.artistNames();
         break;
-      case ECatalogType.CardNames:
+      case "CardNames":
         items = await Catalog.cardNames();
         break;
-      case ECatalogType.CreatureTypes:
+      case "CreatureTypes":
         items = await Catalog.creatureTypes();
         break;
-      case ECatalogType.EnchantmentTypes:
+      case "EnchantmentTypes":
         items = await Catalog.enchantmentTypes();
         break;
-      case ECatalogType.KeywordAbilities:
+      case "KeywordAbilities":
         items = await Catalog.keywordAbilities();
         break;
-      case ECatalogType.KeywordActions:
+      case "KeywordActions":
         items = await Catalog.keywordActions();
         break;
-      case ECatalogType.LandTypes:
+      case "LandTypes":
         items = await Catalog.landTypes();
         break;
-      case ECatalogType.Loyalties:
+      case "Loyalties":
         items = await Catalog.loyalties();
         break;
-      case ECatalogType.PlaneswalkerTypes:
+      case "PlaneswalkerTypes":
         items = await Catalog.planeswalkerTypes();
         break;
-      case ECatalogType.Powers:
+      case "Powers":
         items = await Catalog.powers();
         break;
-      case ECatalogType.SpellTypes:
+      case "SpellTypes":
         items = await Catalog.spellTypes();
         break;
-      case ECatalogType.Supertypes:
+      case "Supertypes":
         items = await Catalog.supertypes();
         break;
-      case ECatalogType.Toughnesses:
+      case "Toughnesses":
         items = await Catalog.toughnesses();
         break;
-      case ECatalogType.Watermarks:
+      case "Watermarks":
         items = await Catalog.watermarks();
         break;
-      case ECatalogType.WordBank:
+      case "WordBank":
         items = await Catalog.wordBank();
         break;
     }

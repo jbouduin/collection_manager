@@ -1,6 +1,8 @@
-export enum EIpcChannel {
-  darkmode = "dark-mode",
-  ping = "ping",
-  query = "query",
-  sync = "sync"
+enum EIpcChannel {
+  darkmode,
+  ping,
+  query,
+  sync
 }
+
+export type IpcChannel = keyof typeof EIpcChannel;

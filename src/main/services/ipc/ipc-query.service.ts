@@ -1,12 +1,12 @@
 import { inject, singleton } from "tsyringe";
-import { ECatalogType, EQueryType } from "../../../common/enums";
+import { QueryType } from "../../../common/enums";
 import { IDatabaseService } from "../database/database.service";
 import { CardSet } from "../database/schema/card-set.table";
 import { CatalogItem } from "../database/schema/catalog-item.table";
 import TOKENS from "../tokens";
 
 export interface IIpcQueryService {
-  handle(queryType: EQueryType): void;
+  handle(queryType: QueryType): void;
 }
 
 @singleton()
@@ -18,14 +18,14 @@ export class IpcQueryService implements IIpcQueryService {
     this.databaseService = databaseService;
   }
 
-  public async handle(queryType: EQueryType): Promise<void> {
+  public async handle(queryType: QueryType): Promise<void> {
     switch (queryType) {
-      case EQueryType.CardSet:
+      case "CardSet":
         await this.TestQueryCardSet();
         break;
-      case EQueryType.Card:
+      case "Card":
         break;
-      case EQueryType.Catalog:
+      case "Catalog":
         await this.TestQueryCatalog();
         break;
     }
@@ -48,7 +48,7 @@ export class IpcQueryService implements IIpcQueryService {
       .selectFrom("catalog_item")
       .innerJoin("catalog", "catalog.id", "catalog_item.catalog_id")
       .selectAll("catalog_item")
-      .where("catalog.name", "=", ECatalogType.ArtifactTypes)
+      .where("catalog.name", "=", "ArtifactTypes")
       .limit(1);
 
     await qb.execute()

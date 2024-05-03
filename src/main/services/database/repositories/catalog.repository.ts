@@ -1,14 +1,14 @@
 import { Transaction, sql } from "kysely";
 import { inject, injectable } from "tsyringe";
 import { v1 as uuidV1 } from "uuid";
-import { ECatalogType } from "../../../../common/enums";
+import { CatalogType } from "../../../../common/enums";
 import TOKENS from "../../tokens";
 import { IDatabaseService } from "../database.service";
 import { DatabaseSchema } from "../schema/database.schema";
 import { BaseRepository } from "./base.repository";
 
 export interface ICatalogRepository {
-  sync(name: ECatalogType, items: Array<string>): Promise<void>;
+  sync(name: CatalogType, items: Array<string>): Promise<void>;
 }
 
 @injectable()
@@ -19,7 +19,7 @@ export class CatalogRepository extends BaseRepository implements ICatalogReposit
     super(databaseService);
   }
 
-  public async sync(name: ECatalogType, items: Array<string>): Promise<void> {
+  public async sync(name: CatalogType, items: Array<string>): Promise<void> {
 
     await this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
       const existingCatalog = await trx

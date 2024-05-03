@@ -1,5 +1,7 @@
-export enum ESyncType {
-  CardSets = "CardSets",
-  Cards = "Cards",
-  Catalogs = "Catalogs"
+enum ESyncType {
+  CardSets,
+  Cards,
+  Catalogs
 }
+
+export type SyncType = keyof typeof ESyncType;

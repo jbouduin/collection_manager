@@ -1,5 +1,4 @@
 import { inject, singleton } from "tsyringe";
-import { ESyncType } from "../../../common/enums";
 import { ICardSetSyncOptions, ICardSyncOptions, ICatalogSyncOptions, ISyncParam, SyncOptions } from "../../../common/ipc-params";
 import { ICardSetSyncService } from "../sync/card-set-sync.service";
 import { ICatalogSyncService } from "../sync/catalog-sync.service";
@@ -32,13 +31,13 @@ export class IpcSyncService implements IIpcSyncService {
 
     console.log("handling sync", params);
     switch (params.type) {
-      case ESyncType.CardSets:
+      case "CardSets":
         await this.cardSetSyncService.sync((params as ISyncParam<ICardSetSyncOptions>).options);
         break;
-      case ESyncType.Cards:
+      case "Cards":
         await this.cardSyncService.sync((params as ISyncParam<ICardSyncOptions>).options);
         break;
-      case ESyncType.Catalogs:
+      case "Catalogs":
         await this.catalogSyncService.sync((params as ISyncParam<ICatalogSyncOptions>).options);
         break;
     }

@@ -1,7 +1,6 @@
 import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
 import { SyncedTable } from "./synced.table";
 
-// TODO check ColumnType<Date, string | undefined, string> usage in detail
 export interface CardSetTable extends SyncedTable {
   /**
    * The unique three to five-letter code for this set.

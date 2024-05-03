@@ -1,6 +1,5 @@
 import { ipcMain, nativeTheme } from "electron";
 import { inject, singleton } from "tsyringe";
-import { EIpcChannel } from "../../../common/enums";
 import { DarkmodeOption } from "../../../common/ipc-params/darkmode.option";
 import TOKENS from "../tokens";
 import { IIpcQueryService } from "./ipc-query.service";
@@ -26,10 +25,10 @@ export class IpcDispatcherService implements IIpcDispatcherService{
 
   /* eslint-disable  @typescript-eslint/no-explicit-any */
   public Initialize(): void {
-    ipcMain.handle(EIpcChannel.darkmode, (_event: Electron.IpcMainEvent, ...args: Array<any>) => this.handelDarkMode(args[0]));
-    ipcMain.handle(EIpcChannel.ping, () => "pong");
-    ipcMain.handle(EIpcChannel.query, (_event: Electron.IpcMainEvent, ...args: Array<any>) => this.query.handle(args[0]));
-    ipcMain.handle(EIpcChannel.sync, (_event: Electron.IpcMainEvent, ...args: Array<any>) => this.update.handle(args[0]));
+    ipcMain.handle("darkmode", (_event: Electron.IpcMainEvent, ...args: Array<any>) => this.handelDarkMode(args[0]));
+    ipcMain.handle("ping", () => "pong");
+    ipcMain.handle("query", (_event: Electron.IpcMainEvent, ...args: Array<any>) => this.query.handle(args[0]));
+    ipcMain.handle("sync", (_event: Electron.IpcMainEvent, ...args: Array<any>) => this.update.handle(args[0]));
   }
   /* eslint-enable  @typescript-eslint/no-explicit-any */
 

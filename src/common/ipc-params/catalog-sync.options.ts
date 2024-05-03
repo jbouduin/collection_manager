@@ -1,5 +1,5 @@
-import { ECatalogType } from "../enums";
+import { CatalogType } from "../enums";
 
 export interface ICatalogSyncOptions {
-   catalogs: Array<ECatalogType>;
+   catalogs: Array<CatalogType>;
 }

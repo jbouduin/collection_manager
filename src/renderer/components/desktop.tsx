@@ -47,7 +47,14 @@ export class Desktop extends React.PureComponent {
           <Button text="Sync some catalogs" onClick={() => {
             const param: ISyncParam<ICatalogSyncOptions> = {
               type: "Catalogs",
-              options: { catalogs: ["AbilityWords", "ArtifactTypes"] }
+              options: { catalogs: ["AbilityWords", "ArtifactTypes", "LandTypes"] }
+            };
+            window.ipc.sync(param);
+          }} />
+          <Button text="Sync symbology" onClick={() => {
+            const param: ISyncParam<undefined> = {
+              type: "Symbology",
+              options: undefined
             };
             window.ipc.sync(param);
           }} />
@@ -78,6 +85,8 @@ export class Desktop extends React.PureComponent {
           <Button text="Query Artifact types" onClick={() => window.ipc.query("Catalog")} />
           <Button text="Query Sets" onClick={() => window.ipc.query("CardSet")} />
           <Button text="Query Language" onClick={() => window.ipc.query("Language")} />
+          <Button text="Query Colors" onClick={() => window.ipc.query("Color")} />
+          <Button text="Query Symbology" onClick={() => window.ipc.query("Symbology")} />
         </p>
       </div >
     );

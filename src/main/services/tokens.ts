@@ -10,11 +10,14 @@ const TOKENS = Object.freeze({
   CardRepository: "CardRepository",
   CardSetRepository: "CardSetRepository",
   CatalogRepository: "CatalogRepository",
+  ColorRepository: "ColorRepository",
   LanguageRepository: "LanguageRepository",
+  SymbologyRepository: "SymbologyRepository",
   // Sync
   CardSyncService: "CardSyncService",
   CardSetSyncService: "CardSetSyncService",
-  CatalogSyncService: "CatalogSyncService"
+  CatalogSyncService: "CatalogSyncService",
+  SymbologySyncService: "SymbologySyncService"
 });
 
 export default TOKENS;

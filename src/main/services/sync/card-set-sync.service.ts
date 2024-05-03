@@ -1,9 +1,9 @@
 import { Set as ScryfallCardSet, Sets } from "scryfall-sdk";
-import { ICardSetRepository } from "../database/repositories/card-set.repository";
 import { inject, injectable } from "tsyringe";
+import { ICardSetSyncOptions } from "../../../common/ipc-params";
+import { ICardSetRepository } from "../database/repositories/card-set.repository";
 import TOKENS from "../tokens";
 import { IBaseSyncService } from "./base-sync.service";
-import { ICardSetSyncOptions } from "../../../common/ipc-params";
 
 export type ICardSetSyncService = IBaseSyncService<ICardSetSyncOptions>;
 

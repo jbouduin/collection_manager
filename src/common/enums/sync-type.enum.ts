@@ -1,7 +1,8 @@
 enum ESyncType {
   CardSets,
   Cards,
-  Catalogs
+  Catalogs,
+  Symbology
 }
 
 export type SyncType = keyof typeof ESyncType;

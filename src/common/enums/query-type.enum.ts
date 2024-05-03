@@ -2,6 +2,8 @@ enum EQueryType {
   CardSet,
   Card,
   Catalog,
+  Color,
+  Symbology,
   Language
 }
 

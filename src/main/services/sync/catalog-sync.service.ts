@@ -11,7 +11,7 @@ export type ICatalogSyncService = IBaseSyncService<ICatalogSyncOptions>;
 @injectable()
 export class CatalogSyncService implements ICatalogSyncService {
 
-  private catalogRepository: ICatalogRepository;
+  private readonly catalogRepository: ICatalogRepository;
 
   public constructor(
     @inject(TOKENS.CatalogRepository) catalogRepository: ICatalogRepository

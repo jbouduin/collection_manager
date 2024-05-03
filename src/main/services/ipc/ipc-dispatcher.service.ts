@@ -12,23 +12,23 @@ export interface IIpcDispatcherService {
 @singleton()
 export class IpcDispatcherService implements IIpcDispatcherService{
 
-  private query: IIpcQueryService;
-  private update: IIpcSyncService;
+  private readonly queryService: IIpcQueryService;
+  private readonly updateService: IIpcSyncService;
 
   public constructor(
-    @inject(TOKENS.IpcQueryService) query: IIpcQueryService,
-    @inject(TOKENS.IpcSyncService) update: IIpcSyncService)
+    @inject(TOKENS.IpcQueryService) queryService: IIpcQueryService,
+    @inject(TOKENS.IpcSyncService) updateService: IIpcSyncService)
   {
-    this.query = query;
-    this.update = update;
+    this.queryService = queryService;
+    this.updateService = updateService;
   }
 
   /* eslint-disable  @typescript-eslint/no-explicit-any */
   public Initialize(): void {
     ipcMain.handle("darkmode", (_event: Electron.IpcMainEvent, ...args: Array<any>) => this.handelDarkMode(args[0]));
     ipcMain.handle("ping", () => "pong");
-    ipcMain.handle("query", (_event: Electron.IpcMainEvent, ...args: Array<any>) => this.query.handle(args[0]));
-    ipcMain.handle("sync", (_event: Electron.IpcMainEvent, ...args: Array<any>) => this.update.handle(args[0]));
+    ipcMain.handle("query", (_event: Electron.IpcMainEvent, ...args: Array<any>) => this.queryService.handle(args[0]));
+    ipcMain.handle("sync", (_event: Electron.IpcMainEvent, ...args: Array<any>) => this.updateService.handle(args[0]));
   }
   /* eslint-enable  @typescript-eslint/no-explicit-any */
 

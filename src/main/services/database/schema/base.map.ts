@@ -1,11 +1,6 @@
 import { ColumnType } from "kysely";
 
-export interface BaseTable {
-  /***
-   * Primary key of the table. The exact contents depend on the type of table
-   */
-  id: ColumnType<string, string, never>;
-
+export interface BaseMap {
   /***
    * Timestamp of creation
    */

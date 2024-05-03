@@ -7,7 +7,7 @@ import { DatabaseSchema } from "../schema/database.schema";
 
 @injectable()
 export class BaseRepository {
-  private databaseService: IDatabaseService;
+  private readonly databaseService: IDatabaseService;
 
   protected get database(): Kysely<DatabaseSchema> {
     return this.databaseService.database;

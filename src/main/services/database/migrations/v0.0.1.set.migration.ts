@@ -26,8 +26,6 @@ export class V0_0_1_Set_Migration extends BaseMigration {
       .addColumn("icon_svg_uri", "text", (col: ColumnDefinitionBuilder) => col.notNull())
       .addColumn("search_uri", "text", (col: ColumnDefinitionBuilder) => col.notNull())
       .execute();
-
-    // TODO maybe add some constraints
   }
 
   public async down(db: Kysely<any>): Promise<void> {

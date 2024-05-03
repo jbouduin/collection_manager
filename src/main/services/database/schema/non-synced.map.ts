@@ -1,7 +1,7 @@
 import { ColumnType } from "kysely";
-import { BaseTable } from "./base.table";
+import { BaseMap } from "./base.map";
 
-export interface NonSyncedTable extends BaseTable{
+export interface NonSyncedMap extends BaseMap{
   /***
    * Timestamp of last update
    */

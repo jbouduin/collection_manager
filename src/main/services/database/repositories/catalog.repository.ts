@@ -19,57 +19,31 @@ export class CatalogRepository extends BaseRepository implements ICatalogReposit
     super(databaseService);
   }
 
-  public async sync(name: CatalogType, items: Array<string>): Promise<void> {
-
-    await this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
-      const existingCatalog = await trx
-        .selectFrom("catalog")
-        .select("catalog.id")
-        .where("catalog.name", "=", name)
-        .executeTakeFirst();
-      let catalogId: string = null;
-      if (existingCatalog) {
-        console.log("catalog exists", name);
-        catalogId = existingCatalog.id;
-        trx.updateTable("catalog")
-          .set({ last_synced_at: sql`CURRENT_TIMESTAMP` })
-          .where("catalog.id", "=", existingCatalog.id)
-          .executeTakeFirstOrThrow()
-          .catch((reason) => console.log(reason));
-      } else {
-        console.log("catalog does not exists", name);
-        catalogId = uuidV1();
-        await trx.insertInto("catalog")
-          .values({ name: name, id: catalogId })
-          .executeTakeFirstOrThrow()
-          .catch((reason) => console.log(reason));
-      }
-      await this.syncCatalogItems(trx, catalogId, items);
-    });
-  }
-
   // TODO remove items that are not on the server anymore or at least mark them
-  private async syncCatalogItems(trx: Transaction<DatabaseSchema>, catalogId: string, items: Array<string>): Promise<void> {
-    items.forEach(async (item: string) => {
-      const existingItem = await trx
-        .selectFrom("catalog_item")
-        .select("catalog_item.id")
-        .where("catalog_item.catalog_id", "=", catalogId)
-        .where("catalog_item.name", "=", item)
-        .executeTakeFirst();
+  public async sync(catalogType: CatalogType, items: Array<string>): Promise<void> {
+      await this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
+      items.forEach(async (item: string) => {
+        const existingItem = await trx
+          .selectFrom("catalog_item")
+          .select("catalog_item.id")
+          .where("catalog_item.catalog_name", "=", catalogType)
+          .where("catalog_item.item", "=", item)
+          .executeTakeFirst();
 
-      if (existingItem) {
-        await trx.updateTable("catalog_item")
-          .set({ last_synced_at: sql`CURRENT_TIMESTAMP` })
-          .where("catalog_item.id", "=", existingItem.id)
-          .executeTakeFirstOrThrow()
-          .catch((reason) => console.log(reason));
-      } else {
-        await trx.insertInto("catalog_item")
-          .values({ id: uuidV1(), name: item, catalog_id: catalogId })
-          .executeTakeFirstOrThrow()
-          .catch((reason) => console.log(reason));
-      }
+        if (existingItem) {
+          await trx.updateTable("catalog_item")
+            .set({ last_synced_at: sql`CURRENT_TIMESTAMP` })
+            .where("catalog_item.catalog_name", "=", catalogType)
+            .where("catalog_item.item", "=", item)
+            .executeTakeFirstOrThrow()
+            .catch((reason) => console.log(reason));
+        } else {
+          await trx.insertInto("catalog_item")
+            .values({ id: uuidV1(), catalog_name: catalogType, item: item })
+            .executeTakeFirstOrThrow()
+            .catch((reason) => { console.log(reason); throw new Error("insert failed"); });
+        }
+      });
     });
   }
 }

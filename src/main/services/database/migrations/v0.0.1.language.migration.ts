@@ -7,7 +7,7 @@ export class V0_0_1_Language_Migration extends BaseMigration {
 
   public async up(db: Kysely<any>): Promise<void> {
     await db.transaction().execute(async (trx: Transaction<any>) => {
-      super.createNonSyncedTable(trx, "language")
+      super.createTable(trx, "language", false)
         .addColumn("printed_code", "text")
         .addColumn("display_text", "text", (col: ColumnDefinitionBuilder) => col.notNull())
         .addColumn("button_text", "text")

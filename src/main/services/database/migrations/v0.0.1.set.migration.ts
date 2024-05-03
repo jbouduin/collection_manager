@@ -5,7 +5,7 @@ import { BaseMigration } from "./base.migration";
 export class V0_0_1_Set_Migration extends BaseMigration {
 
   public async up(db: Kysely<any>): Promise<void> {
-    await super.createSyncedTable(db, "card_set")
+    await super.createTable(db, "card_set", true)
       .addColumn("code", "text", (col: ColumnDefinitionBuilder) => col.notNull().unique())
       .addColumn("mtgo_code", "text", (col: ColumnDefinitionBuilder) => col.unique())
       .addColumn("arena_code", "text", (col: ColumnDefinitionBuilder) => col.unique())

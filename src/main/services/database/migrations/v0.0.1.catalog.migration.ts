@@ -6,7 +6,7 @@ export class V0_0_1_Catalog_Migration extends BaseMigration {
 
   public async up(db: Kysely<any>): Promise<void> {
 
-    await super.createSyncedTable(db, "catalog_item")
+    await super.createTable(db, "catalog_item", true)
       .addColumn("catalog_name", "text", (col: ColumnDefinitionBuilder) => col.notNull())
       .addColumn("item", "text", (col: ColumnDefinitionBuilder) => col.notNull().notNull())
       .execute();

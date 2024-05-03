@@ -75,8 +75,9 @@ export class Desktop extends React.PureComponent {
         </p>
         <p>
           <h3>Query</h3>
-          <Button text="Query sets" onClick={() => window.ipc.query("CardSet")} />
-          <Button text="Query artifact types" onClick={() => window.ipc.query("Catalog")} />
+          <Button text="Query Artifact types" onClick={() => window.ipc.query("Catalog")} />
+          <Button text="Query Sets" onClick={() => window.ipc.query("CardSet")} />
+          <Button text="Query Language" onClick={() => window.ipc.query("Language")} />
         </p>
       </div >
     );

@@ -1,12 +1,11 @@
+import fs from "fs";
 import { Cards, Card as ScryfallCard } from "scryfall-sdk";
 import { inject, injectable } from "tsyringe";
+import { ICardSyncOptions } from "../../../common/ipc-params";
+import { ICardRepository } from "../database/repositories/card.repository";
 import TOKENS from "../tokens";
 import { IBaseSyncService } from "./base-sync.service";
-import { ICardSyncOptions } from "../../../common/ipc-params";
-// TODO create index.ts in services per directory
-import { ICardRepository } from "../database/repositories/card.repository";
-import fs from "fs";
-import path from "path";
+
 export type ICardSyncService = IBaseSyncService<ICardSyncOptions>;
 
 @injectable()
@@ -30,9 +29,9 @@ export class CardSyncService implements IBaseSyncService<ICardSyncOptions> {
       console.log(card.name);
     });
     const all = await emitter.waitForAll();
-    const fileName = "c:/data/new-assistant/json/cards_" + options.setCode + '.json';
+    const fileName = "c:/data/new-assistant/json/cards_" + options.setCode + ".json";
     if (!fs.existsSync(fileName)) {
-      let json = JSON.stringify(all);
+      const json = JSON.stringify(all);
       fs.writeFileSync(fileName, json);
     }
     console.log("Emitted %d cards", cards.length);

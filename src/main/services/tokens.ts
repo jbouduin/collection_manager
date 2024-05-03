@@ -10,6 +10,7 @@ const TOKENS = Object.freeze({
   CardRepository: "CardRepository",
   CardSetRepository: "CardSetRepository",
   CatalogRepository: "CatalogRepository",
+  LanguageRepository: "LanguageRepository",
   // Sync
   CardSyncService: "CardSyncService",
   CardSetSyncService: "CardSetSyncService",

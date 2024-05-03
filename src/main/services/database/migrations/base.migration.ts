@@ -15,7 +15,7 @@ export abstract class BaseMigration implements IBaseMigration {
     return db.schema
       .createTable(tableName)
       .addColumn("id", "text", (col: ColumnDefinitionBuilder) => col.primaryKey().notNull())
-      .addColumn("created_at", "text", (col: ColumnDefinitionBuilder) => col.defaultTo(sql`CURRENT_TIMESTAMP`).notNull().primaryKey())
+      .addColumn("created_at", "text", (col: ColumnDefinitionBuilder) => col.defaultTo(sql`CURRENT_TIMESTAMP`).notNull())
       .addColumn("modified_at", "text", (col: ColumnDefinitionBuilder) => col.defaultTo(sql`CURRENT_TIMESTAMP`).notNull());
   }
 

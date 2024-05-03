@@ -1,7 +1,8 @@
 enum EQueryType {
   CardSet,
   Card,
-  Catalog
+  Catalog,
+  Language
 }
 
 export type QueryType = keyof typeof EQueryType;

@@ -1,4 +1,3 @@
-export * from "./card.table";
 export * from "./card/card-card.map";
 export * from "./card/card-color.map";
 export * from "./card/card-format-legality.table";
@@ -6,6 +5,7 @@ export * from "./card/card-game.table";
 export * from "./card/card-image.table";
 export * from "./card/card-multiverse-id.table";
 export * from "./card/card-ruling-map";
+export * from "./card/card.table";
 
 export * from "./master-data/card-set.table";
 export * from "./master-data/catalog-item.table";

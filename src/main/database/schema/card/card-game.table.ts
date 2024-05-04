@@ -1,8 +1,9 @@
 import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
-import { Game } from "../../../../common/enums";
-import { SyncedTable } from "../synced.table";
 
-export interface CardGameTable extends SyncedTable {
+import { Game } from "../../../../common/enums";
+import { Synchronized } from "../base.types";
+
+export interface CardGameTable extends Synchronized {
   card_id: ColumnType<string, string, never>;
   game: ColumnType<Game, Game, never>;
 }

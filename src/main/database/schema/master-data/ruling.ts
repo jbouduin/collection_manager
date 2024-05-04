@@ -1,8 +1,9 @@
 import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
-import { RulingSource } from "../../../../common/enums";
-import { SyncedMap } from "../synced.map";
 
-export interface RulingTable extends SyncedMap {
+import { RulingSource } from "../../../../common/enums";
+import { Synchronized } from "../base.types";
+
+export interface RulingTable extends Synchronized {
   oracle_id: ColumnType<string, string, never>;
   source: ColumnType<RulingSource, RulingSource, never>;
   published_at: ColumnType<Date, string, never>;

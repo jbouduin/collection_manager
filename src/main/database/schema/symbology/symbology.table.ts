@@ -1,7 +1,8 @@
 import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
-import { SyncedTable } from "../synced.table";
 
-export interface SymbologyTable extends SyncedTable {
+import { Synchronized } from "../base.types";
+
+export interface SymbologyTable extends Synchronized {
   /***
    * The plaintext symbol. Often surrounded with curly braces {}. Note that not all symbols are ASCII text (for example, {∞}).
    * Contains the property "symbol" as returned by scryfall
@@ -59,7 +60,7 @@ export interface SymbologyTable extends SyncedTable {
    */
   phyrexian: ColumnType<boolean, number, number>;
 
-  // TODO check what is the difference between this and mana_value
+  // TODO check what is the difference between this and mana_value in symbology ???
   /***
    * Converted mana cost ?
    */

@@ -1,9 +1,9 @@
 import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
-import { SyncedTable } from "./synced.table";
-import { CardLayout, MTGLanguage } from "../../../common/enums";
 
+import { CardLayout, MTGLanguage } from "../../../../common/enums";
+import { SynchronizedWithStringId } from "../base.types";
 
-export interface CardTable extends SyncedTable {
+export interface CardTable extends SynchronizedWithStringId {
   //#region Core fields -------------------------------------------------------
   /**
    * A unique ID for this card’s oracle identity.

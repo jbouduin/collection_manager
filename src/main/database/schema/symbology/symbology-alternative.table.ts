@@ -1,9 +1,8 @@
 import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
-import { SyncedMap } from "../synced.map";
 
+import { Synchronized } from "../base.types";
 
-// fields are not updateable in code: if required SymbologyAlternatives will be updated during migration
-export interface SymbologyAlternativeTable extends SyncedMap {
+export interface SymbologyAlternativeTable extends Synchronized {
   /**
    * The Symbology Id
    * @example "W"

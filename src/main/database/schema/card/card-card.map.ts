@@ -1,8 +1,9 @@
 import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
-import { CardRelatedCardComponent } from "../../../../common/enums";
-import { SyncedMap } from "../synced.map";
 
-export interface CardCardMap extends SyncedMap {
+import { CardRelatedCardComponent } from "../../../../common/enums";
+import { Synchronized } from "../base.types";
+
+export interface CardCardMap extends Synchronized {
   card_id: ColumnType<string, string, never>;
   related_card_id: ColumnType<string, string, never>;
   component: ColumnType<CardRelatedCardComponent, CardRelatedCardComponent, never>;

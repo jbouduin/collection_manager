@@ -1,9 +1,9 @@
 import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
+
 import { MTGColor } from "../../../../common/enums";
-import { SyncedMap } from "../synced.map";
+import { Synchronized } from "../base.types";
 
-export interface SymbologyColorMapTable extends SyncedMap {
-
+export interface SymbologyColorMapTable extends Synchronized {
   /***
    * The plaintext symbol. Often surrounded with curly braces {}. Note that not all symbols are ASCII text (for example, {∞}).
    * Contains the property "symbol" as returned by scryfall

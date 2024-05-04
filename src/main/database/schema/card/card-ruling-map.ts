@@ -1,7 +1,8 @@
 import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
-import { SyncedMap } from "../synced.map";
 
-export interface CardRulingMap extends SyncedMap {
+import { Synchronized } from "../base.types";
+
+export interface CardRulingMap extends Synchronized {
   card_id: ColumnType<string, string, never>;
   ruling_id: ColumnType<string, string, never>;
 }

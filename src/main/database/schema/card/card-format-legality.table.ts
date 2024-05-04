@@ -1,8 +1,9 @@
 import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
-import { CardLegality, GameFormat } from "../../../../common/enums";
-import { SyncedTable } from "../synced.table";
 
-export interface CardFormatLegalityTable extends SyncedTable {
+import { CardLegality, GameFormat } from "../../../../common/enums";
+import { Synchronized } from "../base.types";
+
+export interface CardFormatLegalityTable extends Synchronized {
   card_id: ColumnType<string, string, never>;
   format: ColumnType<GameFormat, GameFormat, never>;
   legality: ColumnType<CardLegality>;

@@ -1,6 +1,6 @@
-import { SymbologyAlternative } from "../../../main/services/database/schema/symbology-alternative.table";
-import { SymbologyColorMap } from "../../../main/services/database/schema/symbology-color.map";
-import { Symbology } from "../../../main/services/database/schema/symbology.table";
+import { SymbologyAlternative } from "../../../main/database/schema/symbology-alternative.table";
+import { SymbologyColorMap } from "../../../main/database/schema/symbology-color.map";
+import { Symbology } from "../../../main/database/schema/symbology.table";
 
 export interface SymbologySelectDto {
   symbology: Symbology;

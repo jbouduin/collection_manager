@@ -28,9 +28,9 @@ export abstract class BaseMigration implements IBaseMigration {
       .createTable(tableName);
     console.log(tableName, primaryKey);
 
-    if (primaryKey == undefined) {
+    if (primaryKey == undefined || primaryKey == null) {
       result = result.addColumn("id", "text", (col: ColumnDefinitionBuilder) => col.primaryKey().notNull());
-    } else if (primaryKey != null) {
+    } else if (primaryKey.length > 0) {
       primaryKey.forEach((pk: PrimaryKeyColumnDefinition) => result = result.addColumn(pk.columnName, pk.dataType, pk.callback));
       result = result.addPrimaryKeyConstraint(tableName.toUpperCase() + "_PK", primaryKey.map((pk: PrimaryKeyColumnDefinition) => pk.columnName) as Array<never>);
     }

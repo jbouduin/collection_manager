@@ -3,6 +3,7 @@ import { ColumnBuilderCallback, ColumnDefinitionBuilder, CreateTableBuilder, Kys
 import { DataTypeExpression } from "kysely/dist/cjs/parser/data-type-parser";
 
 export interface IBaseMigration {
+  get keyName(): string;
   up(db: Kysely<any>): Promise<void>;
   down(db: Kysely<any>): Promise<void>
 }
@@ -12,20 +13,28 @@ export interface PrimaryKeyColumnDefinition {
   dataType: DataTypeExpression,
   callback?: ColumnBuilderCallback
 }
+
 export abstract class BaseMigration implements IBaseMigration {
+
+  public abstract get keyName(): string;
   public abstract up(db: Kysely<any>): Promise<void>;
   public abstract down(db: Kysely<any>): Promise<void>;
 
+  /***
+   *
+   */
   protected createTable<TB extends string>(db: Kysely<any>, tableName: TB, isSynced: boolean, primaryKey?: Array<PrimaryKeyColumnDefinition>): CreateTableBuilder<TB> {
     let result = db.schema
       .createTable(tableName);
-    console.log(primaryKey);
-    if (primaryKey == undefined || primaryKey == null) {
+    console.log(tableName, primaryKey);
+
+    if (primaryKey == undefined) {
       result = result.addColumn("id", "text", (col: ColumnDefinitionBuilder) => col.primaryKey().notNull());
-    } else {
+    } else if (primaryKey != null) {
       primaryKey.forEach((pk: PrimaryKeyColumnDefinition) => result = result.addColumn(pk.columnName, pk.dataType, pk.callback));
-      result = result.addPrimaryKeyConstraint(tableName.toUpperCase(), primaryKey.map((pk: PrimaryKeyColumnDefinition) => pk.columnName) as Array<never>);
+      result = result.addPrimaryKeyConstraint(tableName.toUpperCase() + "_PK", primaryKey.map((pk: PrimaryKeyColumnDefinition) => pk.columnName) as Array<never>);
     }
+
     result = result.addColumn("created_at", "text", (col: ColumnDefinitionBuilder) => col.defaultTo(sql`CURRENT_TIMESTAMP`).notNull());
     if (isSynced) {
       result = result.addColumn("last_synced_at", "integer", (col: ColumnDefinitionBuilder) => col.defaultTo(sql`CURRENT_TIMESTAMP`).notNull());

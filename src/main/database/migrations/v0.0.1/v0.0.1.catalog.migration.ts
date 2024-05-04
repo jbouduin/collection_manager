@@ -1,8 +1,11 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import { ColumnDefinitionBuilder, Kysely } from "kysely";
-import { BaseMigration } from "./base.migration";
+import { BaseMigration } from "../base.migration";
 
 export class V0_0_1_Catalog_Migration extends BaseMigration {
+  public get keyName(): string {
+    return "0001: v.0.0.1.Catalog";
+  }
 
   public async up(db: Kysely<any>): Promise<void> {
 

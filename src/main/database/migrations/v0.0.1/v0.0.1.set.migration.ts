@@ -1,8 +1,11 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import { ColumnDefinitionBuilder, Kysely } from "kysely";
-import { BaseMigration } from "./base.migration";
+import { BaseMigration } from "../base.migration";
 
 export class V0_0_1_Set_Migration extends BaseMigration {
+  public get keyName(): string {
+    return "0002: v.0.0.1.Set";
+  }
 
   public async up(db: Kysely<any>): Promise<void> {
     await super.createTable(db, "card_set", true)

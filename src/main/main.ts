@@ -8,6 +8,8 @@ import { IDatabaseService } from "./services/infra/interfaces/database.service";
 import { MigrationProvider } from "kysely";
 import { setCacheLimit } from "scryfall-sdk";
 import INFRATOKENS from "./services/infra/interfaces";
+import { MigrationDi } from "./database/migrations/migrations.di";
+import MIGRATOKENS from "./database/migrations/migration.tokens";
 
 // TODO splash screen and communicate with renderer (is that possible)
 
@@ -27,6 +29,7 @@ if (require("electron-squirrel-startup")) {
 }
 
 ServicesDI.register();
+const migrationContainer = MigrationDi.registerMigrations();
 
 const createWindow = (): void => {
   // Create the browser window.
@@ -56,7 +59,8 @@ app.whenReady().then(() => {
   container.resolve<IIpcDispatcherService>(INFRATOKENS.IpcDispatcherService).Initialize();
   container.resolve<IDatabaseService>(INFRATOKENS.DatabaseService)
     .connect("c:/data/new-assistant")
-    .migrateToLatest(container.resolve<MigrationProvider>(INFRATOKENS.CustomMigrationProvider));
+    .migrateToLatest(migrationContainer.resolve<MigrationProvider>(MIGRATOKENS.NewCustomMigrationProvider))
+    .then(() => migrationContainer.dispose());
 
   createWindow();
 

@@ -4,6 +4,7 @@ export interface BaseTable {
   /***
    * Primary key of the table. The exact contents depend on the type of table
    */
+  // TODO
   id: ColumnType<string, string, never>;
 
   /***

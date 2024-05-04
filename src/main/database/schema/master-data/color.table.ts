@@ -1,6 +1,6 @@
 import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
-import { NonSyncedTable } from "./non-synced.table";
-import { BasicLandType, MTGColor } from "../../../common/enums";
+import { NonSyncedTable } from "../non-synced.table";
+import { BasicLandType, MTGColor } from "../../../../common/enums";
 
 // fields are not updateable in code: if required Colors will be updated during migration
 export interface ColorTable extends NonSyncedTable {

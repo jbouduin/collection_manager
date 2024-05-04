@@ -1,6 +1,6 @@
 import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
-import { MTGColor } from "../../../common/enums";
-import { SyncedMap } from "./synced.map";
+import { MTGColor } from "../../../../common/enums";
+import { SyncedMap } from "../synced.map";
 
 export interface SymbologyColorMapTable extends SyncedMap {
 

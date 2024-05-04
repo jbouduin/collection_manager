@@ -1,5 +1,5 @@
 import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
-import { SyncedMap } from "./synced.map";
+import { SyncedMap } from "../synced.map";
 
 
 // fields are not updateable in code: if required SymbologyAlternatives will be updated during migration

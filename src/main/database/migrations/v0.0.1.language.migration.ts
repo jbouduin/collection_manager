@@ -1,6 +1,6 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import { ColumnDefinitionBuilder, Kysely, Transaction } from "kysely";
-import { NewLanguage } from "../schema/language.table";
+import { NewLanguage } from "../schema/master-data/language.table";
 import { BaseMigration } from "./base.migration";
 
 export class V0_0_1_Language_Migration extends BaseMigration {

@@ -1,6 +1,6 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import { ColumnDefinitionBuilder, Kysely, Transaction } from "kysely";
-import { NewColor } from "../schema/color.table";
+import { NewColor } from "../schema/master-data/color.table";
 import { BaseMigration } from "./base.migration";
 
 // TODO once scryfall-sdk removed rename symbology to CardSymbol

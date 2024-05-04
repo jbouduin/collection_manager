@@ -1,6 +1,6 @@
 import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
-import { SyncedTable } from "./synced.table";
-import { CatalogType } from "../../../common/enums";
+import { SyncedTable } from "../synced.table";
+import { CatalogType } from "../../../../common/enums";
 
 export interface CatalogItemTable extends SyncedTable{
 

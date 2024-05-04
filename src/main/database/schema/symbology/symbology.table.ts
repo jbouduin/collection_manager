@@ -1,5 +1,5 @@
 import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
-import { SyncedTable } from "./synced.table";
+import { SyncedTable } from "../synced.table";
 
 export interface SymbologyTable extends SyncedTable {
   /***

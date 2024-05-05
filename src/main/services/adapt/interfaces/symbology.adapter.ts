@@ -1,4 +1,4 @@
 import { DatabaseSchema } from "../../../../main/database/schema";
-import { IBaseAdapter } from "./base.adapter";
+import { ITableAdapter } from "./table.adapter";
 
-export type ISymbologyAdapter = IBaseAdapter<DatabaseSchema, "symbology">;
+export type ISymbologyAdapter = ITableAdapter<DatabaseSchema, "symbology">;

@@ -23,7 +23,7 @@ export class V0_0_1_Card_Migration extends BaseMigration {
         .addColumn("arena_id", "integer")
         .addColumn("mtgo_id", "integer")
         .addColumn("mtgo_foil_id", "integer")
-        .addColumn("tcg_player_id", "integer")
+        .addColumn("tcgplayer_id", "integer")
         .addColumn("tcgplayer_etched_id", "integer")
         .addColumn("cardmarket_id", "integer")
         .execute();
@@ -93,5 +93,7 @@ export class V0_0_1_Card_Migration extends BaseMigration {
   }
 
   public async down(db: Kysely<any>): Promise<void> {
+    await db.schema.dropTable("card").execute();
+    // TODO add other tables here
   }
 }

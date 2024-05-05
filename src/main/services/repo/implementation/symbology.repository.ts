@@ -1,4 +1,4 @@
-import { Transaction } from "kysely";
+import { ExpressionOrFactory, SqlBool, Transaction } from "kysely";
 import { CardSymbol, Color as ScryfallColor } from "scryfall-sdk";
 import { inject, injectable } from "tsyringe";
 import { SymbologySelectDto } from "../../../../common/dto";
@@ -74,20 +74,24 @@ export class SymbologyRepository extends BaseRepository implements ISymbologyRep
   private async syncColors(trx: Transaction<DatabaseSchema>, symbol: string, colors: Array<ScryfallColor>): Promise<void> {
     // TODO use map and waitforall
     colors.forEach(async (color: ScryfallColor) => {
+      const filter: ExpressionOrFactory<DatabaseSchema, "symbology_color_map", SqlBool> = (eb) =>
+        eb.and([
+          eb("symbology_color_map.color_id", "=", color),
+          eb("symbology_color_map.symbology_id", "=", symbol)
+        ]
+        );
       const existing = await trx.selectFrom("symbology_color_map")
         .select("symbology_color_map.color_id")
-        .where("symbology_color_map.color_id", "=", color)
-        .where("symbology_color_map.symbology_id", "=", symbol)
+        .where(filter)
         .executeTakeFirst();
       if (existing) {
         await trx.updateTable("symbology_color_map")
           .set(this.symbologyColorMapAdapter.toUpdate(null))
-          .where("symbology_color_map.color_id", "=", color)
-          .where("symbology_color_map.symbology_id", "=", symbol)
+          .where(filter)
           .executeTakeFirstOrThrow();
       } else {
         await trx.insertInto("symbology_color_map")
-          .values(this.symbologyColorMapAdapter.toInsert({ colorId: color, symbologyId: symbol }))
+          .values(this.symbologyColorMapAdapter.toInsert(symbol, color, null))
           .executeTakeFirstOrThrow();
       }
     });
@@ -95,20 +99,25 @@ export class SymbologyRepository extends BaseRepository implements ISymbologyRep
 
   private async syncAlternatives(trx: Transaction<DatabaseSchema>, symbol: string, alternatives: Array<string>): Promise<void> {
     alternatives.forEach(async (alternative: ScryfallColor) => {
+      const filter: ExpressionOrFactory<DatabaseSchema, "symbology_alternative", SqlBool> = (eb) =>
+        eb.and([
+          eb("symbology_alternative.symbology_id", "=", symbol),
+          eb("symbology_alternative.alternative", "=", alternative)
+        ]
+        );
       const existing = await trx.selectFrom("symbology_alternative")
         .select("symbology_alternative.alternative")
-        .where("symbology_alternative.symbology_id", "=", symbol)
-        .where("symbology_alternative.alternative", "=", alternative)
+        .where(filter)
         .executeTakeFirst();
+
       if (existing) {
         await trx.updateTable("symbology_alternative")
           .set(this.symbologyAlternativeAdapter.toUpdate(null))
-          .where("symbology_alternative.alternative", "=", alternative)
-          .where("symbology_alternative.symbology_id", "=", symbol)
+          .where(filter)
           .executeTakeFirstOrThrow();
       } else {
         await trx.insertInto("symbology_alternative")
-          .values(this.symbologyAlternativeAdapter.toInsert({ alternative: alternative, symbologyId: symbol }))
+          .values(this.symbologyAlternativeAdapter.toInsert(symbol, alternative))
           .executeTakeFirstOrThrow();
       }
     });

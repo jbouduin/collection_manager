@@ -1,4 +1,4 @@
 import { DatabaseSchema } from "../../../database/schema";
-import { IBaseAdapter } from "./base.adapter";
+import { ITableAdapter } from "./table.adapter";
 
-export type ICatalogAdapter = IBaseAdapter<DatabaseSchema, "catalog_item">;
+export type ICatalogAdapter = ITableAdapter<DatabaseSchema, "catalog_item">;

@@ -8,7 +8,7 @@ import { DatabaseSchema } from "../../../../main/database/schema";
 import { ICatalogAdapter } from "../interfaces/catalog.adapter";
 
 export class CatalogAdapter implements ICatalogAdapter {
-  toInsert(scryfall: { catalogType: CatalogType, item: string}): InsertExpression<DatabaseSchema, "catalog_item"> {
+  public toInsert(scryfall: { catalogType: CatalogType, item: string}): InsertExpression<DatabaseSchema, "catalog_item"> {
     return {
       id: uuidV1(),
       catalog_name: scryfall.catalogType,
@@ -16,7 +16,7 @@ export class CatalogAdapter implements ICatalogAdapter {
     };
   }
 
-  toUpdate(): UpdateObjectExpression<DatabaseSchema, "catalog_item"> {
+  public toUpdate(): UpdateObjectExpression<DatabaseSchema, "catalog_item"> {
     return {
       last_synced_at: sql`CURRENT_TIMESTAMP`
     };

@@ -5,16 +5,16 @@ import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser
 import { DatabaseSchema } from "../../../../main/database/schema";
 import { ISymbologyAlternativeAdapter } from "../interfaces";
 
-// TODO create a "child table adapter" or change the signature of the interface
+
 export class SymbologyAlternativeAdapter implements ISymbologyAlternativeAdapter {
-  toInsert(scryFall: { alternative: string, symbologyId: string }): InsertExpression<DatabaseSchema, "symbology_alternative"> {
+  public toInsert(symbologyId: string, alternative: string): InsertExpression<DatabaseSchema, "symbology_alternative"> {
     return {
-      alternative: scryFall.alternative,
-      symbology_id: scryFall.symbologyId
+      symbology_id: symbologyId,
+      alternative: alternative,
     };
   }
 
-  toUpdate(): UpdateObjectExpression<DatabaseSchema, "symbology_alternative"> {
+  public toUpdate(): UpdateObjectExpression<DatabaseSchema, "symbology_alternative"> {
     return {
       last_synced_at: sql`CURRENT_TIMESTAMP`
     };

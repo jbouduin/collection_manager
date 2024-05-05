@@ -1,5 +1,5 @@
 
 import { DatabaseSchema } from "../../../../main/database/schema";
-import { IBaseAdapter } from "./base.adapter";
+import { IChildTableAdapter } from "./child-table.adapter";
 
-export type ISymbologyAlternativeAdapter = IBaseAdapter<DatabaseSchema, "symbology_alternative">;
+export type ISymbologyAlternativeAdapter = IChildTableAdapter<DatabaseSchema, "symbology_alternative">;

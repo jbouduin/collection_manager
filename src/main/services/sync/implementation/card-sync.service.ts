@@ -24,17 +24,19 @@ export class CardSyncService implements ICardSyncService {
     // consider adding required parts of scrfall-sdk to application
     emitter.addListener("data", (card: ScryfallCard) => {
       cards.push(card);
-      console.log(card.name);
+      // console.log(card.name);
     });
-    const all = await emitter.waitForAll();
-    const fileName = "c:/data/new-assistant/json/cards_" + options.setCode + ".json";
-    if (!fs.existsSync(fileName)) {
-      const json = JSON.stringify(all);
-      fs.writeFileSync(fileName, json);
-    }
-    console.log("Emitted %d cards", cards.length);
-    console.log("Found %d cards", all.length);
-    await this.cardRepository.sync(cards);
+    await emitter.waitForAll().then((all) => {
+      const fileName = "c:/data/new-assistant/json/cards_" + options.setCode + ".json";
+      if (!fs.existsSync(fileName)) {
+        const json = JSON.stringify(all);
+        fs.writeFileSync(fileName, json);
+      }
+      console.log("Emitted %d cards", cards.length);
+      console.log("Found %d cards", all.length);
+      return this.cardRepository.sync(cards);
+    });
+
     // TODO handle split card (e.g. MKM - Cease / Desist)
     // TODO handle double side card (e.g. SOI - Archangel Avacyn)
     // split and double sided cards have two cardfaces:

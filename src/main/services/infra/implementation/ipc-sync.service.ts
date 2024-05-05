@@ -30,18 +30,26 @@ export class IpcSyncService implements IIpcSyncService {
     console.log("handling sync", params);
     switch (params.type) {
       case "CardSets":
-        await this.cardSetSyncService.sync((params as ISyncParam<ICardSetSyncOptions>).options);
+        await this.cardSetSyncService
+          .sync((params as ISyncParam<ICardSetSyncOptions>).options)
+          .then(() => console.log("end sync", params));
         break;
       case "Cards":
-        await this.cardSyncService.sync((params as ISyncParam<ICardSyncOptions>).options);
+        await this.cardSyncService
+          .sync((params as ISyncParam<ICardSyncOptions>).options)
+          .then(() => console.log("end sync", params));
         break;
       case "Catalogs":
-        await this.catalogSyncService.sync((params as ISyncParam<ICatalogSyncOptions>).options);
+        await this.catalogSyncService
+          .sync((params as ISyncParam<ICatalogSyncOptions>).options)
+          .then(() => console.log("end sync", params));
         break;
       case "Symbology":
-        await this.symbologySyncService.sync(undefined);
+        await this.symbologySyncService
+          .sync(undefined)
+          .then(() => console.log("end sync", params));
         break;
     }
-    console.log("end sync", params);
+
   }
 }

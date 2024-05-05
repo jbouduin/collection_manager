@@ -25,7 +25,8 @@ export class CatalogRepository extends BaseRepository implements ICatalogReposit
   // TODO remove items that are not on the server anymore or at least mark them
   public async sync(catalogType: CatalogType, items: Array<string>): Promise<void> {
       await this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
-      items.forEach(async (item: string) => {
+        items.forEach(async (item: string) => {
+
         const existingItem = await trx
           .selectFrom("catalog_item")
           .select("catalog_item.id")

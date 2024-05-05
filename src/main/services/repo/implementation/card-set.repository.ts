@@ -1,4 +1,4 @@
-import { Transaction } from "kysely";
+import { ExpressionOrFactory, SqlBool, Transaction } from "kysely";
 import { Set as ScryfallSet } from "scryfall-sdk";
 import { inject, injectable } from "tsyringe";
 
@@ -25,15 +25,17 @@ export class CardSetRepository extends BaseRepository implements ICardSetReposit
   public async sync(cardSets: Array<ScryfallSet>): Promise<void> {
     await this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
       cardSets.forEach(async (cardSet: ScryfallSet) => {
+        const filter: ExpressionOrFactory<DatabaseSchema, "card_set", SqlBool> = (eb) => eb("card_set.id", "=", cardSet.id);
+
         const existingCardSet = await trx
           .selectFrom("card_set")
           .select("card_set.id")
-          .where("card_set.id", "=", cardSet.id)
+          .where(filter)
           .executeTakeFirst();
         if (existingCardSet) {
           await trx.updateTable("card_set")
             .set(this.cardSetAdapter.toUpdate(cardSet))
-            .where("card_set.id", "=", cardSet.id)
+            .where(filter)
             .executeTakeFirstOrThrow()
             .catch((reason) => console.log(reason));
         } else {

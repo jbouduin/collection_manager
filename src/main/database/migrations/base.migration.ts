@@ -23,6 +23,7 @@ export abstract class BaseMigration implements IBaseMigration {
   /***
    *
    */
+  // TODO check what happens if we say TB extends keyof DatabaseSchema (we probably need a current schema for up and a previous schema for down)
   protected createTable<TB extends string>(db: Kysely<any>, tableName: TB, isSynced: boolean, primaryKey?: Array<PrimaryKeyColumnDefinition>): CreateTableBuilder<TB> {
     let result = db.schema
       .createTable(tableName);

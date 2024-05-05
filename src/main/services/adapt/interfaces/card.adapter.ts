@@ -1,4 +1,4 @@
 import { DatabaseSchema } from "../../../database/schema";
-import { IBaseAdapter } from "./base.adapter";
+import { ITableAdapter } from "./table.adapter";
 
-export type ICardAdapter = IBaseAdapter<DatabaseSchema, "card">;
+export type ICardAdapter = ITableAdapter<DatabaseSchema, "card">;

@@ -8,10 +8,10 @@ import { ISymbologyColorMapAdapter } from "../interfaces";
 
 // TODO create a "map adapter" or change the signature of the interface
 export class SymbologyColorMapAdapter implements ISymbologyColorMapAdapter {
-  toInsert(scryfall: { colorId: string, symbologyId: string }): InsertExpression<DatabaseSchema, "symbology_color_map"> {
+  public toInsert(leftId: string, rightId: string): InsertExpression<DatabaseSchema, "symbology_color_map"> {
     return {
-      color_id: scryfall.colorId,
-      symbology_id: scryfall.symbologyId
+      color_id: leftId,
+      symbology_id: rightId
     };
   }
 

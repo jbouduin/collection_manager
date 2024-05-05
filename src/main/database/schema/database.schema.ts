@@ -1,5 +1,5 @@
 import {
-  CardCardMap, CardColorMap, CardFormatLegalityTable, CardGameTable, CardImageTable, CardMultiverseIdTable, CardRulingMap,
+  CardTable, CardCardMapTable, CardColorMapTable, CardFormatLegalityTable, CardGameTable, CardImageTable, CardMultiverseIdTable, CardRulingMapTable,
   CardSetTable, CatalogItemTable, ColorTable, LanguageTable, RulingTable,
   SymbologyAlternativeTable, SymbologyColorMapTable, SymbologyTable
 } from ".";
@@ -7,13 +7,14 @@ import {
 
 export interface DatabaseSchema {
   //#region card --------------------------------------------------------------
-  card_card_map: CardCardMap;
-  card_color_map: CardColorMap;
+  card: CardTable;
+  card_card_map: CardCardMapTable;
+  card_color_map: CardColorMapTable;
   card_format_legality: CardFormatLegalityTable;
   card_game: CardGameTable;
   card_image: CardImageTable;
   card_multiverse_id: CardMultiverseIdTable;
-  card_ruling_map: CardRulingMap;
+  card_ruling_map: CardRulingMapTable;
   //#endregion
 
   //#region master data -------------------------------------------------------

@@ -1,4 +1,5 @@
 import { inject, singleton } from "tsyringe";
+
 import { ICardSetSyncOptions, ICardSyncOptions, ICatalogSyncOptions, ISyncParam, SyncOptions } from "../../../../common/ipc-params";
 import SYNCTOKENS, { ICardSetSyncService, ICardSyncService, ICatalogSyncService, ISymbologySyncService } from "../../sync/interfaces";
 import { IIpcSyncService } from "../interfaces";
@@ -41,5 +42,6 @@ export class IpcSyncService implements IIpcSyncService {
         await this.symbologySyncService.sync(undefined);
         break;
     }
+    console.log("end sync", params);
   }
 }

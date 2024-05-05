@@ -4,7 +4,6 @@ type TCreated = {
   /***
      * Timestamp of creation
      */
-  // TODO check if we could make it <Date, never, never>
   created_at: ColumnType<Date, never, never>;
 };
 
@@ -19,7 +18,7 @@ type TSynchronized = {
   /***
    * Timestamp of last synchronization
    */
-  last_synced_at: ColumnType<Date, string | undefined, string | undefined>;
+  last_synced_at: ColumnType<Date, never, string | undefined>;
 };
 
 type TWithStringIdField = {

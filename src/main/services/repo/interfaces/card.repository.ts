@@ -1,5 +1,5 @@
 import { Card as ScryfallCard } from "scryfall-sdk";
 
 export interface ICardRepository {
-  sync(cardSets: Array<ScryfallCard>): Promise<void>;
+  sync(cards: Array<ScryfallCard>): Promise<void>;
 }

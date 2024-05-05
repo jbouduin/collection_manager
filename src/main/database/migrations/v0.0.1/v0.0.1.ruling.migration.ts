@@ -1,6 +1,6 @@
 
 /* eslint-disable  @typescript-eslint/no-explicit-any */
-import { ColumnDefinitionBuilder, Kysely, Transaction } from "kysely";
+import { ColumnDefinitionBuilder, Kysely } from "kysely";
 import { BaseMigration, PrimaryKeyColumnDefinition } from "../base.migration";
 
 export class V0_0_1_Ruling_Migration extends BaseMigration {

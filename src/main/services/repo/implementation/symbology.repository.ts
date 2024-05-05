@@ -1,8 +1,9 @@
-import { Transaction, sql } from "kysely";
+import { Transaction } from "kysely";
 import { CardSymbol, Color as ScryfallColor } from "scryfall-sdk";
 import { inject, injectable } from "tsyringe";
 import { SymbologySelectDto } from "../../../../common/dto";
 import { DatabaseSchema, Symbology, SymbologyAlternative, SymbologyColorMap } from "../../../database/schema";
+import ADAPTTOKENS, { ISymbologyAdapter, ISymbologyAlternativeAdapter, ISymbologyColorMapAdapter } from "../../adapt/interfaces";
 import INFRATOKENS, { IDatabaseService } from "../../infra/interfaces";
 import { ISymbologyRepository } from "../interfaces";
 import { BaseRepository } from "./base.repository";
@@ -11,8 +12,19 @@ import { BaseRepository } from "./base.repository";
 @injectable()
 export class SymbologyRepository extends BaseRepository implements ISymbologyRepository {
 
-  public constructor(@inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService) {
+  private symbologyAdapter: ISymbologyAdapter;
+  private symbologyAlternativeAdapter: ISymbologyAlternativeAdapter;
+  private symbologyColorMapAdapter: ISymbologyColorMapAdapter;
+
+  public constructor(
+    @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
+    @inject(ADAPTTOKENS.SymbologyAdapter) symbologyAdapter: ISymbologyAdapter,
+    @inject(ADAPTTOKENS.SymbologyAlternativeAdapter) symbologyAlternativeAdapter: ISymbologyAlternativeAdapter,
+    @inject(ADAPTTOKENS.SymbologyColorMapAdapter) symbologyColorMapAdapter: ISymbologyColorMapAdapter) {
     super(databaseService);
+    this.symbologyAdapter = symbologyAdapter;
+    this.symbologyAlternativeAdapter = symbologyAlternativeAdapter;
+    this.symbologyColorMapAdapter = symbologyColorMapAdapter;
   }
 
   public async getAll(): Promise<Array<SymbologySelectDto>> {
@@ -40,38 +52,12 @@ export class SymbologyRepository extends BaseRepository implements ISymbologyRep
           .executeTakeFirst();
         if (existing) {
           await trx.updateTable("symbology")
-            .set({
-              appears_in_mana_costs: symbol.appears_in_mana_costs ? 1 : 0,
-              cmc: symbol.mana_value,
-              english: symbol.english,
-              funny: symbol.funny ? 1 : 0,
-              hybrid: 0, // TODO scrfall-sdk is not returning this
-              last_synced_at: sql`CURRENT_TIMESTAMP`,
-              loose_variant: symbol.loose_variant,
-              mana_value: symbol.mana_value,
-              phyrexian: 0, // TODO scrfall-sdk is not returning this
-              represents_mana: symbol.represents_mana ? 1 : 0,
-              svg_uri: symbol.svg_uri,
-              transposable: symbol.transposable ? 1 : 0
-            })
+            .set(this.symbologyAdapter.toUpdate(symbol))
             .where("symbology.id", "=", symbol.symbol)
             .executeTakeFirstOrThrow();
         } else {
           await trx.insertInto("symbology")
-            .values({
-              id: symbol.symbol,
-              appears_in_mana_costs: symbol.appears_in_mana_costs ? 1 : 0,
-              cmc: symbol.mana_value,
-              english: symbol.english,
-              funny: symbol.funny ? 1 : 0,
-              hybrid: 0, // TODO scrfall-sdk is not returning this
-              loose_variant: symbol.loose_variant,
-              mana_value: symbol.mana_value,
-              phyrexian: 0, // TODO scrfall-sdk is not returning this
-              represents_mana: symbol.represents_mana ? 1 : 0,
-              svg_uri: symbol.svg_uri,
-              transposable: symbol.transposable ? 1 : 0
-            })
+            .values(this.symbologyAdapter.toInsert(symbol))
             .executeTakeFirstOrThrow();
         }
         if (symbol.colors.length > 0) {
@@ -95,13 +81,13 @@ export class SymbologyRepository extends BaseRepository implements ISymbologyRep
         .executeTakeFirst();
       if (existing) {
         await trx.updateTable("symbology_color_map")
-          .set({ last_synced_at: sql`CURRENT_TIMESTAMP` })
+          .set(this.symbologyColorMapAdapter.toUpdate(null))
           .where("symbology_color_map.color_id", "=", color)
           .where("symbology_color_map.symbology_id", "=", symbol)
           .executeTakeFirstOrThrow();
       } else {
         await trx.insertInto("symbology_color_map")
-          .values({ color_id: color, symbology_id: symbol })
+          .values(this.symbologyColorMapAdapter.toInsert({ colorId: color, symbologyId: symbol }))
           .executeTakeFirstOrThrow();
       }
     });
@@ -116,13 +102,13 @@ export class SymbologyRepository extends BaseRepository implements ISymbologyRep
         .executeTakeFirst();
       if (existing) {
         await trx.updateTable("symbology_alternative")
-          .set({ last_synced_at: sql`CURRENT_TIMESTAMP` })
+          .set(this.symbologyAlternativeAdapter.toUpdate(null))
           .where("symbology_alternative.alternative", "=", alternative)
           .where("symbology_alternative.symbology_id", "=", symbol)
           .executeTakeFirstOrThrow();
       } else {
         await trx.insertInto("symbology_alternative")
-          .values({ alternative: alternative, symbology_id: symbol })
+          .values(this.symbologyAlternativeAdapter.toInsert({ alternative: alternative, symbologyId: symbol }))
           .executeTakeFirstOrThrow();
       }
     });

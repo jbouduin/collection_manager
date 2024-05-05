@@ -17,6 +17,7 @@ export class CardSyncService implements ICardSyncService {
   }
 
   public async sync(options: ICardSyncOptions): Promise<void> {
+    // TODO: check if all required master data is available
     const cards: Array<ScryfallCard> = new Array<ScryfallCard>();
     const emitter = Cards.search("e=" + options.setCode, { include_extras: true, include_variations: true, unique: "prints" });
     // TODO sdk is not returning total number of results when querying, so we would never be able to show process
@@ -33,6 +34,7 @@ export class CardSyncService implements ICardSyncService {
     }
     console.log("Emitted %d cards", cards.length);
     console.log("Found %d cards", all.length);
+    await this.cardRepository.sync(cards);
     // TODO handle split card (e.g. MKM - Cease / Desist)
     // TODO handle double side card (e.g. SOI - Archangel Avacyn)
     // split and double sided cards have two cardfaces:

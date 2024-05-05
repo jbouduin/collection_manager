@@ -1,7 +1,9 @@
-import { Transaction, sql } from "kysely";
+import { Transaction } from "kysely";
 import { Set as ScryfallSet } from "scryfall-sdk";
 import { inject, injectable } from "tsyringe";
+
 import { DatabaseSchema } from "../../../database/schema";
+import ADAPTTOKENS, { ICardSetAdapter } from "../../adapt/interfaces";
 import INFRATOKENS, { IDatabaseService } from "../../infra/interfaces";
 import { ICardSetRepository } from "../interfaces";
 import { BaseRepository } from "./base.repository";
@@ -9,11 +11,17 @@ import { BaseRepository } from "./base.repository";
 @injectable()
 export class CardSetRepository extends BaseRepository implements ICardSetRepository {
 
-  public constructor(@inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService) {
+  private cardSetAdapter: ICardSetAdapter;
+
+  public constructor(
+    @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
+    @inject(ADAPTTOKENS.CardSetAdapter) cardSetAdapter: ICardSetAdapter) {
     super(databaseService);
+    this.cardSetAdapter = cardSetAdapter;
   }
 
-  // TODO remove items that are not on the server anymore or at least mark them
+  // TODO remove items that are not on the server anymore or at least mark them => how ?
+  // then we should prevent synchronizing single sets !
   public async sync(cardSets: Array<ScryfallSet>): Promise<void> {
     await this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
       cardSets.forEach(async (cardSet: ScryfallSet) => {
@@ -24,58 +32,13 @@ export class CardSetRepository extends BaseRepository implements ICardSetReposit
           .executeTakeFirst();
         if (existingCardSet) {
           await trx.updateTable("card_set")
-            .set(
-              {
-                arena_code: cardSet.arena_code,
-                block: cardSet.block,
-                block_code: cardSet.block_code,
-                card_count: cardSet.card_count,
-                digital: cardSet.digital ? 1 : 0,
-                foil_only: cardSet.foil_only ? 1 : 0,
-                icon_svg_uri: cardSet.icon_svg_uri,
-                mtgo_code: cardSet.mtgo_code,
-                name: cardSet.name,
-                nonfoil_only: cardSet.nonfoil_only ? 1 : 0,
-                parent_set_code: cardSet.parent_set_code,
-                printed_size: cardSet.printed_size,
-                released_at: cardSet.released_at,
-                scryfall_uri: cardSet.scryfall_uri,
-                search_uri: cardSet.search_uri,
-                set_type: cardSet.set_type,
-                tcgplayer_id: cardSet.tcgplayer_id,
-                uri: cardSet.uri,
-                last_synced_at: sql`CURRENT_TIMESTAMP`
-              }
-            )
+            .set(this.cardSetAdapter.toUpdate(cardSet))
             .where("card_set.id", "=", cardSet.id)
             .executeTakeFirstOrThrow()
             .catch((reason) => console.log(reason));
         } else {
           await trx.insertInto("card_set")
-            .values(
-              {
-                arena_code: cardSet.arena_code,
-                block: cardSet.block,
-                block_code: cardSet.block_code,
-                card_count: cardSet.card_count,
-                code: cardSet.code,
-                digital: cardSet.digital ? 1 : 0,
-                foil_only: cardSet.foil_only ? 1 : 0,
-                icon_svg_uri: cardSet.icon_svg_uri,
-                mtgo_code: cardSet.mtgo_code,
-                name: cardSet.name,
-                nonfoil_only: cardSet.nonfoil_only ? 1 : 0,
-                parent_set_code: cardSet.parent_set_code,
-                printed_size: cardSet.printed_size,
-                id: cardSet.id,
-                released_at: cardSet.released_at,
-                scryfall_uri: cardSet.scryfall_uri,
-                search_uri: cardSet.search_uri,
-                set_type: cardSet.set_type,
-                tcgplayer_id: cardSet.tcgplayer_id,
-                uri: cardSet.uri
-              }
-            )
+            .values(this.cardSetAdapter.toInsert(cardSet))
             .executeTakeFirstOrThrow()
             .catch((reason) => console.log(reason));
         }

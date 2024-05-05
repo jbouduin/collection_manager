@@ -1,8 +1,10 @@
-import { Transaction, sql } from "kysely";
+import { Transaction } from "kysely";
 import { inject, injectable } from "tsyringe";
-import { v1 as uuidV1 } from "uuid";
+
 import { CatalogType } from "../../../../common/enums";
 import { DatabaseSchema } from "../../../database/schema";
+import ADAPTTOKENS from "../../adapt/interfaces";
+import { ICatalogAdapter } from "../../adapt/interfaces/catalog.adapter";
 import INFRATOKENS, { IDatabaseService } from "../../infra/interfaces";
 import { ICatalogRepository } from "../interfaces";
 import { BaseRepository } from "./base.repository";
@@ -11,9 +13,13 @@ import { BaseRepository } from "./base.repository";
 @injectable()
 export class CatalogRepository extends BaseRepository implements ICatalogRepository {
 
+  private catalogAdapter: ICatalogAdapter;
 
-  public constructor(@inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService) {
+  public constructor(
+    @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
+    @inject(ADAPTTOKENS.CatalogAdapter) catalogAdapter:ICatalogAdapter) {
     super(databaseService);
+    this.catalogAdapter = catalogAdapter;
   }
 
   // TODO remove items that are not on the server anymore or at least mark them
@@ -29,14 +35,14 @@ export class CatalogRepository extends BaseRepository implements ICatalogReposit
 
         if (existingItem) {
           await trx.updateTable("catalog_item")
-            .set({ last_synced_at: sql`CURRENT_TIMESTAMP` })
+            .set(this.catalogAdapter.toUpdate({catalogType: catalogType, item:item}))
             .where("catalog_item.catalog_name", "=", catalogType)
             .where("catalog_item.item", "=", item)
             .executeTakeFirstOrThrow()
             .catch((reason) => console.log(reason));
         } else {
           await trx.insertInto("catalog_item")
-            .values({ id: uuidV1(), catalog_name: catalogType, item: item })
+            .values(this.catalogAdapter.toInsert({ catalogType: catalogType, item: item }))
             .executeTakeFirstOrThrow()
             .catch((reason) => { console.log(reason); throw new Error("insert failed"); });
         }

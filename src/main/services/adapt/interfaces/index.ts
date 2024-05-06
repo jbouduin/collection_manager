@@ -8,6 +8,7 @@ export type ICardColorMapAdapter = IMapTableAdapter<DatabaseSchema, "card_color_
 export type ICardFormatLegalityAdapter = IChildTableAdapter<DatabaseSchema, "card_format_legality">;
 export type ICardGameAdapter = IChildTableAdapter<DatabaseSchema, "card_game">;
 export type ICardImageAdapter = IChildTableAdapter<DatabaseSchema, "card_image">;
+export type ICardKeywordAdapter = IChildTableAdapter<DatabaseSchema, "card_keyword">;
 export type ICardMultiverseIdAdapter = IChildTableAdapter<DatabaseSchema, "card_multiverse_id">;
 export type ICardSetAdapter = ITableAdapter<DatabaseSchema, "card_set">;
 export type ICardAdapter = ITableAdapter<DatabaseSchema, "card">;
@@ -24,6 +25,7 @@ const ADAPTTOKENS = Object.freeze({
   CardFormatLegalityAdapter: "CardFormatLegalityAdapter",
   CardGameAdapter: "CardGameAdapter",
   CardImageAdapter: "CardImageAdapter",
+  CardKeywordAdapter: "CardKeywordAdapter",
   CardMultiverseIdAdapter: "CardMultiverseIdAdapter",
   CardSetAdapter: "CardSetAdapter",
   CardAdapter: "CardAdapter",

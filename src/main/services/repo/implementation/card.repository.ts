@@ -3,11 +3,12 @@ import { Color, Game, ImageUris, Legalities, RelatedCard, Card as ScryfallCard }
 import { inject, injectable } from "tsyringe";
 
 import { CardColorType, CardLegality, GameFormat, ImageType } from "../../../../common/enums";
-import { DatabaseSchema, Card } from "../../../../main/database/schema";
+import { Card, DatabaseSchema } from "../../../../main/database/schema";
+import ADAPTTOKENS, { ICardAdapter, ICardCardMapAdapter, ICardColorMapAdapter, ICardFormatLegalityAdapter, ICardGameAdapter, ICardImageAdapter, ICardKeywordAdapter, ICardMultiverseIdAdapter } from "../../adapt/interfaces";
 import INFRATOKENS, { IDatabaseService } from "../../infra/interfaces";
 import { ICardRepository } from "../interfaces";
 import { BaseRepository } from "./base.repository";
-import ADAPTTOKENS, { ICardAdapter, ICardCardMapAdapter, ICardColorMapAdapter, ICardFormatLegalityAdapter, ICardGameAdapter, ICardImageAdapter, ICardMultiverseIdAdapter } from "../../adapt/interfaces";
+
 
 
 @injectable()
@@ -19,8 +20,9 @@ export class CardRepository extends BaseRepository implements ICardRepository {
   private cardFormatLegalityAdapter: ICardFormatLegalityAdapter;
   private cardGameAdapter: ICardGameAdapter;
   private cardImageAdapter: ICardImageAdapter;
-  private cardAdapter: ICardAdapter;
+  private cardKeywordAdapter: ICardKeywordAdapter;
   private cardMultiverseIdAdapter: ICardMultiverseIdAdapter;
+  private cardAdapter: ICardAdapter;
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
@@ -31,6 +33,7 @@ export class CardRepository extends BaseRepository implements ICardRepository {
     @inject(ADAPTTOKENS.CardFormatLegalityAdapter) cardFormatLegalityAdapter: ICardFormatLegalityAdapter,
     @inject(ADAPTTOKENS.CardGameAdapter) cardGameAdapter: ICardGameAdapter,
     @inject(ADAPTTOKENS.CardImageAdapter) cardImageAdapter: ICardImageAdapter,
+    @inject(ADAPTTOKENS.CardKeywordAdapter) cardKeywordAdapter: ICardKeywordAdapter,
     @inject(ADAPTTOKENS.CardMultiverseIdAdapter) cardMultiverseIdAdapter: ICardMultiverseIdAdapter,
     @inject(ADAPTTOKENS.CardAdapter) cardAdapter: ICardAdapter,
   ) {
@@ -40,6 +43,7 @@ export class CardRepository extends BaseRepository implements ICardRepository {
     this.cardFormatLegalityAdapter = cardFormatLegalityAdapter;
     this.cardGameAdapter = cardGameAdapter;
     this.cardImageAdapter = cardImageAdapter;
+    this.cardKeywordAdapter = cardKeywordAdapter;
     this.cardMultiverseIdAdapter = cardMultiverseIdAdapter;
     this.cardAdapter = cardAdapter;
   }
@@ -65,6 +69,7 @@ export class CardRepository extends BaseRepository implements ICardRepository {
           await this.syncCardColorMap(trx, card.id, "produced_mana", card.color_indicator);
           await this.syncCardFormatLegalities(trx, card.id, card.legalities);
           await this.syncCardGame(trx, card.id, card.games);
+          await this.syncCardKeyword(trx, card.id, card.keywords);
           await this.syncCardImages(trx, card.id, card.image_uris);
           console.log("    -> start sync card_multiverse_id");
           await this.syncMultiversId(trx, card.id, card.multiverse_ids);
@@ -209,6 +214,30 @@ export class CardRepository extends BaseRepository implements ICardRepository {
     });
   }
 
+  private async syncCardKeyword(trx: Transaction<DatabaseSchema>, cardId: string, keywords: Array<string>): Promise<void> {
+    keywords.forEach(async (keyword: string) => {
+      const filter: ExpressionOrFactory<DatabaseSchema, "card_keyword", SqlBool> = (eb) =>
+        eb.and([
+          eb("card_keyword.card_id", "=", cardId),
+          eb("card_keyword.keyword", "=", keyword)
+        ]
+        );
+      const existing = await trx.selectFrom("card_keyword")
+        .select("card_keyword.card_id")
+        .where(filter)
+        .executeTakeFirst();
+      if (existing) {
+        await trx.updateTable("card_keyword")
+          .set(this.cardKeywordAdapter.toUpdate(null))
+          .where(filter)
+          .executeTakeFirstOrThrow();
+      } else {
+        await trx.insertInto("card_keyword")
+          .values(this.cardKeywordAdapter.toInsert(cardId, keyword))
+          .executeTakeFirstOrThrow();
+      }
+    });
+  }
   private async syncCardImages(trx: Transaction<DatabaseSchema>, cardId: string, images: ImageUris): Promise<void> {
     if (images) {
       Object.keys(images).forEach(async (key: string) => {

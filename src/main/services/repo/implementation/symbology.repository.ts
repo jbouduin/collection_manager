@@ -71,8 +71,8 @@ export class SymbologyRepository extends BaseRepository implements ISymbologyRep
             if (symbol.gatherer_alternates?.length > 0) {
               this.syncAlternatives(trx, symbol.symbol, symbol.gatherer_alternates);
             } // TODO else remove existing
-          })
-        })
+          });
+        });
       });
     });
   }

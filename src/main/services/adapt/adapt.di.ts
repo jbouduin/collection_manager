@@ -15,7 +15,8 @@ import { RulingAdapter } from "./implementation/ruling.adapter";
 import { SymbologyAlternativeAdapter } from "./implementation/symbology-alternative.adapter";
 import { SymbologyColorMapAdapter } from "./implementation/symbology-color-map.adapter";
 import { SymbologyAdapter } from "./implementation/symbology.adapter";
-import ADAPTTOKENS, { ICardAdapter, ICardCardMapAdapter, ICardColorMapAdapter, ICardFormatLegalityAdapter, ICardGameAdapter, ICardImageAdapter, ICardMultiverseIdAdapter, ICardSetAdapter, ICatalogAdapter, IRulingAdapter, IRulingLineAdapter, ISymbologyAdapter, ISymbologyAlternativeAdapter, ISymbologyColorMapAdapter } from "./interfaces";
+import ADAPTTOKENS, { ICardAdapter, ICardCardMapAdapter, ICardColorMapAdapter, ICardFormatLegalityAdapter, ICardGameAdapter, ICardImageAdapter, ICardKeywordAdapter, ICardMultiverseIdAdapter, ICardSetAdapter, ICatalogAdapter, IRulingAdapter, IRulingLineAdapter, ISymbologyAdapter, ISymbologyAlternativeAdapter, ISymbologyColorMapAdapter } from "./interfaces";
+import { CardKeywordAdapter } from "./implementation/card-keyword.adapter";
 
 export class AdaptDi {
 
@@ -25,6 +26,7 @@ export class AdaptDi {
     container.register<ICardFormatLegalityAdapter>(ADAPTTOKENS.CardFormatLegalityAdapter, { useClass: CardFormatLegalityAdapter }, { lifecycle: Lifecycle.ResolutionScoped });
     container.register<ICardGameAdapter>(ADAPTTOKENS.CardGameAdapter, { useClass: CardGameAdapter }, { lifecycle: Lifecycle.ResolutionScoped });
     container.register<ICardImageAdapter>(ADAPTTOKENS.CardImageAdapter, { useClass: CardImageAdapter }, { lifecycle: Lifecycle.ResolutionScoped });
+    container.register<ICardKeywordAdapter>(ADAPTTOKENS.CardKeywordAdapter, { useClass: CardKeywordAdapter }, { lifecycle: Lifecycle.ResolutionScoped });
     container.register<ICardMultiverseIdAdapter>(ADAPTTOKENS.CardMultiverseIdAdapter, { useClass: CardMultiverseIdAdapter }, { lifecycle: Lifecycle.ResolutionScoped });
     container.register<ICardSetAdapter>(ADAPTTOKENS.CardSetAdapter, { useClass: CardSetAdapter }, { lifecycle: Lifecycle.ResolutionScoped });
     container.register<ICardAdapter>(ADAPTTOKENS.CardAdapter, { useClass: CardAdapter }, { lifecycle: Lifecycle.ResolutionScoped });

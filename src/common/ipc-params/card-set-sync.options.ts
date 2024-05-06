@@ -1,3 +1,3 @@
-export interface ICardSetSyncOptions {
+export interface CardSetSyncOptions {
   code: string | null;
 }

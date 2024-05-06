@@ -3,6 +3,7 @@ export * from "./card.repository";
 export * from "./color-repository";
 export * from "./catalog.repository";
 export * from "./language.repository";
+export * from "./ruling.respository";
 export * from "./symbology.repository";
 
 const REPOTOKENS = Object.freeze({
@@ -11,12 +12,13 @@ const REPOTOKENS = Object.freeze({
   CatalogRepository: "CatalogRepository",
   ColorRepository: "ColorRepository",
   LanguageRepository: "LanguageRepository",
+  RulingRepository: "RulingRepository",
   SymbologyRepository: "SymbologyRepository",
   // Sync
-  CardSyncService: "CardSyncService",
-  CardSetSyncService: "CardSetSyncService",
-  CatalogSyncService: "CatalogSyncService",
-  SymbologySyncService: "SymbologySyncService"
+  // CardSyncService: "CardSyncService",
+  // CardSetSyncService: "CardSetSyncService",
+  // CatalogSyncService: "CatalogSyncService",
+  // SymbologySyncService: "SymbologySyncService"
 });
 
 export default REPOTOKENS;

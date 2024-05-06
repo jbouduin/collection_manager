@@ -1,6 +1,7 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import { ColumnDefinitionBuilder, Kysely } from "kysely";
-import { BaseMigration } from "../base.migration";
+
+import { BaseMigration, CreateTableOptions } from "../base.migration";
 
 export class V0_0_1_Set_Migration extends BaseMigration {
   public get keyName(): string {
@@ -8,7 +9,12 @@ export class V0_0_1_Set_Migration extends BaseMigration {
   }
 
   public async up(db: Kysely<any>): Promise<void> {
-    await super.createTable(db, "card_set", true)
+    const options: CreateTableOptions = {
+      isSynced: true,
+      tableName: "card_set",
+      defaultIdPrimaryKey: true
+    };
+    await super.createTable(db, options)
       .addColumn("code", "text", (col: ColumnDefinitionBuilder) => col.notNull().unique())
       .addColumn("mtgo_code", "text", (col: ColumnDefinitionBuilder) => col.unique())
       .addColumn("arena_code", "text", (col: ColumnDefinitionBuilder) => col.unique())

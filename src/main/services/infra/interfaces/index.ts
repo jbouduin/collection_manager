@@ -1,16 +1,15 @@
 export * from "./database.service";
 export * from "./ipc-dispatcher.service";
 export * from "./ipc-query.service";
+export * from "./ipc-query-or-sync.service";
 export * from "./ipc-sync.service";
 
 const INFRATOKENS = Object.freeze({
-  // TODO this one should get out
-  CustomMigrationProvider: Symbol("CustomMigrationProvider"),
-  DatabaseService: Symbol("DatabaseService"),
-
-  IpcDispatcherService: Symbol("IpcDispatcherService"),
-  IpcQueryService: Symbol("IpcQueryService"),
-  IpcSyncService: Symbol("IIpcSyncService")
+  DatabaseService: "DatabaseService",
+  IpcDispatcherService: "IpcDispatcherService",
+  IpcQueryOrSyncService: "IpcQueryOrSyncService",
+  IpcQueryService: "IpcQueryService",
+  IpcSyncService: "IIpcSyncService"
 });
 
 export default INFRATOKENS;

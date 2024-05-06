@@ -1,5 +1,5 @@
 import { CatalogType } from "../enums";
 
-export interface ICatalogSyncOptions {
+export interface CatalogSyncOptions {
    catalogs: Array<CatalogType>;
 }

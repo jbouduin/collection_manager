@@ -3,7 +3,7 @@ import { Color, Game, ImageUris, Legalities, RelatedCard, Card as ScryfallCard }
 import { inject, injectable } from "tsyringe";
 
 import { CardColorType, CardLegality, GameFormat, ImageType } from "../../../../common/enums";
-import { DatabaseSchema } from "../../../../main/database/schema";
+import { DatabaseSchema, Card } from "../../../../main/database/schema";
 import INFRATOKENS, { IDatabaseService } from "../../infra/interfaces";
 import { ICardRepository } from "../interfaces";
 import { BaseRepository } from "./base.repository";
@@ -41,26 +41,32 @@ export class CardRepository extends BaseRepository implements ICardRepository {
     this.cardAdapter = cardAdapter;
   }
 
+  public async getCardById(cardId: string): Promise<Card> {
+    return this.database.selectFrom("card").selectAll().where("card.id", "=", cardId).executeTakeFirst();
+  }
+
   // TODO remove items that are not on the server anymore or at least mark them
   public async sync(cards: Array<ScryfallCard>): Promise<void> {
-    this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
+    console.log("start CardRepository.sync:");
+    return this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
       cards.forEach(async (card: ScryfallCard) => {
-        await this.syncCard(trx, card);
-      });
-      cards.forEach(async (card: ScryfallCard) => {
-        // TODO next line pass real value card.all_parts when table is created in migration script and we know how to handle missing related cards
-        await this.syncCardCardMap(trx, card.id, null);
-        await this.syncCardColorMap(trx, card.id, "card", card.colors);
-        await this.syncCardColorMap(trx, card.id, "identity", card.color_identity);
-        await this.syncCardColorMap(trx, card.id, "indicator", card.color_indicator);
-        await this.syncCardColorMap(trx, card.id, "produced_mana", card.color_indicator);
-        // TODO next line pass real value card.legalities when table is created in migration script
-        await this.syncCardFormatLegalities(trx, card.id, null);
-        await this.syncCardGame(trx, card.id, card.games);
-        await this.syncCardImages(trx, card.id, card.image_uris);
-        await this.syncMultiversId(trx, card.id, card.multiverse_ids);
-        // TODO next line pass real value card.legalities when we know how to handle missing rulings
-        // await this.syncRulingMap(trx, card.id);
+        console.log("  -> start sync card", card.name);
+        await this.syncCard(trx, card).then(async () => {
+          // TODO next line pass real value card.all_parts when table is created in migration script and we know how to handle missing related cards
+          console.log("    -> start sync card_card_map");
+          await this.syncCardCardMap(trx, card.id, null);
+          console.log("    -> start sync card_color_map");
+          await this.syncCardColorMap(trx, card.id, "card", card.colors);
+          await this.syncCardColorMap(trx, card.id, "identity", card.color_identity);
+          await this.syncCardColorMap(trx, card.id, "indicator", card.color_indicator);
+          await this.syncCardColorMap(trx, card.id, "produced_mana", card.color_indicator);
+          // TODO next line pass real value card.legalities when table is created in migration script
+          await this.syncCardFormatLegalities(trx, card.id, null);
+          await this.syncCardGame(trx, card.id, card.games);
+          await this.syncCardImages(trx, card.id, card.image_uris);
+          console.log("    -> start sync card_multiverse_id");
+          await this.syncMultiversId(trx, card.id, card.multiverse_ids);
+        });
       });
     });
   }
@@ -258,10 +264,4 @@ export class CardRepository extends BaseRepository implements ICardRepository {
       });
     }
   }
-
-  // private async syncRulingMap(trx: Transaction<DatabaseSchema>, cardId: string,): Promise<void> {
-  //   // TODO have to fetch the rulings, otherwise we can not create the map or we store the id without any additional data and give the record a state
-  //   return Promise.resolve();
-  // }
-
 }

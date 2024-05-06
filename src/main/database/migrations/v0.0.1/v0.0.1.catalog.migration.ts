@@ -1,6 +1,6 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import { ColumnDefinitionBuilder, Kysely } from "kysely";
-import { BaseMigration } from "../base.migration";
+import { BaseMigration, CreateTableOptions } from "../base.migration";
 
 export class V0_0_1_Catalog_Migration extends BaseMigration {
   public get keyName(): string {
@@ -8,8 +8,14 @@ export class V0_0_1_Catalog_Migration extends BaseMigration {
   }
 
   public async up(db: Kysely<any>): Promise<void> {
+    const options: CreateTableOptions = {
+      isSynced: true,
+      tableName: "catalog_item",
+      defaultIdPrimaryKey: true
+    };
 
-    await super.createTable(db, "catalog_item", true)
+    await super
+      .createTable(db, options)
       .addColumn("catalog_name", "text", (col: ColumnDefinitionBuilder) => col.notNull())
       .addColumn("item", "text", (col: ColumnDefinitionBuilder) => col.notNull().notNull())
       .execute();

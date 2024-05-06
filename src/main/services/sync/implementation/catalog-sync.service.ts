@@ -1,7 +1,8 @@
 import { Catalog } from "scryfall-sdk";
 import { inject, injectable } from "tsyringe";
+
 import { CatalogType } from "../../../../common/enums";
-import { ICatalogSyncOptions } from "../../../../common/ipc-params";
+import { CatalogSyncOptions } from "../../../../common/ipc-params";
 import REPOTOKENS, { ICatalogRepository } from "../../repo/interfaces";
 import { ICatalogSyncService } from "../interfaces";
 
@@ -16,67 +17,68 @@ export class CatalogSyncService implements ICatalogSyncService {
     this.catalogRepository = catalogRepository;
   }
 
-  public async sync(options: ICatalogSyncOptions): Promise<void> {
+  public async sync(options: CatalogSyncOptions): Promise<void> {
+    console.log("start CatalogSyncService.sync:");
     await Promise.all(options.catalogs.map((catalog: CatalogType) => this.syncSingleCatalog(catalog)));
   }
 
   private async syncSingleCatalog(catalog: CatalogType): Promise<void> {
-    let items: Array<string>;
+    console.log("  -> start CatalogSyncService.syncSingleCatalog", catalog);
+    let items: Promise<Array<string>>;
     switch (catalog) {
       case "AbilityWords":
-        items = await Catalog.abilityWords();
+        items = Catalog.abilityWords();
         break;
       case "ArtifactTypes":
-        items = await Catalog.artifactTypes();
+        items = Catalog.artifactTypes();
         break;
       case "ArtistNames":
-        items = await Catalog.artistNames();
+        items = Catalog.artistNames();
         break;
       case "CardNames":
-        items = await Catalog.cardNames();
+        items = Catalog.cardNames();
         break;
       case "CreatureTypes":
-        items = await Catalog.creatureTypes();
+        items = Catalog.creatureTypes();
         break;
       case "EnchantmentTypes":
-        items = await Catalog.enchantmentTypes();
+        items = Catalog.enchantmentTypes();
         break;
       case "KeywordAbilities":
-        items = await Catalog.keywordAbilities();
+        items = Catalog.keywordAbilities();
         break;
       case "KeywordActions":
-        items = await Catalog.keywordActions();
+        items = Catalog.keywordActions();
         break;
       case "LandTypes":
-        items = await Catalog.landTypes();
+        items = Catalog.landTypes();
         break;
       case "Loyalties":
-        items = await Catalog.loyalties();
+        items = Catalog.loyalties();
         break;
       case "PlaneswalkerTypes":
-        items = await Catalog.planeswalkerTypes();
+        items = Catalog.planeswalkerTypes();
         break;
       case "Powers":
-        items = await Catalog.powers();
+        items = Catalog.powers();
         break;
       case "SpellTypes":
-        items = await Catalog.spellTypes();
+        items = Catalog.spellTypes();
         break;
       case "Supertypes":
-        items = await Catalog.supertypes();
+        items = Catalog.supertypes();
         break;
       case "Toughnesses":
-        items = await Catalog.toughnesses();
+        items = Catalog.toughnesses();
         break;
       case "Watermarks":
-        items = await Catalog.watermarks();
+        items = Catalog.watermarks();
         break;
       case "WordBank":
-        items = await Catalog.wordBank();
+        items = Catalog.wordBank();
         break;
     }
-
-    await this.catalogRepository.sync(catalog, items);
+    return items.then((items: Array<string>) => this.catalogRepository.sync(catalog, items));
   }
 
 }

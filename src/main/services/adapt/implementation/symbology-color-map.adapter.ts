@@ -10,8 +10,8 @@ import { ISymbologyColorMapAdapter } from "../interfaces";
 export class SymbologyColorMapAdapter implements ISymbologyColorMapAdapter {
   public toInsert(leftId: string, rightId: string): InsertExpression<DatabaseSchema, "symbology_color_map"> {
     return {
-      color_id: leftId,
-      symbology_id: rightId
+      color_id: rightId,
+      symbology_id: leftId
     };
   }
 

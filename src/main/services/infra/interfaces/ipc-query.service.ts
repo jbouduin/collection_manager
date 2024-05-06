@@ -1,5 +1,5 @@
-import { QueryType } from "../../../../common/enums";
+import { IQueryOrSyncParam, QueryOrSyncOptions } from "../../../../common/ipc-params";
 
 export interface IIpcQueryService {
-  handle(queryType: QueryType): void;
+  handle(params: IQueryOrSyncParam<QueryOrSyncOptions>): Promise<void>;
 }

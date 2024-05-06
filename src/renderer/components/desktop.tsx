@@ -1,6 +1,7 @@
 import { Button, Classes } from "@blueprintjs/core";
 import * as React from "react";
-import { ICardSetSyncOptions, ICardSyncOptions, ICatalogSyncOptions, ISyncParam } from "../../common/ipc-params";
+
+import { CardSetSyncOptions, CardSyncOptions, CatalogSyncOptions, IQueryOrSyncParam } from "../../common/ipc-params";
 
 
 const DARK_THEME = Classes.DARK;
@@ -45,36 +46,36 @@ export class Desktop extends React.PureComponent {
         <p>
           <h3>Sync</h3>
           <Button text="Sync some catalogs" onClick={() => {
-            const param: ISyncParam<ICatalogSyncOptions> = {
-              type: "Catalogs",
+            const param: IQueryOrSyncParam<CatalogSyncOptions> = {
+              type: "Catalog",
               options: { catalogs: ["AbilityWords", "ArtifactTypes", "LandTypes"] }
             };
             window.ipc.sync(param);
           }} />
           <Button text="Sync symbology" onClick={() => {
-            const param: ISyncParam<undefined> = {
+            const param: IQueryOrSyncParam<undefined> = {
               type: "Symbology",
               options: undefined
             };
             window.ipc.sync(param);
           }} />
           <Button text="Sync cardsets" onClick={() => {
-            const param: ISyncParam<ICardSetSyncOptions> = {
-              type: "CardSets",
+            const param: IQueryOrSyncParam<CardSetSyncOptions> = {
+              type: "CardSet",
               options: { code: null }
             };
             window.ipc.sync(param);
           }} />
           <Button text="Sync card from MKM" onClick={() => {
-            const param: ISyncParam<ICardSyncOptions> = {
-              type: "Cards",
+            const param: IQueryOrSyncParam<CardSyncOptions> = {
+              type: "Card",
               options: { setCode: "MKM" }
             };
             window.ipc.sync(param);
           }} />
           <Button text="Sync card from SOI" onClick={() => {
-            const param: ISyncParam<ICardSyncOptions> = {
-              type: "Cards",
+            const param: IQueryOrSyncParam<CardSyncOptions> = {
+              type: "Card",
               options: { setCode: "SOI" }
             };
             window.ipc.sync(param);
@@ -82,11 +83,12 @@ export class Desktop extends React.PureComponent {
         </p>
         <p>
           <h3>Query</h3>
-          <Button text="Query Artifact types" onClick={() => window.ipc.query("Catalog")} />
-          <Button text="Query Sets" onClick={() => window.ipc.query("CardSet")} />
-          <Button text="Query Language" onClick={() => window.ipc.query("Language")} />
-          <Button text="Query Colors" onClick={() => window.ipc.query("Color")} />
-          <Button text="Query Symbology" onClick={() => window.ipc.query("Symbology")} />
+          <Button text="Query Artifact types" onClick={() => window.ipc.query({ type: "Catalog", options: null })} />
+          <Button text="Query Sets" onClick={() => window.ipc.query({ type: "CardSet", options: null })} />
+          <Button text="Query Language" onClick={() => window.ipc.query({ type: "Language", options: null })} />
+          <Button text="Query Colors" onClick={() => window.ipc.query({ type: "Color", options: null })} />
+          <Button text="Query Symbology" onClick={() => window.ipc.query({ type: "Symbology", options: null })} />
+          <Button text="Query or Sync ruling" onClick={() => window.ipc.queryOrSync({ type: "Ruling", options: { cardId: "bd6e71a1-713e-4eca-bd65-9f0638c16794"} }).then((result) => console.log(result))} />
         </p>
       </div >
     );

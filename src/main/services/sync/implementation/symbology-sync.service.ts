@@ -1,4 +1,4 @@
-import { Symbology } from "scryfall-sdk";
+import { CardSymbol, Symbology } from "scryfall-sdk";
 import { inject, injectable } from "tsyringe";
 import REPOTOKENS, { ISymbologyRepository } from "../../repo/interfaces";
 import { ISymbologySyncService } from "../interfaces/symbology-sync.service";
@@ -15,8 +15,7 @@ export class SymbologySyncService implements ISymbologySyncService {
   }
 
   public async sync(): Promise<void> {
-    console.log("sync symbology");
-    const symbols = await Symbology.all();
-    await this.symbologyRepository.sync(symbols);
+    console.log("start SymboloySyncService.sync");
+    return Symbology.all().then((all: Array<CardSymbol>) => this.symbologyRepository.sync(all));
   }
 }

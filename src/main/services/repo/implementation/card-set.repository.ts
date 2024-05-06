@@ -23,7 +23,7 @@ export class CardSetRepository extends BaseRepository implements ICardSetReposit
   // TODO remove items that are not on the server anymore or at least mark them => how ?
   // then we should prevent synchronizing single sets !
   public async sync(cardSets: Array<ScryfallSet>): Promise<void> {
-    await this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
+    return this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
       cardSets.forEach(async (cardSet: ScryfallSet) => {
         const filter: ExpressionOrFactory<DatabaseSchema, "card_set", SqlBool> = (eb) => eb("card_set.id", "=", cardSet.id);
 
@@ -36,13 +36,11 @@ export class CardSetRepository extends BaseRepository implements ICardSetReposit
           await trx.updateTable("card_set")
             .set(this.cardSetAdapter.toUpdate(cardSet))
             .where(filter)
-            .executeTakeFirstOrThrow()
-            .catch((reason) => console.log(reason));
+            .executeTakeFirstOrThrow();
         } else {
           await trx.insertInto("card_set")
             .values(this.cardSetAdapter.toInsert(cardSet))
-            .executeTakeFirstOrThrow()
-            .catch((reason) => console.log(reason));
+            .executeTakeFirstOrThrow();
         }
       });
     });

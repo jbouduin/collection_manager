@@ -1,28 +1,32 @@
 import { ipcMain, nativeTheme } from "electron";
 import { inject, singleton } from "tsyringe";
 import { DarkmodeOption } from "../../../../common/ipc-params";
-import INFRATOKENS, { IIpcDispatcherService, IIpcQueryService, IIpcSyncService } from "../interfaces";
+import INFRATOKENS, { IIpcDispatcherService, IIpcQueryOrSyncService, IIpcQueryService, IIpcSyncService } from "../interfaces";
 
 @singleton()
 export class IpcDispatcherService implements IIpcDispatcherService{
 
-  private readonly queryService: IIpcQueryService;
-  private readonly updateService: IIpcSyncService;
+  private readonly ipcQueryOrSyncService: IIpcQueryOrSyncService;
+  private readonly ipcQueryService: IIpcQueryService;
+  private readonly ipcSyncService: IIpcSyncService;
 
   public constructor(
-    @inject(INFRATOKENS.IpcQueryService) queryService: IIpcQueryService,
-    @inject(INFRATOKENS.IpcSyncService) updateService: IIpcSyncService)
-  {
-    this.queryService = queryService;
-    this.updateService = updateService;
+    @inject(INFRATOKENS.IpcQueryOrSyncService) ipcQueryOrSyncService: IIpcQueryOrSyncService,
+    @inject(INFRATOKENS.IpcQueryService) ipcQueryService: IIpcQueryService,
+    @inject(INFRATOKENS.IpcSyncService) ipcSyncService: IIpcSyncService
+  )  {
+    this.ipcQueryOrSyncService = ipcQueryOrSyncService;
+    this.ipcQueryService = ipcQueryService;
+    this.ipcSyncService = ipcSyncService;
   }
 
   /* eslint-disable  @typescript-eslint/no-explicit-any */
   public Initialize(): void {
     ipcMain.handle("darkmode", (_event: Electron.IpcMainEvent, ...args: Array<any>) => this.handelDarkMode(args[0]));
     ipcMain.handle("ping", () => "pong");
-    ipcMain.handle("query", (_event: Electron.IpcMainEvent, ...args: Array<any>) => this.queryService.handle(args[0]));
-    ipcMain.handle("sync", (_event: Electron.IpcMainEvent, ...args: Array<any>) => this.updateService.handle(args[0]));
+    ipcMain.handle("query", (_event: Electron.IpcMainEvent, ...args: Array<any>) => this.ipcQueryService.handle(args[0]));
+    ipcMain.handle("queryOrSync", (_event: Electron.IpcMainEvent, ...args: Array<any>) => this.ipcQueryOrSyncService.handle(args[0]));
+    ipcMain.handle("sync", (_event: Electron.IpcMainEvent, ...args: Array<any>) => this.ipcSyncService.handle(args[0]));
   }
   /* eslint-enable  @typescript-eslint/no-explicit-any */
 

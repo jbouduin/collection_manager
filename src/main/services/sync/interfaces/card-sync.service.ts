@@ -1,4 +1,4 @@
-import { ICardSyncOptions } from "../../../../common/ipc-params";
+import { CardSyncOptions } from "../../../../common/ipc-params";
 import { IBaseSyncService } from "./base-sync.service";
 
-export type ICardSyncService = IBaseSyncService<ICardSyncOptions>;
+export type ICardSyncService = IBaseSyncService<CardSyncOptions>;

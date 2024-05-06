@@ -17,15 +17,15 @@ export class CatalogRepository extends BaseRepository implements ICatalogReposit
 
   public constructor(
     @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
-    @inject(ADAPTTOKENS.CatalogAdapter) catalogAdapter:ICatalogAdapter) {
+    @inject(ADAPTTOKENS.CatalogAdapter) catalogAdapter: ICatalogAdapter) {
     super(databaseService);
     this.catalogAdapter = catalogAdapter;
   }
 
   // TODO remove items that are not on the server anymore or at least mark them
   public async sync(catalogType: CatalogType, items: Array<string>): Promise<void> {
-      await this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
-        items.forEach(async (item: string) => {
+    return await this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
+      items.forEach(async (item: string) => {
 
         const existingItem = await trx
           .selectFrom("catalog_item")
@@ -36,16 +36,14 @@ export class CatalogRepository extends BaseRepository implements ICatalogReposit
 
         if (existingItem) {
           await trx.updateTable("catalog_item")
-            .set(this.catalogAdapter.toUpdate({catalogType: catalogType, item:item}))
+            .set(this.catalogAdapter.toUpdate({ catalogType: catalogType, item: item }))
             .where("catalog_item.catalog_name", "=", catalogType)
             .where("catalog_item.item", "=", item)
-            .executeTakeFirstOrThrow()
-            .catch((reason) => console.log(reason));
+            .executeTakeFirstOrThrow();
         } else {
           await trx.insertInto("catalog_item")
             .values(this.catalogAdapter.toInsert({ catalogType: catalogType, item: item }))
-            .executeTakeFirstOrThrow()
-            .catch((reason) => { console.log(reason); throw new Error("insert failed"); });
+            .executeTakeFirstOrThrow();
         }
       });
     });

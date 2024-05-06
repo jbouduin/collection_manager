@@ -1,7 +1,8 @@
 import {
-  CardTable, CardCardMapTable, CardColorMapTable, CardFormatLegalityTable, CardGameTable, CardImageTable, CardMultiverseIdTable, CardRulingMapTable,
+  CardTable, CardCardMapTable, CardColorMapTable, CardFormatLegalityTable, CardGameTable, CardImageTable, CardMultiverseIdTable,
   CardSetTable, CatalogItemTable, ColorTable, LanguageTable, RulingTable,
-  SymbologyAlternativeTable, SymbologyColorMapTable, SymbologyTable
+  SymbologyAlternativeTable, SymbologyColorMapTable, SymbologyTable,
+  RulingLineTable
 } from ".";
 
 
@@ -14,7 +15,6 @@ export interface DatabaseSchema {
   card_game: CardGameTable;
   card_image: CardImageTable;
   card_multiverse_id: CardMultiverseIdTable;
-  card_ruling_map: CardRulingMapTable;
   //#endregion
 
   //#region master data -------------------------------------------------------
@@ -22,7 +22,11 @@ export interface DatabaseSchema {
   catalog_item: CatalogItemTable;
   color: ColorTable,
   language: LanguageTable;
-  ruling: RulingTable
+  //#endregion
+
+  //#region ruling ------------------------------------------------------------
+  ruling: RulingTable;
+  ruling_line: RulingLineTable;
   //#endregion
 
   //#region Symbology ---------------------------------------------------------

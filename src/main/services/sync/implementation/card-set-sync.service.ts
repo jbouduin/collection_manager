@@ -1,6 +1,6 @@
 import { Set as ScryfallCardSet, Sets } from "scryfall-sdk";
 import { inject, injectable } from "tsyringe";
-import { ICardSetSyncOptions } from "../../../../common/ipc-params";
+import { CardSetSyncOptions } from "../../../../common/ipc-params";
 import REPOTOKENS, { ICardSetRepository } from "../../repo/interfaces";
 import { ICardSetSyncService } from "../interfaces";
 
@@ -15,15 +15,15 @@ export class CardSetSyncService implements ICardSetSyncService {
     this.cardSetRepository = cardSetRepository;
   }
 
-  public async sync(options: ICardSetSyncOptions): Promise<void> {
-    let sets: Array<ScryfallCardSet>;
-    if (options.code == null){
-      sets = await Sets.all();
+  public async sync(options: CardSetSyncOptions): Promise<void> {
+    console.log("start CardSetSyncService.sync");
+    let sets: Promise<Array<ScryfallCardSet>>;
+    if (options.code == null) {
+      sets = Sets.all();
     }
     else {
-      const set = await Sets.byCode(options.code);
-      sets = new Array<ScryfallCardSet>(set);
+      sets = Sets.byCode(options.code).then((set: ScryfallCardSet) => new Array<ScryfallCardSet>(set));
     }
-    await this.cardSetRepository.sync(sets);
+    return sets.then((sets: Array<ScryfallCardSet>) => this.cardSetRepository.sync(sets));
   }
 }

@@ -1,9 +1,10 @@
 import { inject, singleton } from "tsyringe";
-import { SymbologySelectDto } from "../../../../common/dto/select/symbology-select.dto";
-import { QueryType } from "../../../../common/enums";
+
+import { SymbologySelectDto } from "../../../../common/dto/select/symbology.select.dto";
+import { IQueryOrSyncParam, QueryOrSyncOptions } from "../../../../common/ipc-params";
+import { CardSet, CatalogItem, Color, Language } from "../../../../main/database/schema";
 import REPOTOKENS, { IColorRepository, ILanguageRepository, ISymbologyRepository } from "../../repo/interfaces";
 import INFRATOKENS, { IDatabaseService, IIpcQueryService } from "../interfaces";
-import { CardSet, CatalogItem, Color, Language } from "../../../../main/database/schema";
 
 
 @singleton()
@@ -27,12 +28,12 @@ export class IpcQueryService implements IIpcQueryService {
     this.symbologyRepository = symbologyRepository;
   }
 
-  public async handle(queryType: QueryType): Promise<void> {
-    switch (queryType) {
+  public async handle(params: IQueryOrSyncParam<QueryOrSyncOptions>): Promise<void> {
+    switch (params.type) {
+      case "Card":
+        break;
       case "CardSet":
         await this.TestQueryCardSet();
-        break;
-      case "Card":
         break;
       case "Catalog":
         await this.TestQueryCatalog();
@@ -52,6 +53,9 @@ export class IpcQueryService implements IIpcQueryService {
       case "Symbology":
         await this.symbologyRepository.getAll()
           .then((result: Array<SymbologySelectDto>) => console.log(result.length > 0 ? result[0] : "nothing found"));
+        break;
+      case "Ruling":
+        // TODO we should not do this
         break;
     }
   }

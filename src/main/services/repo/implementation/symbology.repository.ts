@@ -1,6 +1,7 @@
 import { ExpressionOrFactory, SqlBool, Transaction } from "kysely";
 import { CardSymbol, Color as ScryfallColor } from "scryfall-sdk";
 import { inject, injectable } from "tsyringe";
+
 import { SymbologySelectDto } from "../../../../common/dto";
 import { DatabaseSchema, Symbology, SymbologyAlternative, SymbologyColorMap } from "../../../database/schema";
 import ADAPTTOKENS, { ISymbologyAdapter, ISymbologyAlternativeAdapter, ISymbologyColorMapAdapter } from "../../adapt/interfaces";
@@ -44,12 +45,13 @@ export class SymbologyRepository extends BaseRepository implements ISymbologyRep
 
   // TODO remove items that are not on the server anymore or at least mark them
   public async sync(symbols: Array<CardSymbol>): Promise<void> {
-    await this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
+    return this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
       symbols.forEach(async (symbol: CardSymbol) => {
-        const existing = await trx.selectFrom("symbology")
+        const existing = trx.selectFrom("symbology")
           .select("symbology.id")
           .where("symbology.id", "=", symbol.symbol)
           .executeTakeFirst();
+
         if (existing) {
           await trx.updateTable("symbology")
             .set(this.symbologyAdapter.toUpdate(symbol))
@@ -68,7 +70,6 @@ export class SymbologyRepository extends BaseRepository implements ISymbologyRep
         } // TODO else remove existing
       });
     });
-    return Promise.resolve();
   }
 
   private async syncColors(trx: Transaction<DatabaseSchema>, symbol: string, colors: Array<ScryfallColor>): Promise<void> {

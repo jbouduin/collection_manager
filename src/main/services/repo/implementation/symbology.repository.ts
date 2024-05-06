@@ -1,4 +1,4 @@
-import { ExpressionOrFactory, SqlBool, Transaction } from "kysely";
+import { ExpressionOrFactory, InsertResult, SqlBool, Transaction, UpdateResult } from "kysely";
 import { CardSymbol, Color as ScryfallColor } from "scryfall-sdk";
 import { inject, injectable } from "tsyringe";
 
@@ -51,23 +51,28 @@ export class SymbologyRepository extends BaseRepository implements ISymbologyRep
           .select("symbology.id")
           .where("symbology.id", "=", symbol.symbol)
           .executeTakeFirst();
+        existing.then((existing: { id: string }) => {
+          let insertOrUpdate: Promise<InsertResult | UpdateResult>;
+          if (existing) {
+            insertOrUpdate = trx.updateTable("symbology")
+              .set(this.symbologyAdapter.toUpdate(symbol))
+              .where("symbology.id", "=", symbol.symbol)
+              .executeTakeFirstOrThrow();
+          } else {
+            insertOrUpdate = trx.insertInto("symbology")
+              .values(this.symbologyAdapter.toInsert(symbol))
+              .executeTakeFirstOrThrow();
+          }
 
-        if (existing) {
-          await trx.updateTable("symbology")
-            .set(this.symbologyAdapter.toUpdate(symbol))
-            .where("symbology.id", "=", symbol.symbol)
-            .executeTakeFirstOrThrow();
-        } else {
-          await trx.insertInto("symbology")
-            .values(this.symbologyAdapter.toInsert(symbol))
-            .executeTakeFirstOrThrow();
-        }
-        if (symbol.colors.length > 0) {
-          await this.syncColors(trx, symbol.symbol, symbol.colors);
-        } // TODO else remove existing
-        if (symbol.gatherer_alternates?.length > 0) {
-          await this.syncAlternatives(trx, symbol.symbol, symbol.gatherer_alternates);
-        } // TODO else remove existing
+          insertOrUpdate.then(() => {
+            if (symbol.colors.length > 0) {
+              this.syncColors(trx, symbol.symbol, symbol.colors);
+            } // TODO else remove existing
+            if (symbol.gatherer_alternates?.length > 0) {
+              this.syncAlternatives(trx, symbol.symbol, symbol.gatherer_alternates);
+            } // TODO else remove existing
+          })
+        })
       });
     });
   }

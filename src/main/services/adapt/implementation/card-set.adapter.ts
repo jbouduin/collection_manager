@@ -3,6 +3,7 @@ import { InsertExpression } from "kysely/dist/cjs/parser/insert-values-parser";
 import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser";
 import { Set as ScryfallSet } from "scryfall-sdk";
 
+import { CardSetType } from "../../../../common/enums/card-set-type.enum";
 import { DatabaseSchema } from "../../../database/schema";
 import { ICardSetAdapter } from "../interfaces";
 
@@ -27,7 +28,7 @@ export class CardSetAdapter implements ICardSetAdapter {
           released_at: cardSet.released_at,
           scryfall_uri: cardSet.scryfall_uri,
           search_uri: cardSet.search_uri,
-          set_type: cardSet.set_type,
+          set_type: cardSet.set_type as CardSetType,
           tcgplayer_id: cardSet.tcgplayer_id,
           uri: cardSet.uri
     };
@@ -50,7 +51,7 @@ export class CardSetAdapter implements ICardSetAdapter {
       released_at: cardSet.released_at,
       scryfall_uri: cardSet.scryfall_uri,
       search_uri: cardSet.search_uri,
-      set_type: cardSet.set_type,
+      set_type: cardSet.set_type as CardSetType,
       tcgplayer_id: cardSet.tcgplayer_id,
       uri: cardSet.uri,
       last_synced_at: sql`CURRENT_TIMESTAMP`

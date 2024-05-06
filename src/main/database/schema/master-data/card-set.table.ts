@@ -1,5 +1,6 @@
 import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
 
+import { CardSetType } from "../../../../common/enums/card-set-type.enum";
 import { SynchronizedWithStringId } from "../base.types";
 
 export interface CardSetTable extends SynchronizedWithStringId {
@@ -31,7 +32,7 @@ export interface CardSetTable extends SynchronizedWithStringId {
   /**
    * A computer-readable classification for this set. See below.
    */
-  set_type: ColumnType<string>;
+  set_type: ColumnType<CardSetType>;
 
   /**
    * The date the set was released or the first card was printed in the set (in GMT-8 Pacific time).

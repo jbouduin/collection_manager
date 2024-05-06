@@ -5,8 +5,6 @@ import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser
 import { DatabaseSchema } from "../../../../main/database/schema";
 import { ISymbologyColorMapAdapter } from "../interfaces";
 
-
-// TODO create a "map adapter" or change the signature of the interface
 export class SymbologyColorMapAdapter implements ISymbologyColorMapAdapter {
   public toInsert(leftId: string, rightId: string): InsertExpression<DatabaseSchema, "symbology_color_map"> {
     return {
@@ -15,7 +13,7 @@ export class SymbologyColorMapAdapter implements ISymbologyColorMapAdapter {
     };
   }
 
-  toUpdate(): UpdateObjectExpression<DatabaseSchema, "symbology_color_map"> {
+  public toUpdate(): UpdateObjectExpression<DatabaseSchema, "symbology_color_map"> {
     return {
       last_synced_at: sql`CURRENT_TIMESTAMP`
     };

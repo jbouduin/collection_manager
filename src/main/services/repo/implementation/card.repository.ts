@@ -13,6 +13,7 @@ import ADAPTTOKENS, { ICardAdapter, ICardCardMapAdapter, ICardColorMapAdapter, I
 @injectable()
 export class CardRepository extends BaseRepository implements ICardRepository {
 
+  //#region Private readonly properties ---------------------------------------
   private cardCardMapAdapter: ICardCardMapAdapter;
   private cardColorMapAdapter: ICardColorMapAdapter;
   private cardFormatLegalityAdapter: ICardFormatLegalityAdapter;
@@ -20,7 +21,9 @@ export class CardRepository extends BaseRepository implements ICardRepository {
   private cardImageAdapter: ICardImageAdapter;
   private cardAdapter: ICardAdapter;
   private cardMultiverseIdAdapter: ICardMultiverseIdAdapter;
+  //#endregion
 
+  //#region Constructor & C° --------------------------------------------------
   public constructor(
     @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
     @inject(ADAPTTOKENS.CardCardMapAdapter) cardCardMapAdapter: ICardCardMapAdapter,
@@ -40,7 +43,9 @@ export class CardRepository extends BaseRepository implements ICardRepository {
     this.cardMultiverseIdAdapter = cardMultiverseIdAdapter;
     this.cardAdapter = cardAdapter;
   }
+  //#endregion
 
+  //#region ICardRepository methods -------------------------------------------
   public async getCardById(cardId: string): Promise<Card> {
     return this.database.selectFrom("card").selectAll().where("card.id", "=", cardId).executeTakeFirst();
   }
@@ -53,15 +58,12 @@ export class CardRepository extends BaseRepository implements ICardRepository {
         console.log("  -> start sync card", card.name);
         await this.syncCard(trx, card).then(async () => {
           // TODO next line pass real value card.all_parts when table is created in migration script and we know how to handle missing related cards
-          console.log("    -> start sync card_card_map");
           await this.syncCardCardMap(trx, card.id, null);
-          console.log("    -> start sync card_color_map");
           await this.syncCardColorMap(trx, card.id, "card", card.colors);
           await this.syncCardColorMap(trx, card.id, "identity", card.color_identity);
           await this.syncCardColorMap(trx, card.id, "indicator", card.color_indicator);
           await this.syncCardColorMap(trx, card.id, "produced_mana", card.color_indicator);
-          // TODO next line pass real value card.legalities when table is created in migration script
-          await this.syncCardFormatLegalities(trx, card.id, null);
+          await this.syncCardFormatLegalities(trx, card.id, card.legalities);
           await this.syncCardGame(trx, card.id, card.games);
           await this.syncCardImages(trx, card.id, card.image_uris);
           console.log("    -> start sync card_multiverse_id");
@@ -71,6 +73,9 @@ export class CardRepository extends BaseRepository implements ICardRepository {
     });
   }
 
+  //#endregion
+
+  //#region private sync methods ----------------------------------------------
   private async syncCard(trx: Transaction<DatabaseSchema>, card: ScryfallCard): Promise<void> {
     const filter: ExpressionOrFactory<DatabaseSchema, "card", SqlBool> = (eb) => eb("card.id", "=", card.id);
     const existing: { id: string } = await trx
@@ -264,4 +269,5 @@ export class CardRepository extends BaseRepository implements ICardRepository {
       });
     }
   }
+  //#endregion
 }

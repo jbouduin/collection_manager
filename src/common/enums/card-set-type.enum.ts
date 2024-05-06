@@ -2,73 +2,73 @@
 
 enum ECardSetType {
   /** A yearly Magic core set (Tenth Edition, etc) */
-  Core = "core",
+  Core,
 
   /** A rotational expansion set in a block (Zendikar, etc) */
-  Expansion = "expansion",
+  Expansion,
 
   /** A reprint set that contains no new cards (Modern Masters, etc) */
-  Masters = "masters",
+  Masters,
 
   /** An Arena set designed for Alchemy */
-  Alchemy = "alchemy",
+  Alchemy,
 
   /** Masterpiece Series premium foil cards */
-  Masterpiece = "masterpiece",
+  Masterpiece,
 
   /** A Commander-oriented gift set */
-  Arsenal = "arsenal",
+  Arsenal,
 
   /** From the Vault gift sets */
-  FromTheVault = "from_the_vault",
+  FromTheVault,
 
   /** Spellbook series gift sets */
-  Spellbook = "spellbook",
+  Spellbook,
 
   /** Premium Deck Series decks */
-  PremiumDeck = "premium_deck",
+  PremiumDeck,
 
   /** Duel Decks */
-  DuelDeck = "duel_deck",
+  DuelDeck,
 
   /** Special draft sets, like Conspiracy and Battlebond */
-  DraftInnovation = "draft_innovation",
+  DraftInnovation,
 
   /** Magic Online treasure chest prize sets */
-  TreasureChest = "treasure_chest",
+  TreasureChest,
 
   /** Commander preconstructed decks */
-  Commander = "commander",
+  Commander,
 
   /** Planechase sets */
-  Planechase = "planechase",
+  Planechase,
 
   /** Archenemy sets */
-  Archenemy = "archenemy",
+  Archenemy,
 
   /** Vanguard card sets */
-  Vanguard = "vanguard",
+  Vanguard,
 
   /** A funny un-set or set with funny promos (Unglued, Happy Holidays, etc) */
-  Funny = "funny",
+  Funny,
 
   /** A starter/introductory set (Portal, etc) */
-  Starter = "starter",
+  Starter,
 
   /** A gift box set */
-  Box = "box",
+  Box,
 
   /** A set that contains purely promotional cards */
-  Promo = "promo",
+  Promo,
 
   /** A set made up of tokens and emblems. */
-  Token = "token",
+  Token,
 
   /** A set made up of gold-bordered, oversize, or trophy cards that are not legal */
-  Memorabilia = "memorabilia",
+  Memorabilia,
 
   /** A set that contains minigame card inserts from booster packs */
-  Minigame = "minigame",
+  Minigame,
 }
 
 export type CardSetType = keyof typeof ECardSetType;

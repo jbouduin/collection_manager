@@ -87,10 +87,32 @@ export class V0_0_1_Card_Migration extends BaseMigration {
       .createTable(db, options)
       .addColumn("uri", "text", (col: ColumnDefinitionBuilder) => col.notNull())
       .execute();
+
+    options = {
+      isSynced: true,
+      tableName: "card_format_legality",
+      defaultIdPrimaryKey: false,
+      primaryKey: [
+        { columnName: "card_id", dataType: "text", callback: (col: ColumnDefinitionBuilder) => col.references("card.id").onDelete("cascade").notNull() },
+        { columnName: "format", dataType: "text", callback: (col: ColumnDefinitionBuilder) => col.notNull() }
+      ]
+    }
+
+    await super
+      .createTable(db, options)
+      .addColumn("legality", "text", (col: ColumnDefinitionBuilder) => col.notNull())
+      .execute();
   }
 
   public async down(db: Kysely<any>): Promise<void> {
     await db.schema.dropTable("card").execute();
+    await db.schema.dropTable("card_multiverse_id").execute();
+    await db.schema.dropTable("card_color_map").execute();
+    await db.schema.dropTable("card_game").execute();
+    await db.schema.dropTable("card_image").execute();
+    await db.schema.dropTable("card_multiverse_id").execute();
+    await db.schema.dropTable("card_multiverse_id").execute();
+
     // TODO add other tables here
   }
 }

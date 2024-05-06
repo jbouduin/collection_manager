@@ -4,7 +4,7 @@ import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser
 
 import { Game } from "../../../../common/enums";
 import { DatabaseSchema } from "../../../database/schema";
-import { ICardGameAdapter } from "../interfaces/card-game.adapter";
+import { ICardGameAdapter } from "../interfaces";
 
 export class CardGameAdapter implements ICardGameAdapter {
   toInsert(cardId: string, game: string): InsertExpression<DatabaseSchema, "card_game"> {

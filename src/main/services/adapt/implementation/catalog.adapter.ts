@@ -5,7 +5,7 @@ import { v1 as uuidV1 } from "uuid";
 
 import { CatalogType } from "../../../../common/enums";
 import { DatabaseSchema } from "../../../../main/database/schema";
-import { ICatalogAdapter } from "../interfaces/catalog.adapter";
+import { ICatalogAdapter } from "../interfaces";
 
 export class CatalogAdapter implements ICatalogAdapter {
   public toInsert(scryfall: { catalogType: CatalogType, item: string}): InsertExpression<DatabaseSchema, "catalog_item"> {

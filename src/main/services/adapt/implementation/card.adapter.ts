@@ -2,10 +2,10 @@ import { InsertExpression } from "kysely/dist/cjs/parser/insert-values-parser";
 import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser";
 import { Card as ScryFallCard } from "scryfall-sdk";
 
-import { DatabaseSchema } from "../../../../main/database/schema";
-import { ICardAdapter } from "../interfaces/card.adapter";
-import { MTGLanguage } from "../../../../common/enums";
 import { sql } from "kysely";
+import { MTGLanguage } from "../../../../common/enums";
+import { DatabaseSchema } from "../../../../main/database/schema";
+import { ICardAdapter } from "../interfaces";
 
 export class CardAdapter implements ICardAdapter {
   public toInsert(scryfall: ScryFallCard): InsertExpression<DatabaseSchema, "card"> {

@@ -1,18 +1,22 @@
-// TODO most of these files just export a type, they could be put in here.
-export * from "./card-card-map.adapter";
-export * from "./card-color-map.adapter";
-export * from "./card-format-legality.adapter";
-export * from "./card-game.adapter";
-export * from "./card-image.adapter";
-export * from "./card-multiverse-id.adapter";
-export * from "./card-set.adapter";
-export * from "./card.adapter";
-export * from "./catalog.adapter";
-export * from "./ruling-line.adapter";
-export * from "./ruling.adapter";
-export * from "./symbology-alternative.adapter";
-export * from "./symbology-color-map.adapter";
-export * from "./symbology.adapter";
+import { DatabaseSchema } from "../../../database/schema";
+import { IChildTableAdapter } from "./child-table.adapter";
+import { IMapTableAdapter } from "./map-table.adapter";
+import { ITableAdapter } from "./table.adapter";
+
+export type ICardCardMapAdapter = IMapTableAdapter<DatabaseSchema, "card_card_map">;
+export type ICardColorMapAdapter = IMapTableAdapter<DatabaseSchema, "card_color_map">;
+export type ICardFormatLegalityAdapter = IChildTableAdapter<DatabaseSchema, "card_format_legality">;
+export type ICardGameAdapter = IChildTableAdapter<DatabaseSchema, "card_game">;
+export type ICardImageAdapter = IChildTableAdapter<DatabaseSchema, "card_image">;
+export type ICardMultiverseIdAdapter = IChildTableAdapter<DatabaseSchema, "card_multiverse_id">;
+export type ICardSetAdapter = ITableAdapter<DatabaseSchema, "card_set">;
+export type ICardAdapter = ITableAdapter<DatabaseSchema, "card">;
+export type ICatalogAdapter = ITableAdapter<DatabaseSchema, "catalog_item">;
+export type IRulingLineAdapter = IChildTableAdapter<DatabaseSchema, "ruling_line">;
+export type IRulingAdapter = ITableAdapter<DatabaseSchema, "ruling">;
+export type ISymbologyAlternativeAdapter = IChildTableAdapter<DatabaseSchema, "symbology_alternative">;
+export type ISymbologyColorMapAdapter = IMapTableAdapter<DatabaseSchema, "symbology_color_map">;
+export type ISymbologyAdapter = ITableAdapter<DatabaseSchema, "symbology">;
 
 const ADAPTTOKENS = Object.freeze({
   CardCardMapAdapter: "CardCardMapAdapter",

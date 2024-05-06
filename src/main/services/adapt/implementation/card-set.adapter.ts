@@ -4,7 +4,7 @@ import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser
 import { Set as ScryfallSet } from "scryfall-sdk";
 
 import { DatabaseSchema } from "../../../database/schema";
-import { ICardSetAdapter } from "../interfaces/card-set.adapter";
+import { ICardSetAdapter } from "../interfaces";
 
 export class CardSetAdapter implements ICardSetAdapter {
 

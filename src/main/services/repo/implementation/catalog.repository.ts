@@ -3,8 +3,7 @@ import { inject, injectable } from "tsyringe";
 
 import { CatalogType } from "../../../../common/enums";
 import { DatabaseSchema } from "../../../database/schema";
-import ADAPTTOKENS from "../../adapt/interfaces";
-import { ICatalogAdapter } from "../../adapt/interfaces/catalog.adapter";
+import ADAPTTOKENS, { ICatalogAdapter } from "../../adapt/interfaces";
 import INFRATOKENS, { IDatabaseService } from "../../infra/interfaces";
 import { ICatalogRepository } from "../interfaces";
 import { BaseRepository } from "./base.repository";

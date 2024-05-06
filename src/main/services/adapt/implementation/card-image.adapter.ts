@@ -4,7 +4,7 @@ import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser
 
 import { ImageType } from "../../../../common/enums";
 import { DatabaseSchema } from "../../../database/schema";
-import { ICardImageAdapter } from "../interfaces/card-image.adapter";
+import { ICardImageAdapter } from "../interfaces";
 
 export class CardImageAdapter implements ICardImageAdapter {
   public toInsert(cardId: string, scryfall: { type: ImageType, uri: string }): InsertExpression<DatabaseSchema, "card_image"> {

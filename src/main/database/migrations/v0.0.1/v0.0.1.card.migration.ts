@@ -29,6 +29,20 @@ export class V0_0_1_Card_Migration extends BaseMigration {
       .addColumn("tcgplayer_id", "integer")
       .addColumn("tcgplayer_etched_id", "integer")
       .addColumn("cardmarket_id", "integer")
+      .addColumn("cmc", "numeric", (cb: ColumnDefinitionBuilder) => cb.notNull())
+      .addColumn("defense", "text")
+      .addColumn("edhrec_rank", "integer")
+      .addColumn("hand_modifier", "text")
+      .addColumn("life_modifier", "text")
+      .addColumn("loyalty", "text")
+      .addColumn("mana_cost", "text")
+      .addColumn("name", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
+      .addColumn("oracle_text", "text")
+      .addColumn("penny_rank", "integer")
+      .addColumn("power", "text")
+      .addColumn("reserved", "integer", (cb: ColumnDefinitionBuilder)=> cb.notNull())
+      .addColumn("thoughness", "text")
+      .addColumn("type_line", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
       .execute();
 
     options = {

@@ -23,7 +23,21 @@ export class CardAdapter implements ICardAdapter {
       scryfall_uri: scryfall.scryfall_uri,
       tcgplayer_etched_id: scryfall.tcgplayer_etched_id,
       tcgplayer_id: scryfall.tcgplayer_id,
-      uri: scryfall.uri
+      uri: scryfall.uri,
+      cmc: scryfall.cmc,
+      defense: null, //TODO scryfall sdk does not return this
+      edhrec_rank: scryfall.edhrec_rank,
+      hand_modfier: scryfall.hand_modifier,
+      life_modfier: scryfall.life_modifier,
+      loyalty: scryfall.loyalty,
+      mana_cost: scryfall.mana_cost,
+      name: scryfall.name,
+      oracle_text: scryfall.oracle_text,
+      penny_rank: scryfall.penny_rank,
+      power: scryfall.power,
+      reserved: scryfall.reserved ? 0:1,
+      thoughness: scryfall.toughness,
+      type_line: scryfall.type_line
     };
   }
 
@@ -40,6 +54,20 @@ export class CardAdapter implements ICardAdapter {
       tcgplayer_etched_id: scryfall.tcgplayer_etched_id,
       tcgplayer_id: scryfall.tcgplayer_id,
       uri: scryfall.uri,
+      cmc: scryfall.cmc,
+      defense: null, //TODO scryfall sdk does not return this
+      edhrec_rank: scryfall.edhrec_rank,
+      hand_modfier: scryfall.hand_modifier,
+      life_modfier: scryfall.life_modifier,
+      loyalty: scryfall.loyalty,
+      mana_cost: scryfall.mana_cost,
+      name: scryfall.name,
+      oracle_text: scryfall.oracle_text,
+      penny_rank: scryfall.penny_rank,
+      power: scryfall.power,
+      reserved: scryfall.reserved ? 0 : 1,
+      thoughness: scryfall.toughness,
+      type_line: scryfall.type_line,
       last_synced_at: sql`CURRENT_TIMESTAMP`
     };
   }

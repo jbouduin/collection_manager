@@ -3,6 +3,7 @@ import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
 import { CardLayout, MTGLanguage } from "../../../../common/enums";
 import { SynchronizedWithStringId } from "../base.types";
 
+// TODO consider cards with normal layout as card with a single face and store it like that
 export interface CardTable extends SynchronizedWithStringId {
   //#region Core fields -------------------------------------------------------
   /**
@@ -73,6 +74,84 @@ export interface CardTable extends SynchronizedWithStringId {
    * This card’s ID on Cardmarket’s API, also known as the idProduct.
    */
   cardmarket_id?: ColumnType<number, number | undefined, number>;
+  //#endregion
+
+  //#region Gameplay Fields ---------------------------------------------------
+  /**
+   * The card’s mana value. Note that some funny cards have fractional mana costs.
+   */
+  cmc: number;
+
+  /**
+   * This face’s defense, if any.
+   */
+  defense?: string;
+
+  /**
+   * This card’s overall rank/popularity on EDHREC. Not all cards are ranked. (integer)
+   */
+  edhrec_rank?: number;
+
+  /**
+   * This card’s hand modifier, if it is Vanguard card. This value will contain a delta, such as -1.
+   */
+  hand_modfier?: string;
+
+  /**
+   * This card’s life modifier, if it is Vanguard card. This value will contain a delta, such as +2.
+   */
+  life_modfier?: string;
+
+  /**
+   * This loyalty if any. Note that some cards have loyalties that are not numeric, such as X.
+   */
+  loyalty?: string;
+
+  /**
+   * The mana cost for this card. This value will be any empty string "" if the cost is absent.
+   * Remember that per the game rules, a missing mana cost and a mana cost of {0} are different values.
+   * Multi-faced cards will report this value in card faces
+   * __This is not correct when looking at the json.__
+   */
+  mana_cost?: string;
+
+  /**
+   * The name of this card. I
+   * f this card has multiple faces, this field will contain both names separated by _//␣.
+   */
+  name: string;
+
+  /**
+   * The Oracle text for this card, if any.
+   */
+  //
+  oracle_text?: string;
+
+  /**
+   * This card’s rank/popularity on Penny Dreadful. Not all cards are ranked.
+   * (integer)
+   */
+  penny_rank?: number;
+
+  /**
+   * This card’s power, if any. Note that some cards have powers that are not numeric, such as *.
+   */
+  power?: string;
+
+  /**
+   * True if this card is on the Reserved List.
+   */
+  reserved: number;
+
+  /**
+   * This card’s toughness, if any. Note that some cards have toughnesses that are not numeric, such as *.
+   */
+  thoughness?: string;
+
+  /**
+   * The type line of this card.
+   */
+  type_line: string;
   //#endregion
 }
 

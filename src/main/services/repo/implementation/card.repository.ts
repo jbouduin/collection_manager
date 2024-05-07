@@ -54,14 +54,14 @@ export class CardRepository extends BaseRepository implements ICardRepository {
     return this.database.selectFrom("card").selectAll().where("card.id", "=", cardId).executeTakeFirst();
   }
 
-  // TODO remove items that are not on the server anymore or at least mark them
   public async sync(cards: Array<ScryfallCard>): Promise<void> {
+    // LATER use a single transaction for each card
     console.log("start CardRepository.sync:");
     return this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
       cards.forEach(async (card: ScryfallCard) => {
         console.log("  -> start sync card", card.name);
         await this.syncCard(trx, card).then(async () => {
-          // TODO next line pass real value card.all_parts when table is created in migration script and we know how to handle missing related cards
+          // FEATURE next line pass real value card.all_parts when table is created in migration script and we know how to handle missing related cards
           await this.syncCardCardMap(trx, card.id, null);
           await this.syncCardColorMap(trx, card.id, "card", card.colors);
           await this.syncCardColorMap(trx, card.id, "identity", card.color_identity);
@@ -103,7 +103,6 @@ export class CardRepository extends BaseRepository implements ICardRepository {
   }
 
   private async syncCardCardMap(trx: Transaction<DatabaseSchema>, cardId: string, relatedCards: Array<RelatedCard>): Promise<void> {
-    // TODO have to fetch the related cards, otherwise we can not create the map or we store the id without any additional data and give the record a state
     if (relatedCards?.length > 0) {
       relatedCards.forEach(async (relatedCard: RelatedCard) => {
         const filter: ExpressionOrFactory<DatabaseSchema, "card_card_map", SqlBool> = (eb) => eb.and([

@@ -43,6 +43,35 @@ export class V0_0_1_Card_Migration extends BaseMigration {
       .addColumn("reserved", "integer", (cb: ColumnDefinitionBuilder)=> cb.notNull())
       .addColumn("thoughness", "text")
       .addColumn("type_line", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
+      .addColumn("artist", "text")
+      .addColumn("booster", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
+      .addColumn("border", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
+      .addColumn("card_back_id", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
+      .addColumn("collector_number", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
+      .addColumn("content_warning", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
+      .addColumn("digital", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
+      .addColumn("flavor_name", "text")
+      .addColumn("flavor_text", "text")
+      .addColumn("frame", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
+      .addColumn("full_art", "integer")
+      .addColumn("highres_image", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
+      .addColumn("illustration_id", "text")
+      .addColumn("image_status", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
+      .addColumn("oversized", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
+      .addColumn("printed_name", "text")
+      .addColumn("printed_text", "text")
+      .addColumn("printed_type_line", "text")
+      .addColumn("promo", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
+      .addColumn("rarity", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
+      .addColumn("released_at", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
+      .addColumn("reprint", "boolean", (cb: ColumnDefinitionBuilder) => cb.notNull())
+      .addColumn("set_id", "text", (cb: ColumnDefinitionBuilder) => cb.notNull()) // LATER references set.id and if required create index on the field
+      .addColumn("story_spotlight", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
+      .addColumn("textless", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
+      .addColumn("variation", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
+      .addColumn("variation_of", "text")
+      .addColumn("security_stamp", "text")
+      .addColumn("watermark", "text")
       .execute();
 
     options = {
@@ -71,7 +100,8 @@ export class V0_0_1_Card_Migration extends BaseMigration {
     await super
       .createTable(db, options)
       .execute();
-    // TODO later check which other indices we need on card_color_map
+
+    await db.schema.createIndex("card_color_map_color_id_idx").on("card_color_map").column("color").execute();
 
     options = {
       isSynced: true,
@@ -138,9 +168,6 @@ export class V0_0_1_Card_Migration extends BaseMigration {
     await db.schema.dropTable("card_color_map").execute();
     await db.schema.dropTable("card_game").execute();
     await db.schema.dropTable("card_image").execute();
-    await db.schema.dropTable("card_multiverse_id").execute();
-    await db.schema.dropTable("card_multiverse_id").execute();
-
-    // TODO add other tables here
+    await db.schema.dropTable("card_keyword").execute();
   }
 }

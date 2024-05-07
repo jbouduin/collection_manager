@@ -15,10 +15,10 @@ export class SymbologyAdapter extends BaseAdapter implements ISymbologyAdapter {
       cmc: symbol.mana_value,
       english: symbol.english,
       funny: super.booleanToNumber(symbol.funny),
-      hybrid: 0, // TODO scrfall-sdk is not returning this
+      hybrid: 0, // FEATURE scryfall-sdk does not return this
       loose_variant: symbol.loose_variant,
       mana_value: symbol.mana_value,
-      phyrexian: 0, // TODO scrfall-sdk is not returning this
+      phyrexian: 0, // FEATURE scryfall-sdk does not return this
       represents_mana: super.booleanToNumber(symbol.represents_mana),
       svg_uri: symbol.svg_uri,
       transposable: super.booleanToNumber(symbol.transposable)
@@ -30,12 +30,11 @@ export class SymbologyAdapter extends BaseAdapter implements ISymbologyAdapter {
       appears_in_mana_costs: super.booleanToNumber(symbol.appears_in_mana_costs),
       cmc: symbol.mana_value,
       english: symbol.english,
-      funny: super.booleanToNumber(symbol.funny),
-      hybrid: 0, // TODO scrfall-sdk is not returning this
+      funny: super.booleanToNumber(symbol.funny), hybrid: 0,
       last_synced_at: sql`CURRENT_TIMESTAMP`,
       loose_variant: symbol.loose_variant,
       mana_value: symbol.mana_value,
-      phyrexian: 0, // TODO scrfall-sdk is not returning this
+      phyrexian: 0,
       represents_mana: super.booleanToNumber(symbol.represents_mana),
       svg_uri: symbol.svg_uri,
       transposable: super.booleanToNumber(symbol.transposable)

@@ -16,7 +16,7 @@ export class V0_0_1_Symbology_Migration extends BaseMigration {
     };
     await super
       .createTable(db, options)
-      // TODO .ifNotExists() we need better handling of failing migrations
+      // LATER we need better handling of failing migrations (consider using .ifNotExists())
       .addColumn("svg_uri", "text", (col: ColumnDefinitionBuilder) => col.notNull())
       .addColumn("loose_variant", "text")
       .addColumn("english", "text", (col: ColumnDefinitionBuilder) => col.notNull())

@@ -1,11 +1,14 @@
 import { ExpressionOrFactory, InsertResult, SqlBool, Transaction, UpdateResult, sql } from "kysely";
 import {
-  Color, Game, ImageUris, Legalities, RelatedCard, Card as ScryfallCard, CardFace as ScryFallCardface
+  Color, Game, ImageUris, Legalities, RelatedCard,
+  CardFace as ScryFallCardface,
+  Card as ScryfallCard
 } from "scryfall-sdk";
 import { inject, injectable } from "tsyringe";
 
+import chalk from "chalk";
 import { CardColorType, CardLegality, GameFormat, ImageType } from "../../../../common/enums";
-import { Card, DatabaseSchema, UpdateCard } from "../../../../main/database/schema";
+import { Card, DatabaseSchema } from "../../../../main/database/schema";
 import ADAPTTOKENS, {
   ICardAdapter, ICardCardMapAdapter, ICardColorMapAdapter, ICardFormatLegalityAdapter,
   ICardGameAdapter, ICardImageAdapter, ICardKeywordAdapter, ICardMultiverseIdAdapter,
@@ -14,7 +17,6 @@ import ADAPTTOKENS, {
 import INFRATOKENS, { IDatabaseService } from "../../infra/interfaces";
 import { ICardRepository } from "../interfaces";
 import { BaseRepository } from "./base.repository";
-import chalk from "chalk";
 
 
 
@@ -88,7 +90,7 @@ export class CardRepository extends BaseRepository implements ICardRepository {
         .selectFrom("card")
         .select("card.id")
         .where(filter)
-        .executeTakeFirst()
+        .executeTakeFirst();
 
       const insertOrUpdate: Promise<InsertResult | UpdateResult> = queryExisting.then((queryResult: { id: string }) => {
         let result: Promise<InsertResult | UpdateResult>;
@@ -126,7 +128,7 @@ export class CardRepository extends BaseRepository implements ICardRepository {
       (reason) => {
         // LATER: remove chalk dependency
         console.log("    -> end sync card", card.id, "(" + card.name + "):", chalk.red("failure"));
-        console.log(reason)
+        console.log(reason);
       }
     );
   }
@@ -338,7 +340,7 @@ export class CardRepository extends BaseRepository implements ICardRepository {
     const deleteFilter: ExpressionOrFactory<DatabaseSchema, "cardface", SqlBool> = (eb) => eb("cardface.card_id", "=", cardId);
     trx.deleteFrom("cardface").where(deleteFilter).execute()
       .then(() => {
-        trx.insertInto('cardface').values(this.cardfaceAdapter.toInsert(cardId, cardface)).executeTakeFirstOrThrow()
+        trx.insertInto("cardface").values(this.cardfaceAdapter.toInsert(cardId, cardface)).executeTakeFirstOrThrow()
           .then((insertResult: InsertResult) => {
             trx.selectFrom("cardface").select("cardface.id").where(sql`ROWID`, "=", insertResult.insertId).executeTakeFirst()
               .then((cardfaceId: { id: string }) => {
@@ -348,7 +350,7 @@ export class CardRepository extends BaseRepository implements ICardRepository {
                   this.syncCardfaceImages(trx, cardfaceId.id, cardface.image_uris)
                 ]);
               });
-          })
+          });
       });
     return Promise.resolve();
   }
@@ -369,7 +371,6 @@ export class CardRepository extends BaseRepository implements ICardRepository {
           .executeTakeFirst();
 
         existing.then((queryResult: { cardface_id: string }) => {
-          let insertOrUpdateResult: Promise<InsertResult | UpdateResult>;
           if (queryResult) {
             result.push(trx.updateTable("cardface_color_map")
               .set(this.cardfaceColorMapAdapter.toUpdate(null))
@@ -380,9 +381,9 @@ export class CardRepository extends BaseRepository implements ICardRepository {
               .values(this.cardfaceColorMapAdapter.toInsert(cardfaceId, color, colorType))
               .executeTakeFirstOrThrow());
           }
-        })
+        });
       });
-      return Promise.all(result).then(() => Promise.resolve())
+      return Promise.all(result).then(() => Promise.resolve());
     } else {
       return Promise.resolve();
     }

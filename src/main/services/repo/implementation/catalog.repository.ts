@@ -1,4 +1,4 @@
-import { Transaction, sql } from "kysely";
+import { Transaction } from "kysely";
 import { inject, injectable } from "tsyringe";
 
 import { CatalogType } from "../../../../common/enums";

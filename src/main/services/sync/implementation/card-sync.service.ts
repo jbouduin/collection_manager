@@ -21,7 +21,7 @@ export class CardSyncService implements ICardSyncService {
     // TODO: check if all required master data is available
     const cards: Array<ScryfallCard> = new Array<ScryfallCard>();
     const emitter = Cards.search("e=" + options.setCode, { include_extras: true, include_variations: true, unique: "prints" });
-    // TODO sdk is not returning total number of results when querying, so we would never be able to show process
+    // T// FEATURE replace scryfall-sdk:  sdk is not returning total number of results when querying, so we would never be able to show process
     // consider adding required parts of scrfall-sdk to application
     // emitter.addListener("data", (card: ScryfallCard) => {
     //   cards.push(card);

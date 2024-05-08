@@ -1,20 +1,30 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import { ColumnDefinitionBuilder, Kysely } from "kysely";
 
-import { BaseMigration, CreateTableOptions } from "../base.migration";
+import { IBaseMigration, CreateTableOptions, createTable } from "../base.migration";
 
-export class V0_0_1_Set_Migration extends BaseMigration {
+export class V0_0_1_Set_Migration implements IBaseMigration {
   public get keyName(): string {
     return "0002: v.0.0.1.Set";
   }
 
   public async up(db: Kysely<any>): Promise<void> {
-    const options: CreateTableOptions = {
+    return createV0_0_1_Ruling(db);
+  }
+
+  public async down(db: Kysely<any>): Promise<void> {
+    return db.schema.dropTable("card_set").execute();
+  }
+}
+
+async function createV0_0_1_Ruling(db: Kysely<any>): Promise<void> {
+  const options: CreateTableOptions = {
       isSynced: true,
       tableName: "card_set",
       defaultIdPrimaryKey: true
-    };
-    await super.createTable(db, options)
+  };
+
+  return createTable(db, options)
       .addColumn("code", "text", (col: ColumnDefinitionBuilder) => col.notNull().unique())
       .addColumn("mtgo_code", "text", (col: ColumnDefinitionBuilder) => col.unique())
       .addColumn("arena_code", "text", (col: ColumnDefinitionBuilder) => col.unique())
@@ -35,9 +45,4 @@ export class V0_0_1_Set_Migration extends BaseMigration {
       .addColumn("icon_svg_uri", "text", (col: ColumnDefinitionBuilder) => col.notNull())
       .addColumn("search_uri", "text", (col: ColumnDefinitionBuilder) => col.notNull())
       .execute();
-  }
-
-  public async down(db: Kysely<any>): Promise<void> {
-    await db.schema.dropTable("card_set").execute();
-  }
 }

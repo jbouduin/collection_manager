@@ -11,7 +11,7 @@ export interface CardTable extends SynchronizedWithStringId {
    * This value is consistent across reprinted card editions, and unique among different cards with the same name (tokens, Unstable variants, etc).
    * Always present except for the reversible_card layout where it will be absent; oracle_id will be found on each face instead.
    */
-  oracle_id: ColumnType<string, string, string>;
+  oracle_id?: ColumnType<string, string | undefined>;
 
   /**
    * A language code for this printing.
@@ -21,7 +21,7 @@ export interface CardTable extends SynchronizedWithStringId {
   /**
    * A code for this card’s layout.
    */
-  layout: ColumnType<CardLayout, CardLayout, never>;
+  layout: ColumnType<CardLayout, CardLayout>;
 
   /**
    * A link to where you can begin paginating all re/prints for this card on Scryfall’s API.
@@ -161,7 +161,7 @@ export interface CardTable extends SynchronizedWithStringId {
   */
   artist?: ColumnType<string, string | undefined>;
 
-  // NOW store artists in artist table, makes previous field redundant
+  // LATER store artists in artist table, makes previous field redundant
   // artist_ids  = The IDs of the artists that illustrated this card. Newly spoiled cards may not have this field yet.
 
   // FEATURE store property "attraction_lights" in a table: The lit Unfinity attractions lights array on this card, if any.
@@ -195,7 +195,7 @@ export interface CardTable extends SynchronizedWithStringId {
   /**
    * True if this card was only released in a video game.
    */
-  digital: ColumnType<boolean, number , number>;
+  digital: ColumnType<boolean, number, number>;
 
   // LATER store property "finishes" in a table
   // An array of computer - readable flags that indicate if this card can come in foil, nonfoil, or etched finishes.
@@ -210,8 +210,7 @@ export interface CardTable extends SynchronizedWithStringId {
    */
   flavor_text?: ColumnType<string, string | undefined>;
 
-  // NOW store property "frame_effects": Array of This card’s frame effects, if any.
-  // LATER will make some other properties redundant I suppose
+  // LATER store property "frame_effects": Array of This card’s frame effects, if any.Will make some other properties redundant I suppose
 
   /**
    * This card’s frame layout.
@@ -243,7 +242,7 @@ export interface CardTable extends SynchronizedWithStringId {
   /**
    * True if this card is oversized.
    */
-  oversized: ColumnType<boolean, number , number>;
+  oversized: ColumnType<boolean, number, number>;
 
   // FEATURE store "prices" in a table
   // An object containing daily price information for this card, including usd, usd_foil, usd_etched, eur, eur_foil, eur_etched, and tix prices, as strings.
@@ -268,8 +267,7 @@ export interface CardTable extends SynchronizedWithStringId {
    */
   promo: ColumnType<boolean, number, number>;
 
-  // NOW store promo_types in a table
-  // probably makes previous property redundant
+  // LATER store promo_types in a table
   // An array of strings describing what categories of promo cards this card falls into.
 
   // FEATURE store "purchase_uris" in a table

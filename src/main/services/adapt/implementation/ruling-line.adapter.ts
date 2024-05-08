@@ -1,4 +1,3 @@
-import { sql } from "kysely";
 import { InsertExpression } from "kysely/dist/cjs/parser/insert-values-parser";
 import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser";
 import { Ruling as ScryfallRuling } from "scryfall-sdk";
@@ -10,7 +9,7 @@ import { IRulingLineAdapter } from "../interfaces";
 export class RulingLineAdapter implements IRulingLineAdapter {
   public toInsert(oracleId: string, scryfall: ScryfallRuling): InsertExpression<DatabaseSchema, "ruling_line"> {
     return {
-      // TODO the sdk has the property not defined!
+      // FEATURE replace scryfall-sdk: the sdk has the property not defined!
       oracle_id: oracleId,
       source: scryfall.source as RulingSource,
       comments: scryfall.comment,
@@ -19,9 +18,6 @@ export class RulingLineAdapter implements IRulingLineAdapter {
   }
 
   public toUpdate(): UpdateObjectExpression<DatabaseSchema, "ruling_line"> {
-    // TODO throw exception, as ruling lines should never be updated (they have no PK)
-    return {
-      last_synced_at: sql`CURRENT_TIMESTAMP`
-    };
+    throw new Error("Not supported");
   }
 }

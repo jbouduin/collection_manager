@@ -66,24 +66,31 @@ export class Desktop extends React.PureComponent {
             };
             window.ipc.sync(param);
           }} />
-          <Button text="Sync card from UDS" onClick={() => {
+          <Button text="Sync UDS" onClick={() => {
             const param: IQueryOrSyncParam<CardSyncOptions> = {
               type: "Card",
               options: { setCode: "UDS" }
             };
             window.ipc.sync(param);
           }} />
-          <Button text="Sync card from MKM" onClick={() => {
+          <Button text="Sync MKM" onClick={() => {
             const param: IQueryOrSyncParam<CardSyncOptions> = {
               type: "Card",
               options: { setCode: "MKM" }
             };
             window.ipc.sync(param);
           }} />
-          <Button text="Sync card from SOI" onClick={() => {
+          <Button text="Sync SOI" onClick={() => {
             const param: IQueryOrSyncParam<CardSyncOptions> = {
               type: "Card",
               options: { setCode: "SOI" }
+            };
+            window.ipc.sync(param);
+          }} />
+          <Button text="Sync TOTP" onClick={() => {
+            const param: IQueryOrSyncParam<CardSyncOptions> = {
+              type: "Card",
+              options: { setCode: "TOTP" }
             };
             window.ipc.sync(param);
           }} />

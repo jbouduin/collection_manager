@@ -78,7 +78,6 @@ export class SymbologyRepository extends BaseRepository implements ISymbologyRep
   }
 
   private async syncColors(trx: Transaction<DatabaseSchema>, symbol: string, colors: Array<ScryfallColor>): Promise<void> {
-    // TODO use map and waitforall
     colors.forEach(async (color: ScryfallColor) => {
       const filter: ExpressionOrFactory<DatabaseSchema, "symbology_color_map", SqlBool> = (eb) =>
         eb.and([

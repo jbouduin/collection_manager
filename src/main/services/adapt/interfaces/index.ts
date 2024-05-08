@@ -12,6 +12,9 @@ export type ICardKeywordAdapter = IChildTableAdapter<DatabaseSchema, "card_keywo
 export type ICardMultiverseIdAdapter = IChildTableAdapter<DatabaseSchema, "card_multiverse_id">;
 export type ICardSetAdapter = ITableAdapter<DatabaseSchema, "card_set">;
 export type ICardAdapter = ITableAdapter<DatabaseSchema, "card">;
+export type ICardfaceAdapter = IChildTableAdapter<DatabaseSchema, "cardface">;
+export type ICardfaceColorMapAdapter = IMapTableAdapter<DatabaseSchema, "cardface_color_map">;
+export type ICardfaceImageAdapter = IChildTableAdapter<DatabaseSchema, "cardface_image">;
 export type ICatalogAdapter = ITableAdapter<DatabaseSchema, "catalog_item">;
 export type IRulingLineAdapter = IChildTableAdapter<DatabaseSchema, "ruling_line">;
 export type IRulingAdapter = ITableAdapter<DatabaseSchema, "ruling">;
@@ -29,6 +32,9 @@ const ADAPTTOKENS = Object.freeze({
   CardMultiverseIdAdapter: "CardMultiverseIdAdapter",
   CardSetAdapter: "CardSetAdapter",
   CardAdapter: "CardAdapter",
+  CardfaceAdapter: "CardfaceAdapter",
+  CardfaceColorMapAdapter: "CardfaceColorMapAdapter",
+  CardfaceImageAdapter: "CardfaceImageAdapter",
   CatalogAdapter: "CatalogAdapter",
   ColorAdapter: "ColorAdapter",
   LanguageAdapter: "LanguageAdapter",

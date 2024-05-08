@@ -2,7 +2,10 @@ import {
   CardTable, CardCardMapTable, CardColorMapTable, CardFormatLegalityTable, CardGameTable, CardImageTable, CardKeywordTable, CardMultiverseIdTable,
   CardSetTable, CatalogItemTable, ColorTable, LanguageTable, RulingTable,
   SymbologyAlternativeTable, SymbologyColorMapTable, SymbologyTable,
-  RulingLineTable
+  RulingLineTable,
+  CardFaceTable,
+  CardFaceImageTable,
+  CardFaceColorMapTable
 } from ".";
 import {  } from "./card/card-key-word.table";
 
@@ -17,6 +20,9 @@ export interface DatabaseSchema {
   card_image: CardImageTable;
   card_keyword: CardKeywordTable;
   card_multiverse_id: CardMultiverseIdTable;
+  cardface_color_map: CardFaceColorMapTable;
+  cardface_image: CardFaceImageTable;
+  cardface: CardFaceTable;
   //#endregion
 
   //#region master data -------------------------------------------------------

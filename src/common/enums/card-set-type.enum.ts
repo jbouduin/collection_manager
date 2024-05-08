@@ -1,5 +1,3 @@
-// TODO remove the string values and use (keyof typeof ECardSetTypex as datatype) after removing scryfall-sdk (currently set type is the scryfall-sdk one)
-
 enum ECardSetType {
   /** A yearly Magic core set (Tenth Edition, etc) */
   Core,

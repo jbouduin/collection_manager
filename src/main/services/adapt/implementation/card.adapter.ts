@@ -25,7 +25,7 @@ export class CardAdapter implements ICardAdapter {
       tcgplayer_id: scryfall.tcgplayer_id,
       uri: scryfall.uri,
       cmc: scryfall.cmc,
-      defense: null, // FEATURE scryfall-sdk does not return this
+      defense: null, // FEATURE replace scryfall-sdk: scryfall-sdk does not return this
       edhrec_rank: scryfall.edhrec_rank,
       hand_modfier: scryfall.hand_modifier,
       life_modfier: scryfall.life_modifier,
@@ -35,7 +35,7 @@ export class CardAdapter implements ICardAdapter {
       oracle_text: scryfall.oracle_text,
       penny_rank: scryfall.penny_rank,
       power: scryfall.power,
-      reserved: scryfall.reserved ? 0:1,
+      reserved: scryfall.reserved ? 0 : 1,
       thoughness: scryfall.toughness,
       type_line: scryfall.type_line,
       artist: scryfall.artist,
@@ -60,7 +60,7 @@ export class CardAdapter implements ICardAdapter {
       rarity: scryfall.rarity,
       released_at: scryfall.released_at,
       reprint: scryfall.reprint ? 0 : 1,
-      security_stamp: undefined, // FEATURE scryfall-sdk has strange value here
+      security_stamp: undefined, // // FEATURE replace scryfall-sdk: scryfall-sdk has strange value here
       set_id: scryfall.set_id,
       story_spotlight: scryfall.story_spotlight ? 0 : 1,
       textless: scryfall.textless ? 0 : 1,

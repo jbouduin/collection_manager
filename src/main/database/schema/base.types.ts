@@ -25,7 +25,6 @@ type TWithStringIdField = {
   /***
    * Primary key of the table. The exact contents depend on the type of table
    */
-  // TODO
   id: ColumnType<string, string, never>;
 };
 

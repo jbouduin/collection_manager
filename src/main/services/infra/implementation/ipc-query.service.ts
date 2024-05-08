@@ -3,38 +3,45 @@ import { inject, singleton } from "tsyringe";
 import { SymbologySelectDto } from "../../../../common/dto/select/symbology.select.dto";
 import { IQueryOrSyncParam, QueryOrSyncOptions } from "../../../../common/ipc-params";
 import { CardSet, CatalogItem, Color, Language } from "../../../../main/database/schema";
-import REPOTOKENS, { IColorRepository, ILanguageRepository, ISymbologyRepository } from "../../repo/interfaces";
+import REPOTOKENS, { ICardSetRepository, IColorRepository, ILanguageRepository, ISymbologyRepository } from "../../repo/interfaces";
 import INFRATOKENS, { IDatabaseService, IIpcQueryService } from "../interfaces";
 
 
 @singleton()
 export class IpcQueryService implements IIpcQueryService {
 
+  //#region Private readonly properties ---------------------------------------
   private readonly databaseService: IDatabaseService;
+  private readonly cardSetRepository: ICardSetRepository;
   private readonly languageRepository: ILanguageRepository;
   private readonly colorRepository: IColorRepository;
   private readonly symbologyRepository: ISymbologyRepository;
+  //#endregion
 
+  //#region Constructor & C° --------------------------------------------------
   public constructor(
     // the injected property should be removed over time
     @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
+    @inject(REPOTOKENS.CardSetRepository) cardSetRepository: ICardSetRepository,
     @inject(REPOTOKENS.ColorRepository) colorRepository: IColorRepository,
     @inject(REPOTOKENS.LanguageRepository) languageRepository: ILanguageRepository,
     @inject(REPOTOKENS.SymbologyRepository) symbologyRepository: ISymbologyRepository
   ) {
     this.databaseService = databaseService;
+    this.cardSetRepository = cardSetRepository;
     this.colorRepository = colorRepository;
     this.languageRepository = languageRepository;
     this.symbologyRepository = symbologyRepository;
   }
+  //#endregion
 
-  public async handle(params: IQueryOrSyncParam<QueryOrSyncOptions>): Promise<void> {
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  public async handle(params: IQueryOrSyncParam<QueryOrSyncOptions>): Promise<any> {
     switch (params.type) {
       case "Card":
         break;
       case "CardSet":
-        await this.TestQueryCardSet();
-        break;
+        return this.cardSetRepository.getAll();
       case "Catalog":
         await this.TestQueryCatalog();
         break;
@@ -60,16 +67,15 @@ export class IpcQueryService implements IIpcQueryService {
     }
   }
 
-  private async TestQueryCardSet(): Promise<void> {
-    await this.databaseService.database
+  private async TestQueryCardSet(): Promise<Array<CardSet>> {
+    return this.databaseService.database
       .selectFrom("card_set")
       .selectAll()
-      .limit(1)
-      .execute()
-      .then((cardSet: Array<CardSet>) => {
-        console.log(typeof cardSet[0]);
-        console.log(cardSet[0]);
-      });
+      .execute();
+      // .then((cardSet: Array<CardSet>) => {
+      //   console.log(typeof cardSet[0]);
+      //   console.log(cardSet[0]);
+      // });
   }
 
   private async TestQueryCatalog(): Promise<void> {

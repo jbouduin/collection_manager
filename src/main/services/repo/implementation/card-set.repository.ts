@@ -2,6 +2,7 @@ import { ExpressionOrFactory, SqlBool, Transaction } from "kysely";
 import { Set as ScryfallSet } from "scryfall-sdk";
 import { inject, injectable } from "tsyringe";
 
+import { CardSetSelectDto } from "../../../../common/dto";
 import { DatabaseSchema } from "../../../database/schema";
 import ADAPTTOKENS, { ICardSetAdapter } from "../../adapt/interfaces";
 import INFRATOKENS, { IDatabaseService } from "../../infra/interfaces";
@@ -11,13 +12,25 @@ import { BaseRepository } from "./base.repository";
 @injectable()
 export class CardSetRepository extends BaseRepository implements ICardSetRepository {
 
+  //#region private readonly properties ---------------------------------------
   private cardSetAdapter: ICardSetAdapter;
+  //#endregion
 
+  //#region Constructor & C° --------------------------------------------------
   public constructor(
     @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
     @inject(ADAPTTOKENS.CardSetAdapter) cardSetAdapter: ICardSetAdapter) {
     super(databaseService);
     this.cardSetAdapter = cardSetAdapter;
+  }
+  //#endregion
+
+  //#region ICardSetRepository methods ----------------------------------------
+  public getAll(): Promise<Array<CardSetSelectDto>> {
+    return this.database
+      .selectFrom("card_set")
+      .selectAll()
+      .execute();
   }
 
   // TODO remove items that are not on the server anymore or at least mark them => how ?
@@ -45,4 +58,5 @@ export class CardSetRepository extends BaseRepository implements ICardSetReposit
       });
     });
   }
+  //#endregion
 }

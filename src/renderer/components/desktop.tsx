@@ -1,7 +1,7 @@
 import { Button, Classes } from "@blueprintjs/core";
 import * as React from "react";
-import { ECatalogType, EQueryType, ESyncType } from "../../common/enums";
-import { ICardSetSyncOptions, ICatalogSyncOptions, ISyncParam } from "../../common/ipc-params";
+
+import { CardSetSyncOptions, CardSyncOptions, CatalogSyncOptions, IQueryOrSyncParam } from "../../common/ipc-params";
 
 
 const DARK_THEME = Classes.DARK;
@@ -39,27 +39,70 @@ export class Desktop extends React.PureComponent {
           {ping}
         </p>
         <p>
-          Theme: {this.theme}
-        </p>
-        <p>
+          <h3>Darkmode</h3>
           <Button text="Toggle" onClick={() => window.ipc.darkmode("toggle").then((value: boolean) => this.setTheme(value))} />
           <Button intent="success" text="System" onClick={() => window.ipc.darkmode("toggle").then((value: boolean) => this.setTheme(value))} />
-          <Button text="Query sets" onClick={() => window.ipc.query(EQueryType.CardSet)} />
-          <Button text="Query artifact types" onClick={() => window.ipc.query(EQueryType.Catalog)} />
+        </p>
+        <p>
+          <h3>Sync</h3>
           <Button text="Sync some catalogs" onClick={() => {
-            const param: ISyncParam<ICatalogSyncOptions> = {
-              type: ESyncType.Catalogs,
-              options: { catalogs: [ECatalogType.AbilityWords, ECatalogType.ArtifactTypes] }
+            const param: IQueryOrSyncParam<CatalogSyncOptions> = {
+              type: "Catalog",
+              options: { catalogs: ["AbilityWords", "ArtifactTypes", "LandTypes"] }
+            };
+            window.ipc.sync(param);
+          }} />
+          <Button text="Sync symbology" onClick={() => {
+            const param: IQueryOrSyncParam<undefined> = {
+              type: "Symbology",
+              options: undefined
             };
             window.ipc.sync(param);
           }} />
           <Button text="Sync cardsets" onClick={() => {
-            const param: ISyncParam<ICardSetSyncOptions> = {
-              type: ESyncType.CardSets,
+            const param: IQueryOrSyncParam<CardSetSyncOptions> = {
+              type: "CardSet",
               options: { code: null }
             };
             window.ipc.sync(param);
           }} />
+          <Button text="Sync UDS" onClick={() => {
+            const param: IQueryOrSyncParam<CardSyncOptions> = {
+              type: "Card",
+              options: { setCode: "UDS" }
+            };
+            window.ipc.sync(param);
+          }} />
+          <Button text="Sync MKM" onClick={() => {
+            const param: IQueryOrSyncParam<CardSyncOptions> = {
+              type: "Card",
+              options: { setCode: "MKM" }
+            };
+            window.ipc.sync(param);
+          }} />
+          <Button text="Sync SOI" onClick={() => {
+            const param: IQueryOrSyncParam<CardSyncOptions> = {
+              type: "Card",
+              options: { setCode: "SOI" }
+            };
+            window.ipc.sync(param);
+          }} />
+          <Button text="Sync TOTP" onClick={() => {
+            const param: IQueryOrSyncParam<CardSyncOptions> = {
+              type: "Card",
+              options: { setCode: "TOTP" }
+            };
+            window.ipc.sync(param);
+          }} />
+        </p>
+        <p>
+          <h3>Query</h3>
+          <Button text="Query Artifact types" onClick={() => window.ipc.query({ type: "Catalog", options: null })} />
+          <Button text="Query Sets" onClick={() => window.ipc.query({ type: "CardSet", options: null })} />
+          <Button text="Query Language" onClick={() => window.ipc.query({ type: "Language", options: null })} />
+          <Button text="Query Colors" onClick={() => window.ipc.query({ type: "Color", options: null })} />
+          <Button text="Query Symbology" onClick={() => window.ipc.query({ type: "Symbology", options: null })} />
+          <Button text="Query or Sync ruling" onClick={() => window.ipc.queryOrSync({ type: "Ruling", options: { cardId: "bd6e71a1-713e-4eca-bd65-9f0638c16794"} }).then((result) => console.log(result))} />
         </p>
       </div >
     );

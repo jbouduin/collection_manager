@@ -1,19 +1,21 @@
-export enum ECatalogType {
-  CardNames = "CardNames",
-  ArtistNames = "ArtistNames",
-  WordBank = "WordBank",
-  CreatureTypes = "CreatureTypes",
-  PlaneswalkerTypes = "PlaneswalkerTypes",
-  LandTypes = "LandTypes",
-  ArtifactTypes = "ArtifactTypes",
-  EnchantmentTypes = "EnchantmentTypes",
-  SpellTypes = "SpellTypes",
-  Powers = "Powers",
-  Toughnesses = "Toughnesses",
-  Loyalties = "Loyalties",
-  Watermarks = "Watermarks",
-  KeywordAbilities = "KeywordAbilities",
-  KeywordActions = "KeywordActions",
-  AbilityWords = "AbilityWords",
-  Supertypes = "Supertypes"
+enum ECatalogType {
+  CardNames,
+  ArtistNames,
+  WordBank,
+  CreatureTypes,
+  PlaneswalkerTypes,
+  LandTypes,
+  ArtifactTypes,
+  EnchantmentTypes,
+  SpellTypes,
+  Powers,
+  Toughnesses ,
+  Loyalties,
+  Watermarks,
+  KeywordAbilities,
+  KeywordActions,
+  AbilityWords,
+  Supertypes
 }
+
+export type CatalogType = keyof typeof ECatalogType;

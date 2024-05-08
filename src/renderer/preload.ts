@@ -1,6 +1,5 @@
 import { contextBridge, ipcRenderer } from "electron";
-import { EIpcChannel, EQueryType } from "../common/enums";
-import { ISyncParam, SyncOptions } from "../common/ipc-params";
+import { IQueryOrSyncParam, QueryOrSyncOptions } from "../common/ipc-params";
 import { DarkmodeOption } from "../common/ipc-params/darkmode.option";
 
 // define
@@ -11,10 +10,11 @@ const versions = {
 };
 
 const ipc = {
-  ping: () => ipcRenderer.invoke(EIpcChannel.ping),
-  darkmode: (mode: DarkmodeOption) => ipcRenderer.invoke(EIpcChannel.darkmode, mode),
-  query: (queryType: EQueryType) => ipcRenderer.invoke(EIpcChannel.query, queryType),
-  sync: (param: ISyncParam<SyncOptions> ) => ipcRenderer.invoke(EIpcChannel.sync, param)
+  ping: () => ipcRenderer.invoke("ping"),
+  darkmode: (mode: DarkmodeOption) => ipcRenderer.invoke("darkmode", mode),
+  query: (param: IQueryOrSyncParam<QueryOrSyncOptions>) => ipcRenderer.invoke("query", param),
+  queryOrSync: (param:  IQueryOrSyncParam<QueryOrSyncOptions>) => ipcRenderer.invoke("queryOrSync", param),
+  sync: (param: IQueryOrSyncParam<QueryOrSyncOptions> ) => ipcRenderer.invoke("sync", param)
 };
 
 // expose

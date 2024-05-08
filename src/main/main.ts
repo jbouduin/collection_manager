@@ -2,11 +2,14 @@ import { app, BrowserWindow } from "electron";
 import "reflect-metadata";
 import { container } from "tsyringe";
 import { updateElectronApp } from "update-electron-app";
-import { Di } from "./services/di";
-import { IIpcDispatcherService } from "./services/ipc/ipc-dispatcher.service";
-import TOKENS from "./services/tokens";
-import { IDatabaseService } from "./services/database/database.service";
+import { ServicesDI } from "./services/services.di";
+import { IIpcDispatcherService } from "./services/infra/interfaces/ipc-dispatcher.service";
+import { IDatabaseService } from "./services/infra/interfaces/database.service";
 import { MigrationProvider } from "kysely";
+import { setCacheLimit } from "scryfall-sdk";
+import INFRATOKENS from "./services/infra/interfaces";
+import { MigrationDi } from "./database/migrations/migrations.di";
+import MIGRATOKENS from "./database/migrations/migration.tokens";
 
 // TODO splash screen and communicate with renderer (is that possible)
 
@@ -16,7 +19,7 @@ import { MigrationProvider } from "kysely";
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
-
+setCacheLimit(0);
 // check for updates
 updateElectronApp();
 
@@ -25,7 +28,8 @@ if (require("electron-squirrel-startup")) {
   app.quit();
 }
 
-Di.register();
+ServicesDI.register();
+const migrationContainer = MigrationDi.registerMigrations();
 
 const createWindow = (): void => {
   // Create the browser window.
@@ -52,10 +56,11 @@ const createWindow = (): void => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  container.resolve<IIpcDispatcherService>(TOKENS.IpcDispatcherService).Initialize();
-  container.resolve<IDatabaseService>(TOKENS.DatabaseService)
+  container.resolve<IIpcDispatcherService>(INFRATOKENS.IpcDispatcherService).Initialize();
+  container.resolve<IDatabaseService>(INFRATOKENS.DatabaseService)
     .connect("c:/data/new-assistant")
-    .migrateToLatest(container.resolve<MigrationProvider>(TOKENS.CustomMigrationProvider));
+    .migrateToLatest(migrationContainer.resolve<MigrationProvider>(MIGRATOKENS.NewCustomMigrationProvider))
+    .then(() => migrationContainer.dispose());
 
   createWindow();
 

@@ -12,7 +12,6 @@ import { DesktopState } from "./desktop.state";
 const DARK_THEME = Classes.DARK;
 const LIGHT_THEME = "";
 
-
 export class Desktop extends React.PureComponent<Props, DesktopState> {
   private _theme: string;
   private _themeIcon: IconName;

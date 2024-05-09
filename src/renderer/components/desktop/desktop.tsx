@@ -1,15 +1,19 @@
-import {
-  Classes,
-  IconName
-} from "@blueprintjs/core";
+import { Classes, IconName, Props } from "@blueprintjs/core";
 import * as React from "react";
-import { TemporaryMainPanel } from "./temporary-main-panel";
+
+import { CollectionView } from "../collection/collection-view";
+import { DatabaseView } from "../database/database-view";
+import { DeckView } from "../deck/deck-view";
+import { ButtonBar } from "./button-bar";
+import { EDesktopView } from "./desktop-view.enum";
+import { DesktopState } from "./desktop.state";
 
 // import logo from "./logo.png";
 const DARK_THEME = Classes.DARK;
 const LIGHT_THEME = "";
 
-export class Desktop extends React.PureComponent<any, any> {
+
+export class Desktop extends React.PureComponent<Props, DesktopState> {
   private _theme: string;
   private _themeIcon: IconName;
 
@@ -29,15 +33,32 @@ export class Desktop extends React.PureComponent<any, any> {
     this._themeIcon = themeIcon;
 
   }
-  // private setTheme(shouldUseDarkColors: boolean): void {
-  //   this.theme = shouldUseDarkColors ? DARK_THEME : LIGHT_THEME;
-  //   this.themeIcon = shouldUseDarkColors ? "flash" : "moon";
-  // }
 
-  public render() {
+  private onButtonBarButtonClick(desktopView: EDesktopView): void {
+    console.log("in desktop buttonbar button click event:", desktopView);
+    this.setState({ currentView: desktopView });
+  }
+
+  public componentDidMount(): void {
+    this.setState({ currentView: EDesktopView.Database });
+  }
+
+  public render(): React.JSX.Element {
+
     return (
-      <div className={this.theme}>
-        <TemporaryMainPanel className={this.theme}></TemporaryMainPanel>
+      <div className="desktop-wrapper">
+        <ButtonBar onSelectButton={this.onButtonBarButtonClick.bind(this)}></ButtonBar>
+        <div className="main-panel">
+          {(this.state == null || this.state.currentView == EDesktopView.Database) &&
+            <DatabaseView className={this.theme} />
+          }
+          {this.state?.currentView == EDesktopView.Collection &&
+            <CollectionView className={this.theme} />
+          }
+          {this.state?.currentView == EDesktopView.Deck &&
+            <DeckView className={this.theme} />
+          }
+        </div>
       </div>
     );
   }

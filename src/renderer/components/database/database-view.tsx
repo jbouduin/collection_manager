@@ -2,14 +2,14 @@ import { Button, Card, Classes, ContextMenu, Props, Tree, TreeNodeInfo } from "@
 import * as React from "react";
 
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
-import { CardSetSyncOptions, CardSyncOptions, CatalogSyncOptions, IQueryOrSyncParam } from "../../common/ipc-params";
-import { CardSetSelectDto } from "../../common/dto";
+import { CardSetSelectDto } from "../../../common/dto";
+import { CardSetSyncOptions, CardSyncOptions, CatalogSyncOptions, IQueryOrSyncParam } from "../../../common/ipc-params";
+import { DatabaseViewState } from "./database-view.state";
 
-interface tState {
-  nodes: Array<TreeNodeInfo>;
-}
-export class TemporaryMainPanel extends React.Component<Props, tState> {
+
+export class DatabaseView extends React.Component<Props, DatabaseViewState> {
   private contentSizing = { popoverProps: { popoverClassName: Classes.POPOVER_CONTENT_SIZING } };
+
   public constructor(props: Props) {
     super(props);
     this.state = { nodes: new Array<TreeNodeInfo<CardSetSelectDto>>() };
@@ -88,7 +88,7 @@ export class TemporaryMainPanel extends React.Component<Props, tState> {
                 <p>
                   {ping}
                 </p>
-                <p>
+
                   <h3>Sync</h3>
                   <Button text="Sync some catalogs" onClick={() => {
                     const param: IQueryOrSyncParam<CatalogSyncOptions> = {
@@ -139,8 +139,7 @@ export class TemporaryMainPanel extends React.Component<Props, tState> {
                     };
                     window.ipc.sync(param);
                   }} />
-                </p>
-                <p>
+
                   <h3>Query</h3>
                   <Button text="Query Artifact types" onClick={() => window.ipc.query({ type: "Catalog", options: null })} />
                   <Button text="Query Sets" onClick={() => window.ipc.query({ type: "CardSet", options: null })} />
@@ -148,7 +147,7 @@ export class TemporaryMainPanel extends React.Component<Props, tState> {
                   <Button text="Query Colors" onClick={() => window.ipc.query({ type: "Color", options: null })} />
                   <Button text="Query Symbology" onClick={() => window.ipc.query({ type: "Symbology", options: null })} />
                   <Button text="Query or Sync ruling" onClick={() => window.ipc.queryOrSync({ type: "Ruling", options: { cardId: "bd6e71a1-713e-4eca-bd65-9f0638c16794" } }).then((result) => console.log(result))} />
-                </p>
+
               </div >
             </Card>
           </Panel>

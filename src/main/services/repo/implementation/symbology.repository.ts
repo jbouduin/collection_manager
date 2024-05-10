@@ -30,17 +30,23 @@ export class SymbologyRepository extends BaseRepository implements ISymbologyRep
 
   public async getAll(): Promise<Array<SymbologySelectDto>> {
 
-    const allSymbologies = await this.database.selectFrom("symbology").selectAll().execute();
-    const allColors = await this.database.selectFrom("symbology_color_map").selectAll().execute();
-    const allAlternatives = await this.database.selectFrom("symbology_alternative").selectAll().execute();
-    const result = allSymbologies.map<SymbologySelectDto>((symbol: Symbology) => {
-      return {
-        symbology: symbol,
-        colors: allColors.filter((color: SymbologyColorMap) => color.symbology_id == symbol.id),
-        alternatives: allAlternatives.filter((alternative: SymbologyAlternative) => alternative.symbology_id == symbol.id),
-      };
-    });
-    return result;
+    const w = Promise.all([
+      this.database.selectFrom("symbology").selectAll().execute(),
+      this.database.selectFrom("symbology_color_map").selectAll().execute(),
+      this.database.selectFrom("symbology_alternative").selectAll().execute()
+    ])
+      .then((result: [Array<Symbology>, Array<SymbologyColorMap>, Array<SymbologyAlternative>]) => {
+        return result[0].map<SymbologySelectDto>((symbol: Symbology) => {
+          const dto: SymbologySelectDto = {
+            symbology: symbol,
+            alternatives: result[2].filter((alternative: SymbologyAlternative) => alternative.symbology_id == symbol.id),
+            colors: result[1].filter((color: SymbologyColorMap) => color.symbology_id == symbol.id)
+          };
+          return dto;
+        });
+      });
+    console.log(w);
+    return w;
   }
 
   // TODO remove items that are not on the server anymore or at least mark them

@@ -1,9 +1,9 @@
 import { inject, singleton } from "tsyringe";
 
-import { SymbologySelectDto } from "../../../../common/dto/select/symbology.select.dto";
 import { IQueryOrSyncParam, QueryOrSyncOptions } from "../../../../common/ipc-params";
-import { CardSet, CatalogItem, Color, Language } from "../../../../main/database/schema";
-import REPOTOKENS, { ICardSetRepository, IColorRepository, ILanguageRepository, ISymbologyRepository } from "../../repo/interfaces";
+import { CardQueryOptions } from "../../../../common/ipc-params/card-query.options";
+import { CatalogItem, Color, Language } from "../../../../main/database/schema";
+import REPOTOKENS, { ICardRepository, ICardSetRepository, IColorRepository, ILanguageRepository, ISymbologyRepository } from "../../repo/interfaces";
 import INFRATOKENS, { IDatabaseService, IIpcQueryService } from "../interfaces";
 
 
@@ -12,6 +12,7 @@ export class IpcQueryService implements IIpcQueryService {
 
   //#region Private readonly properties ---------------------------------------
   private readonly databaseService: IDatabaseService;
+  private readonly cardRepository: ICardRepository;
   private readonly cardSetRepository: ICardSetRepository;
   private readonly languageRepository: ILanguageRepository;
   private readonly colorRepository: IColorRepository;
@@ -22,12 +23,14 @@ export class IpcQueryService implements IIpcQueryService {
   public constructor(
     // the injected property should be removed over time
     @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
+    @inject(REPOTOKENS.CardRepository) cardRepository: ICardRepository,
     @inject(REPOTOKENS.CardSetRepository) cardSetRepository: ICardSetRepository,
     @inject(REPOTOKENS.ColorRepository) colorRepository: IColorRepository,
     @inject(REPOTOKENS.LanguageRepository) languageRepository: ILanguageRepository,
     @inject(REPOTOKENS.SymbologyRepository) symbologyRepository: ISymbologyRepository
   ) {
     this.databaseService = databaseService;
+    this.cardRepository = cardRepository;
     this.cardSetRepository = cardSetRepository;
     this.colorRepository = colorRepository;
     this.languageRepository = languageRepository;
@@ -37,9 +40,10 @@ export class IpcQueryService implements IIpcQueryService {
 
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   public async handle(params: IQueryOrSyncParam<QueryOrSyncOptions>): Promise<any> {
+    console.log("start IpcQueryService.handling", params);
     switch (params.type) {
       case "Card":
-        break;
+        return this.cardRepository.getWithOptions(params.options as CardQueryOptions);
       case "CardSet":
         return this.cardSetRepository.getAll();
       case "Catalog":
@@ -58,24 +62,11 @@ export class IpcQueryService implements IIpcQueryService {
           );
         break;
       case "Symbology":
-        await this.symbologyRepository.getAll()
-          .then((result: Array<SymbologySelectDto>) => console.log(result.length > 0 ? result[0] : "nothing found"));
-        break;
+        return this.symbologyRepository.getAll();
       case "Ruling":
         // TODO we should not do this
         break;
     }
-  }
-
-  private async TestQueryCardSet(): Promise<Array<CardSet>> {
-    return this.databaseService.database
-      .selectFrom("card_set")
-      .selectAll()
-      .execute();
-      // .then((cardSet: Array<CardSet>) => {
-      //   console.log(typeof cardSet[0]);
-      //   console.log(cardSet[0]);
-      // });
   }
 
   private async TestQueryCatalog(): Promise<void> {

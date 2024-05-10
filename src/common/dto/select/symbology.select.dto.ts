@@ -5,3 +5,9 @@ export interface SymbologySelectDto {
   colors: Array<SymbologyColorMap>;
   alternatives: Array<SymbologyAlternative>;
 }
+
+// LATER would be nice to have it like but then we need an efficient way to construct it
+// export interface SymbologySelectDto extends Symbology {
+//   colors: Array<SymbologyColorMap>;
+//   alternatives: Array<SymbologyAlternative>;
+// }

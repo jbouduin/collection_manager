@@ -5,6 +5,8 @@ import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { CardSetSelectDto } from "../../../common/dto";
 import { CardSetSyncOptions, CardSyncOptions, CatalogSyncOptions, IQueryOrSyncParam } from "../../../common/ipc-params";
 import { DatabaseViewState } from "./database-view.state";
+import { Cell, Column, Table2 } from "@blueprintjs/table";
+import { CardsTable } from "../common/tables/cards-table";
 
 
 export class DatabaseView extends React.Component<Props, DatabaseViewState> {
@@ -135,6 +137,8 @@ export class DatabaseView extends React.Component<Props, DatabaseViewState> {
                 <Button text="Query Colors" onClick={() => window.ipc.query({ type: "Color", options: null })} />
                 <Button text="Query Symbology" onClick={() => window.ipc.query({ type: "Symbology", options: null })} />
                 <Button text="Query or Sync ruling" onClick={() => window.ipc.queryOrSync({ type: "Ruling", options: { cardId: "bd6e71a1-713e-4eca-bd65-9f0638c16794" } }).then((result) => console.log(result))} />
+                <h3>Table</h3>
+                <CardsTable {...this.props}></CardsTable>
 
               </div >
             </Card>
@@ -208,4 +212,5 @@ export class DatabaseView extends React.Component<Props, DatabaseViewState> {
     });
   }
   //#endregion
+
 }

@@ -7,8 +7,10 @@ import {
 import { inject, injectable } from "tsyringe";
 
 import chalk from "chalk";
+import { CardSelectDto, } from "../../../../common/dto";
 import { CardColorType, CardLegality, GameFormat, ImageType } from "../../../../common/enums";
-import { Card, DatabaseSchema } from "../../../../main/database/schema";
+import { CardQueryOptions } from "../../../../common/ipc-params/card-query.options";
+import { DatabaseSchema } from "../../../../main/database/schema";
 import ADAPTTOKENS, {
   ICardAdapter, ICardCardMapAdapter, ICardColorMapAdapter, ICardFormatLegalityAdapter,
   ICardGameAdapter, ICardImageAdapter, ICardKeywordAdapter, ICardMultiverseIdAdapter,
@@ -68,10 +70,24 @@ export class CardRepository extends BaseRepository implements ICardRepository {
   //#endregion
 
   //#region ICardRepository methods -------------------------------------------
-  public async getCardById(cardId: string): Promise<Card> {
+  public async getCardById(cardId: string): Promise<CardSelectDto> {
     return this.database.selectFrom("card").selectAll().where("card.id", "=", cardId).executeTakeFirst();
   }
 
+  public async getWithOptions(options: CardQueryOptions): Promise<Array<CardSelectDto>> {
+    console.log(options);
+    if (options.cardId) {
+      return this.database.selectFrom("card").selectAll().where("card.id", "=", options.cardId).execute();
+    }
+    else {
+      return this.database
+        .selectFrom("card")
+        .selectAll()
+        .leftJoin("card_set", "card_set.id", "card.set_id")
+        .selectAll("card")
+        .execute();
+    }
+  }
   public async sync(cards: Array<ScryfallCard>): Promise<void> {
     console.log("start CardRepository.sync:");
     return Promise

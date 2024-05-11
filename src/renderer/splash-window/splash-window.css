@@ -1,0 +1,12 @@
+@import "normalize.css";
+@import "@blueprintjs/core/lib/css/blueprint.css";
+
+body {
+  background-image: url("/assets/img/Splash.webp");
+  color: white;
+}
+
+.splash-wrapper {
+  padding: 20px;
+  padding-top: 375px;
+}

@@ -7,8 +7,6 @@ body {
     Arial, sans-serif;
   margin: auto;
   font-size: small;
-
-  /* padding-top: 50px; */
 }
 
 #root {
@@ -27,25 +25,16 @@ body {
 .desktop-wrapper {
   display: flex;
   flex-direction: row;
-  /* align-content: stretch;
-  width: 100%;
-  flex: wrap 100%; */
 }
+
 .button-bar {
-  /* display: inline-block; */
   float: inline-start;
-    /* border: 1px solid red;
-    padding: 1rem 1rem;
-    vertical-align: middle; */
 }
 
 .main-panel {
   flex:1
-  /* display: inline-block;
-    border: 1px solid red;
-    padding: 1rem 1rem;
-    vertical-align: middle; */
 }
+
 @media (prefers-color-scheme: dark) {
 
   body,

@@ -2,10 +2,9 @@ import { Button, Card, Classes, ContextMenu, Props, Tree, TreeNodeInfo } from "@
 import * as React from "react";
 
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
-import { CardSetSelectDto } from "../../../common/dto";
-import { CardSetSyncOptions, CardSyncOptions, CatalogSyncOptions, IQueryOrSyncParam } from "../../../common/ipc-params";
+import { CardSetSelectDto } from "../../../../common/dto";
+import { CardSetSyncOptions, CardSyncOptions, CatalogSyncOptions, IQueryOrSyncParam } from "../../../../common/ipc-params";
 import { DatabaseViewState } from "./database-view.state";
-import { Cell, Column, Table2 } from "@blueprintjs/table";
 import { CardsTable } from "../common/tables/cards-table";
 
 
@@ -44,6 +43,7 @@ export class DatabaseView extends React.Component<Props, DatabaseViewState> {
       this.setState({ nodes: this.buildTree(cardSets, null) });
     });
   }
+
   //#endregion
 
   //#region Public methods ----------------------------------------------------

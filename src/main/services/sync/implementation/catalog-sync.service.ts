@@ -17,13 +17,19 @@ export class CatalogSyncService implements ICatalogSyncService {
     this.catalogRepository = catalogRepository;
   }
 
-  public async sync(options: CatalogSyncOptions): Promise<void> {
+  public async sync(options: CatalogSyncOptions, progressCallback?: (label: string) => void): Promise<void> {
     console.log("start CatalogSyncService.sync:");
+    if (progressCallback) {
+      progressCallback("sync catalogs");
+    }
     await Promise.all(options.catalogs.map((catalog: CatalogType) => this.syncSingleCatalog(catalog)));
   }
 
-  private async syncSingleCatalog(catalog: CatalogType): Promise<void> {
+  private async syncSingleCatalog(catalog: CatalogType, progressCallback?: (label: string) => void): Promise<void> {
     console.log("  -> start CatalogSyncService.syncSingleCatalog", catalog);
+    if (progressCallback) {
+      progressCallback(`sync ${catalog}`);
+    }
     let items: Promise<Array<string>>;
     switch (catalog) {
       case "AbilityWords":

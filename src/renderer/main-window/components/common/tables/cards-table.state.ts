@@ -1,4 +1,4 @@
-import {  CardSelectDto } from "../../../../common/dto";
+import {  CardSelectDto } from "../../../../../common/dto";
 
 export interface CardsTableState {
   cards: Array<CardSelectDto>;

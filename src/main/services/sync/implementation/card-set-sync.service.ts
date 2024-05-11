@@ -15,8 +15,12 @@ export class CardSetSyncService implements ICardSetSyncService {
     this.cardSetRepository = cardSetRepository;
   }
 
-  public async sync(options: CardSetSyncOptions): Promise<void> {
+  public async sync(options: CardSetSyncOptions, progressCallback?: (label: string) => void): Promise<void> {
     console.log("start CardSetSyncService.sync");
+    if (progressCallback) {
+      progressCallback("Sync Sets");
+    }
+
     let sets: Promise<Array<ScryfallCardSet>>;
     if (options.code == null) {
       sets = Sets.all();

@@ -16,12 +16,15 @@ export class CardSyncService implements ICardSyncService {
     this.cardRepository = cardRepository;
   }
 
-  public async sync(options: CardSyncOptions): Promise<void> {
+  public async sync(options: CardSyncOptions, progressCallback?: (label: string) => void): Promise<void> {
     console.log("start CardSyncService.sync");
+    if (progressCallback) {
+      progressCallback("Sync cards");
+    }
     // TODO: check if all required master data is available
     const cards: Array<ScryfallCard> = new Array<ScryfallCard>();
     const emitter = Cards.search("e=" + options.setCode, { include_extras: true, include_variations: true, unique: "prints" });
-    // T// FEATURE replace scryfall-sdk:  sdk is not returning total number of results when querying, so we would never be able to show process
+    // FEATURE replace scryfall-sdk:  sdk is not returning total number of results when querying, so we would never be able to show process
     // consider adding required parts of scrfall-sdk to application
     // emitter.addListener("data", (card: ScryfallCard) => {
     //   cards.push(card);

@@ -1,9 +1,9 @@
 import * as React from "react";
 import { CardsTableState } from "./cards-table.state";
 import { Props } from "@blueprintjs/core";
-import { CardSelectDto, SymbologySelectDto } from "../../../../common/dto";
+import { CardSelectDto, SymbologySelectDto } from "../../../../../common/dto";
 import { Cell, CellProps, CellRenderer, Column, Table2 } from "@blueprintjs/table";
-import { CardQueryOptions, IQueryOrSyncParam } from "../../../..//common/ipc-params";
+import { CardQueryOptions, IQueryOrSyncParam } from "../../../../../common/ipc-params";
 
 
 export class CardsTable extends React.PureComponent<Props, CardsTableState> {

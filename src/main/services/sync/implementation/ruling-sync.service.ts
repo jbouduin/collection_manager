@@ -1,8 +1,10 @@
-import { Ruling as ScryfallRuling, Rulings } from "scryfall-sdk";
-import { RulingSyncOptions } from "../../../../common/ipc-params";
-import { IRulingSyncService } from "../interfaces";
+import { Rulings, Ruling as ScryfallRuling } from "scryfall-sdk";
 import { inject, injectable } from "tsyringe";
+
+import { RulingSyncOptions } from "../../../../common/ipc-params";
+import { ProgressCallback } from "../../infra/implementation";
 import REPOTOKENS, { IRulingRepository } from "../../repo/interfaces";
+import { IRulingSyncService } from "../interfaces";
 
 @injectable()
 export class RulingSyncService implements IRulingSyncService{
@@ -13,7 +15,7 @@ export class RulingSyncService implements IRulingSyncService{
     this.rulingRepository = rulingRepository;
   }
 
-  public async sync(options: RulingSyncOptions, progressCallback?: (label: string) => void): Promise<void> {
+  public async sync(options: RulingSyncOptions, progressCallback?: ProgressCallback): Promise<void> {
     console.log("start RulingSyncService.sync");
     if (progressCallback) {
       progressCallback("sync rulings");

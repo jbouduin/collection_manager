@@ -6,7 +6,6 @@ import {
 } from "scryfall-sdk";
 import { inject, injectable } from "tsyringe";
 
-import chalk from "chalk";
 import { CardSelectDto, } from "../../../../common/dto";
 import { CardColorType, CardLegality, GameFormat, ImageType } from "../../../../common/enums";
 import { CardQueryOptions } from "../../../../common/ipc-params/card-query.options";
@@ -16,6 +15,7 @@ import ADAPTTOKENS, {
   ICardGameAdapter, ICardImageAdapter, ICardKeywordAdapter, ICardMultiverseIdAdapter,
   ICardfaceAdapter, ICardfaceColorMapAdapter, ICardfaceImageAdapter
 } from "../../adapt/interfaces";
+import { ProgressCallback } from "../../infra/implementation";
 import INFRATOKENS, { IDatabaseService } from "../../infra/interfaces";
 import { ICardRepository } from "../interfaces";
 import { BaseRepository } from "./base.repository";
@@ -88,19 +88,19 @@ export class CardRepository extends BaseRepository implements ICardRepository {
         .execute();
     }
   }
-  public async sync(cards: Array<ScryfallCard>): Promise<void> {
-    console.log("start CardRepository.sync:");
+  public async sync(cards: Array<ScryfallCard>, progressCallback?: ProgressCallback): Promise<void> {
+    const total = cards.length;
+    let cnt = 0;
     return Promise
-      .all(cards.map((card: ScryfallCard) => this.syncSingleCard(card)))
+      .all(cards.map((card: ScryfallCard) =>         this.syncSingleCard(card, ++cnt, total, progressCallback)))
       .then(() => Promise.resolve());
   }
 
   //#endregion
 
   //#region private sync methods ----------------------------------------------
-  private async syncSingleCard(card: ScryfallCard): Promise<void> {
+  private async syncSingleCard(card: ScryfallCard, cnt: number, total: number, progressCallback?: ProgressCallback): Promise<void> {
     return this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
-      console.log("  -> start sync card", card.id, "(" + card.name + ")");
       const filter: ExpressionOrFactory<DatabaseSchema, "card", SqlBool> = (eb) => eb("card.id", "=", card.id);
       const queryExisting: Promise<{ id: string }> = trx
         .selectFrom("card")
@@ -111,12 +111,18 @@ export class CardRepository extends BaseRepository implements ICardRepository {
       const insertOrUpdate: Promise<InsertResult | UpdateResult> = queryExisting.then((queryResult: { id: string }) => {
         let result: Promise<InsertResult | UpdateResult>;
         if (queryResult) {
+          if (progressCallback) {
+            progressCallback(`Updating ${card.name} (${cnt}/${total})`);
+          }
           result = trx.updateTable("card")
             .set(this.cardAdapter.toUpdate(card))
             .where(filter)
             .executeTakeFirstOrThrow();
 
         } else {
+          if (progressCallback) {
+            progressCallback(`Inserting ${card.name} (${cnt}/${total})`);
+          }
           result = trx.insertInto("card")
             .values(this.cardAdapter.toInsert(card))
             .executeTakeFirstOrThrow();
@@ -140,10 +146,9 @@ export class CardRepository extends BaseRepository implements ICardRepository {
         ])
       ); //.then(() => Promise.resolve())
     }).then(
-      () => console.log("    -> end sync card", card.id, "(" + card.name + "):", chalk.green("succes")),
+      null,
       (reason) => {
-        // LATER: remove chalk dependency
-        console.log("    -> end sync card", card.id, "(" + card.name + "):", chalk.red("failure"));
+
         console.log(reason);
       }
     );

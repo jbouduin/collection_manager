@@ -5,6 +5,7 @@ import { inject, injectable } from "tsyringe";
 import { SymbologySelectDto } from "../../../../common/dto";
 import { DatabaseSchema, Symbology, SymbologyAlternative, SymbologyColorMap } from "../../../database/schema";
 import ADAPTTOKENS, { ISymbologyAdapter, ISymbologyAlternativeAdapter, ISymbologyColorMapAdapter } from "../../adapt/interfaces";
+import { ProgressCallback } from "../../infra/implementation";
 import INFRATOKENS, { IDatabaseService } from "../../infra/interfaces";
 import { ISymbologyRepository } from "../interfaces";
 import { BaseRepository } from "./base.repository";
@@ -50,9 +51,20 @@ export class SymbologyRepository extends BaseRepository implements ISymbologyRep
   }
 
   // TODO remove items that are not on the server anymore or at least mark them
-  public async sync(symbols: Array<CardSymbol>): Promise<void> {
+  public async sync(symbols: Array<CardSymbol>, progressCallback: ProgressCallback): Promise<void> {
+    const total: number = symbols.length;
+    if (progressCallback) {
+      progressCallback(`Retrieved ${total} card symbols`);
+    }
+    // TODO because this one large transaction, the splash screen seems not to be updating until the commit at the end
+    let cnt = 0;
     return this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
       symbols.forEach(async (symbol: CardSymbol) => {
+        cnt++;
+        console.log(`Synchronizing ${symbol.symbol} ${cnt}/${total}`)
+        if (progressCallback) {
+          progressCallback(`Synchronizing ${symbol.symbol} ${cnt}/${total}`);
+        }
         const existing = trx.selectFrom("symbology")
           .select("symbology.id")
           .where("symbology.id", "=", symbol.symbol)

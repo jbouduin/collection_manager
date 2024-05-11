@@ -3,6 +3,7 @@ import { inject, injectable } from "tsyringe";
 
 import { CatalogType } from "../../../../common/enums";
 import { CatalogSyncOptions } from "../../../../common/ipc-params";
+import { ProgressCallback } from "../../infra/implementation";
 import REPOTOKENS, { ICatalogRepository } from "../../repo/interfaces";
 import { ICatalogSyncService } from "../interfaces";
 
@@ -17,7 +18,7 @@ export class CatalogSyncService implements ICatalogSyncService {
     this.catalogRepository = catalogRepository;
   }
 
-  public async sync(options: CatalogSyncOptions, progressCallback?: (label: string) => void): Promise<void> {
+  public async sync(options: CatalogSyncOptions, progressCallback?: ProgressCallback): Promise<void> {
     console.log("start CatalogSyncService.sync:");
     if (progressCallback) {
       progressCallback("sync catalogs");
@@ -25,7 +26,7 @@ export class CatalogSyncService implements ICatalogSyncService {
     await Promise.all(options.catalogs.map((catalog: CatalogType) => this.syncSingleCatalog(catalog)));
   }
 
-  private async syncSingleCatalog(catalog: CatalogType, progressCallback?: (label: string) => void): Promise<void> {
+  private async syncSingleCatalog(catalog: CatalogType, progressCallback?: ProgressCallback): Promise<void> {
     console.log("  -> start CatalogSyncService.syncSingleCatalog", catalog);
     if (progressCallback) {
       progressCallback(`sync ${catalog}`);

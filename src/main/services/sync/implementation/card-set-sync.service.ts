@@ -1,6 +1,8 @@
 import { Set as ScryfallCardSet, Sets } from "scryfall-sdk";
 import { inject, injectable } from "tsyringe";
+
 import { CardSetSyncOptions } from "../../../../common/ipc-params";
+import { ProgressCallback } from "../../infra/implementation";
 import REPOTOKENS, { ICardSetRepository } from "../../repo/interfaces";
 import { ICardSetSyncService } from "../interfaces";
 
@@ -15,7 +17,7 @@ export class CardSetSyncService implements ICardSetSyncService {
     this.cardSetRepository = cardSetRepository;
   }
 
-  public async sync(options: CardSetSyncOptions, progressCallback?: (label: string) => void): Promise<void> {
+  public async sync(options: CardSetSyncOptions, progressCallback?: ProgressCallback): Promise<void> {
     console.log("start CardSetSyncService.sync");
     if (progressCallback) {
       progressCallback("Sync Sets");

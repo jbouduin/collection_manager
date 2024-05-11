@@ -1,11 +1,11 @@
-import { Button, Card, Classes, ContextMenu, Props, Tree, TreeNodeInfo } from "@blueprintjs/core";
+import { Button, Card, Classes, ContextMenu, Menu, MenuItem, Props, Tree, TreeNodeInfo } from "@blueprintjs/core";
 import * as React from "react";
 
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { CardSetSelectDto } from "../../../../common/dto";
 import { CardSetSyncOptions, CardSyncOptions, CatalogSyncOptions, IQueryOrSyncParam } from "../../../../common/ipc-params";
-import { DatabaseViewState } from "./database-view.state";
 import { CardsTable } from "../common/tables/cards-table";
+import { DatabaseViewState } from "./database-view.state";
 
 
 export class DatabaseView extends React.Component<Props, DatabaseViewState> {
@@ -176,7 +176,7 @@ export class DatabaseView extends React.Component<Props, DatabaseViewState> {
         const node: TreeNodeInfo<CardSetSelectDto> = {
           id: item.id,
           label: (
-            <ContextMenu {...this.contentSizing} content={<div>{item.name}</div>}>
+            <ContextMenu  {...this.props} content={<Menu><MenuItem text="Synchronize" onClick={(e) => { e.preventDefault(); this.synchronizeSet(item.code); }}/></Menu>}>
               {item.name}
             </ContextMenu>
           ),
@@ -187,6 +187,14 @@ export class DatabaseView extends React.Component<Props, DatabaseViewState> {
         };
         return node;
       });
+  }
+
+  private synchronizeSet(code: string): void {
+    const params: IQueryOrSyncParam<CardSyncOptions> = {
+      type: "Card",
+      options: { setCode: code }
+    };
+    window.ipc.sync(params);
   }
 
   private forNodeAtPath(

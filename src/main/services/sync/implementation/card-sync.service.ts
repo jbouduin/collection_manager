@@ -1,7 +1,9 @@
 import fs from "fs";
 import { Cards, Card as ScryfallCard } from "scryfall-sdk";
 import { inject, injectable } from "tsyringe";
+
 import { CardSyncOptions } from "../../../../common/ipc-params";
+import { ProgressCallback } from "../../infra/implementation";
 import REPOTOKENS, { ICardRepository } from "../../repo/interfaces";
 import { ICardSyncService } from "../interfaces";
 
@@ -16,7 +18,7 @@ export class CardSyncService implements ICardSyncService {
     this.cardRepository = cardRepository;
   }
 
-  public async sync(options: CardSyncOptions, progressCallback?: (label: string) => void): Promise<void> {
+  public async sync(options: CardSyncOptions, progressCallback?: ProgressCallback): Promise<void> {
     console.log("start CardSyncService.sync");
     if (progressCallback) {
       progressCallback("Sync cards");
@@ -37,7 +39,7 @@ export class CardSyncService implements ICardSyncService {
       }
       console.log("Emitted %d cards", cards.length);
       console.log("Found %d cards", all.length);
-      return this.cardRepository.sync(all);
+      return this.cardRepository.sync(all, progressCallback);
     });
   }
 }

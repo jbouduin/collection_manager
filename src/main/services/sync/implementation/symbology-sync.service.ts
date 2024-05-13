@@ -1,7 +1,9 @@
 import { CardSymbol, Symbology } from "scryfall-sdk";
 import { inject, injectable } from "tsyringe";
 
-import { ProgressCallback } from "../../infra/implementation";
+import { SymbologySelectDto } from "../../../../common/dto";
+import { ProgressCallback } from "../../../../common/ipc-params";
+import INFRATOKENS, { IImageCacheService } from "../../infra/interfaces";
 import REPOTOKENS, { ISymbologyRepository } from "../../repo/interfaces";
 import { ISymbologySyncService } from "../interfaces/symbology-sync.service";
 
@@ -9,18 +11,32 @@ import { ISymbologySyncService } from "../interfaces/symbology-sync.service";
 export class SymbologySyncService implements ISymbologySyncService {
 
   private readonly symbologyRepository: ISymbologyRepository;
+  private readonly imageCacheService: IImageCacheService;
 
   public constructor(
-    @inject(REPOTOKENS.SymbologyRepository) symbologyRepository: ISymbologyRepository
-  ) {
+    @inject(INFRATOKENS.ImageCacheService) imageCacheService: IImageCacheService,
+    @inject(REPOTOKENS.SymbologyRepository) symbologyRepository: ISymbologyRepository) {
+    this.imageCacheService = imageCacheService;
     this.symbologyRepository = symbologyRepository;
   }
 
-  public async sync(options: null, progressCallback?: ProgressCallback): Promise<void> {
-    console.log("start SymboloySyncService.sync");
+  public async sync(_options: null, progressCallback?: ProgressCallback): Promise<void> {
+    console.log("start SymbologySyncService.sync");
     if (progressCallback) {
-      progressCallback("start sync card symbols");
+      progressCallback("Synchronizing card symbols");
     }
-    return Symbology.all().then((all: Array<CardSymbol>) => this.symbologyRepository.sync(all, progressCallback));
+    return Symbology.all()
+      .then((all: Array<CardSymbol>) => this.symbologyRepository.sync(all, progressCallback))
+      .then(() => this.symbologyRepository.getAll()
+        .then((allCardSymbols: Array<SymbologySelectDto>) => {
+          console.log("got all symbols");
+          return Promise.all(allCardSymbols.map((cardSymbol: SymbologySelectDto) => {
+            if (progressCallback) {
+              progressCallback(`caching image for ${cardSymbol.symbology.id}`);
+            }
+            return this.imageCacheService.cacheSymbologyImage(cardSymbol);
+          }));
+        })
+      ).then(() => Promise.resolve());
   }
 }

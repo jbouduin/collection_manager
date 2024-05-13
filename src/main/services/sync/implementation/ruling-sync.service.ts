@@ -1,10 +1,10 @@
 import { Rulings, Ruling as ScryfallRuling } from "scryfall-sdk";
 import { inject, injectable } from "tsyringe";
 
-import { RulingSyncOptions } from "../../../../common/ipc-params";
-import { ProgressCallback } from "../../infra/implementation";
+import { ProgressCallback, RulingSyncOptions } from "../../../../common/ipc-params";
 import REPOTOKENS, { IRulingRepository } from "../../repo/interfaces";
 import { IRulingSyncService } from "../interfaces";
+
 
 @injectable()
 export class RulingSyncService implements IRulingSyncService{

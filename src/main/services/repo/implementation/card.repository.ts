@@ -9,23 +9,23 @@ import { inject, injectable } from "tsyringe";
 import { CardSelectDto, } from "../../../../common/dto";
 import { CardColorType, CardLegality, GameFormat, ImageType } from "../../../../common/enums";
 import { CardQueryOptions } from "../../../../common/ipc-params/card-query.options";
-import { DatabaseSchema } from "../../../../main/database/schema";
+import { Card, DatabaseSchema } from "../../../../main/database/schema";
 import ADAPTTOKENS, {
   ICardAdapter, ICardCardMapAdapter, ICardColorMapAdapter, ICardFormatLegalityAdapter,
   ICardGameAdapter, ICardImageAdapter, ICardKeywordAdapter, ICardMultiverseIdAdapter,
   ICardfaceAdapter, ICardfaceColorMapAdapter, ICardfaceImageAdapter
 } from "../../adapt/interfaces";
-import { ProgressCallback } from "../../infra/implementation";
-import INFRATOKENS, { IDatabaseService } from "../../infra/interfaces";
-import { ICardRepository } from "../interfaces";
+import INFRATOKENS, { IImageCacheService, IDatabaseService } from "../../infra/interfaces";
+import REPOTOKENS, { ICardRepository, ISymbologyRepository } from "../interfaces";
 import { BaseRepository } from "./base.repository";
+import { ProgressCallback } from "../../../../common/ipc-params";
 
 
 
 @injectable()
 export class CardRepository extends BaseRepository implements ICardRepository {
 
-  //#region Private readonly properties ---------------------------------------
+  //#region Private readonly properties: Adapters -----------------------------
   private readonly cardCardMapAdapter: ICardCardMapAdapter;
   private readonly cardColorMapAdapter: ICardColorMapAdapter;
   private readonly cardfaceAdapter: ICardfaceAdapter;
@@ -37,6 +37,11 @@ export class CardRepository extends BaseRepository implements ICardRepository {
   private readonly cardKeywordAdapter: ICardKeywordAdapter;
   private readonly cardMultiverseIdAdapter: ICardMultiverseIdAdapter;
   private readonly cardAdapter: ICardAdapter;
+  //#endregion
+
+  //#region Private readonly properties: Other --------------------------------
+  private readonly imageCacheService: IImageCacheService;
+  private readonly symbologyRepository: ISymbologyRepository;
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
@@ -53,6 +58,8 @@ export class CardRepository extends BaseRepository implements ICardRepository {
     @inject(ADAPTTOKENS.CardKeywordAdapter) cardKeywordAdapter: ICardKeywordAdapter,
     @inject(ADAPTTOKENS.CardMultiverseIdAdapter) cardMultiverseIdAdapter: ICardMultiverseIdAdapter,
     @inject(ADAPTTOKENS.CardAdapter) cardAdapter: ICardAdapter,
+    @inject(INFRATOKENS.ImageCacheService) imageCacheService: IImageCacheService,
+    @inject(REPOTOKENS.SymbologyRepository) symbologyRepository: ISymbologyRepository
   ) {
     super(databaseService);
     this.cardCardMapAdapter = cardCardMapAdapter;
@@ -66,33 +73,49 @@ export class CardRepository extends BaseRepository implements ICardRepository {
     this.cardKeywordAdapter = cardKeywordAdapter;
     this.cardMultiverseIdAdapter = cardMultiverseIdAdapter;
     this.cardAdapter = cardAdapter;
+    this.imageCacheService = imageCacheService;
+    this.symbologyRepository = symbologyRepository;
   }
   //#endregion
 
   //#region ICardRepository methods -------------------------------------------
   public async getCardById(cardId: string): Promise<CardSelectDto> {
-    return this.database.selectFrom("card").selectAll().where("card.id", "=", cardId).executeTakeFirst();
+    return this.database
+      .selectFrom("card")
+      .selectAll()
+      .where("card.id", "=", cardId)
+      .executeTakeFirst()
+      .then((card: Card) => this.convertCardToCardSelectDto(card));
   }
 
   public async getWithOptions(options: CardQueryOptions): Promise<Array<CardSelectDto>> {
     console.log(options);
+    let cardQueryResult: Promise<Array<Card>>;
     if (options.cardId) {
-      return this.database.selectFrom("card").selectAll().where("card.id", "=", options.cardId).execute();
+      cardQueryResult = this.database
+        .selectFrom("card")
+        .selectAll()
+        .where("card.id", "=", options.cardId).execute();
     }
-    else {
-      return this.database
+    else if (options.setIds) {
+      cardQueryResult = this.database
         .selectFrom("card")
         .selectAll()
         .leftJoin("card_set", "card_set.id", "card.set_id")
         .selectAll("card")
+        .where("card.set_id", "in", options.setIds)
         .execute();
     }
+    return cardQueryResult.then((cards: Array<Card>) =>
+      cards.map((card: Card) => this.convertCardToCardSelectDto(card))
+    );
   }
+
   public async sync(cards: Array<ScryfallCard>, progressCallback?: ProgressCallback): Promise<void> {
     const total = cards.length;
     let cnt = 0;
     return Promise
-      .all(cards.map((card: ScryfallCard) =>         this.syncSingleCard(card, ++cnt, total, progressCallback)))
+      .all(cards.map((card: ScryfallCard) => this.syncSingleCard(card, ++cnt, total, progressCallback)))
       .then(() => Promise.resolve());
   }
 
@@ -445,5 +468,23 @@ export class CardRepository extends BaseRepository implements ICardRepository {
       }
     }
   }
+  //#endregion
+
+  //#region private get related methods ---------------------------------------
+  private convertCardToCardSelectDto(card: Card): CardSelectDto {
+    let manaCostArray: Array<string>;
+    if (card.mana_cost?.length > 0) {
+      const splittedCellValue = card.mana_cost.split("}");
+      splittedCellValue.pop();
+      manaCostArray = splittedCellValue.map((s: string, i: number) => i < splittedCellValue.length ? s + "}" : s);
+    } else {
+      manaCostArray = new Array<string>();
+    }
+    return {
+      card: card,
+      manaCostArray: manaCostArray
+    };
+  }
+
   //#endregion
 }

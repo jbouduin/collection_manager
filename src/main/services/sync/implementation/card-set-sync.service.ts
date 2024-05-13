@@ -1,8 +1,7 @@
 import { Set as ScryfallCardSet, Sets } from "scryfall-sdk";
 import { inject, injectable } from "tsyringe";
 
-import { CardSetSyncOptions } from "../../../../common/ipc-params";
-import { ProgressCallback } from "../../infra/implementation";
+import { CardSetSyncOptions, ProgressCallback } from "../../../../common/ipc-params";
 import REPOTOKENS, { ICardSetRepository } from "../../repo/interfaces";
 import { ICardSetSyncService } from "../interfaces";
 

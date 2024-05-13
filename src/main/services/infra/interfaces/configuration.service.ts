@@ -1,5 +1,6 @@
 export interface IConfigurationService {
-  getDataBaseName(): string;
-  getDataDirectory(): string;
-  isNewInstallation(): boolean;
+  readonly isNewInstallation: boolean;
+  readonly cacheDirectory: string;
+  readonly dataBaseName: string;
+  readonly dataDirectory: string;
 }

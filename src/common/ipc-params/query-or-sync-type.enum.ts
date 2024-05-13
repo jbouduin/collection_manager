@@ -5,7 +5,9 @@ enum EQueryOrSyncType {
   Color,
   Language,
   Ruling,
-  Symbology
+  Symbology,
+  // NOW: type of cached svg should be in the options
+  SymbologyCachedSvg
 }
 
 export type QueryOrSyncType = keyof typeof EQueryOrSyncType;

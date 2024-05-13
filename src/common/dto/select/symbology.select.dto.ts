@@ -11,3 +11,8 @@ export interface SymbologySelectDto {
 //   colors: Array<SymbologyColorMap>;
 //   alternatives: Array<SymbologyAlternative>;
 // }
+// or
+// export type SymbologySelectDto = Symbology & {
+//   colors: Array<SymbologyColorMap>;
+//   alternatives: Array<SymbologyAlternative>;
+// }

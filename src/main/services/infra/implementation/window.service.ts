@@ -87,7 +87,7 @@ export class WindowService implements IWindowService {
     });
 
     splashWindow.on("ready-to-show", () => {
-      if (this.configurationService.isNewInstallation()) {
+      if (this.configurationService.isNewInstallation) {
         const firsTimeWindow = this.createFirstTimeWindow();
         firsTimeWindow.on("closed", () => splashWindow.show());
       } else {

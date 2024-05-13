@@ -2,11 +2,11 @@ import fs from "fs";
 import { Cards, Card as ScryfallCard } from "scryfall-sdk";
 import { inject, injectable } from "tsyringe";
 
-import { CardSyncOptions } from "../../../../common/ipc-params";
-import { ProgressCallback } from "../../infra/implementation";
+import { CardSyncOptions, ProgressCallback } from "../../../../common/ipc-params";
 import REPOTOKENS, { ICardRepository } from "../../repo/interfaces";
 import { ICardSyncService } from "../interfaces";
 
+// LATER move the sync code from the repositories here
 @injectable()
 export class CardSyncService implements ICardSyncService {
 

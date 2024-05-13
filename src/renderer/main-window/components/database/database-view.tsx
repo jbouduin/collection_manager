@@ -1,9 +1,9 @@
-import { Button, Card, Classes, ContextMenu, Menu, MenuItem, Props, Tree, TreeNodeInfo } from "@blueprintjs/core";
+import { Card, Classes, ContextMenu, Menu, MenuItem, Props, Tree, TreeNodeInfo } from "@blueprintjs/core";
 import * as React from "react";
 
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { CardSetSelectDto } from "../../../../common/dto";
-import { CardSetSyncOptions, CardSyncOptions, CatalogSyncOptions, IQueryOrSyncParam } from "../../../../common/ipc-params";
+import { CardSyncOptions, IQueryOrSyncParam } from "../../../../common/ipc-params";
 import { CardsTable } from "../common/tables/cards-table";
 import { DatabaseViewState } from "./database-view.state";
 
@@ -15,15 +15,15 @@ export class DatabaseView extends React.Component<Props, DatabaseViewState> {
   //#endregion
 
   //#region Event handlers ----------------------------------------------------
-  private handleNodeCollapse(node: TreeNodeInfo<CardSetSelectDto>, nodePath: Array<number>, e: React.MouseEvent<HTMLElement>): void {
+  private handleNodeCollapse(_node: TreeNodeInfo<CardSetSelectDto>, nodePath: Array<number>, _e: React.MouseEvent<HTMLElement>): void {
     this.forNodeAtPath(this.state.nodes, nodePath, (node => node.isExpanded = false));
   }
 
-  private handleNodeClick(node: TreeNodeInfo<CardSetSelectDto>, nodePath: Array<number>, e: React.MouseEvent<HTMLElement>): void {
+  private handleNodeClick(_node: TreeNodeInfo<CardSetSelectDto>, nodePath: Array<number>, _e: React.MouseEvent<HTMLElement>): void {
     this.setNodeSelected(this.state.nodes, nodePath);
   }
 
-  private handleNodeExpand(node: TreeNodeInfo<CardSetSelectDto>, nodePath: Array<number>, e: React.MouseEvent<HTMLElement, MouseEvent>): void {
+  private handleNodeExpand(_node: TreeNodeInfo<CardSetSelectDto>, nodePath: Array<number>, _e: React.MouseEvent<HTMLElement, MouseEvent>): void {
     this.forNodeAtPath(this.state.nodes, nodePath, (node => node.isExpanded = true));
   }
   //#endregion
@@ -48,11 +48,12 @@ export class DatabaseView extends React.Component<Props, DatabaseViewState> {
 
   //#region Public methods ----------------------------------------------------
   public render(): React.ReactNode {
-    const chromeVersion = window.versions.chrome();
-    const nodeVersion = window.versions.node();
-    const elecVersion = window.versions.electron();
+    // LATER Move to about dialog
+    // const chromeVersion = window.versions.chrome();
+    // const nodeVersion = window.versions.node();
+    // const elecVersion = window.versions.electron();
     const compact = true;
-    const ping = "waiting for ping";
+
     return (
       <div>
         <PanelGroup direction="horizontal">
@@ -68,81 +69,7 @@ export class DatabaseView extends React.Component<Props, DatabaseViewState> {
           </Panel>
           <PanelResizeHandle />
           <Panel>
-            <Card className={this.props.className}>
-              <div>
-                <h1>{this.state.currentSelectedSets?.map(x => x.name).join(", ") ?? "No sets selected"}</h1>
-                <h2>💖 Hello from React - Blueprint desktop!</h2>
-                <p>
-                  This app is using Chrome ({chromeVersion}), Node.js ({nodeVersion}), and Electron ({elecVersion})
-                </p>
-                <p>
-                  {ping}
-                </p>
-
-                <h3>Sync</h3>
-                <Button text="Sync some catalogs" onClick={() => {
-                  const param: IQueryOrSyncParam<CatalogSyncOptions> = {
-                    type: "Catalog",
-                    options: { catalogs: ["AbilityWords", "ArtifactTypes", "LandTypes"] }
-                  };
-                  window.ipc.sync(param);
-                }} />
-                <Button text="Sync symbology" onClick={() => {
-                  const param: IQueryOrSyncParam<undefined> = {
-                    type: "Symbology",
-                    options: undefined
-                  };
-                  window.ipc.sync(param);
-                }} />
-                <Button text="Sync cardsets" onClick={() => {
-                  const param: IQueryOrSyncParam<CardSetSyncOptions> = {
-                    type: "CardSet",
-                    options: { code: null }
-                  };
-                  window.ipc.sync(param);
-                }} />
-                <Button text="Sync UDS" onClick={() => {
-                  const param: IQueryOrSyncParam<CardSyncOptions> = {
-                    type: "Card",
-                    options: { setCode: "UDS" }
-                  };
-                  window.ipc.sync(param);
-                }} />
-                <Button text="Sync MKM" onClick={() => {
-                  const param: IQueryOrSyncParam<CardSyncOptions> = {
-                    type: "Card",
-                    options: { setCode: "MKM" }
-                  };
-                  window.ipc.sync(param);
-                }} />
-                <Button text="Sync SOI" onClick={() => {
-                  const param: IQueryOrSyncParam<CardSyncOptions> = {
-                    type: "Card",
-                    options: { setCode: "SOI" }
-                  };
-                  window.ipc.sync(param);
-                }} />
-                <Button text="Sync TOTP" onClick={() => {
-                  const param: IQueryOrSyncParam<CardSyncOptions> = {
-                    type: "Card",
-                    options: { setCode: "TOTP" }
-                  };
-                  window.ipc.sync(param);
-                }} />
-
-                <h3>Query</h3>
-                <Button text="Query Artifact types" onClick={() => window.ipc.query({ type: "Catalog", options: null })} />
-                <Button text="Query Sets" onClick={() => window.ipc.query({ type: "CardSet", options: null })} />
-                <Button text="Query Language" onClick={() => window.ipc.query({ type: "Language", options: null })} />
-                <Button text="Query Colors" onClick={() => window.ipc.query({ type: "Color", options: null })} />
-                <Button text="Query Symbology" onClick={() => window.ipc.query({ type: "Symbology", options: null })} />
-                <Button text="Query or Sync ruling" onClick={() => window.ipc.queryOrSync({ type: "Ruling", options: { cardId: "bd6e71a1-713e-4eca-bd65-9f0638c16794" } }).then((result) => console.log(result))} />
-                <h3>Table</h3>
-                <CardsTable {...this.props}></CardsTable>
-
-              </div >
-            </Card>
-
+              <CardsTable {...this.props}></CardsTable>
           </Panel>
           <PanelResizeHandle />
           <Panel defaultSize={20}>
@@ -176,7 +103,7 @@ export class DatabaseView extends React.Component<Props, DatabaseViewState> {
         const node: TreeNodeInfo<CardSetSelectDto> = {
           id: item.id,
           label: (
-            <ContextMenu  {...this.props} content={<Menu><MenuItem text="Synchronize" onClick={(e) => { e.preventDefault(); this.synchronizeSet(item.code); }}/></Menu>}>
+            <ContextMenu  {...this.props} content={<Menu><MenuItem text="Synchronize" onClick={(e) => { e.preventDefault(); this.synchronizeSet(item.code); }} /></Menu>}>
               {item.name}
             </ContextMenu>
           ),

@@ -2,8 +2,7 @@ import { Catalog } from "scryfall-sdk";
 import { inject, injectable } from "tsyringe";
 
 import { CatalogType } from "../../../../common/enums";
-import { CatalogSyncOptions } from "../../../../common/ipc-params";
-import { ProgressCallback } from "../../infra/implementation";
+import { CatalogSyncOptions, ProgressCallback } from "../../../../common/ipc-params";
 import REPOTOKENS, { ICatalogRepository } from "../../repo/interfaces";
 import { ICatalogSyncService } from "../interfaces";
 

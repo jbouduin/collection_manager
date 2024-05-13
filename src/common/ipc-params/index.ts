@@ -17,3 +17,4 @@ export * from "./ruling-sync.options";
 export * from "./ipc-channel.enum";
 
 export type QueryOrSyncOptions = CardSetSyncOptions | CardSyncOptions | CatalogSyncOptions | RulingQueryOrSyncOptions | RulingSyncOptions | CardQueryOptions;
+export type ProgressCallback = (value: string) => void;

@@ -63,6 +63,8 @@ export class IpcQueryService implements IIpcQueryService {
         break;
       case "Symbology":
         return this.symbologyRepository.getAll();
+      case "SymbologyCachedSvg":
+        return this.symbologyRepository.getAllWithCachedSvg();
       case "Ruling":
         // TODO we should not do this
         break;

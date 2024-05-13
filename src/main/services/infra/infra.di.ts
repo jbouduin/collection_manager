@@ -1,15 +1,20 @@
 
 import { Lifecycle, container } from "tsyringe";
 
-import { DatabaseService, IpcDispatcherService, IpcQueryService, IpcSyncService } from "./implementation";
-import INFRATOKENS, { IConfigurationService, IDatabaseService, IIpcDispatcherService, IIpcQueryOrSyncService, IIpcQueryService, IIpcSyncService, IWindowService } from "./interfaces";
-import { IpcQueryOrSyncService } from "./implementation/ipc-query-or-sync.service";
+import { ImageCacheService } from "./implementation/image-cache.service";
 import { ConfigurationService } from "./implementation/configuration.service";
+import { DatabaseService } from "./implementation/database.service";
+import { IpcDispatcherService } from "./implementation/ipc-dispatcher.service";
+import { IpcQueryOrSyncService } from "./implementation/ipc-query-or-sync.service";
+import { IpcQueryService } from "./implementation/ipc-query.service";
+import { IpcSyncService } from "./implementation/ipc-sync.service";
 import { WindowService } from "./implementation/window.service";
+import INFRATOKENS, { IImageCacheService, IConfigurationService, IDatabaseService, IIpcDispatcherService, IIpcQueryOrSyncService, IIpcQueryService, IIpcSyncService, IWindowService } from "./interfaces";
 
 export class InfraDi {
 
   public static registerInfrastructure() {
+    container.register<IImageCacheService>(INFRATOKENS.ImageCacheService, { useClass: ImageCacheService }, { lifecycle: Lifecycle.Singleton });
     container.register<IConfigurationService>(INFRATOKENS.ConfigurationService, { useClass: ConfigurationService }, { lifecycle: Lifecycle.Singleton });
     container.register<IDatabaseService>(INFRATOKENS.DatabaseService, { useClass: DatabaseService }, { lifecycle: Lifecycle.Singleton });
     container.register<IIpcDispatcherService>(INFRATOKENS.IpcDispatcherService, { useClass: IpcDispatcherService }, { lifecycle: Lifecycle.Singleton });

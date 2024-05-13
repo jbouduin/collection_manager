@@ -3,10 +3,10 @@ import { CardSymbol, Color as ScryfallColor } from "scryfall-sdk";
 import { inject, injectable } from "tsyringe";
 
 import { SymbologySelectDto } from "../../../../common/dto";
+import { ProgressCallback } from "../../../../common/ipc-params";
 import { DatabaseSchema, Symbology, SymbologyAlternative, SymbologyColorMap } from "../../../database/schema";
 import ADAPTTOKENS, { ISymbologyAdapter, ISymbologyAlternativeAdapter, ISymbologyColorMapAdapter } from "../../adapt/interfaces";
-import { ProgressCallback } from "../../infra/implementation";
-import INFRATOKENS, { IDatabaseService } from "../../infra/interfaces";
+import INFRATOKENS, { IDatabaseService, IImageCacheService } from "../../infra/interfaces";
 import { ISymbologyRepository } from "../interfaces";
 import { BaseRepository } from "./base.repository";
 
@@ -14,40 +14,50 @@ import { BaseRepository } from "./base.repository";
 @injectable()
 export class SymbologyRepository extends BaseRepository implements ISymbologyRepository {
 
+  private imageCacheService: IImageCacheService;
   private symbologyAdapter: ISymbologyAdapter;
   private symbologyAlternativeAdapter: ISymbologyAlternativeAdapter;
   private symbologyColorMapAdapter: ISymbologyColorMapAdapter;
+  private allSymbologies: Map<string, SymbologySelectDto>;
+
 
   public constructor(
     @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
+    @inject(INFRATOKENS.ImageCacheService) imageCacheService: IImageCacheService,
     @inject(ADAPTTOKENS.SymbologyAdapter) symbologyAdapter: ISymbologyAdapter,
     @inject(ADAPTTOKENS.SymbologyAlternativeAdapter) symbologyAlternativeAdapter: ISymbologyAlternativeAdapter,
     @inject(ADAPTTOKENS.SymbologyColorMapAdapter) symbologyColorMapAdapter: ISymbologyColorMapAdapter) {
     super(databaseService);
+    this.imageCacheService = imageCacheService;
     this.symbologyAdapter = symbologyAdapter;
     this.symbologyAlternativeAdapter = symbologyAlternativeAdapter;
     this.symbologyColorMapAdapter = symbologyColorMapAdapter;
   }
 
   public async getAll(): Promise<Array<SymbologySelectDto>> {
+    if (this.allSymbologies?.size > 0) {
+      return Promise.resolve(Array.from(this.allSymbologies.values()));
+    } else {
+      return this.buildCache().then(() => Array.from(this.allSymbologies.values()));
+    }
+  }
 
-    const w = Promise.all([
-      this.database.selectFrom("symbology").selectAll().execute(),
-      this.database.selectFrom("symbology_color_map").selectAll().execute(),
-      this.database.selectFrom("symbology_alternative").selectAll().execute()
-    ])
-      .then((result: [Array<Symbology>, Array<SymbologyColorMap>, Array<SymbologyAlternative>]) => {
-        return result[0].map<SymbologySelectDto>((symbol: Symbology) => {
-          const dto: SymbologySelectDto = {
-            symbology: symbol,
-            alternatives: result[2].filter((alternative: SymbologyAlternative) => alternative.symbology_id == symbol.id),
-            colors: result[1].filter((color: SymbologyColorMap) => color.symbology_id == symbol.id)
-          };
-          return dto;
-        });
-      });
-    console.log(w);
-    return w;
+  public getAllWithCachedSvg(): Promise<Map<string, string>> {
+    return this.getAll().then(((cardSymbols: Array<SymbologySelectDto>) => {
+      const result = new Map<string, string>();
+      cardSymbols.forEach((cardSymbol: SymbologySelectDto) =>
+        result.set(cardSymbol.symbology.id, this.imageCacheService.getCardSymbolSvg(cardSymbol))
+      );
+      return result;
+    }));
+  }
+
+  public async getByid(id: string): Promise<SymbologySelectDto> {
+    if (this.allSymbologies?.size > 0) {
+      return Promise.resolve(this.allSymbologies.get(id));
+    } else {
+      return this.buildCache().then(() => this.allSymbologies.get(id));
+    }
   }
 
   // TODO remove items that are not on the server anymore or at least mark them
@@ -61,7 +71,6 @@ export class SymbologyRepository extends BaseRepository implements ISymbologyRep
     return this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
       symbols.forEach(async (symbol: CardSymbol) => {
         cnt++;
-        console.log(`Synchronizing ${symbol.symbol} ${cnt}/${total}`)
         if (progressCallback) {
           progressCallback(`Synchronizing ${symbol.symbol} ${cnt}/${total}`);
         }
@@ -144,5 +153,28 @@ export class SymbologyRepository extends BaseRepository implements ISymbologyRep
           .executeTakeFirstOrThrow();
       }
     });
+  }
+
+  private async buildCache(): Promise<void> {
+    if (!this.allSymbologies) {
+      this.allSymbologies = new Map<string, SymbologySelectDto>();
+    }
+
+    return Promise.all([
+      this.database.selectFrom("symbology").selectAll().execute(),
+      this.database.selectFrom("symbology_color_map").selectAll().execute(),
+      this.database.selectFrom("symbology_alternative").selectAll().execute()
+    ])
+      .then((result: [Array<Symbology>, Array<SymbologyColorMap>, Array<SymbologyAlternative>]) => {
+        result[0].forEach((symbol: Symbology) => {
+          const dto: SymbologySelectDto = {
+            symbology: symbol,
+            alternatives: result[2].filter((alternative: SymbologyAlternative) => alternative.symbology_id == symbol.id),
+            colors: result[1].filter((color: SymbologyColorMap) => color.symbology_id == symbol.id)
+          };
+          this.allSymbologies.set(symbol.id, dto);
+          // return dto;
+        });
+      });
   }
 }

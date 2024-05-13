@@ -2,7 +2,7 @@ import { Card as ScryfallCard } from "scryfall-sdk";
 
 import { CardSelectDto } from "../../../../common/dto";
 import { CardQueryOptions } from "../../../../common/ipc-params/card-query.options";
-import { ProgressCallback } from "../../infra/implementation";
+import { ProgressCallback } from "../../../../common/ipc-params";
 
 export interface ICardRepository {
   sync(cards: Array<ScryfallCard>, progressCallback?: ProgressCallback): Promise<void>;

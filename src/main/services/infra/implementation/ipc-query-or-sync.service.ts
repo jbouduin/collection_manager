@@ -1,6 +1,6 @@
 import { inject, injectable } from "tsyringe";
 
-import { RulingsByCardIdSelectDto } from "../../../../common/dto";
+import { CardSelectDto, RulingsByCardIdSelectDto } from "../../../../common/dto";
 import { IQueryOrSyncParam, QueryOrSyncOptions, RulingQueryOrSyncOptions } from "../../../../common/ipc-params";
 import { Card } from "../../../../main/database/schema";
 import REPOTOKENS, { ICardRepository, IRulingRepository } from "../../repo/interfaces";
@@ -33,7 +33,7 @@ export class IpcQueryOrSyncService implements IIpcQueryOrSyncService {
           .then((queryResult: RulingsByCardIdSelectDto) => {
             if (queryResult.length == 0) {
               return this.cardRepository.getCardById((params.options as RulingQueryOrSyncOptions).cardId)
-                .then((card: Card) => this.rulingSyncService.sync({ oracleId: card.oracle_id }))
+                .then((card: CardSelectDto) => this.rulingSyncService.sync({ oracleId: card.card.oracle_id }))
                 .then(() => this.rulingRepository.getByCardId((params.options as RulingQueryOrSyncOptions).cardId));
             } else {
               return queryResult;

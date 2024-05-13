@@ -32,7 +32,11 @@ body {
 }
 
 .main-panel {
-  flex:1
+  flex:1;
+}
+
+.cards-table-wrapper {
+  height: 100vh;
 }
 
 @media (prefers-color-scheme: dark) {

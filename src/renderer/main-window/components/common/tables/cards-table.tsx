@@ -45,7 +45,7 @@ export class CardsTable extends React.PureComponent<Props, CardsTableState> {
   public render(): React.JSX.Element {
     return (
       <div className="cards-table-wrapper">
-        <Table2 numRows={this.state?.cards?.length ?? 0}>
+        <Table2 {...this.props} numRows={this.state?.cards?.length ?? 0}>
           <Column name="Name" cellRenderer={this.textCellRenderer((card: CardSelectDto) => card.card.name)} />
           <Column name="Rarity" cellRenderer={this.textCellRenderer((card: CardSelectDto) => card.card.rarity)} />
           <Column name="Mana cost" cellRenderer={this.manaCostRenderer.bind(this)} />

@@ -28,10 +28,11 @@ const bootFunction = async (splashWindow: BrowserWindow) => {
   await container.resolve<IDatabaseService>(INFRATOKENS.DatabaseService)
     .connect("c:/data/new-assistant")
     .migrateToLatest(migrationContainer.resolve<MigrationProvider>(MIGRATOKENS.NewCustomMigrationProvider))
-    .then(() => migrationContainer.dispose())
-    // TODO this should only be done when new installation .then(() => container.resolve<ICatalogSyncService>(SYNCTOKENS.CatalogSyncService).sync({ catalogs: AllCatalogTypes }))
-    .then(() => container.resolve<ICardSetSyncService>(SYNCTOKENS.CardSetSyncService).sync({ code: null }, (label: string) => splashWindow.webContents.send("splash", label)));
+    .then(() => migrationContainer.dispose());
+    // TODO this should only be done when new installation
+    // .then(() => container.resolve<ICatalogSyncService>(SYNCTOKENS.CatalogSyncService).sync({ catalogs: AllCatalogTypes }))
     // TODO make those things setting dependent
+    // .then(() => container.resolve<ICardSetSyncService>(SYNCTOKENS.CardSetSyncService).sync({ code: null }, (label: string) => splashWindow.webContents.send("splash", label)));
     // .then(() => container.resolve<ISymbologySyncService>(SYNCTOKENS.SymbologySyncService).sync(null, (label: string) => splashWindow.webContents.send("splash", label)));
 };
 

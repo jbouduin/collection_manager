@@ -1,8 +1,9 @@
 enum ECacheType {
   "CardSymbol",
-  "CardFace"
+  "CardFace",
+  "CardSet"
 }
 
 
-// NOW use in query for cached svg
+// LATER use in query for cached svg or remove this enum definition
 export type CacheType = keyof typeof ECacheType;

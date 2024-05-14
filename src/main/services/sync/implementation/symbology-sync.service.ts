@@ -28,15 +28,12 @@ export class SymbologySyncService implements ISymbologySyncService {
     return Symbology.all()
       .then((all: Array<CardSymbol>) => this.symbologyRepository.sync(all, progressCallback))
       .then(() => this.symbologyRepository.getAll()
-        .then((allCardSymbols: Array<SymbologySelectDto>) => {
-          console.log("got all symbols");
-          return Promise.all(allCardSymbols.map((cardSymbol: SymbologySelectDto) => {
-            if (progressCallback) {
-              progressCallback(`caching image for ${cardSymbol.symbology.id}`);
-            }
-            return this.imageCacheService.cacheSymbologyImage(cardSymbol);
-          }));
+        .then(async (allCardSymbols: Array<SymbologySelectDto>) => {
+          let result = Promise.resolve();
+          allCardSymbols.forEach(async (cardSymbol: SymbologySelectDto) => {
+            result = result.then(() => this.imageCacheService.cacheCardSymbolSvg(cardSymbol.symbology));
+          })
         })
-      ).then(() => Promise.resolve());
+      );
   }
 }

@@ -39,6 +39,16 @@ body {
   height: 100vh;
 }
 
+.set-tree-item {
+  display: flex;
+  flex-direction: row;
+}
+
+.tree-view-image {
+  filter:invert(100%);
+  padding-right: 10px;
+}
+
 @media (prefers-color-scheme: dark) {
 
   body,

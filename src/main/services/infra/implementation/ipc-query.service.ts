@@ -10,6 +10,7 @@ import INFRATOKENS, { IDatabaseService, IIpcQueryService } from "../interfaces";
 @singleton()
 export class IpcQueryService implements IIpcQueryService {
 
+    // NOW use container to resolve repositories
   //#region Private readonly properties ---------------------------------------
   private readonly databaseService: IDatabaseService;
   private readonly cardRepository: ICardRepository;

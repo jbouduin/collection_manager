@@ -1,9 +1,10 @@
 import { Card, Classes, ContextMenu, Menu, MenuItem, Props, Tree, TreeNodeInfo } from "@blueprintjs/core";
 import * as React from "react";
-
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
+
 import { CardSetSelectDto } from "../../../../common/dto";
 import { CardSyncOptions, IQueryOrSyncParam } from "../../../../common/ipc-params";
+import { SvgProvider } from "../common/svg-provider/svg-provider";
 import { CardsTable } from "../common/tables/cards-table";
 import { DatabaseViewState } from "./database-view.state";
 
@@ -39,6 +40,7 @@ export class DatabaseView extends React.Component<Props, DatabaseViewState> {
   }
   public componentDidMount(): void {
     window.ipc.query({ type: "CardSet", options: null }).then((r) => {
+      console.log(r)
       const cardSets = r as Array<CardSetSelectDto>;
       this.setState({ nodes: this.buildTree(cardSets, null) });
     });
@@ -97,17 +99,19 @@ export class DatabaseView extends React.Component<Props, DatabaseViewState> {
 
   private buildTree(items: Array<CardSetSelectDto>, id: string | undefined): Array<TreeNodeInfo<CardSetSelectDto>> {
     return items
-      .filter((item: CardSetSelectDto) => item.parent_set_code === id)
+      .filter((item: CardSetSelectDto) => item.cardSet.parent_set_code === id)
       .map(item => {
-        const childNodes: Array<TreeNodeInfo<CardSetSelectDto>> = this.buildTree(items, item.code);
+        const childNodes: Array<TreeNodeInfo<CardSetSelectDto>> = this.buildTree(items, item.cardSet.code);
         const node: TreeNodeInfo<CardSetSelectDto> = {
-          id: item.id,
+          id: item.cardSet.id,
           label: (
-            <ContextMenu  {...this.props} content={<Menu><MenuItem text="Synchronize" onClick={(e) => { e.preventDefault(); this.synchronizeSet(item.code); }} /></Menu>}>
-              {item.name}
+              <ContextMenu  {...this.props} className="set-tree-item" content={<Menu><MenuItem text="Synchronize" onClick={(e) => { e.preventDefault(); this.synchronizeSet(item.cardSet.code); }} /></Menu>}>
+
+              <SvgProvider className="tree-view-image" width={26} svg={item.svg}/>
+                {item.cardSet.name}
             </ContextMenu>
           ),
-          isExpanded: false, //!id,
+          isExpanded: false,
           isSelected: false,
           childNodes: childNodes.length > 0 ? childNodes : null,
           nodeData: item

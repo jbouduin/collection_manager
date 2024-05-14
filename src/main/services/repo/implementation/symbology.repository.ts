@@ -18,6 +18,7 @@ export class SymbologyRepository extends BaseRepository implements ISymbologyRep
   private symbologyAdapter: ISymbologyAdapter;
   private symbologyAlternativeAdapter: ISymbologyAlternativeAdapter;
   private symbologyColorMapAdapter: ISymbologyColorMapAdapter;
+  // NOW check if this caching is still required, probably not
   private allSymbologies: Map<string, SymbologySelectDto>;
 
 
@@ -46,7 +47,7 @@ export class SymbologyRepository extends BaseRepository implements ISymbologyRep
     return this.getAll().then(((cardSymbols: Array<SymbologySelectDto>) => {
       const result = new Map<string, string>();
       cardSymbols.forEach((cardSymbol: SymbologySelectDto) =>
-        result.set(cardSymbol.symbology.id, this.imageCacheService.getCardSymbolSvg(cardSymbol))
+        result.set(cardSymbol.symbology.id, this.imageCacheService.getCardSymbolSvg(cardSymbol.symbology))
       );
       return result;
     }));

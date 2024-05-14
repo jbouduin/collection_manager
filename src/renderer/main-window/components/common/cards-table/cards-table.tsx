@@ -1,22 +1,35 @@
-import { Props } from "@blueprintjs/core";
-import { Cell, CellProps, CellRenderer, Column, Table2 } from "@blueprintjs/table";
+import { Cell, CellProps, CellRenderer, Column, CoordinateData, Region, SelectionModes, Table2 } from "@blueprintjs/table";
 import * as React from "react";
 
 import { CardSelectDto } from "../../../../../common/dto";
 import { CardQueryOptions, IQueryOrSyncParam } from "../../../../../common/ipc-params";
 import { SvgProvider } from "../svg-provider/svg-provider";
+import { CardsTableProps } from "./cards-table.props";
 import { CardsTableState } from "./cards-table.state";
 
 
-export class CardsTable extends React.PureComponent<Props, CardsTableState> {
+export class CardsTable extends React.PureComponent<CardsTableProps, CardsTableState> {
 
   //#region private properties ------------------------------------------------
   // LATER add to context ?
   private cachedSvgs: Map<string, string>;
+  private selectedRegionTransform(region: Region, _event: MouseEvent | KeyboardEvent, _coords?: CoordinateData): Region {
+    console.log(region);
+    if (region.cols) {
+      return { rows: region.rows };
+    } else {
+      return region;
+    }
+  }
+  private onSelection(selectedRegions: Array<Region>): void {
+    if (selectedRegions[0]?.rows) {
+      this.props.onCardSelected(this.state.cards[selectedRegions[0].rows[0]].card.id);
+    }
+  }
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
-  public constructor(props: Props) {
+  public constructor(props: CardsTableProps) {
     super(props);
     this.state = { cards: new Array<CardSelectDto>() };
   }
@@ -36,7 +49,7 @@ export class CardsTable extends React.PureComponent<Props, CardsTableState> {
         }
       };
       window.ipc.query(cardQueryParam)
-        .then((cardResult: Array<CardSelectDto>) => { console.log(cardResult); this.setState({ cards: cardResult }); });
+        .then((cardResult: Array<CardSelectDto>) => this.setState({ cards: cardResult }));
     });
   }
   //#endregion
@@ -45,7 +58,7 @@ export class CardsTable extends React.PureComponent<Props, CardsTableState> {
   public render(): React.JSX.Element {
     return (
       <div className="cards-table-wrapper">
-        <Table2 {...this.props} numRows={this.state?.cards?.length ?? 0}>
+        <Table2 {...this.props} numRows={this.state?.cards?.length ?? 0} selectionModes={SelectionModes.ROWS_AND_CELLS} onSelection={this.onSelection.bind(this)} selectedRegionTransform={this.selectedRegionTransform}>
           <Column name="Name" cellRenderer={this.textCellRenderer((card: CardSelectDto) => card.card.name)} />
           <Column name="Rarity" cellRenderer={this.textCellRenderer((card: CardSelectDto) => card.card.rarity)} />
           <Column name="Mana cost" cellRenderer={this.manaCostRenderer.bind(this)} />

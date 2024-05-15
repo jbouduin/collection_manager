@@ -1,6 +1,3 @@
-import { Props } from "@blueprintjs/core";
-import { CardSetSelectDto } from "../../../../common/dto";
+import { DesktopProps } from "../desktop/desktop.props";
 
-export interface DatabaseViewProps extends Props {
-  cardSets: Array<CardSetSelectDto>;
-}
+export type DatabaseViewProps = DesktopProps;

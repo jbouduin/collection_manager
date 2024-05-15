@@ -5,37 +5,37 @@ import { ButtonBarButton } from "./button-bar-button";
 import { ButtonBarProps } from "./button-bar.props";
 import { EDesktopView } from "./desktop-view.enum";
 
-
-export class ButtonBar extends React.PureComponent<ButtonBarProps> {
-
-  private onAnyButtonClick(desktopView: EDesktopView): void {
-    this.props.onSelectButton(desktopView);
+export function ButtonBar(props: ButtonBarProps) {
+  //#region Event handling ----------------------------------------------------
+  function onAnyButtonClick(desktopView: EDesktopView): void {
+    props.onSelectButton(desktopView);
   }
+  //#endregion
 
-  public render(): React.JSX.Element {
-    return (
-      <div className="button-bar">
-        <ButtonGroup minimal={true} vertical={true}>
-          <ButtonBarButton
-            desktopView={EDesktopView.Database}
-            iconName="database"
-            tooltip={<span>Magic the Gathering Database</span>}
-            onButtonClick={this.onAnyButtonClick.bind(this)}
-          />
-          <ButtonBarButton
-            desktopView={EDesktopView.Collection}
-            iconName="box"
-            tooltip={<span>Collections</span>}
-            onButtonClick={this.onAnyButtonClick.bind(this)}
-          />
-          <ButtonBarButton
-            desktopView={EDesktopView.Deck}
-            iconName="box"
-            tooltip={<span>Decks</span>}
-            onButtonClick={this.onAnyButtonClick.bind(this)}
-          />
-        </ButtonGroup>
-      </div>
-    );
-  }
+  //#region Main --------------------------------------------------------------
+  return (
+    <div className="button-bar">
+      <ButtonGroup minimal={true} vertical={true}>
+        <ButtonBarButton
+          desktopView={EDesktopView.Database}
+          iconName="database"
+          tooltip={<span>Magic the Gathering Database</span>}
+          onButtonClick={onAnyButtonClick}
+        />
+        <ButtonBarButton
+          desktopView={EDesktopView.Collection}
+          iconName="box"
+          tooltip={<span>Collections</span>}
+          onButtonClick={onAnyButtonClick}
+        />
+        <ButtonBarButton
+          desktopView={EDesktopView.Deck}
+          iconName="box"
+          tooltip={<span>Decks</span>}
+          onButtonClick={onAnyButtonClick}
+        />
+      </ButtonGroup>
+    </div>
+  );
+  //#endregion
 }

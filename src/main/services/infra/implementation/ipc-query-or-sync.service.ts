@@ -2,7 +2,6 @@ import { inject, injectable } from "tsyringe";
 
 import { CardSelectDto, RulingsByCardIdSelectDto } from "../../../../common/dto";
 import { IQueryOrSyncParam, QueryOrSyncOptions, RulingQueryOrSyncOptions } from "../../../../common/ipc-params";
-import { Card } from "../../../../main/database/schema";
 import REPOTOKENS, { ICardRepository, IRulingRepository } from "../../repo/interfaces";
 import SYNCTOKENS, { IRulingSyncService } from "../../sync/interfaces";
 import { IIpcQueryOrSyncService } from "../interfaces";

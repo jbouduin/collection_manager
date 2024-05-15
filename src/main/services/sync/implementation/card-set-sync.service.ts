@@ -1,14 +1,13 @@
+import { ExpressionOrFactory, SqlBool, Transaction } from "kysely";
 import { Set as ScryfallCardSet, Sets } from "scryfall-sdk";
 import { inject, injectable } from "tsyringe";
 
 import { CardSetSyncOptions, ProgressCallback } from "../../../../common/ipc-params";
-import REPOTOKENS, { ICardSetRepository } from "../../repo/interfaces";
-import { ICardSetSyncService } from "../interfaces";
 import { CardSet, DatabaseSchema } from "../../../../main/database/schema";
-import INFRATOKENS, { IDatabaseService, IImageCacheService } from "../../infra/interfaces";
-import { BaseSyncService } from "./base-sync.service";
-import { ExpressionOrFactory, SqlBool, Transaction } from "kysely";
 import ADAPTTOKENS, { ICardSetAdapter } from "../../adapt/interfaces";
+import INFRATOKENS, { IDatabaseService, IImageCacheService } from "../../infra/interfaces";
+import { ICardSetSyncService } from "../interfaces";
+import { BaseSyncService } from "./base-sync.service";
 
 @injectable()
 export class CardSetSyncService extends BaseSyncService implements ICardSetSyncService {

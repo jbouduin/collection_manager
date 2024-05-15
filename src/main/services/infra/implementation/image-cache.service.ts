@@ -51,7 +51,7 @@ export class ImageCacheService implements IImageCacheService {
         const buffer = Buffer.from(arrayBuffer);
         fs.createWriteStream(this.pathToCardSetSvg(cardSet)).write(buffer);
       })
-      .catch((reason) => console.log(`failed ${cardSet.name}`));
+      .catch(() => console.log(`failed ${cardSet.name}`));
   }
 
   public async getCachedImage(localUrl: string): Promise<Response> {

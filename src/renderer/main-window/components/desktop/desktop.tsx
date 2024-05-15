@@ -1,4 +1,4 @@
-import { Classes, IconName, Props } from "@blueprintjs/core";
+import { Classes } from "@blueprintjs/core";
 import * as React from "react";
 
 import { CollectionView } from "../collection/collection-view";
@@ -6,61 +6,44 @@ import { DatabaseView } from "../database/database-view";
 import { DeckView } from "../deck/deck-view";
 import { ButtonBar } from "./button-bar";
 import { EDesktopView } from "./desktop-view.enum";
-import { DesktopState } from "./desktop.state";
+import { DesktopProps } from "./desktop.props";
 
 // import logo from "./logo.png";
 const DARK_THEME = Classes.DARK;
 const LIGHT_THEME = "";
 
-export class Desktop extends React.PureComponent<Props, DesktopState> {
-  private _theme: string;
-  private _themeIcon: IconName;
+export function Desktop(props: DesktopProps) {
+  console.log("in desktop function");
+  //#region State -------------------------------------------------------------
+  const [theme, setTheme] = React.useState(DARK_THEME);
+  const [currentView, setCurrentView] = React.useState(EDesktopView.Database);
+  //#endregion
 
-  private get theme(): string {
-    return this._theme;
-  }
-
-  private set theme(value: string) {
-    this._theme = value;
-  }
-
-  private get themeIcon(): IconName {
-    return this._themeIcon;
-  }
-
-  private set themeIcon(themeIcon: IconName) {
-    this._themeIcon = themeIcon;
-
-  }
-
-  private onButtonBarButtonClick(desktopView: EDesktopView): void {
+  //#region Event handling ----------------------------------------------------
+  function onButtonBarButtonClick(desktopView: EDesktopView): void {
     console.log("in desktop buttonbar button click event:", desktopView);
-    this.setState({ currentView: desktopView });
+    setCurrentView(desktopView);
   }
+  //#endregion
 
-  public componentDidMount(): void {
-    this.setState({ currentView: EDesktopView.Database });
-  }
-
-  public render(): React.JSX.Element {
-
-    return (
-      <div className="desktop-wrapper">
-        <ButtonBar onSelectButton={this.onButtonBarButtonClick.bind(this)}></ButtonBar>
-        <div className="main-panel">
-          {(this.state == null || this.state.currentView == EDesktopView.Database) &&
-            <DatabaseView className={this.theme} />
-          }
-          {this.state?.currentView == EDesktopView.Collection &&
-            <CollectionView className={this.theme} />
-          }
-          {this.state?.currentView == EDesktopView.Deck &&
-            <DeckView className={this.theme} />
-          }
-        </div>
+  //#region Main --------------------------------------------------------------
+  return (
+    <div className="desktop-wrapper">
+      <ButtonBar className={theme} onSelectButton={onButtonBarButtonClick}></ButtonBar>
+      <div className="main-panel">
+        {(currentView == EDesktopView.Database) &&
+          <DatabaseView {...props} className={theme} />
+        }
+        {currentView == EDesktopView.Collection &&
+          <CollectionView className={theme} />
+        }
+        {currentView == EDesktopView.Deck &&
+          <DeckView className={theme} />
+        }
       </div>
-    );
-  }
+    </div>
+  );
+  //#endregion
 }
 
 /* <header> *

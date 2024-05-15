@@ -2,23 +2,23 @@
 import * as React from "react";
 import { SvgProviderProps } from "./svg-provider.props";
 
-export class SvgProvider extends React.PureComponent<SvgProviderProps> {
-  public render(): React.ReactNode {
-    const start = this.props.svg.indexOf(">");
-    const end = this.props.svg.indexOf("</svg");
-    const  path = this.props.svg.substring(start + 1, end);
+export function SvgProvider(props: SvgProviderProps) {
+  //#region Main --------------------------------------------------------------
+  const start = props.svg.indexOf(">");
+  const end = props.svg.indexOf("</svg");
+  const path = props.svg.substring(start + 1, end);
 
-    return (
-      <span aria-hidden="true" className="bp5-icon bp5-icon-record">
-        <svg
-          className={this.props.className}
-          role="img"
-          viewBox="0 0 100 100"
-          height={this.props.height ?? 16}
-          width={this.props.width ?? 16}
-          dangerouslySetInnerHTML={{ __html: path }}>
-        </svg>
-      </span>
-    );
-  }
+  return (
+    <span aria-hidden="true" className="bp5-icon bp5-icon-record">
+      <svg
+        {...props}
+        role="img"
+        viewBox="0 0 100 100"
+        height={props.height ?? 16}
+        width={props.width ?? 16}
+        dangerouslySetInnerHTML={{ __html: path }}>
+      </svg>
+    </span>
+  );
+  //#endregion
 }

@@ -1,31 +1,29 @@
-import { Button, IconName, Props, Tooltip } from "@blueprintjs/core";
+import { Button, Tooltip } from "@blueprintjs/core";
 import * as React from "react";
 
-import { EDesktopView } from "./desktop-view.enum";
+import { ButtonBarButtonProps } from "./button-bar-button.props";
 
-export interface ButtonBarButtonProps extends Props {
-  desktopView: EDesktopView;
-  iconName: IconName;
-  tooltip: React.JSX.Element;
-  onButtonClick: (desktopView: EDesktopView) => void;
-}
 
-export class ButtonBarButton extends React.PureComponent<ButtonBarButtonProps> {
+export function ButtonBarButton(props: ButtonBarButtonProps) {
+  console.log("in buttonbarbutton function");
 
-  private onButtonClick(): void {
-    this.props.onButtonClick(this.props.desktopView);
+  //#region Event handling ----------------------------------------------------
+  function onButtonClick(): void {
+    props.onButtonClick(props.desktopView);
   }
+  //#endregion
 
-  public render(): React.JSX.Element {
-    return (
-      <div><Tooltip
-        content={this.props.tooltip}
-        openOnTargetFocus={false}
-        placement="right"
-        usePortal={false}>
-        <Button icon={this.props.iconName} onClick={this.onButtonClick.bind(this)}></Button>
-      </Tooltip>
-      </div>
-    );
-  }
+  //#region Main --------------------------------------------------------------
+  return (
+    <div><Tooltip
+      {...props}
+      content={props.tooltip}
+      openOnTargetFocus={false}
+      placement="right"
+      usePortal={false}>
+      <Button icon={props.iconName} onClick={onButtonClick}></Button>
+    </Tooltip>
+    </div>
+  );
+  //#endregion
 }

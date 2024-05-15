@@ -32,7 +32,7 @@ export class CardSetRepository extends BaseRepository implements ICardSetReposit
         return {
           cardSet: cardSet,
           svg: this.imageCacheService.getCardSetSvg(cardSet)
-        }
+        } as CardSetSelectDto;
       }));
   }
   //#endregion

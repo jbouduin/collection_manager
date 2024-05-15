@@ -1,3 +1,4 @@
 export interface SplashContentState {
-  label: string;
+  label?: string;
+  currentProgress?: number;
 }

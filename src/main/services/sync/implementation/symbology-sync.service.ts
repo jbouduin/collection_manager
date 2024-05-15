@@ -32,7 +32,7 @@ export class SymbologySyncService implements ISymbologySyncService {
           let result = Promise.resolve();
           allCardSymbols.forEach(async (cardSymbol: SymbologySelectDto) => {
             result = result.then(() => this.imageCacheService.cacheCardSymbolSvg(cardSymbol.symbology));
-          })
+          });
         })
       );
   }

@@ -1,30 +1,28 @@
-import { ProgressBar, Props } from "@blueprintjs/core";
+import { ProgressBar } from "@blueprintjs/core";
 import * as React from "react";
 import { SplashContentState } from "./splash-content.state";
 
-export class SplashContent extends React.PureComponent<Props, SplashContentState> {
+export function SplashContent() {
 
-  private currentValue = 1;
+  //#region State -------------------------------------------------------------
+  const initialState: SplashContentState = {
+    label: "Loading",
+    currentProgress: 1
+  };
+  const [state, setState] = React.useState(initialState);
+  //#endregion
 
-  public constructor(props: Props) {
-    super(props);
-    window.ipc.onProgress((status) => {
-      console.log("splash", status);
-      this.setState({ label: status });
-    });
-    this.state = { label: "Starting..." };
-  }
+  //#region Main --------------------------------------------------------------
+  window.ipc.onProgress((status) => {
+    console.log("splash", status);
+    setState({ label: status });
+  });
 
-  // public componentWillUnmount(): void {
-  //   ipcRenderer.removeAllListeners("splash");
-  // }
-
-  public render(): React.ReactNode {
-    return (
-      <div className="splash-wrapper">
-        <p>{this.state.label}</p>
-        <ProgressBar animate={true} value={this.currentValue} intent="primary" ></ProgressBar>
-      </div>
-    );
-  }
+  return (
+    <div className="splash-wrapper">
+      <p>{state.label}</p>
+      <ProgressBar animate={true} value={state.currentProgress} intent="primary" ></ProgressBar>
+    </div>
+  );
+  //#endregion
 }

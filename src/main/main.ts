@@ -1,4 +1,4 @@
-import { app, BrowserWindow, net, protocol } from "electron";
+import { app, BrowserWindow, protocol } from "electron";
 import { MigrationProvider } from "kysely";
 import "reflect-metadata";
 import { setCacheLimit } from "scryfall-sdk";
@@ -11,7 +11,7 @@ import INFRATOKENS, { IImageCacheService, IWindowService } from "./services/infr
 import { IDatabaseService } from "./services/infra/interfaces/database.service";
 import { IIpcDispatcherService } from "./services/infra/interfaces/ipc-dispatcher.service";
 import { ServicesDI } from "./services/services.di";
-import SYNCTOKENS, { ICardSetSyncService, ISymbologySyncService } from "./services/sync/interfaces";
+// import SYNCTOKENS, { ICardSetSyncService, ISymbologySyncService } from "./services/sync/interfaces";
 
 // FEATURE Replace scrfall-sdk
 setCacheLimit(0);
@@ -28,12 +28,13 @@ const bootFunction = async (splashWindow: BrowserWindow) => {
   await container.resolve<IDatabaseService>(INFRATOKENS.DatabaseService)
     .connect("c:/data/new-assistant")
     .migrateToLatest(migrationContainer.resolve<MigrationProvider>(MIGRATOKENS.NewCustomMigrationProvider))
-    .then(() => migrationContainer.dispose());
+    .then(() => migrationContainer.dispose())
     // TODO this should only be done when new installation
     // .then(() => container.resolve<ICatalogSyncService>(SYNCTOKENS.CatalogSyncService).sync({ catalogs: AllCatalogTypes }))
     // TODO make those things setting dependent
     // .then(() => container.resolve<ICardSetSyncService>(SYNCTOKENS.CardSetSyncService).sync({ code: null }, (label: string) => splashWindow.webContents.send("splash", label)));
     // .then(() => container.resolve<ISymbologySyncService>(SYNCTOKENS.SymbologySyncService).sync(null, (label: string) => splashWindow.webContents.send("splash", label)));
+    .then(() => splashWindow.webContents.send("splash", "loading main program"));
 };
 
 // This method will be called when Electron has finished

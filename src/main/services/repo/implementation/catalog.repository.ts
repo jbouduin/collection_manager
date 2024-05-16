@@ -7,6 +7,7 @@ import ADAPTTOKENS, { ICatalogAdapter } from "../../adapt/interfaces";
 import INFRATOKENS, { IDatabaseService } from "../../infra/interfaces";
 import { ICatalogRepository } from "../interfaces";
 import { BaseRepository } from "./base.repository";
+import { CatalogItemSelectDto } from "../../../../common/dto";
 
 
 @injectable()
@@ -19,6 +20,14 @@ export class CatalogRepository extends BaseRepository implements ICatalogReposit
     @inject(ADAPTTOKENS.CatalogAdapter) catalogAdapter: ICatalogAdapter) {
     super(databaseService);
     this.catalogAdapter = catalogAdapter;
+  }
+
+  public async getAll(name: CatalogType): Promise<Array<CatalogItemSelectDto>> {
+    return this.database
+      .selectFrom("catalog_item")
+      .selectAll()
+      .where("catalog_item.catalog_name", "=", name)
+      .execute();
   }
 
   // TODO remove items that are not on the server anymore or at least mark them

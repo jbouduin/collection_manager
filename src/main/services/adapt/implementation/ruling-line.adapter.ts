@@ -13,7 +13,7 @@ export class RulingLineAdapter implements IRulingLineAdapter {
       oracle_id: oracleId,
       source: scryfall.source as RulingSource,
       comments: scryfall.comment,
-      published_at: scryfall.published_at
+      published_at: `${scryfall.published_at} 00:00:00`
     };
   }
 

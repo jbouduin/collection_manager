@@ -5,11 +5,14 @@ import { setCacheLimit } from "scryfall-sdk";
 import { container } from "tsyringe";
 import { updateElectronApp } from "update-electron-app";
 
+import { CardImageSelectDto } from "../common/dto";
+import { ImageType } from "../common/enums";
 import MIGRATOKENS from "./database/migrations/migration.tokens";
 import { MigrationDi } from "./database/migrations/migrations.di";
 import INFRATOKENS, { IImageCacheService, IWindowService } from "./services/infra/interfaces";
 import { IDatabaseService } from "./services/infra/interfaces/database.service";
 import { IIpcDispatcherService } from "./services/infra/interfaces/ipc-dispatcher.service";
+import REPOTOKENS, { ICardRepository } from "./services/repo/interfaces";
 import { ServicesDI } from "./services/services.di";
 // import SYNCTOKENS, { ICardSetSyncService, ISymbologySyncService } from "./services/sync/interfaces";
 
@@ -42,9 +45,14 @@ const bootFunction = async (splashWindow: BrowserWindow) => {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   ServicesDI.register();
-  const cacheService = container.resolve<IImageCacheService>(INFRATOKENS.ImageCacheService);
-  protocol.handle("cached-image", (request: Request) => {
-    return cacheService.getCachedImage(request.url);
+  protocol.handle("cached-image", async (request: Request) => {
+    const url = new URL(request.url);
+    return container.resolve<ICardRepository>(REPOTOKENS.CardRepository)
+      .getCardImageData(url.hostname, url.searchParams.get("size") as ImageType)
+      .then((data: CardImageSelectDto) => {
+        const cacheService = container.resolve<IImageCacheService>(INFRATOKENS.ImageCacheService);
+        return cacheService.getCardImage(data);
+      });
   });
 
   container.resolve<IIpcDispatcherService>(INFRATOKENS.IpcDispatcherService).Initialize();

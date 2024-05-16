@@ -7,7 +7,7 @@ import { createRoot } from "react-dom/client";
 import { Desktop } from "./components/desktop/desktop";
 import { IQueryOrSyncParam } from "../../common/ipc-params";
 import { DesktopProps } from "./components/desktop/desktop.props";
-import { CardSetSelectDto } from "../../common/dto";
+import { CardSetSelectDto, LanguageSelectDto } from "../../common/dto";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
@@ -23,7 +23,8 @@ FocusStyleManager.onlyShowFocusOnTabs();
   };
   const desktopProps: DesktopProps = {
     cardSets: new Array<CardSetSelectDto>(),
-    cachedSvg: new Map<string, string>()
+    cachedSvg: new Map<string, string>(),
+    languages: new Array<LanguageSelectDto>()
   };
   window.ipc.query(symbologyQueryParam)
     .then((cachedSvgs: Map<string, string>) => {
@@ -31,6 +32,8 @@ FocusStyleManager.onlyShowFocusOnTabs();
     })
     .then(() => window.ipc.query({ type: "CardSet", options: null }))
     .then((cardSets: Array<CardSetSelectDto>) => desktopProps.cardSets = cardSets)
+    .then(() => window.ipc.query({ type: "Language", options: null }))
+    .then((languages: Array<LanguageSelectDto>) => desktopProps.languages = languages)
     .then(() => root.render(
       <BlueprintProvider>
         <Desktop {...desktopProps} />

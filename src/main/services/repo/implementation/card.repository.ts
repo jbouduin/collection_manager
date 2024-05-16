@@ -6,7 +6,7 @@ import {
 } from "scryfall-sdk";
 import { inject, injectable } from "tsyringe";
 
-import { CardSelectDto, } from "../../../../common/dto";
+import { CardImageSelectDto, CardSelectDto, } from "../../../../common/dto";
 import { CardColorType, CardLegality, GameFormat, ImageType } from "../../../../common/enums";
 import { CardQueryOptions } from "../../../../common/ipc-params/card-query.options";
 import { Card, DatabaseSchema } from "../../../../main/database/schema";
@@ -86,6 +86,23 @@ export class CardRepository extends BaseRepository implements ICardRepository {
       .where("card.id", "=", cardId)
       .executeTakeFirst()
       .then((card: Card) => this.convertCardToCardSelectDto(card));
+  }
+
+  public async getCardImageData(cardId: string, imageType: ImageType): Promise<CardImageSelectDto>
+  {
+    return this.database.selectFrom("card")
+      .leftJoin("card_image", "card_image.card_id", "card.id")
+      .leftJoin("card_set", "card_set.id", "card.set_id")
+      .select([
+        "card.collector_number as collectorNumber",
+        "card_image.uri as imageUri",
+        "card_set.code as setCode",
+        "card.lang as language",
+        "card_image.image_type as imageType"
+      ])
+      .where("card.id", "=", cardId)
+      .where("card_image.image_type", "=", imageType)
+      .executeTakeFirst();
   }
 
   public async getWithOptions(options: CardQueryOptions): Promise<Array<CardSelectDto>> {
@@ -472,19 +489,28 @@ export class CardRepository extends BaseRepository implements ICardRepository {
 
   //#region private get related methods ---------------------------------------
   private convertCardToCardSelectDto(card: Card): CardSelectDto {
-    let manaCostArray: Array<string>;
+    const manaCostArray = new Array<string>();
     if (card.mana_cost?.length > 0) {
-      const splittedCellValue = card.mana_cost.split("}");
-      splittedCellValue.pop();
-      manaCostArray = splittedCellValue.map((s: string, i: number) => i < splittedCellValue.length ? s + "}" : s);
-    } else {
-      manaCostArray = new Array<string>();
+      card.mana_cost
+        .split("//")
+        .forEach((singleManaCost: string, idx: number) => {
+          if (idx > 0) {
+            manaCostArray.push("//");
+          }
+          manaCostArray.push(...this.convertSingleManaCostToArray(singleManaCost.trim()));
+        });
     }
     return {
       card: card,
-      manaCostArray: manaCostArray
+      manaCostArray: manaCostArray,
+      collectorNumberSortValue: isNaN(Number(card.collector_number)) ? card.collector_number : card.collector_number.padStart(3, "0")
     };
   }
 
+  private convertSingleManaCostToArray(manaCost: string): Array<string> {
+    const splittedCellValue = manaCost.split("}");
+    splittedCellValue.pop();
+    return splittedCellValue.map((s: string, i: number) => i < splittedCellValue.length ? s + "}" : s);
+  }
   //#endregion
 }

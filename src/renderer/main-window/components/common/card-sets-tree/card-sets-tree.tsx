@@ -1,4 +1,5 @@
 import * as React from "react";
+import classNames from "classnames";
 import { CardSetTreeProps } from "./card-sets-tree.props";
 import { Classes, ContextMenu, Menu, MenuItem, Tree, TreeNodeInfo } from "@blueprintjs/core";
 // import { CardSetTreeState } from "./card-sets-tree.state";
@@ -49,7 +50,7 @@ export function CardSetsTree(props: CardSetTreeProps) {
     const currentSelectedSets = getTreeNodeItemsRecursive(nodeToSelect);
     setCurrentSelectedPath(path);
     setNodes(nodes);
-    props.onSetsSelected(currentSelectedSets.map((set: CardSetSelectDto) => set.cardSet.id));
+    props.onSetsSelected(currentSelectedSets);
   }
 
   function getTreeNodeItemsRecursive(node: TreeNodeInfo<CardSetSelectDto>, items?: Array<CardSetSelectDto>): Array<CardSetSelectDto> {
@@ -67,9 +68,9 @@ export function CardSetsTree(props: CardSetTreeProps) {
         const node: TreeNodeInfo<CardSetSelectDto> = {
           id: item.cardSet.id,
           label: (
-            <ContextMenu  {...props} className="set-tree-item" content={<Menu><MenuItem text="Synchronize" onClick={(e) => { e.preventDefault(); synchronizeSet(item.cardSet.code); }} /></Menu>}>
+            <ContextMenu className={classNames("set-tree-item", props.className)} content={<Menu><MenuItem text="Synchronize" onClick={(e) => { e.preventDefault(); synchronizeSet(item.cardSet.code); }} /></Menu>}>
 
-              <SvgProvider className="tree-view-image" width={26} svg={item.svg} />
+              <SvgProvider className={classNames("tree-view-image", props.className)} width={26} svg={item.svg} />
               {item.cardSet.name}
             </ContextMenu>
           ),
@@ -100,7 +101,7 @@ export function CardSetsTree(props: CardSetTreeProps) {
     onNodeClick={handleNodeClick}
     onNodeCollapse={handleNodeCollapse}
     onNodeExpand={handleNodeExpand}
-    className={Classes.ELEVATION_0}
+    className={classNames(Classes.ELEVATION_0, props.className)}
   />);
   //#endregion
 }

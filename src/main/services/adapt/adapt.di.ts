@@ -1,5 +1,5 @@
 
-import { Lifecycle, container } from "tsyringe";
+import { container } from "tsyringe";
 
 import { CardCardMapAdapter } from "./implementation/card-card-map.adapter";
 import { CardColorMapAdapter } from "./implementation/card-color-map.adapter";
@@ -29,23 +29,23 @@ import ADAPTTOKENS, {
 export class AdaptDi {
 
   public static registerAdapters() {
-    container.register<ICardCardMapAdapter>(ADAPTTOKENS.CardCardMapAdapter, { useClass: CardCardMapAdapter }, { lifecycle: Lifecycle.ResolutionScoped });
-    container.register<ICardColorMapAdapter>(ADAPTTOKENS.CardColorMapAdapter, { useClass: CardColorMapAdapter }, { lifecycle: Lifecycle.ResolutionScoped });
-    container.register<ICardFormatLegalityAdapter>(ADAPTTOKENS.CardFormatLegalityAdapter, { useClass: CardFormatLegalityAdapter }, { lifecycle: Lifecycle.ResolutionScoped });
-    container.register<ICardGameAdapter>(ADAPTTOKENS.CardGameAdapter, { useClass: CardGameAdapter }, { lifecycle: Lifecycle.ResolutionScoped });
-    container.register<ICardImageAdapter>(ADAPTTOKENS.CardImageAdapter, { useClass: CardImageAdapter }, { lifecycle: Lifecycle.ResolutionScoped });
-    container.register<ICardKeywordAdapter>(ADAPTTOKENS.CardKeywordAdapter, { useClass: CardKeywordAdapter }, { lifecycle: Lifecycle.ResolutionScoped });
-    container.register<ICardMultiverseIdAdapter>(ADAPTTOKENS.CardMultiverseIdAdapter, { useClass: CardMultiverseIdAdapter }, { lifecycle: Lifecycle.ResolutionScoped });
-    container.register<ICardSetAdapter>(ADAPTTOKENS.CardSetAdapter, { useClass: CardSetAdapter }, { lifecycle: Lifecycle.ResolutionScoped });
-    container.register<ICardAdapter>(ADAPTTOKENS.CardAdapter, { useClass: CardAdapter }, { lifecycle: Lifecycle.ResolutionScoped });
-    container.register<ICardfaceAdapter>(ADAPTTOKENS.CardfaceAdapter, { useClass: CardfaceAdapter }, { lifecycle: Lifecycle.ResolutionScoped });
-    container.register<ICardfaceColorMapAdapter>(ADAPTTOKENS.CardfaceColorMapAdapter, { useClass: CardfaceColorMapAdapter }, { lifecycle: Lifecycle.ResolutionScoped });
-    container.register<ICardfaceImageAdapter>(ADAPTTOKENS.CardfaceImageAdapter, { useClass: CardFaceImageAdapter }, { lifecycle: Lifecycle.ResolutionScoped });
-    container.register<ICatalogAdapter>(ADAPTTOKENS.CatalogAdapter, { useClass: CatalogAdapter }, { lifecycle: Lifecycle.ResolutionScoped });
-    container.register<IRulingLineAdapter>(ADAPTTOKENS.RulingLineAdapter, { useClass: RulingLineAdapter }, { lifecycle: Lifecycle.ResolutionScoped });
-    container.register<IRulingAdapter>(ADAPTTOKENS.RulingAdapter, { useClass: RulingAdapter }, { lifecycle: Lifecycle.ResolutionScoped });
-    container.register<ISymbologyAlternativeAdapter>(ADAPTTOKENS.SymbologyAlternativeAdapter, { useClass: SymbologyAlternativeAdapter }, { lifecycle: Lifecycle.ResolutionScoped });
-    container.register<ISymbologyColorMapAdapter>(ADAPTTOKENS.SymbologyColorMapAdapter, { useClass: SymbologyColorMapAdapter }, { lifecycle: Lifecycle.ResolutionScoped });
-    container.register<ISymbologyAdapter>(ADAPTTOKENS.SymbologyAdapter, { useClass: SymbologyAdapter }, { lifecycle: Lifecycle.ResolutionScoped });
+    container.register<ICardCardMapAdapter>(ADAPTTOKENS.CardCardMapAdapter, { useClass: CardCardMapAdapter });
+    container.register<ICardColorMapAdapter>(ADAPTTOKENS.CardColorMapAdapter, { useClass: CardColorMapAdapter });
+    container.register<ICardFormatLegalityAdapter>(ADAPTTOKENS.CardFormatLegalityAdapter, { useClass: CardFormatLegalityAdapter });
+    container.register<ICardGameAdapter>(ADAPTTOKENS.CardGameAdapter, { useClass: CardGameAdapter });
+    container.register<ICardImageAdapter>(ADAPTTOKENS.CardImageAdapter, { useClass: CardImageAdapter });
+    container.register<ICardKeywordAdapter>(ADAPTTOKENS.CardKeywordAdapter, { useClass: CardKeywordAdapter });
+    container.register<ICardMultiverseIdAdapter>(ADAPTTOKENS.CardMultiverseIdAdapter, { useClass: CardMultiverseIdAdapter });
+    container.register<ICardSetAdapter>(ADAPTTOKENS.CardSetAdapter, { useClass: CardSetAdapter });
+    container.register<ICardAdapter>(ADAPTTOKENS.CardAdapter, { useClass: CardAdapter });
+    container.register<ICardfaceAdapter>(ADAPTTOKENS.CardfaceAdapter, { useClass: CardfaceAdapter });
+    container.register<ICardfaceColorMapAdapter>(ADAPTTOKENS.CardfaceColorMapAdapter, { useClass: CardfaceColorMapAdapter });
+    container.register<ICardfaceImageAdapter>(ADAPTTOKENS.CardfaceImageAdapter, { useClass: CardFaceImageAdapter });
+    container.register<ICatalogAdapter>(ADAPTTOKENS.CatalogAdapter, { useClass: CatalogAdapter });
+    container.register<IRulingLineAdapter>(ADAPTTOKENS.RulingLineAdapter, { useClass: RulingLineAdapter });
+    container.register<IRulingAdapter>(ADAPTTOKENS.RulingAdapter, { useClass: RulingAdapter });
+    container.register<ISymbologyAlternativeAdapter>(ADAPTTOKENS.SymbologyAlternativeAdapter, { useClass: SymbologyAlternativeAdapter });
+    container.register<ISymbologyColorMapAdapter>(ADAPTTOKENS.SymbologyColorMapAdapter, { useClass: SymbologyColorMapAdapter });
+    container.register<ISymbologyAdapter>(ADAPTTOKENS.SymbologyAdapter, { useClass: SymbologyAdapter });
   }
 }

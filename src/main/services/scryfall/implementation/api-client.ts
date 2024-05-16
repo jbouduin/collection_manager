@@ -1,4 +1,6 @@
-export class ApiClient {
+import { IApiClient } from "../interfaces";
+
+export class ApiClient implements IApiClient {
   private minimumRequestTimeout: number;
   private nextQuery: number;
 
@@ -12,6 +14,11 @@ export class ApiClient {
   public async fetchSvg(uri: string): Promise<ArrayBuffer> {
     return this.tryFetch(uri)
       .then((response: Response) => response.arrayBuffer());
+  }
+
+  public async fetchImage(uri: string): Promise<ReadableStream<Uint8Array>> {
+    return this.tryFetch(uri)
+      .then((response: Response) => response.body);
   }
 
   private async tryFetch(uri: string): Promise<Response> {

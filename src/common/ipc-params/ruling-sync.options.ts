@@ -1,3 +1,3 @@
 export interface RulingSyncOptions {
-  oracleId: string
+  cardId: string
 }

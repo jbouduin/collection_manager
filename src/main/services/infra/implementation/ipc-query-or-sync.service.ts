@@ -1,49 +1,42 @@
-import { inject, injectable } from "tsyringe";
+import { container, injectable } from "tsyringe";
 
-import { CardSelectDto, RulingsByCardIdSelectDto } from "../../../../common/dto";
+import { RulingsByCardIdSelectDto } from "../../../../common/dto";
 import { IQueryOrSyncParam, QueryOrSyncOptions, RulingQueryOrSyncOptions } from "../../../../common/ipc-params";
-import REPOTOKENS, { ICardRepository, IRulingRepository } from "../../repo/interfaces";
+import REPOTOKENS, { IRulingRepository } from "../../repo/interfaces";
 import SYNCTOKENS, { IRulingSyncService } from "../../sync/interfaces";
 import { IIpcQueryOrSyncService } from "../interfaces";
 
-
+// NOW get rid of this service
 @injectable()
 export class IpcQueryOrSyncService implements IIpcQueryOrSyncService {
 
-  private readonly cardRepository: ICardRepository;
-  private readonly rulingRepository: IRulingRepository;
-  private readonly rulingSyncService: IRulingSyncService;
-
-  public constructor(
-    @inject(REPOTOKENS.CardRepository) cardRepository: ICardRepository,
-    @inject(REPOTOKENS.RulingRepository) rulingRepository: IRulingRepository,
-    @inject(SYNCTOKENS.RulingSyncService) rulingSyncService: IRulingSyncService
-  ) {
-    this.cardRepository = cardRepository;
-    this.rulingRepository = rulingRepository;
-    this.rulingSyncService = rulingSyncService;
-  }
 
   public async handle(params: IQueryOrSyncParam<QueryOrSyncOptions>): Promise<void | RulingsByCardIdSelectDto> {
     console.log("start IpcQueryOrSyncService.handle", params);
     switch (params.type) {
+      // NOW handle this as normal query and sync the thing when required
       case "Ruling":
-        return this.rulingRepository.getByCardId((params.options as RulingQueryOrSyncOptions).cardId)
-          .then((queryResult: RulingsByCardIdSelectDto) => {
-            if (queryResult.length == 0) {
-              return this.cardRepository.getCardById((params.options as RulingQueryOrSyncOptions).cardId)
-                .then((card: CardSelectDto) => this.rulingSyncService.sync({ oracleId: card.card.oracle_id }))
-                .then(() => this.rulingRepository.getByCardId((params.options as RulingQueryOrSyncOptions).cardId));
-            } else {
-              return queryResult;
-            }
-          })
-          .then((queryResult: RulingsByCardIdSelectDto) => {
-            console.log("end IpcQueryOrSyncService.handling");
-            return queryResult;
-          });
+        return this.handleRuling(params.options as RulingQueryOrSyncOptions);
       default:
         return Promise.resolve();
     }
+  }
+
+  private async handleRuling(options: RulingQueryOrSyncOptions): Promise<RulingsByCardIdSelectDto> {
+    const rulingRepository = container.resolve<IRulingRepository>(REPOTOKENS.RulingRepository);
+    // NOW if there are no rulings, but we already synced, we do not have to resync
+    return rulingRepository.getByCardId(options.cardId)
+      .then((queryResult: RulingsByCardIdSelectDto) => {
+        if (queryResult.length == 0) {
+          return container.resolve<IRulingSyncService>(SYNCTOKENS.RulingSyncService).sync({ cardId: options.cardId })
+            .then(() => rulingRepository.getByCardId(options.cardId));
+        } else {
+          return queryResult;
+        }
+      })
+      .then((queryResult: RulingsByCardIdSelectDto) => {
+        console.log("end IpcQueryOrSyncService.handling");
+        return queryResult;
+      });
   }
 }

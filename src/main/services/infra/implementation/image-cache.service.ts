@@ -26,36 +26,36 @@ export class ImageCacheService implements IImageCacheService {
   //#endregion
 
   //#region IImageCacheService methods ----------------------------------------
-  public async cacheCardImage(card: CardImageSelectDto): Promise<void> {
-    return fetch(card.uri)
-      .then((response: Response) => response.arrayBuffer())
-      .then((arrayBuffer: ArrayBuffer) => {
-        const buffer = Buffer.from(arrayBuffer);
-        fs.createWriteStream(this.pathToCachedCardImage(card)).write(buffer);
-      });
-  }
-
   public async cacheCardSymbolSvg(cardSymbol: Symbology): Promise<void> {
     return this.apiClient.fetchSvg(cardSymbol.svg_uri)
       .then((arrayBuffer: ArrayBuffer) => {
-        console.log(`ready to write ${this.pathToCardSymbolSvg(cardSymbol)}`);
         const buffer = Buffer.from(arrayBuffer);
         fs.createWriteStream(this.pathToCardSymbolSvg(cardSymbol)).write(buffer);
       });
   }
 
+  // TODO if the svg has no fill property, insert it as fill="#000" otherwise the colors could screw up
   public async cacheCardSetSvg(cardSet: CardSet): Promise<void> {
     await this.apiClient.fetchSvg(cardSet.icon_svg_uri)
       .then((arrayBuffer: ArrayBuffer) => {
-        console.log(`ready to write ${this.pathToCardSetSvg(cardSet)}`);
         const buffer = Buffer.from(arrayBuffer);
-        fs.createWriteStream(this.pathToCardSetSvg(cardSet)).write(buffer);
+        return fs.promises.writeFile(this.pathToCardSetSvg(cardSet), buffer);
       })
       .catch(() => console.log(`failed ${cardSet.name}`));
   }
 
-  public async getCachedImage(localUrl: string): Promise<Response> {
-    return net.fetch(localUrl);
+  public async getCardImage(card: CardImageSelectDto): Promise<Response> {
+    const cachePath = this.pathToCachedCardImage(card);
+    if (fs.existsSync(cachePath)) {
+      return net.fetch(cachePath);
+    } else {
+      return this.apiClient.fetchSvg(card.imageUri)
+        .then((arrayBuffer: ArrayBuffer) => {
+          const buffer = Buffer.from(arrayBuffer);
+          return fs.promises.writeFile(cachePath, buffer);
+        })
+        .then(() => net.fetch(cachePath));
+    }
   }
 
   public getCardSymbolSvg(cardSymbol: Symbology): string {
@@ -78,15 +78,15 @@ export class ImageCacheService implements IImageCacheService {
   }
 
   private pathToCachedCardImage(card: CardImageSelectDto): string {
-    const fileName = `${card.collector_number.padStart(3)}.${path.extname(new URL(card.uri).pathname.split("/").pop())}`;
-    const dirName = path.join(this.configurationService.cacheDirectory, "cards", card.code, card.lang, card.collector_number, card.image_type);
+    const fileName = `${card.collectorNumber.padStart(3, "0")}${path.extname(new URL(card.imageUri).pathname.split("/").pop())}`;
+    const dirName = path.join(this.configurationService.cacheDirectory, "cards", card.setCode, card.language, card.imageType);
     if (!fs.existsSync(dirName)) {
       fs.mkdirSync(dirName, { recursive: true });
     }
     return path.join(dirName, fileName);
   }
 
-  public pathToCardSetSvg(cardSet: CardSet): string {
+  private pathToCardSetSvg(cardSet: CardSet): string {
     const fileName = `${cardSet.code}${path.extname(new URL(cardSet.icon_svg_uri).pathname.split("/").pop())}`;
     const dirName = path.join(this.configurationService.cacheDirectory, "sets");
     if (!fs.existsSync(dirName)) {

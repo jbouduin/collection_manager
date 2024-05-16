@@ -1,54 +1,59 @@
-import { Card } from "@blueprintjs/core";
 import * as React from "react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
 
+import { CardSelectDto, CardSetSelectDto } from "../../../../common/dto";
+import { CardDetailPanel } from "../common/card-detail-panel/card-detail-panel";
 import { CardSetsTree } from "../common/card-sets-tree/card-sets-tree";
 import { CardsTable } from "../common/cards-table/cards-table";
-import { DatabaseViewState } from "./database-view.state";
 import { DatabaseViewProps } from "./database-view.props";
+import { DatabaseViewState } from "./database-view.state";
 
 
 export function DatabaseView(props: DatabaseViewProps) {
   console.log("in databaseview function");
 
   //#region State -------------------------------------------------------------
-  const [state, setState] = React.useState({} as DatabaseViewState);
+  const initialState: DatabaseViewState = {};
+  const [state, setState] = React.useState(initialState);
   //#endregion
 
   //#region Event handlers ----------------------------------------------------
-  function onCardSetsSelected(setIds: Array<string>): void {
-    console.log("nmessage from database view Card set selected in tree", setIds);
-    setState({ selectedSetIds: setIds });
+  function onCardSetsSelected(sets: Array<CardSetSelectDto>): void {
+    console.log("Card set selected in tree", sets.map((s: CardSetSelectDto) => s.cardSet.name));
+    setState({ selectedSets: sets, selectedCards: state.selectedCards });
   }
 
-  function onCardSelected(cardId ?: string): void {
-    console.log("Card selected in table", cardId);
-    setState({ selectedCardIds: [cardId] });
+  function onCardSelected(cards?: Array<CardSelectDto>): void {
+    console.log("Cards selected in table", cards.map((c: CardSelectDto) => c.card.name));
+    setState({ selectedCards: cards, selectedSets: state.selectedSets });
   }
   //#endregion
 
+  function calculateSetOfSelectedCard(): CardSetSelectDto {
+    if (state.selectedCards) {
+      const setOfSelectedCard = props.cardSets.filter((cardSet: CardSetSelectDto) => cardSet.cardSet.id = state.selectedCards[0].card.set_id);
+      return setOfSelectedCard.length > 0 ? setOfSelectedCard[0] : null;
+    }
+    else {
+      return null;
+    }
+  }
   //#region Main --------------------------------------------------------------
   return (
     <div>
       <PanelGroup direction="horizontal">
-        <Panel defaultSize={20}>
-          <CardSetsTree {...props} onSetsSelected={onCardSetsSelected} />
+        <Panel defaultSize={20} className={props.className}>
+          <CardSetsTree className={props.className} cardSets={props.cardSets} onSetsSelected={onCardSetsSelected} />
         </Panel>
         <PanelResizeHandle />
         <Panel>
-          <CardsTable {...props} selectedSetIds={state.selectedSetIds} onCardSelected={onCardSelected}></CardsTable>
+          <CardsTable className={props.className} cachedSvg={props.cachedSvg} selectedSets={state.selectedSets} languages={props.languages} onCardsSelected={onCardSelected}></CardsTable>
         </Panel>
         <PanelResizeHandle />
         <Panel defaultSize={20}>
-          <PanelGroup direction="vertical">
-            <Panel>
-              <Card>Here comes the image</Card>
-            </Panel>
-            <PanelResizeHandle />
-            <Panel><Card>Here comes the info</Card></Panel>
-          </PanelGroup>
-        </Panel>
+          <CardDetailPanel className={props.className} card={state.selectedCards ? state.selectedCards[0] : null} cardSet={calculateSetOfSelectedCard()}/>
+          </Panel>
       </PanelGroup>
     </div >
   );

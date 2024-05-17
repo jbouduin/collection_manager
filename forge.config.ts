@@ -43,16 +43,33 @@ const config: ForgeConfig = {
   plugins: [
     new AutoUnpackNativesPlugin({}),
     new WebpackPlugin({
+      devContentSecurityPolicy: 'default-src \'self\' \'unsafe-inline\' data:; script-src \'self\' \'unsafe-eval\' \'unsafe-inline\' data:; img-src * cached-image:',
       mainConfig,
       renderer: {
         config: rendererConfig,
         entryPoints: [
           {
-            html: "./src/renderer/index.html",
-            js: "./src/renderer/renderer.ts",
+            html: "./src/renderer/main-window/main-window.html",
+            js: "./src/renderer/main-window/main-window-renderer.ts",
             name: "main_window",
             preload: {
-              js: "./src/renderer/preload.ts",
+              js: "./src/renderer/common/preload.ts",
+            },
+          },
+          {
+            html: "./src/renderer/first-time/first-time.html",
+            js: "./src/renderer/first-time/first-time-renderer.ts",
+            name: "first_time",
+            // preload: {
+            //   js: "./src/renderer/common/preload.ts",
+            // },
+          },
+          {
+            html: "./src/renderer/splash-window/splash-window.html",
+            js: "./src/renderer/splash-window/splash-window-renderer.ts",
+            name: "splash_window",
+            preload: {
+              js: "./src/renderer/common/preload.ts",
             },
           },
         ],

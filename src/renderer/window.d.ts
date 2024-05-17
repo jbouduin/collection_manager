@@ -1,4 +1,4 @@
-import { Versions, IPC } from "./preload";
+import { Versions, IPC } from "./common/preload";
 
 declare global {
   // eslint-disable-next-line no-unused-vars

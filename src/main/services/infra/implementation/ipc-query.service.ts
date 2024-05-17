@@ -1,88 +1,56 @@
-import { inject, singleton } from "tsyringe";
+import { container, singleton } from "tsyringe";
 
-import { SymbologySelectDto } from "../../../../common/dto/select/symbology.select.dto";
-import { IQueryOrSyncParam, QueryOrSyncOptions } from "../../../../common/ipc-params";
-import { CardSet, CatalogItem, Color, Language } from "../../../../main/database/schema";
-import REPOTOKENS, { IColorRepository, ILanguageRepository, ISymbologyRepository } from "../../repo/interfaces";
-import INFRATOKENS, { IDatabaseService, IIpcQueryService } from "../interfaces";
+import { RulingLineDto } from "../../../../common/dto";
+import { IQueryParam, QueryOptions, RulingQueryOptions } from "../../../../common/ipc-params";
+import { CardQueryOptions } from "../../../../common/ipc-params/card-query.options";
+import REPOTOKENS, { ICardRepository, ICardSetRepository, ICatalogRepository, IColorRepository, ILanguageRepository, IRulingRepository, ISymbologyRepository } from "../../repo/interfaces";
+import SYNCTOKENS, { IRulingSyncService } from "../../scryfall";
+import { IIpcQueryService } from "../interfaces";
 
 
 @singleton()
 export class IpcQueryService implements IIpcQueryService {
 
-  private readonly databaseService: IDatabaseService;
-  private readonly languageRepository: ILanguageRepository;
-  private readonly colorRepository: IColorRepository;
-  private readonly symbologyRepository: ISymbologyRepository;
-
-  public constructor(
-    // the injected property should be removed over time
-    @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
-    @inject(REPOTOKENS.ColorRepository) colorRepository: IColorRepository,
-    @inject(REPOTOKENS.LanguageRepository) languageRepository: ILanguageRepository,
-    @inject(REPOTOKENS.SymbologyRepository) symbologyRepository: ISymbologyRepository
-  ) {
-    this.databaseService = databaseService;
-    this.colorRepository = colorRepository;
-    this.languageRepository = languageRepository;
-    this.symbologyRepository = symbologyRepository;
-  }
-
-  public async handle(params: IQueryOrSyncParam<QueryOrSyncOptions>): Promise<void> {
+  //#region IIpcQueryService methods ------------------------------------------
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  public async handle(params: IQueryParam<QueryOptions>): Promise<any> {
+    // console.log("start IpcQueryService.handling", params);
     switch (params.type) {
       case "Card":
-        break;
+        return container.resolve<ICardRepository>(REPOTOKENS.CardRepository).getWithOptions(params.options as CardQueryOptions);
       case "CardSet":
-        await this.TestQueryCardSet();
-        break;
+        return container.resolve<ICardSetRepository>(REPOTOKENS.CardSetRepository).getAll();
       case "Catalog":
-        await this.TestQueryCatalog();
-        break;
+        return container.resolve<ICatalogRepository>(REPOTOKENS.CatalogRepository).getAll("AbilityWords");
       case "Color":
-        await this.colorRepository.getAll()
-          .then((result: Array<Color>) =>
-            result.forEach((color: Color) => console.log(color.id, color.land_type, color.display_text, color.mana_symbol))
-          );
-        break;
+        return container.resolve<IColorRepository>(REPOTOKENS.ColorRepository).getAll();
       case "Language":
-        await this.languageRepository.getAll()
-          .then((result: Array<Language>) =>
-            result.forEach((lng: Language) => console.log(lng.id, lng.printed_code, lng.display_text, lng.button_text))
-          );
-        break;
+        return container.resolve<ILanguageRepository>(REPOTOKENS.LanguageRepository).getAll();
       case "Symbology":
-        await this.symbologyRepository.getAll()
-          .then((result: Array<SymbologySelectDto>) => console.log(result.length > 0 ? result[0] : "nothing found"));
-        break;
+        return container.resolve<ISymbologyRepository>(REPOTOKENS.SymbologyRepository).getAll();
+      case "SymbologyCachedSvg":
+        return container.resolve<ISymbologyRepository>(REPOTOKENS.SymbologyRepository).getAllWithCachedSvg();
       case "Ruling":
-        // TODO we should not do this
-        break;
+        return this.handleRuling(params.options as RulingQueryOptions);
     }
   }
+  //#endregion
 
-  private async TestQueryCardSet(): Promise<void> {
-    await this.databaseService.database
-      .selectFrom("card_set")
-      .selectAll()
-      .limit(1)
-      .execute()
-      .then((cardSet: Array<CardSet>) => {
-        console.log(typeof cardSet[0]);
-        console.log(cardSet[0]);
+  //#region Private methods ---------------------------------------------------
+  private async handleRuling(options: RulingQueryOptions): Promise<Array<RulingLineDto>> {
+    const rulingRepository = container.resolve<IRulingRepository>(REPOTOKENS.RulingRepository);
+    return rulingRepository.getByCardId(options.cardId)
+      .then((queryResult: Array<RulingLineDto>) => {
+        if (queryResult.length == 0) {
+          return container.resolve<IRulingSyncService>(SYNCTOKENS.RulingSyncService).sync({ cardId: options.cardId })
+            .then(() => rulingRepository
+              .getByCardId(options.cardId)
+              .then((afterSync: Array<RulingLineDto>) => afterSync.filter((line: RulingLineDto) => line.oracle_id !== null))
+            );
+        } else {
+          return queryResult.filter((line: RulingLineDto) => line.oracle_id !== null);
+        }
       });
   }
-
-  private async TestQueryCatalog(): Promise<void> {
-    const qb = this.databaseService.database
-      .selectFrom("catalog_item")
-      .selectAll("catalog_item")
-      .where("catalog_name", "=", "ArtifactTypes")
-      .limit(1);
-
-    await qb.execute()
-      .then((catalogItem: Array<CatalogItem>) => {
-        console.log(typeof catalogItem[0]);
-        console.log(catalogItem[0]);
-      });
-  }
+  //#endregion
 }

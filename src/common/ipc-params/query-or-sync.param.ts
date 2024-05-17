@@ -1,6 +1,6 @@
-import { QueryOrSyncOptions, QueryOrSyncType } from ".";
+import { QueryOptions, QueryType } from ".";
 
-export interface IQueryOrSyncParam<T extends QueryOrSyncOptions> {
-  type: QueryOrSyncType;
+export interface IQueryParam<T extends QueryOptions> {
+  type: QueryType;
   options: T
 }

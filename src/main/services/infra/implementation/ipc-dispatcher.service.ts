@@ -1,34 +1,22 @@
 import { ipcMain, nativeTheme } from "electron";
-import { inject, singleton } from "tsyringe";
+import { container, singleton } from "tsyringe";
+
 import { DarkmodeOption } from "../../../../common/ipc-params";
-import INFRATOKENS, { IIpcDispatcherService, IIpcQueryOrSyncService, IIpcQueryService, IIpcSyncService } from "../interfaces";
+import INFRATOKENS, { IIpcDispatcherService, IIpcQueryService, IIpcSyncService } from "../interfaces";
 
 @singleton()
 export class IpcDispatcherService implements IIpcDispatcherService{
 
-  private readonly ipcQueryOrSyncService: IIpcQueryOrSyncService;
-  private readonly ipcQueryService: IIpcQueryService;
-  private readonly ipcSyncService: IIpcSyncService;
-
-  public constructor(
-    @inject(INFRATOKENS.IpcQueryOrSyncService) ipcQueryOrSyncService: IIpcQueryOrSyncService,
-    @inject(INFRATOKENS.IpcQueryService) ipcQueryService: IIpcQueryService,
-    @inject(INFRATOKENS.IpcSyncService) ipcSyncService: IIpcSyncService
-  )  {
-    this.ipcQueryOrSyncService = ipcQueryOrSyncService;
-    this.ipcQueryService = ipcQueryService;
-    this.ipcSyncService = ipcSyncService;
-  }
-
+  //#region IIpcDispatcherService methods -------------------------------------
   /* eslint-disable  @typescript-eslint/no-explicit-any */
   public Initialize(): void {
     ipcMain.handle("darkmode", (_event: Electron.IpcMainEvent, ...args: Array<any>) => this.handelDarkMode(args[0]));
-    ipcMain.handle("ping", () => "pong");
-    ipcMain.handle("query", (_event: Electron.IpcMainEvent, ...args: Array<any>) => this.ipcQueryService.handle(args[0]));
-    ipcMain.handle("queryOrSync", (_event: Electron.IpcMainEvent, ...args: Array<any>) => this.ipcQueryOrSyncService.handle(args[0]));
-    ipcMain.handle("sync", (_event: Electron.IpcMainEvent, ...args: Array<any>) => this.ipcSyncService.handle(args[0]));
+    ipcMain.handle("query", (_event: Electron.IpcMainEvent, ...args: Array<any>) => container.resolve<IIpcQueryService>(INFRATOKENS.IpcQueryService).handle(args[0]));
+    ipcMain.handle("sync", (_event: Electron.IpcMainEvent, ...args: Array<any>) => container.resolve<IIpcSyncService>(INFRATOKENS.IpcSyncService).handle(args[0]));
   }
   /* eslint-enable  @typescript-eslint/no-explicit-any */
+  //#endregion
+
 
   private handelDarkMode(...args: Array<DarkmodeOption>): boolean {
     const option = args[0] as DarkmodeOption;

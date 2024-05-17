@@ -1,5 +1,6 @@
-import { Set as ScryfallSet } from "scryfall-sdk";
+
+import { CardSetDto } from "../../../../common/dto";
 
 export interface ICardSetRepository {
-  sync(cardSets: Array<ScryfallSet>): Promise<void>;
+  getAll(): Promise<Array<CardSetDto>>;
 }

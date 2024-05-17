@@ -1,5 +1,6 @@
+import { CatalogItemDto } from "../../../../common/dto";
 import { CatalogType } from "../../../../common/enums";
 
 export interface ICatalogRepository {
-  sync(name: CatalogType, items: Array<string>): Promise<void>;
+  getAll(name: CatalogType): Promise<Array<CatalogItemDto>>;
 }

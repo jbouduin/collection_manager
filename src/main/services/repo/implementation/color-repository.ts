@@ -1,6 +1,6 @@
 import { inject, injectable } from "tsyringe";
 
-import { ColorSelectDto } from "../../../../common/dto";
+import { ColorDto } from "../../../../common/dto";
 import INFRATOKENS, { IDatabaseService } from "../../infra/interfaces";
 import { IColorRepository } from "../interfaces";
 import { BaseRepository } from "./base.repository";
@@ -12,7 +12,7 @@ export class ColorRepository extends BaseRepository implements IColorRepository 
     super(databaseService);
   }
 
-  getAll(): Promise<Array<ColorSelectDto>> {
+  getAll(): Promise<Array<ColorDto>> {
     return this.database.selectFrom("color").selectAll().execute();
   }
 }

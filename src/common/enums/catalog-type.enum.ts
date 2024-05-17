@@ -19,3 +19,5 @@ enum ECatalogType {
 }
 
 export type CatalogType = keyof typeof ECatalogType;
+export const AllCatalogTypes: Array<CatalogType> = Object.keys(ECatalogType)
+  .filter(prop => isNaN(parseInt(prop))) as Array<CatalogType>;

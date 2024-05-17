@@ -1,5 +1,5 @@
-import { ColorSelectDto } from "../../../../common/dto";
+import { ColorDto } from "../../../../common/dto";
 
 export interface IColorRepository {
-  getAll(): Promise<Array<ColorSelectDto>>;
+  getAll(): Promise<Array<ColorDto>>;
 }

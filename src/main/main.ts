@@ -16,7 +16,7 @@ import { IDatabaseService } from "./services/infra/interfaces/database.service";
 import { IIpcDispatcherService } from "./services/infra/interfaces/ipc-dispatcher.service";
 import REPOTOKENS, { ICardRepository } from "./services/repo/interfaces";
 import { ServicesDI } from "./services/services.di";
-import SYNCTOKENS, { ICatalogSyncService } from "./services/scryfall";
+import SYNCTOKENS, { ICardSetSyncService, ICatalogSyncService } from "./services/scryfall";
 
 
 // FEATURE Replace scrfall-sdk
@@ -36,9 +36,9 @@ const bootFunction = async (splashWindow: BrowserWindow) => {
     .migrateToLatest(migrationContainer.resolve<MigrationProvider>(MIGRATOKENS.NewCustomMigrationProvider))
     .then(() => migrationContainer.dispose())
     // TODO this should only be done when new installation
-    // .then(() => container.resolve<ICatalogSyncService>(SYNCTOKENS.CatalogSyncService).sync({ catalogs: ["AbilityWords", "LandTypes", "ArtifactTypes"] }))
+    //.then(async () => await container.resolve<ICatalogSyncService>(SYNCTOKENS.CatalogSyncService).sync({ catalogs: ["AbilityWords", "LandTypes", "ArtifactTypes"] }))
     // LATER make those things setting dependent
-    // .then(() => container.resolve<ICardSetSyncService>(SYNCTOKENS.CardSetSyncService).sync({ code: null }, (label: string) => splashWindow.webContents.send("splash", label)));
+    .then(async () => await container.resolve<ICardSetSyncService>(SYNCTOKENS.CardSetSyncService).sync({ code: null }, (label: string) => splashWindow.webContents.send("splash", label)))
     // .then(() => container.resolve<ISymbologySyncService>(SYNCTOKENS.SymbologySyncService).sync(null, (label: string) => splashWindow.webContents.send("splash", label)));
     .then(() => splashWindow.webContents.send("splash", "loading main program"));
 };

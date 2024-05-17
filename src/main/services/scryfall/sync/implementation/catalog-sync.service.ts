@@ -1,5 +1,4 @@
 import { Transaction } from "kysely";
-import { Catalog } from "scryfall-sdk";
 import { inject, injectable } from "tsyringe";
 
 import { CatalogType } from "../../../../../common/enums";
@@ -9,96 +8,117 @@ import INFRATOKENS, { IDatabaseService } from "../../../../../main/services/infr
 import ADAPTTOKENS, { ICatalogAdapter } from "../../adapt/interface";
 import { ICatalogSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
+import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
+import { ScryfallCatalog } from "../../types";
+import { runSerial } from "../../../../../main/services/infra/util";
+
+type SyncSingleCatalogParameter = {
+  catalogType: CatalogType,
+  progressCallback?: ProgressCallback
+};
 
 @injectable()
 export class CatalogSyncService extends BaseSyncService implements ICatalogSyncService {
 
-  private catalogAdapter: ICatalogAdapter;
+  //#region private readonly fields -------------------------------------------
+  private readonly catalogAdapter: ICatalogAdapter;
+  private readonly scryfallclient: IScryfallClient;
+  //#endregion
 
+  //#region Constructor & C° --------------------------------------------------
   public constructor(
     @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
-    @inject(ADAPTTOKENS.CatalogAdapter) catalogAdapter: ICatalogAdapter) {
+    @inject(ADAPTTOKENS.CatalogAdapter) catalogAdapter: ICatalogAdapter,
+    @inject(CLIENTTOKENS.ScryfallClient) scryfallclient: IScryfallClient) {
     super(databaseService);
     this.catalogAdapter = catalogAdapter;
+    this.scryfallclient = scryfallclient;
   }
+  //#endregion
 
+  //#region ICatalogSyncService methods ---------------------------------------
   public async sync(options: CatalogSyncOptions, progressCallback?: ProgressCallback): Promise<void> {
     console.log("start CatalogSyncService.sync:");
-    if (progressCallback) {
-      progressCallback("sync catalogs");
-    }
-    await Promise.all(options.catalogs.map((catalog: CatalogType) => this.syncSingleCatalog(catalog)));
+    const serialExecutionArray = options.catalogs.map<SyncSingleCatalogParameter>((catalog: CatalogType) => { return { catalogType: catalog, progressCallback: progressCallback }; });
+    await runSerial<SyncSingleCatalogParameter>(serialExecutionArray, this.syncSingleCatalog.bind(this));
   }
+  //#endregion
 
-  private async syncSingleCatalog(catalog: CatalogType, progressCallback?: ProgressCallback): Promise<void> {
-    console.log("  -> start CatalogSyncService.syncSingleCatalog", catalog);
-    if (progressCallback) {
-      progressCallback(`Synchronizing ${catalog}`);
+  //#region Private methods ---------------------------------------------------
+  private async syncSingleCatalog(parameter: SyncSingleCatalogParameter): Promise<void> {
+    console.log("  -> start CatalogSyncService.syncSingleCatalog", parameter.catalogType);
+    if (parameter.progressCallback) {
+      parameter.progressCallback(`Synchronizing catalog '${parameter.catalogType}'`);
     }
-    let items: Promise<Array<string>>;
-    switch (catalog) {
+    let catalog: Promise<ScryfallCatalog>;
+    switch (parameter.catalogType) {
       case "AbilityWords":
-        items = Catalog.abilityWords();
+        catalog = this.scryfallclient.getCatalog("AbilityWords");
         break;
       case "ArtifactTypes":
-        items = Catalog.artifactTypes();
+        catalog = this.scryfallclient.getCatalog("ArtifactTypes");
         break;
       case "ArtistNames":
-        items = Catalog.artistNames();
+        catalog = this.scryfallclient.getCatalog("ArtistNames");
         break;
       case "CardNames":
-        items = Catalog.cardNames();
+        catalog = this.scryfallclient.getCatalog("CardNames");
         break;
       case "CreatureTypes":
-        items = Catalog.creatureTypes();
+        catalog = this.scryfallclient.getCatalog("CreatureTypes");
         break;
       case "EnchantmentTypes":
-        items = Catalog.enchantmentTypes();
+        catalog = this.scryfallclient.getCatalog("EnchantmentTypes");
         break;
       case "KeywordAbilities":
-        items = Catalog.keywordAbilities();
+        catalog = this.scryfallclient.getCatalog("KeywordAbilities");
         break;
       case "KeywordActions":
-        items = Catalog.keywordActions();
+        catalog = this.scryfallclient.getCatalog("KeywordActions");
         break;
       case "LandTypes":
-        items = Catalog.landTypes();
+        catalog = this.scryfallclient.getCatalog("LandTypes");
         break;
       case "Loyalties":
-        items = Catalog.loyalties();
+        catalog = this.scryfallclient.getCatalog("Loyalties");
         break;
       case "PlaneswalkerTypes":
-        items = Catalog.planeswalkerTypes();
+        catalog = this.scryfallclient.getCatalog("PlaneswalkerTypes");
         break;
       case "Powers":
-        items = Catalog.powers();
+        catalog = this.scryfallclient.getCatalog("Powers");
         break;
       case "SpellTypes":
-        items = Catalog.spellTypes();
+        catalog = this.scryfallclient.getCatalog("SpellTypes");
         break;
       case "Supertypes":
-        items = Catalog.supertypes();
+        catalog = this.scryfallclient.getCatalog("Supertypes");
         break;
       case "Toughnesses":
-        items = Catalog.toughnesses();
+        catalog = this.scryfallclient.getCatalog("Toughnesses");
         break;
       case "Watermarks":
-        items = Catalog.watermarks();
+        catalog = this.scryfallclient.getCatalog("Watermarks");
         break;
       case "WordBank":
-        items = Catalog.wordBank();
+        catalog = this.scryfallclient.getCatalog("WordBank");
         break;
     }
-    return items.then((items: Array<string>) => this.processSync(catalog, items));
+    return catalog.then((fetched: ScryfallCatalog) => this.processSync(parameter, fetched));
   }
 
   // TODO remove items that are not on the server anymore or at least mark them
-  private async processSync(catalogType: CatalogType, items: Array<string>): Promise<void> {
+  private async processSync(parameter: SyncSingleCatalogParameter, catalog: ScryfallCatalog): Promise<void> {
+    console.log(`Retrieved ${catalog.total_values} items for catalog '${parameter.catalogType}'`);
+    if (parameter.progressCallback) {
+      parameter.progressCallback(`Retrieved ${catalog.total_values} items for catalog '${parameter.catalogType}'`);
+    }
     return await this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
-      trx.deleteFrom("catalog_item").where("catalog_item.catalog_name", "=", catalogType).execute();
+      trx.deleteFrom("catalog_item").where("catalog_item.catalog_name", "=", parameter.catalogType).execute();
       trx.insertInto("catalog_item")
-        .values(items.map((item:string)=> this.catalogAdapter.toInsert({ catalogType: catalogType, item: item })))
+        .values(catalog.data.map((item: string) => this.catalogAdapter.toInsert({ catalogType: parameter.catalogType, item: item })))
         .executeTakeFirstOrThrow();
     });
   }
+  //#endregion
 }

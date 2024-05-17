@@ -1,5 +1,6 @@
-import { Compilable, Kysely, UpdateQueryBuilderWithRightJoin } from "kysely";
+import { Compilable, Kysely } from "kysely";
 import { inject, injectable } from "tsyringe";
+
 import { DatabaseSchema } from "../../../database/schema";
 import INFRATOKENS, { IDatabaseService } from "../../infra/interfaces";
 

@@ -4,10 +4,10 @@ import { inject, injectable } from "tsyringe";
 
 import { CardSetSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
 import { CardSet, DatabaseSchema } from "../../../../database/schema";
-import ADAPTTOKENS, { ICardSetAdapter } from "../../adapt/interface";
 import INFRATOKENS, { IDatabaseService, IImageCacheService } from "../../../infra/interfaces";
-import { BaseSyncService } from "./base-sync.service";
+import ADAPTTOKENS, { ICardSetAdapter } from "../../adapt/interface";
 import { ICardSetSyncService } from "../interface";
+import { BaseSyncService } from "./base-sync.service";
 
 @injectable()
 export class CardSetSyncService extends BaseSyncService implements ICardSetSyncService {
@@ -16,15 +16,6 @@ export class CardSetSyncService extends BaseSyncService implements ICardSetSyncS
   private readonly cardSetAdapter: ICardSetAdapter;
   private readonly imageCacheService: IImageCacheService;
   //#endregion
-
-  // TODO check where to put this so we can re-use
-  // private runSerial<T>(cardSets: Array<T>, task: (t: T) => Promise<void>): Promise<void> {
-  //   var result = Promise.resolve();
-  //   cardSets.forEach((cardSet: any) => {
-  //     result = result.then(() => task(cardSet));
-  //   });
-  //   return result;
-  // }
 
   //#region Constructor -------------------------------------------------------
   public constructor(
@@ -51,14 +42,16 @@ export class CardSetSyncService extends BaseSyncService implements ICardSetSyncS
     else {
       sets = Sets.byCode(options.code).then((set: ScryfallCardSet) => new Array<ScryfallCardSet>(set));
     }
-    return sets
-      .then((sets: Array<ScryfallCardSet>) => this.processSync(sets))
+
+    return await sets
+      .then(async (sets: Array<ScryfallCardSet>) => await this.processSync(sets))
       .then(() => this.database.selectFrom("card_set").selectAll().execute())
-      .then(async (cardsets: Array<CardSet>) => {
+      .then(async (cardSets: Array<CardSet>) => {
         let result = Promise.resolve();
-        cardsets.forEach(async (cardset: CardSet) => {
-          result = result.then(() => this.imageCacheService.cacheCardSetSvg(cardset));
+        cardSets.forEach(async (cardset: CardSet) => {
+          result = result.then(async () => await this.imageCacheService.cacheCardSetSvg(cardset));
         });
+        return result;
       });
   }
   //#endregion

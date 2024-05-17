@@ -6,60 +6,88 @@ import { Classes, ContextMenu, Menu, MenuItem, Tree, TreeNodeInfo } from "@bluep
 import { CardSetSelectDto } from "../../../../../common/dto";
 import { SvgProvider } from "../svg-provider/svg-provider";
 import { CardSyncOptions, IQueryOrSyncParam } from "../../../../../common/ipc-params";
+import * as _ from "lodash";
+
+type NodePath = Array<number>;
+
+type TreeAction =
+  | { type: "SET_IS_EXPANDED"; payload: { path: NodePath; isExpanded: boolean } }
+  | { type: "DESELECT_ALL"; }
+  | { type: "SET_IS_SELECTED"; payload: { path: NodePath; isSelected: boolean } };
+
+function forEachNode(nodes: Array<TreeNodeInfo> | undefined, callback: (node: TreeNodeInfo) => void) {
+  if (!nodes) {
+    return;
+  }
+  for (const node of nodes as Array<TreeNodeInfo>) {
+    callback(node);
+    forEachNode(node.childNodes, callback);
+  }
+}
+
+function forNodeAtPath(nodes: Array<TreeNodeInfo>, path: NodePath, callback: (node: TreeNodeInfo) => void) {
+  callback(Tree.nodeFromPath(path, nodes));
+}
+
+function treeExampleReducer(state: Array<TreeNodeInfo>, action: TreeAction) {
+  const newState = _.cloneDeep(state);
+  switch (action.type) {
+    case "DESELECT_ALL":
+      forEachNode(newState, node => (node.isSelected = false));
+      return newState;
+    case "SET_IS_EXPANDED":
+      forNodeAtPath(newState, action.payload.path, node => (node.isExpanded = action.payload.isExpanded));
+      return newState;
+    case "SET_IS_SELECTED":
+      forNodeAtPath(newState, action.payload.path, node => (node.isSelected = action.payload.isSelected));
+      return newState;
+    default:
+      return state;
+  }
+}
 
 export function CardSetsTree(props: CardSetTreeProps) {
   console.log("in cardsetstree function");
 
   //#region State -------------------------------------------------------------
-  const [nodes, setNodes] = React.useState(buildTree(props.cardSets, null));
-  const [currentSelectedPath, setCurrentSelectedPath] = React.useState(new Array<number>());
+  const [nodes, dispatch] = React.useReducer(treeExampleReducer, buildTree(props.cardSets, null));
+  // const [currentSelectedPath, setCurrentSelectedPath] = React.useState(new Array<number>());
   //#endregion
 
   //#region event handlers ----------------------------------------------------
-  function handleNodeCollapse(_node: TreeNodeInfo<CardSetSelectDto>, nodePath: Array<number>, _e: React.MouseEvent<HTMLElement>): void {
-    forNodeAtPath(nodes, nodePath, (node => node.isExpanded = false));
-  }
+  const handleNodeClick = React.useCallback(
+    (node: TreeNodeInfo<CardSetSelectDto>, nodePath: NodePath, _e: React.MouseEvent<HTMLElement>) => {
+      // LATER by dispatching twice, we are re-rendering twice
+      const originallySelected = node.isSelected;
+      // LATER multi select
+      // if (!e.shiftKey) {
+        dispatch({ type: "DESELECT_ALL" });
+      // }
+      dispatch({
+        payload: { path: nodePath, isSelected: originallySelected == null ? true : !originallySelected },
+        type: "SET_IS_SELECTED",
+      });
+      props.onSetsSelected(getTreeNodeItemsRecursive(node, null));
+    },
+    [],
+  );
 
-  function handleNodeClick(_node: TreeNodeInfo<CardSetSelectDto>, nodePath: Array<number>, _e: React.MouseEvent<HTMLElement>): void {
-    setNodeSelected(nodes, nodePath);
-  }
+  const handleNodeCollapse = React.useCallback((_node: TreeNodeInfo, nodePath: NodePath) => {
+    dispatch({
+      payload: { path: nodePath, isExpanded: false },
+      type: "SET_IS_EXPANDED",
+    });
+  }, []);
 
-  function handleNodeExpand(_node: TreeNodeInfo<CardSetSelectDto>, nodePath: Array<number>, _e: React.MouseEvent<HTMLElement, MouseEvent>): void {
-    forNodeAtPath(nodes, nodePath, (node => node.isExpanded = true));
-  }
+  const handleNodeExpand = React.useCallback((_node: TreeNodeInfo, nodePath: NodePath) => {
+    dispatch({
+      payload: { path: nodePath, isExpanded: true },
+      type: "SET_IS_EXPANDED",
+    });
+  }, []);
   //#endregion
 
   //#region Private methods ---------------------------------------------------
-  function forNodeAtPath(
-    inputNodes: Array<TreeNodeInfo<CardSetSelectDto>>,
-    path: Array<number>,
-    callbackForNode: (node: TreeNodeInfo) => void): void {
-    callbackForNode(Tree.nodeFromPath(path, nodes));
-    setNodes(nodes);
-    // this.forceUpdate(); // otherwise nothing happens
-  }
-
-  function setNodeSelected(nodes: Array<TreeNodeInfo<CardSetSelectDto>>, path: Array<number>): void {
-    const nodeToUnselect: TreeNodeInfo = currentSelectedPath.length > 0 ?
-      Tree.nodeFromPath(currentSelectedPath, nodes) : null;
-    const nodeToSelect = Tree.nodeFromPath<CardSetSelectDto>(path, nodes);
-    if (nodeToUnselect) {
-      nodeToUnselect.isSelected = false;
-    }
-    nodeToSelect.isSelected = true;
-    const currentSelectedSets = getTreeNodeItemsRecursive(nodeToSelect);
-    setCurrentSelectedPath(path);
-    setNodes(nodes);
-    props.onSetsSelected(currentSelectedSets);
-  }
-
-  function getTreeNodeItemsRecursive(node: TreeNodeInfo<CardSetSelectDto>, items?: Array<CardSetSelectDto>): Array<CardSetSelectDto> {
-    const result = items ?? new Array<CardSetSelectDto>();
-    result.push(node.nodeData);
-    node.childNodes?.forEach((child: TreeNodeInfo<CardSetSelectDto>) => getTreeNodeItemsRecursive(child, result));
-    return result;
-  }
-
   function buildTree(items: Array<CardSetSelectDto>, id: string | undefined): Array<TreeNodeInfo<CardSetSelectDto>> {
     return items
       .filter((item: CardSetSelectDto) => item.cardSet.parent_set_code === id)
@@ -81,6 +109,13 @@ export function CardSetsTree(props: CardSetTreeProps) {
         };
         return node;
       });
+  }
+
+  function getTreeNodeItemsRecursive(node: TreeNodeInfo<CardSetSelectDto>, items?: Array<CardSetSelectDto>): Array<CardSetSelectDto> {
+    const result = items ?? new Array<CardSetSelectDto>();
+    result.push(node.nodeData);
+    node.childNodes?.forEach((child: TreeNodeInfo<CardSetSelectDto>) => getTreeNodeItemsRecursive(child, result));
+    return result;
   }
 
   function synchronizeSet(code: string): void {

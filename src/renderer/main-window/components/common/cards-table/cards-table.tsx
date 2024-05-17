@@ -43,7 +43,7 @@ export function CardsTable(props: CardsTableProps) {
   }
 
   function setNameRenderer(row: number): React.ReactElement<CellProps> {
-    const set = props.selectedSets.filter((s: CardSetSelectDto) => s.cardSet.id = cards[row].card.set_id);
+    const set = props.selectedSets.filter((s: CardSetSelectDto) => s.cardSet.id == cards[row].card.set_id);
     return (<Cell>{set[0]?.cardSet.name}</Cell>);
   }
 

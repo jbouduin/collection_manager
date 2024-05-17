@@ -1,5 +1,7 @@
-import { app, BrowserWindow, protocol } from "electron";
+import { app, BrowserWindow, protocol, session } from "electron";
+import * as fs from "fs";
 import { MigrationProvider } from "kysely";
+import * as path from "path";
 import "reflect-metadata";
 import { setCacheLimit } from "scryfall-sdk";
 import { container } from "tsyringe";
@@ -14,13 +16,15 @@ import { IDatabaseService } from "./services/infra/interfaces/database.service";
 import { IIpcDispatcherService } from "./services/infra/interfaces/ipc-dispatcher.service";
 import REPOTOKENS, { ICardRepository } from "./services/repo/interfaces";
 import { ServicesDI } from "./services/services.di";
-// import SYNCTOKENS, { ICardSetSyncService, ISymbologySyncService } from "./services/sync/interfaces";
+
 
 // FEATURE Replace scrfall-sdk
 setCacheLimit(0);
 // check for updates
 updateElectronApp();
 
+// const localAppData = process.env.
+// fmkadmapgofadopljbjfkapdkoienihi
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
   app.quit();
@@ -43,7 +47,13 @@ const bootFunction = async (splashWindow: BrowserWindow) => {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
+  // LATER also allow loading when packed, but then we need to find the correct version to load
+  const reactDevToolsPath = path.join(process.env.LOCALAPPDATA, "Google", "Chrome", "User Data", "Default", "Extensions", "fmkadmapgofadopljbjfkapdkoienihi", "5.2.0_0");
+  if (!app.isPackaged && fs.existsSync(reactDevToolsPath)) {
+    await session.defaultSession.loadExtension(reactDevToolsPath);
+  }
+
   ServicesDI.register();
   protocol.handle("cached-image", async (request: Request) => {
     const url = new URL(request.url);

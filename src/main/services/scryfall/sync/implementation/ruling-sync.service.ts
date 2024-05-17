@@ -1,5 +1,4 @@
 import { DeleteResult, ExpressionOrFactory, InsertResult, SqlBool, Transaction, UpdateResult } from "kysely";
-import { Rulings, Ruling as ScryfallRuling } from "scryfall-sdk";
 import { inject, injectable } from "tsyringe";
 
 import { ProgressCallback, RulingSyncOptions } from "../../../../../common/ipc-params";
@@ -8,18 +7,27 @@ import INFRATOKENS, { IDatabaseService } from "../../../infra/interfaces";
 import ADAPTTOKENS, { IRulingAdapter, IRulingLineAdapter } from "../../adapt/interface";
 import { IRulingSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
+import { ScryfallRuling } from "../../types";
+import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
 
 
 @injectable()
 export class RulingSyncService extends BaseSyncService implements IRulingSyncService {
 
+  //#region private readonly fields -------------------------------------------
+  private readonly scryfallclient: IScryfallClient;
   private rulingLineAdapter: IRulingLineAdapter;
   private rulingAdapter: IRulingAdapter;
+  //#endregion
 
-  public constructor(@inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
+  //#region Constructor & C° --------------------------------------------------
+  public constructor(
+    @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
+    @inject(CLIENTTOKENS.ScryfallClient) scryfallclient: IScryfallClient,
     @inject(ADAPTTOKENS.RulingLineAdapter) rulingLineAdapter: IRulingLineAdapter,
     @inject(ADAPTTOKENS.RulingAdapter) rulingAdapter: IRulingAdapter) {
     super(databaseService);
+    this.scryfallclient = scryfallclient;
     this.rulingLineAdapter = rulingLineAdapter;
     this.rulingAdapter = rulingAdapter;
   }
@@ -29,7 +37,7 @@ export class RulingSyncService extends BaseSyncService implements IRulingSyncSer
     if (progressCallback) {
       progressCallback("Synchronizing rulings");
     }
-    return Rulings.byId(options.cardId)
+    return this.scryfallclient.getRulings(options.cardId)
       .then((scryFall: Array<ScryfallRuling>) => this.processSync(options.cardId, scryFall));
   }
 

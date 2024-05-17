@@ -21,18 +21,18 @@ type SyncSingleCatalogParameter = {
 export class CatalogSyncService extends BaseSyncService implements ICatalogSyncService {
 
   //#region private readonly fields -------------------------------------------
-  private readonly catalogAdapter: ICatalogAdapter;
   private readonly scryfallclient: IScryfallClient;
+  private readonly catalogAdapter: ICatalogAdapter;
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
   public constructor(
     @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
-    @inject(ADAPTTOKENS.CatalogAdapter) catalogAdapter: ICatalogAdapter,
-    @inject(CLIENTTOKENS.ScryfallClient) scryfallclient: IScryfallClient) {
+    @inject(CLIENTTOKENS.ScryfallClient) scryfallclient: IScryfallClient,
+    @inject(ADAPTTOKENS.CatalogAdapter) catalogAdapter: ICatalogAdapter  ) {
     super(databaseService);
-    this.catalogAdapter = catalogAdapter;
     this.scryfallclient = scryfallclient;
+    this.catalogAdapter = catalogAdapter;
   }
   //#endregion
 

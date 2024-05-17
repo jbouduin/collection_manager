@@ -59,7 +59,7 @@ export class RulingSyncService extends BaseSyncService implements IRulingSyncSer
           .selectAll()
           .where("card.id", "=", cardId)
           .executeTakeFirst()
-          .then((card: Card) => this.syncRulingForSingleOracleId(trx, card.oracle_id, new Array<ScryfallRuling>()))
+          .then((card: Card) => this.syncRulingForSingleOracleId(trx, card.oracle_id, new Array<ScryfallRuling>()));
       });
     }
   }

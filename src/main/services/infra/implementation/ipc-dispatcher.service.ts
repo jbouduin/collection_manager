@@ -2,22 +2,21 @@ import { ipcMain, nativeTheme } from "electron";
 import { container, singleton } from "tsyringe";
 
 import { DarkmodeOption } from "../../../../common/ipc-params";
-import INFRATOKENS, { IIpcDispatcherService, IIpcQueryOrSyncService, IIpcQueryService, IIpcSyncService } from "../interfaces";
+import INFRATOKENS, { IIpcDispatcherService, IIpcQueryService, IIpcSyncService } from "../interfaces";
 
 @singleton()
 export class IpcDispatcherService implements IIpcDispatcherService{
 
-
-
+  //#region IIpcDispatcherService methods -------------------------------------
   /* eslint-disable  @typescript-eslint/no-explicit-any */
   public Initialize(): void {
     ipcMain.handle("darkmode", (_event: Electron.IpcMainEvent, ...args: Array<any>) => this.handelDarkMode(args[0]));
-    ipcMain.handle("ping", () => "pong");
     ipcMain.handle("query", (_event: Electron.IpcMainEvent, ...args: Array<any>) => container.resolve<IIpcQueryService>(INFRATOKENS.IpcQueryService).handle(args[0]));
-    ipcMain.handle("queryOrSync", (_event: Electron.IpcMainEvent, ...args: Array<any>) => container.resolve<IIpcQueryOrSyncService>(INFRATOKENS.IpcQueryOrSyncService).handle(args[0]));
     ipcMain.handle("sync", (_event: Electron.IpcMainEvent, ...args: Array<any>) => container.resolve<IIpcSyncService>(INFRATOKENS.IpcSyncService).handle(args[0]));
   }
   /* eslint-enable  @typescript-eslint/no-explicit-any */
+  //#endregion
+
 
   private handelDarkMode(...args: Array<DarkmodeOption>): boolean {
     const option = args[0] as DarkmodeOption;

@@ -14,14 +14,14 @@ import { BaseRepository } from "./base.repository";
 @injectable()
 export class SymbologyRepository extends BaseRepository implements ISymbologyRepository {
 
+  //#region Private readonly fields -------------------------------------------
   private imageCacheService: IImageCacheService;
   private symbologyAdapter: ISymbologyAdapter;
   private symbologyAlternativeAdapter: ISymbologyAlternativeAdapter;
   private symbologyColorMapAdapter: ISymbologyColorMapAdapter;
-  // NOW check if this caching is still required, probably not
-  private allSymbologies: Map<string, SymbologySelectDto>;
+  //#endregion
 
-
+  //#region Constructor & C° --------------------------------------------------
   public constructor(
     @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
     @inject(INFRATOKENS.ImageCacheService) imageCacheService: IImageCacheService,
@@ -34,31 +34,41 @@ export class SymbologyRepository extends BaseRepository implements ISymbologyRep
     this.symbologyAlternativeAdapter = symbologyAlternativeAdapter;
     this.symbologyColorMapAdapter = symbologyColorMapAdapter;
   }
+  //#endregion
 
+  //#region ISymbologyRepository methods --------------------------------------
   public async getAll(): Promise<Array<SymbologySelectDto>> {
-    if (this.allSymbologies?.size > 0) {
-      return Promise.resolve(Array.from(this.allSymbologies.values()));
-    } else {
-      return this.buildCache().then(() => Array.from(this.allSymbologies.values()));
-    }
+    return Promise.all([
+      this.database.selectFrom("symbology").selectAll().execute(),
+      this.database.selectFrom("symbology_color_map").selectAll().execute(),
+      this.database.selectFrom("symbology_alternative").selectAll().execute()
+    ])
+      .then((result: [Array<Symbology>, Array<SymbologyColorMap>, Array<SymbologyAlternative>]) => {
+
+        return result[0].map((symbol: Symbology) => {
+          const dto: SymbologySelectDto = {
+            symbology: symbol,
+            alternatives: result[2].filter((alternative: SymbologyAlternative) => alternative.symbology_id == symbol.id),
+            colors: result[1].filter((color: SymbologyColorMap) => color.symbology_id == symbol.id)
+          };
+          return dto;
+        });
+      });
+
   }
 
   public getAllWithCachedSvg(): Promise<Map<string, string>> {
-    return this.getAll().then(((cardSymbols: Array<SymbologySelectDto>) => {
+    return this.database
+      .selectFrom("symbology")
+      .selectAll()
+      .execute()
+      .then(((cardSymbols: Array<Symbology>) => {
       const result = new Map<string, string>();
-      cardSymbols.forEach((cardSymbol: SymbologySelectDto) =>
-        result.set(cardSymbol.symbology.id, this.imageCacheService.getCardSymbolSvg(cardSymbol.symbology))
+      cardSymbols.forEach((cardSymbol: Symbology) =>
+        result.set(cardSymbol.id, this.imageCacheService.getCardSymbolSvg(cardSymbol))
       );
       return result;
     }));
-  }
-
-  public async getByid(id: string): Promise<SymbologySelectDto> {
-    if (this.allSymbologies?.size > 0) {
-      return Promise.resolve(this.allSymbologies.get(id));
-    } else {
-      return this.buildCache().then(() => this.allSymbologies.get(id));
-    }
   }
 
   // TODO remove items that are not on the server anymore or at least mark them
@@ -156,26 +166,4 @@ export class SymbologyRepository extends BaseRepository implements ISymbologyRep
     });
   }
 
-  private async buildCache(): Promise<void> {
-    if (!this.allSymbologies) {
-      this.allSymbologies = new Map<string, SymbologySelectDto>();
-    }
-
-    return Promise.all([
-      this.database.selectFrom("symbology").selectAll().execute(),
-      this.database.selectFrom("symbology_color_map").selectAll().execute(),
-      this.database.selectFrom("symbology_alternative").selectAll().execute()
-    ])
-      .then((result: [Array<Symbology>, Array<SymbologyColorMap>, Array<SymbologyAlternative>]) => {
-        result[0].forEach((symbol: Symbology) => {
-          const dto: SymbologySelectDto = {
-            symbology: symbol,
-            alternatives: result[2].filter((alternative: SymbologyAlternative) => alternative.symbology_id == symbol.id),
-            colors: result[1].filter((color: SymbologyColorMap) => color.symbology_id == symbol.id)
-          };
-          this.allSymbologies.set(symbol.id, dto);
-          // return dto;
-        });
-      });
-  }
 }

@@ -1,6 +1,6 @@
 import { container, inject, singleton } from "tsyringe";
 
-import { CardSetSyncOptions, CardSyncOptions, CatalogSyncOptions, IQueryOrSyncParam, QueryOrSyncOptions } from "../../../../common/ipc-params";
+import { CardSetSyncOptions, CardSyncOptions, CatalogSyncOptions, IQueryParam, QueryOptions } from "../../../../common/ipc-params";
 import SYNCTOKENS, { ICardSetSyncService, ICardSyncService, ICatalogSyncService, ISymbologySyncService } from "../../sync/interfaces";
 import INFRATOKENS, { IIpcSyncService, IWindowService } from "../interfaces";
 
@@ -14,7 +14,7 @@ export class IpcSyncService implements IIpcSyncService {
     this.windowService = windowService;
   }
 
-  public async handle(params: IQueryOrSyncParam<QueryOrSyncOptions>): Promise<void> {
+  public async handle(params: IQueryParam<QueryOptions>): Promise<void> {
     console.log("start IpcSyncService.handling", params);
     const splashWindow = this.windowService.createSplashWindow();
     splashWindow.on("ready-to-show", async () => {
@@ -24,7 +24,7 @@ export class IpcSyncService implements IIpcSyncService {
         case "CardSet":
           await container.resolve<ICardSetSyncService>(SYNCTOKENS.CardSetSyncService)
             .sync(
-              (params as IQueryOrSyncParam<CardSetSyncOptions>).options,
+              (params as IQueryParam<CardSetSyncOptions>).options,
               (value: string) => splashWindow.webContents.send("splash", value)
             )
             .then(() => splashWindow.close());
@@ -32,7 +32,7 @@ export class IpcSyncService implements IIpcSyncService {
         case "Card":
           await container.resolve<ICardSyncService>(SYNCTOKENS.CardSyncService)
             .sync(
-              (params as IQueryOrSyncParam<CardSyncOptions>).options,
+              (params as IQueryParam<CardSyncOptions>).options,
               (value: string) => splashWindow.webContents.send("splash", value)
             )
             .then(() => splashWindow.close());
@@ -40,7 +40,7 @@ export class IpcSyncService implements IIpcSyncService {
         case "Catalog":
           await container.resolve<ICatalogSyncService>(SYNCTOKENS.CatalogSyncService)
             .sync(
-              (params as IQueryOrSyncParam<CatalogSyncOptions>).options,
+              (params as IQueryParam<CatalogSyncOptions>).options,
               (value: string) => splashWindow.webContents.send("splash", value)
             )
             .then(() => splashWindow.close());

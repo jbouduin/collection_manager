@@ -1,6 +1,6 @@
-import { ProgressCallback, QueryOrSyncOptions } from "../../../../common/ipc-params";
+import { ProgressCallback, QueryOptions } from "../../../../common/ipc-params";
 
 
-export interface IBaseSyncService<O extends QueryOrSyncOptions> {
+export interface IBaseSyncService<O extends QueryOptions> {
   sync(options: O, progressCallback?: ProgressCallback): Promise<void>;
 }

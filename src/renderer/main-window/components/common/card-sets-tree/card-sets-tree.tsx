@@ -5,7 +5,7 @@ import { Classes, ContextMenu, Menu, MenuItem, Tree, TreeNodeInfo } from "@bluep
 // import { CardSetTreeState } from "./card-sets-tree.state";
 import { CardSetSelectDto } from "../../../../../common/dto";
 import { SvgProvider } from "../svg-provider/svg-provider";
-import { CardSyncOptions, IQueryOrSyncParam } from "../../../../../common/ipc-params";
+import { CardSyncOptions, IQueryParam } from "../../../../../common/ipc-params";
 import * as _ from "lodash";
 
 type NodePath = Array<number>;
@@ -119,7 +119,7 @@ export function CardSetsTree(props: CardSetTreeProps) {
   }
 
   function synchronizeSet(code: string): void {
-    const params: IQueryOrSyncParam<CardSyncOptions> = {
+    const params: IQueryParam<CardSyncOptions> = {
       type: "Card",
       options: { setCode: code }
     };

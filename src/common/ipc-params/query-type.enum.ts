@@ -1,4 +1,4 @@
-enum EQueryOrSyncType {
+enum EQueryType {
   CardSet,
   CardSetCachedSvg,
   Card,
@@ -10,4 +10,4 @@ enum EQueryOrSyncType {
   SymbologyCachedSvg
 }
 
-export type QueryOrSyncType = keyof typeof EQueryOrSyncType;
+export type QueryType = keyof typeof EQueryType;

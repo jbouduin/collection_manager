@@ -5,7 +5,7 @@ import * as React from "react";
 import { BlueprintProvider, FocusStyleManager } from "@blueprintjs/core";
 import { createRoot } from "react-dom/client";
 import { Desktop } from "./components/desktop/desktop";
-import { IQueryOrSyncParam } from "../../common/ipc-params";
+import { IQueryParam } from "../../common/ipc-params";
 import { DesktopProps } from "./components/desktop/desktop.props";
 import { CardSetSelectDto, LanguageSelectDto } from "../../common/dto";
 
@@ -17,7 +17,7 @@ FocusStyleManager.onlyShowFocusOnTabs();
   // TODO await import("./App.css");
   const container = document.getElementById("root") as HTMLElement;
   const root = createRoot(container);
-  const symbologyQueryParam: IQueryOrSyncParam<null> = {
+  const symbologyQueryParam: IQueryParam<null> = {
     type: "SymbologyCachedSvg",
     options: null
   };

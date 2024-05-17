@@ -1,11 +1,12 @@
 import { ExpressionOrFactory, SqlBool, Transaction } from "kysely";
-import { Set as ScryfallCardSet, Sets } from "scryfall-sdk";
 import { inject, injectable } from "tsyringe";
 
-import { CardSetSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
+import { ProgressCallback } from "../../../../../common/ipc-params";
 import { CardSet, DatabaseSchema } from "../../../../database/schema";
 import INFRATOKENS, { IDatabaseService, IImageCacheService } from "../../../infra/interfaces";
 import ADAPTTOKENS, { ICardSetAdapter } from "../../adapt/interface";
+import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
+import { ScryfallCardSet } from "../../types";
 import { ICardSetSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
 
@@ -13,6 +14,7 @@ import { BaseSyncService } from "./base-sync.service";
 export class CardSetSyncService extends BaseSyncService implements ICardSetSyncService {
 
   //#region private readonly fields -------------------------------------------
+  private readonly scryfallclient: IScryfallClient;
   private readonly cardSetAdapter: ICardSetAdapter;
   private readonly imageCacheService: IImageCacheService;
   //#endregion
@@ -20,28 +22,24 @@ export class CardSetSyncService extends BaseSyncService implements ICardSetSyncS
   //#region Constructor -------------------------------------------------------
   public constructor(
     @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
+    @inject(CLIENTTOKENS.ScryfallClient) scryfallclient: IScryfallClient,
     @inject(ADAPTTOKENS.CardSetAdapter) cardSetAdapter: ICardSetAdapter,
     @inject(INFRATOKENS.ImageCacheService) imageCacheService: IImageCacheService) {
     super(databaseService);
+    this.scryfallclient = scryfallclient;
     this.cardSetAdapter = cardSetAdapter;
     this.imageCacheService = imageCacheService;
   }
   //#endregion
 
   //#region ICardSetSyncService methods ---------------------------------------
-  public async sync(options: CardSetSyncOptions, progressCallback?: ProgressCallback): Promise<void> {
+  public async sync(_options: null, progressCallback?: ProgressCallback): Promise<void> {
     console.log("start CardSetSyncService.sync");
     if (progressCallback) {
-      progressCallback("Sync Sets");
+      progressCallback("Synchronizing Card sets");
     }
 
-    let sets: Promise<Array<ScryfallCardSet>>;
-    if (options.code == null) {
-      sets = Sets.all();
-    }
-    else {
-      sets = Sets.byCode(options.code).then((set: ScryfallCardSet) => new Array<ScryfallCardSet>(set));
-    }
+    const sets = this.scryfallclient.getCardSets();
 
     return await sets
       .then(async (sets: Array<ScryfallCardSet>) => await this.processSync(sets))

@@ -5,10 +5,10 @@ import { ProgressCallback, RulingSyncOptions } from "../../../../../common/ipc-p
 import { Card, DatabaseSchema } from "../../../../database/schema";
 import INFRATOKENS, { IDatabaseService } from "../../../infra/interfaces";
 import ADAPTTOKENS, { IRulingAdapter, IRulingLineAdapter } from "../../adapt/interface";
+import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
+import { ScryfallRuling } from "../../types";
 import { IRulingSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
-import { ScryfallRuling } from "../../types";
-import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
 
 
 @injectable()
@@ -16,8 +16,8 @@ export class RulingSyncService extends BaseSyncService implements IRulingSyncSer
 
   //#region private readonly fields -------------------------------------------
   private readonly scryfallclient: IScryfallClient;
-  private rulingLineAdapter: IRulingLineAdapter;
-  private rulingAdapter: IRulingAdapter;
+  private readonly rulingLineAdapter: IRulingLineAdapter;
+  private readonly rulingAdapter: IRulingAdapter;
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------

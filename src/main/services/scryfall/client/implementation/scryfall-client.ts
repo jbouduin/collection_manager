@@ -3,9 +3,8 @@ import { inject, injectable } from "tsyringe";
 import { CatalogType } from "../../../../../common/enums";
 import { ProgressCallback } from "../../../../../common/ipc-params";
 import INFRATOKENS, { IConfigurationService } from "../../../../../main/services/infra/interfaces";
-import { ScryfallCatalog, ScryfallEndpoint } from "../../types";
+import { ScryfallCardSet, ScryfallCatalog, ScryfallEndpoint, ScryfallRuling } from "../../types";
 import { ScryfallList } from "../../types/scryfall-list";
-import { ScryfallRuling } from "../../types/scryfall-ruling";
 import { IScryfallClient } from "../interfaces";
 
 
@@ -46,16 +45,24 @@ export class ScryfallClient implements IScryfallClient {
       .then((response: Response) => response.body);
   }
 
+  public async getCardSets(): Promise<Array<ScryfallCardSet>> {
+    const uri = `${this.scryfallApiRoot}/${this.scryfallEndpoints.get("cardSet")}`;
+    return this.fetchList<ScryfallCardSet>(uri, new Array<ScryfallCardSet>());
+  }
+
   public async getCatalog(type: CatalogType): Promise<ScryfallCatalog> {
+    const uri = `${this.scryfallApiRoot}/${this.scryfallEndpoints.get("catalog")}/${this.scryfallCatalogPaths.get(type)}`;
     return this
-      .tryFetch(`${this.scryfallApiRoot}/${this.scryfallEndpoints.get("catalog")}/${this.scryfallCatalogPaths.get(type)}`)
+      .tryFetch(uri)
       .then((fetchResult: Response) => fetchResult.json());
   }
 
   public async getRulings(cardId: string): Promise<Array<ScryfallRuling>> {
-    const url = `${this.scryfallApiRoot}/${this.scryfallEndpoints.get("ruling").replace(":id", cardId)}`;
-    return this.fetchList<ScryfallRuling>(url, new Array<ScryfallRuling>());
+    const uri = `${this.scryfallApiRoot}/${this.scryfallEndpoints.get("ruling").replace(":id", cardId)}`;
+    return this.fetchList<ScryfallRuling>(uri, new Array<ScryfallRuling>());
   }
+
+
   //#endregion
 
   //#region private methods ---------------------------------------------------

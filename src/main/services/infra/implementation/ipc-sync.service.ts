@@ -1,6 +1,6 @@
 import { container, inject, singleton } from "tsyringe";
 
-import { CardSetSyncOptions, CardSyncOptions, CatalogSyncOptions, IQueryParam, QueryOptions } from "../../../../common/ipc-params";
+import { CardSyncOptions, CatalogSyncOptions, IQueryParam, QueryOptions } from "../../../../common/ipc-params";
 import SYNCTOKENS, { ICardSetSyncService, ICardSyncService, ICatalogSyncService, ISymbologySyncService } from "../../scryfall";
 import INFRATOKENS, { IIpcSyncService, IWindowService } from "../interfaces";
 
@@ -24,7 +24,7 @@ export class IpcSyncService implements IIpcSyncService {
         case "CardSet":
           await container.resolve<ICardSetSyncService>(SYNCTOKENS.CardSetSyncService)
             .sync(
-              (params as IQueryParam<CardSetSyncOptions>).options,
+              null,
               (value: string) => splashWindow.webContents.send("splash", value)
             )
             .then(() => splashWindow.close());

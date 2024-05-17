@@ -5,12 +5,12 @@ import { CatalogType } from "../../../../../common/enums";
 import { CatalogSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
 import { DatabaseSchema } from "../../../../../main/database/schema";
 import INFRATOKENS, { IDatabaseService } from "../../../../../main/services/infra/interfaces";
+import { runSerial } from "../../../../../main/services/infra/util";
 import ADAPTTOKENS, { ICatalogAdapter } from "../../adapt/interface";
-import { ICatalogSyncService } from "../interface";
-import { BaseSyncService } from "./base-sync.service";
 import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
 import { ScryfallCatalog } from "../../types";
-import { runSerial } from "../../../../../main/services/infra/util";
+import { ICatalogSyncService } from "../interface";
+import { BaseSyncService } from "./base-sync.service";
 
 type SyncSingleCatalogParameter = {
   catalogType: CatalogType,
@@ -29,7 +29,7 @@ export class CatalogSyncService extends BaseSyncService implements ICatalogSyncS
   public constructor(
     @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
     @inject(CLIENTTOKENS.ScryfallClient) scryfallclient: IScryfallClient,
-    @inject(ADAPTTOKENS.CatalogAdapter) catalogAdapter: ICatalogAdapter  ) {
+    @inject(ADAPTTOKENS.CatalogAdapter) catalogAdapter: ICatalogAdapter) {
     super(databaseService);
     this.scryfallclient = scryfallclient;
     this.catalogAdapter = catalogAdapter;

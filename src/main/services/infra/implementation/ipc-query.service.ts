@@ -4,7 +4,7 @@ import { RulingsByCardIdSelectDto } from "../../../../common/dto";
 import { IQueryParam, QueryOptions, RulingQueryOptions } from "../../../../common/ipc-params";
 import { CardQueryOptions } from "../../../../common/ipc-params/card-query.options";
 import REPOTOKENS, { ICardRepository, ICardSetRepository, ICatalogRepository, IColorRepository, ILanguageRepository, IRulingRepository, ISymbologyRepository } from "../../repo/interfaces";
-import SYNCTOKENS, { IRulingSyncService } from "../../sync/interfaces";
+import SYNCTOKENS, { IRulingSyncService } from "../../scryfall";
 import { IIpcQueryService } from "../interfaces";
 
 

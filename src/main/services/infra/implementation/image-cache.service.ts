@@ -6,20 +6,20 @@ import { inject, injectable } from "tsyringe";
 import { CardImageSelectDto } from "../../../../common/dto";
 import INFRATOKENS, { IConfigurationService, IImageCacheService } from "../interfaces";
 import { CardSet, Symbology } from "../../../../main/database/schema";
-import SCRYTOKENS, { IApiClient } from "../../scryfall/interfaces";
+import SCRYTOKENS, { IScryfallClient } from "../../scryfall/client/interfaces";
 
 @injectable()
 export class ImageCacheService implements IImageCacheService {
 
   //#region Private readonly fields -------------------------------------------
   private readonly configurationService: IConfigurationService;
-  private readonly apiClient: IApiClient;
+  private readonly apiClient: IScryfallClient;
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
   public constructor(
     @inject(INFRATOKENS.ConfigurationService) configurationService: IConfigurationService,
-    @inject(SCRYTOKENS.ApiClient) apiClient: IApiClient) {
+    @inject(SCRYTOKENS.ScryfallClient) apiClient: IScryfallClient) {
     this.configurationService = configurationService;
     this.apiClient = apiClient;
   }

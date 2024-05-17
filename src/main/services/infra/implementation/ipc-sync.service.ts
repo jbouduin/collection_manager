@@ -1,7 +1,7 @@
 import { container, inject, singleton } from "tsyringe";
 
 import { CardSetSyncOptions, CardSyncOptions, CatalogSyncOptions, IQueryParam, QueryOptions } from "../../../../common/ipc-params";
-import SYNCTOKENS, { ICardSetSyncService, ICardSyncService, ICatalogSyncService, ISymbologySyncService } from "../../sync/interfaces";
+import SYNCTOKENS, { ICardSetSyncService, ICardSyncService, ICatalogSyncService, ISymbologySyncService } from "../../scryfall";
 import INFRATOKENS, { IIpcSyncService, IWindowService } from "../interfaces";
 
 

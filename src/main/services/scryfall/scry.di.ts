@@ -1,9 +1,11 @@
-import { Lifecycle, container } from "tsyringe";
-import { ApiClient } from "./implementation/api-client";
-import SCRYTOKENS, { IApiClient } from "./interfaces";
+import { SyncDi } from "./sync/sync.di";
+import { AdaptDi } from "./adapt/adapt.di";
+import { ClientDi } from "./client/client.di";
 
 export class ScryDi {
   public static registerScryfall() {
-    container.register<IApiClient>(SCRYTOKENS.ApiClient, { useClass: ApiClient }, { lifecycle: Lifecycle.Singleton });
+    ClientDi.registerClient();
+    SyncDi.registerSynchronizers();
+    AdaptDi.registerAdapters();
   }
 }

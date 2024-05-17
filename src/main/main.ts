@@ -16,6 +16,7 @@ import { IDatabaseService } from "./services/infra/interfaces/database.service";
 import { IIpcDispatcherService } from "./services/infra/interfaces/ipc-dispatcher.service";
 import REPOTOKENS, { ICardRepository } from "./services/repo/interfaces";
 import { ServicesDI } from "./services/services.di";
+import SYNCTOKENS, { ICatalogSyncService } from "./services/scryfall";
 
 
 // FEATURE Replace scrfall-sdk
@@ -23,8 +24,6 @@ setCacheLimit(0);
 // check for updates
 updateElectronApp();
 
-// const localAppData = process.env.
-// fmkadmapgofadopljbjfkapdkoienihi
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
   app.quit();
@@ -37,8 +36,8 @@ const bootFunction = async (splashWindow: BrowserWindow) => {
     .migrateToLatest(migrationContainer.resolve<MigrationProvider>(MIGRATOKENS.NewCustomMigrationProvider))
     .then(() => migrationContainer.dispose())
     // TODO this should only be done when new installation
-    // .then(() => container.resolve<ICatalogSyncService>(SYNCTOKENS.CatalogSyncService).sync({ catalogs: AllCatalogTypes }))
-    // TODO make those things setting dependent
+    .then(() => container.resolve<ICatalogSyncService>(SYNCTOKENS.CatalogSyncService).sync({ catalogs: ["AbilityWords", "LandTypes", "ArtifactTypes"] }))
+    // NOW make those things setting dependent
     // .then(() => container.resolve<ICardSetSyncService>(SYNCTOKENS.CardSetSyncService).sync({ code: null }, (label: string) => splashWindow.webContents.send("splash", label)));
     // .then(() => container.resolve<ISymbologySyncService>(SYNCTOKENS.SymbologySyncService).sync(null, (label: string) => splashWindow.webContents.send("splash", label)));
     .then(() => splashWindow.webContents.send("splash", "loading main program"));
@@ -92,6 +91,3 @@ app.on("activate", () => {
     container.resolve<IWindowService>(INFRATOKENS.WindowService).createMainWindow();
   }
 });
-
-// In this file you can include the rest of your app"s specific main process
-// code. You can also put them in separate files and import them here.

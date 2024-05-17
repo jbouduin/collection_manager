@@ -6,7 +6,6 @@ import { ProgressCallback } from "../../../../common/ipc-params";
 import { ImageType } from "../../../../common/enums";
 
 export interface ICardRepository {
-  sync(cards: Array<ScryfallCard>, progressCallback?: ProgressCallback): Promise<void>;
   // TODO maybe this method can be removed
   getCardById(cardId: string): Promise<CardSelectDto>;
   getCardImageData(cardId: string, imageType: ImageType): Promise<CardImageSelectDto>;

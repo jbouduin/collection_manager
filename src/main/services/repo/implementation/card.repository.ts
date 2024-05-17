@@ -1,25 +1,12 @@
-import { ExpressionOrFactory, InsertResult, SqlBool, Transaction, UpdateResult, sql } from "kysely";
-import {
-  Color, Game, ImageUris, Legalities, RelatedCard,
-  CardFace as ScryFallCardface,
-  Card as ScryfallCard
-} from "scryfall-sdk";
 import { inject, injectable } from "tsyringe";
 
-import { CardImageSelectDto, CardSelectDto, } from "../../../../common/dto";
-import { CardColorType, CardLegality, GameFormat, ImageType } from "../../../../common/enums";
+import { CardDto, CardImageDto, } from "../../../../common/dto";
+import { ImageType } from "../../../../common/enums";
 import { CardQueryOptions } from "../../../../common/ipc-params/card-query.options";
-import { Card, DatabaseSchema } from "../../../../main/database/schema";
-import ADAPTTOKENS, {
-  ICardAdapter, ICardCardMapAdapter, ICardColorMapAdapter, ICardFormatLegalityAdapter,
-  ICardGameAdapter, ICardImageAdapter, ICardKeywordAdapter, ICardMultiverseIdAdapter,
-  ICardfaceAdapter, ICardfaceColorMapAdapter, ICardfaceImageAdapter
-} from "../../scryfall/adapt/interface";
-import INFRATOKENS, { IImageCacheService, IDatabaseService } from "../../infra/interfaces";
-import REPOTOKENS, { ICardRepository, ISymbologyRepository } from "../interfaces";
+import { Card } from "../../../../main/database/schema";
+import INFRATOKENS, { IDatabaseService } from "../../infra/interfaces";
+import { ICardRepository } from "../interfaces";
 import { BaseRepository } from "./base.repository";
-import { ProgressCallback } from "../../../../common/ipc-params";
-
 
 
 @injectable()
@@ -33,7 +20,7 @@ export class CardRepository extends BaseRepository implements ICardRepository {
   //#endregion
 
   //#region ICardRepository methods -------------------------------------------
-  public async getCardById(cardId: string): Promise<CardSelectDto> {
+  public async getCardById(cardId: string): Promise<CardDto> {
     return this.database
       .selectFrom("card")
       .selectAll()
@@ -42,7 +29,7 @@ export class CardRepository extends BaseRepository implements ICardRepository {
       .then((card: Card) => this.convertCardToCardSelectDto(card));
   }
 
-  public async getCardImageData(cardId: string, imageType: ImageType): Promise<CardImageSelectDto> {
+  public async getCardImageData(cardId: string, imageType: ImageType): Promise<CardImageDto> {
     return this.database.selectFrom("card")
       .leftJoin("card_image", "card_image.card_id", "card.id")
       .leftJoin("card_set", "card_set.id", "card.set_id")
@@ -58,7 +45,7 @@ export class CardRepository extends BaseRepository implements ICardRepository {
       .executeTakeFirst();
   }
 
-  public async getWithOptions(options: CardQueryOptions): Promise<Array<CardSelectDto>> {
+  public async getWithOptions(options: CardQueryOptions): Promise<Array<CardDto>> {
     console.log(options);
     let cardQueryResult: Promise<Array<Card>>;
     if (options.cardId) {
@@ -83,7 +70,7 @@ export class CardRepository extends BaseRepository implements ICardRepository {
   //#endregion
 
   //#region private get related methods ---------------------------------------
-  private convertCardToCardSelectDto(card: Card): CardSelectDto {
+  private convertCardToCardSelectDto(card: Card): CardDto {
     const manaCostArray = new Array<string>();
     if (card.mana_cost?.length > 0) {
       card.mana_cost

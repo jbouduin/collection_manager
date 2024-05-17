@@ -1,6 +1,6 @@
 import { inject, injectable } from "tsyringe";
 
-import { CardSetSelectDto } from "../../../../common/dto";
+import { CardSetDto } from "../../../../common/dto";
 import { CardSet } from "../../../database/schema";
 import INFRATOKENS, { IDatabaseService, IImageCacheService } from "../../infra/interfaces";
 import { ICardSetRepository } from "../interfaces";
@@ -23,16 +23,16 @@ export class CardSetRepository extends BaseRepository implements ICardSetReposit
   //#endregion
 
   //#region ICardSetRepository methods ----------------------------------------
-  public getAll(): Promise<Array<CardSetSelectDto>> {
+  public getAll(): Promise<Array<CardSetDto>> {
     return this.database
       .selectFrom("card_set")
       .selectAll()
       .execute()
-      .then((cardSets: Array<CardSet>) => cardSets.map<CardSetSelectDto>((cardSet: CardSet) => {
+      .then((cardSets: Array<CardSet>) => cardSets.map<CardSetDto>((cardSet: CardSet) => {
         return {
           cardSet: cardSet,
           svg: this.imageCacheService.getCardSetSvg(cardSet)
-        } as CardSetSelectDto;
+        } as CardSetDto;
       }));
   }
   //#endregion

@@ -1,11 +1,8 @@
-import { ExpressionOrFactory, InsertResult, SqlBool, Transaction, UpdateResult } from "kysely";
 
 import { inject, injectable } from "tsyringe";
 
-import { SymbologySelectDto } from "../../../../common/dto";
-import { ProgressCallback } from "../../../../common/ipc-params";
-import { DatabaseSchema, Symbology, SymbologyAlternative, SymbologyColorMap } from "../../../database/schema";
-import ADAPTTOKENS, { ISymbologyAdapter, ISymbologyAlternativeAdapter, ISymbologyColorMapAdapter } from "../../scryfall/adapt/interface";
+import { SymbologyDto } from "../../../../common/dto";
+import { Symbology, SymbologyAlternative, SymbologyColorMap } from "../../../database/schema";
 import INFRATOKENS, { IDatabaseService, IImageCacheService } from "../../infra/interfaces";
 import { ISymbologyRepository } from "../interfaces";
 import { BaseRepository } from "./base.repository";
@@ -28,7 +25,7 @@ export class SymbologyRepository extends BaseRepository implements ISymbologyRep
   //#endregion
 
   //#region ISymbologyRepository methods --------------------------------------
-  public async getAll(): Promise<Array<SymbologySelectDto>> {
+  public async getAll(): Promise<Array<SymbologyDto>> {
     return Promise.all([
       this.database.selectFrom("symbology").selectAll().execute(),
       this.database.selectFrom("symbology_color_map").selectAll().execute(),
@@ -37,7 +34,7 @@ export class SymbologyRepository extends BaseRepository implements ISymbologyRep
       .then((result: [Array<Symbology>, Array<SymbologyColorMap>, Array<SymbologyAlternative>]) => {
 
         return result[0].map((symbol: Symbology) => {
-          const dto: SymbologySelectDto = {
+          const dto: SymbologyDto = {
             symbology: symbol,
             alternatives: result[2].filter((alternative: SymbologyAlternative) => alternative.symbology_id == symbol.id),
             colors: result[1].filter((color: SymbologyColorMap) => color.symbology_id == symbol.id)

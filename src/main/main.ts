@@ -7,7 +7,7 @@ import { setCacheLimit } from "scryfall-sdk";
 import { container } from "tsyringe";
 import { updateElectronApp } from "update-electron-app";
 
-import { CardImageSelectDto } from "../common/dto";
+import { CardImageDto } from "../common/dto";
 import { ImageType } from "../common/enums";
 import MIGRATOKENS from "./database/migrations/migration.tokens";
 import { MigrationDi } from "./database/migrations/migrations.di";
@@ -36,8 +36,8 @@ const bootFunction = async (splashWindow: BrowserWindow) => {
     .migrateToLatest(migrationContainer.resolve<MigrationProvider>(MIGRATOKENS.NewCustomMigrationProvider))
     .then(() => migrationContainer.dispose())
     // TODO this should only be done when new installation
-    .then(() => container.resolve<ICatalogSyncService>(SYNCTOKENS.CatalogSyncService).sync({ catalogs: ["AbilityWords", "LandTypes", "ArtifactTypes"] }))
-    // NOW make those things setting dependent
+    // .then(() => container.resolve<ICatalogSyncService>(SYNCTOKENS.CatalogSyncService).sync({ catalogs: ["AbilityWords", "LandTypes", "ArtifactTypes"] }))
+    // LATER make those things setting dependent
     // .then(() => container.resolve<ICardSetSyncService>(SYNCTOKENS.CardSetSyncService).sync({ code: null }, (label: string) => splashWindow.webContents.send("splash", label)));
     // .then(() => container.resolve<ISymbologySyncService>(SYNCTOKENS.SymbologySyncService).sync(null, (label: string) => splashWindow.webContents.send("splash", label)));
     .then(() => splashWindow.webContents.send("splash", "loading main program"));
@@ -58,7 +58,7 @@ app.whenReady().then(async () => {
     const url = new URL(request.url);
     return container.resolve<ICardRepository>(REPOTOKENS.CardRepository)
       .getCardImageData(url.hostname, url.searchParams.get("size") as ImageType)
-      .then((data: CardImageSelectDto) => {
+      .then((data: CardImageDto) => {
         const cacheService = container.resolve<IImageCacheService>(INFRATOKENS.ImageCacheService);
         return cacheService.getCardImage(data);
       });

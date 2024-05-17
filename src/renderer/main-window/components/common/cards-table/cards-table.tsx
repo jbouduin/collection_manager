@@ -1,7 +1,7 @@
-import { Cell, CellProps, CellRenderer, Column, CoordinateData, Region, SelectionModes, Table2 } from "@blueprintjs/table";
+import { Cell, CellProps, CellRenderer, Column, Region, SelectionModes, Table2 } from "@blueprintjs/table";
 import * as React from "react";
 
-import { CardSelectDto, CardSetSelectDto, LanguageSelectDto } from "../../../../../common/dto";
+import { CardDto, CardSetDto, LanguageDto } from "../../../../../common/dto";
 import { CardQueryOptions, IQueryParam } from "../../../../../common/ipc-params";
 import { SvgProvider } from "../svg-provider/svg-provider";
 import { CardsTableProps } from "./cards-table.props";
@@ -10,11 +10,11 @@ import { CardsTableProps } from "./cards-table.props";
 export function CardsTable(props: CardsTableProps) {
   console.log("in cards table function");
   //#region State -------------------------------------------------------------
-  const [cards, setCards] = React.useState(new Array<CardSelectDto>());
+  const [cards, setCards] = React.useState(new Array<CardDto>());
   //#endregion
 
   //#region event handling ----------------------------------------------------
-  function selectedRegionTransform(region: Region, _event: MouseEvent | KeyboardEvent, _coords?: CoordinateData): Region {
+  function selectedRegionTransform(region: Region): Region {
     if (region.cols) {
       return { rows: region.rows };
     } else {
@@ -23,7 +23,7 @@ export function CardsTable(props: CardsTableProps) {
   }
 
   function onSelection(selectedRegions: Array<Region>): void {
-    const selectedCards = new Array<CardSelectDto>();
+    const selectedCards = new Array<CardDto>();
     selectedRegions
       .filter((region: Region) => region.rows)
       .forEach((region: Region) => {
@@ -38,18 +38,18 @@ export function CardsTable(props: CardsTableProps) {
   //#endregion
 
   //#region Cell renderers ----------------------------------------------------
-  function textCellRenderer(valueCallBack: (card: CardSelectDto) => string): CellRenderer {
+  function textCellRenderer(valueCallBack: (card: CardDto) => string): CellRenderer {
     return (row: number) => (<Cell>{valueCallBack(cards[row])}</Cell>);
   }
 
   function setNameRenderer(row: number): React.ReactElement<CellProps> {
-    const set = props.selectedSets.filter((s: CardSetSelectDto) => s.cardSet.id == cards[row].card.set_id);
+    const set = props.selectedSets.filter((s: CardSetDto) => s.cardSet.id == cards[row].card.set_id);
     return (<Cell>{set[0]?.cardSet.name}</Cell>);
   }
 
   function languageRenderer(row: number): React.ReactElement<CellProps> {
     const lang = cards[row].card.lang;
-    const languageDef = props.languages.filter((lng: LanguageSelectDto) => lng.id == lang);
+    const languageDef = props.languages.filter((lng: LanguageDto) => lng.id == lang);
     return (
       <Cell>
         {languageDef.length > 0 ? languageDef[0].display_text : lang}
@@ -88,13 +88,13 @@ export function CardsTable(props: CardsTableProps) {
         type: "Card",
         options: {
           cardId: null,
-          setIds: props.selectedSets.map((set: CardSetSelectDto) => set.cardSet.id)
+          setIds: props.selectedSets.map((set: CardSetDto) => set.cardSet.id)
         }
       };
       window.ipc.query(cardQueryParam)
-        .then((cardResult: Array<CardSelectDto>) => setCards(cardResult.sort((a: CardSelectDto, b: CardSelectDto) => a.collectorNumberSortValue.localeCompare(b.collectorNumberSortValue))));
+        .then((cardResult: Array<CardDto>) => setCards(cardResult.sort((a: CardDto, b: CardDto) => a.collectorNumberSortValue.localeCompare(b.collectorNumberSortValue))));
     } else {
-      setCards(new Array<CardSelectDto>());
+      setCards(new Array<CardDto>());
     }
   }, [props.selectedSets]);
   //#endregion
@@ -103,11 +103,12 @@ export function CardsTable(props: CardsTableProps) {
   return (
     <div className="cards-table-wrapper">
       <Table2 className={props.className} numRows={cards?.length ?? 0} selectionModes={SelectionModes.ROWS_AND_CELLS} onSelection={onSelection} selectedRegionTransform={selectedRegionTransform}>
-        <Column name="Name" cellRenderer={textCellRenderer((card: CardSelectDto) => card.card.name)} />
-        <Column name="Rarity" cellRenderer={textCellRenderer((card: CardSelectDto) => card.card.rarity)} />
+        <Column name="Number" cellRenderer={textCellRenderer((card: CardDto) => card.card.collector_number)} />
+        <Column name="Name" cellRenderer={textCellRenderer((card: CardDto) => card.card.name)} />
+        <Column name="Rarity" cellRenderer={textCellRenderer((card: CardDto) => card.card.rarity)} />
         <Column name="Mana cost" cellRenderer={manaCostRenderer} />
-        <Column name="Power" cellRenderer={textCellRenderer((card: CardSelectDto) => card.card.power)} />
-        <Column name="Thoughness" cellRenderer={textCellRenderer((card: CardSelectDto) => card.card.thoughness)} />
+        <Column name="Power" cellRenderer={textCellRenderer((card: CardDto) => card.card.power)} />
+        <Column name="Thoughness" cellRenderer={textCellRenderer((card: CardDto) => card.card.thoughness)} />
         <Column name="Language" cellRenderer={languageRenderer} />
         <Column name="Set" cellRenderer={setNameRenderer} />
       </Table2>

@@ -1,5 +1,5 @@
-import { LanguageSelectDto } from "../../../../common/dto";
+import { LanguageDto } from "../../../../common/dto";
 
 export interface ILanguageRepository {
-  getAll(): Promise<Array<LanguageSelectDto>>;
+  getAll(): Promise<Array<LanguageDto>>;
 }

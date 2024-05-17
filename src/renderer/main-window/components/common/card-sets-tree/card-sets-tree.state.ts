@@ -1,8 +1,8 @@
 import { Props, TreeNodeInfo } from "@blueprintjs/core";
-import { CardSetSelectDto } from "../../../../../common/dto";
+import { CardSetDto } from "../../../../../common/dto";
 
 export interface CardSetTreeState extends Props {
-  nodes: Array<TreeNodeInfo<CardSetSelectDto>>;
+  nodes: Array<TreeNodeInfo<CardSetDto>>;
   currentSelectedPath?: Array<number>;
-  currentSelectedSets?: Array<CardSetSelectDto>;
+  currentSelectedSets?: Array<CardSetDto>;
 }

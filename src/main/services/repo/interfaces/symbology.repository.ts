@@ -1,9 +1,7 @@
-import { CardSymbol } from "scryfall-sdk";
 
-import { SymbologySelectDto } from "../../../../common/dto";
-import { ProgressCallback } from "../../../../common/ipc-params";
+import { SymbologyDto } from "../../../../common/dto";
 
 export interface ISymbologyRepository {
-  getAll(): Promise<Array<SymbologySelectDto>>;
+  getAll(): Promise<Array<SymbologyDto>>;
   getAllWithCachedSvg(): Promise<Map<string, string>>;
 }

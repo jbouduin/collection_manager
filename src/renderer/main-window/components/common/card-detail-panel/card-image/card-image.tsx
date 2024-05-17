@@ -4,6 +4,7 @@ import { CardImageProps } from "./card-image.props";
 export function CardImage(props: CardImageProps) {
   // console.log("cardimage constructor", props.card);
 
+  // TODO round the corners, so we do not have the white edges around the card
   //#region Main --------------------------------------------------------------
   return (props.card ?
     <div className="image-wrapper">
@@ -11,8 +12,6 @@ export function CardImage(props: CardImageProps) {
     </div>
     :
     <div></div>
-
-    // </div>
   );
   //#endregion
 }

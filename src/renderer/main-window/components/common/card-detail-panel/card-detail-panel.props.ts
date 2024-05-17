@@ -1,7 +1,7 @@
 import { Props } from "@blueprintjs/core";
-import { CardSelectDto, CardSetSelectDto } from "../../../../../common/dto";
+import { CardDto, CardSetDto } from "../../../../../common/dto";
 
 export interface CardDetailPanelProps extends Props {
-  card?: CardSelectDto;
-  cardSet?: CardSetSelectDto;
+  card?: CardDto;
+  cardSet?: CardSetDto;
 }

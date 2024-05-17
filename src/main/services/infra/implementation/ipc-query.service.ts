@@ -1,6 +1,6 @@
 import { container, singleton } from "tsyringe";
 
-import { RulingsByCardIdSelectDto } from "../../../../common/dto";
+import { RulingLineDto } from "../../../../common/dto";
 import { IQueryParam, QueryOptions, RulingQueryOptions } from "../../../../common/ipc-params";
 import { CardQueryOptions } from "../../../../common/ipc-params/card-query.options";
 import REPOTOKENS, { ICardRepository, ICardSetRepository, ICatalogRepository, IColorRepository, ILanguageRepository, IRulingRepository, ISymbologyRepository } from "../../repo/interfaces";
@@ -37,16 +37,18 @@ export class IpcQueryService implements IIpcQueryService {
   //#endregion
 
   //#region Private methods ---------------------------------------------------
-  private async handleRuling(options: RulingQueryOptions): Promise<RulingsByCardIdSelectDto> {
+  private async handleRuling(options: RulingQueryOptions): Promise<Array<RulingLineDto>> {
     const rulingRepository = container.resolve<IRulingRepository>(REPOTOKENS.RulingRepository);
-    // NOW if there are no rulings, but we already synced, we do not have to resync
     return rulingRepository.getByCardId(options.cardId)
-      .then((queryResult: RulingsByCardIdSelectDto) => {
+      .then((queryResult: Array<RulingLineDto>) => {
         if (queryResult.length == 0) {
           return container.resolve<IRulingSyncService>(SYNCTOKENS.RulingSyncService).sync({ cardId: options.cardId })
-            .then(() => rulingRepository.getByCardId(options.cardId));
+            .then(() => rulingRepository
+              .getByCardId(options.cardId)
+              .then((afterSync: Array<RulingLineDto>) => afterSync.filter((line: RulingLineDto) => line.oracle_id !== null))
+            );
         } else {
-          return queryResult;
+          return queryResult.filter((line: RulingLineDto) => line.oracle_id !== null);
         }
       });
   }

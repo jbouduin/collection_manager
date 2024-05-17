@@ -3,7 +3,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { inject, injectable } from "tsyringe";
 
-import { CardImageSelectDto } from "../../../../common/dto";
+import { CardImageDto } from "../../../../common/dto";
 import INFRATOKENS, { IConfigurationService, IImageCacheService } from "../interfaces";
 import { CardSet, Symbology } from "../../../../main/database/schema";
 import SCRYTOKENS, { IScryfallClient } from "../../scryfall/client/interfaces";
@@ -44,7 +44,7 @@ export class ImageCacheService implements IImageCacheService {
       .catch(() => console.log(`failed ${cardSet.name}`));
   }
 
-  public async getCardImage(card: CardImageSelectDto): Promise<Response> {
+  public async getCardImage(card: CardImageDto): Promise<Response> {
     const cachePath = this.pathToCachedCardImage(card);
     if (fs.existsSync(cachePath)) {
       return net.fetch(cachePath);
@@ -77,7 +77,7 @@ export class ImageCacheService implements IImageCacheService {
     return path.join(dirName, fileName);
   }
 
-  private pathToCachedCardImage(card: CardImageSelectDto): string {
+  private pathToCachedCardImage(card: CardImageDto): string {
     const fileName = `${card.collectorNumber.padStart(3, "0")}${path.extname(new URL(card.imageUri).pathname.split("/").pop())}`;
     const dirName = path.join(this.configurationService.cacheDirectory, "cards", card.setCode, card.language, card.imageType);
     if (!fs.existsSync(dirName)) {

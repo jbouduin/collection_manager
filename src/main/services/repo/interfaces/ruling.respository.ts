@@ -1,5 +1,5 @@
-import { RulingsByCardIdSelectDto } from "../../../../common/dto";
+import { RulingLineDto  } from "../../../../common/dto";
 
 export interface IRulingRepository {
-  getByCardId(cardId: string): Promise<RulingsByCardIdSelectDto>;
+  getByCardId(cardId: string): Promise<Array<RulingLineDto>>;
 }

@@ -2,13 +2,13 @@ import { SectionCard } from "@blueprintjs/core";
 import * as React from "react";
 import { CardDetailPanelProps } from "../card-detail-panel.props";
 
-import { RulingLineDto, RulingsByCardIdSelectDto } from "../../../../../../common/dto";
+import { RulingLineDto } from "../../../../../../common/dto";
 import { IQueryParam, RulingQueryOptions } from "../../../../../../common/ipc-params";
 import { RulingLine } from "../ruling-line/ruling-line";
 
 export function CardRulings(props: CardDetailPanelProps) {
 
-  const [rulings, setRulings] = React.useState(null as RulingsByCardIdSelectDto);
+  const [rulings, setRulings] = React.useState(null as Array<RulingLineDto>);
 
   //#region Effects -----------------------------------------------------------
   React.useEffect(() => {
@@ -20,7 +20,7 @@ export function CardRulings(props: CardDetailPanelProps) {
         }
       };
       window.ipc.query(rulingQueryParam)
-        .then((queryResult: RulingsByCardIdSelectDto) => setRulings(queryResult));
+        .then((queryResult: Array<RulingLineDto>) => setRulings(queryResult));
     } else {
       setRulings(null);
     }

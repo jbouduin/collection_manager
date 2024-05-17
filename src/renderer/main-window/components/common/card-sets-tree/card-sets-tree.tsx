@@ -3,7 +3,7 @@ import classNames from "classnames";
 import { CardSetTreeProps } from "./card-sets-tree.props";
 import { Classes, ContextMenu, Menu, MenuItem, Tree, TreeNodeInfo } from "@blueprintjs/core";
 // import { CardSetTreeState } from "./card-sets-tree.state";
-import { CardSetSelectDto } from "../../../../../common/dto";
+import { CardSetDto } from "../../../../../common/dto";
 import { SvgProvider } from "../svg-provider/svg-provider";
 import { CardSyncOptions, IQueryParam } from "../../../../../common/ipc-params";
 import * as _ from "lodash";
@@ -56,10 +56,11 @@ export function CardSetsTree(props: CardSetTreeProps) {
 
   //#region event handlers ----------------------------------------------------
   const handleNodeClick = React.useCallback(
-    (node: TreeNodeInfo<CardSetSelectDto>, nodePath: NodePath, _e: React.MouseEvent<HTMLElement>) => {
+    (node: TreeNodeInfo<CardSetDto>, nodePath: NodePath) => {
       // LATER by dispatching twice, we are re-rendering twice
       const originallySelected = node.isSelected;
-      // LATER multi select
+      // LATER multi select:
+      // add parameter "e: React.MouseEvent<HTMLElement>" to the callback and...
       // if (!e.shiftKey) {
         dispatch({ type: "DESELECT_ALL" });
       // }
@@ -88,12 +89,12 @@ export function CardSetsTree(props: CardSetTreeProps) {
   //#endregion
 
   //#region Private methods ---------------------------------------------------
-  function buildTree(items: Array<CardSetSelectDto>, id: string | undefined): Array<TreeNodeInfo<CardSetSelectDto>> {
+  function buildTree(items: Array<CardSetDto>, id: string | undefined): Array<TreeNodeInfo<CardSetDto>> {
     return items
-      .filter((item: CardSetSelectDto) => item.cardSet.parent_set_code === id)
+      .filter((item: CardSetDto) => item.cardSet.parent_set_code === id)
       .map(item => {
-        const childNodes: Array<TreeNodeInfo<CardSetSelectDto>> = buildTree(items, item.cardSet.code);
-        const node: TreeNodeInfo<CardSetSelectDto> = {
+        const childNodes: Array<TreeNodeInfo<CardSetDto>> = buildTree(items, item.cardSet.code);
+        const node: TreeNodeInfo<CardSetDto> = {
           id: item.cardSet.id,
           label: (
             <ContextMenu className={classNames("set-tree-item", props.className)} content={<Menu><MenuItem text="Synchronize" onClick={(e) => { e.preventDefault(); synchronizeSet(item.cardSet.code); }} /></Menu>}>
@@ -111,10 +112,10 @@ export function CardSetsTree(props: CardSetTreeProps) {
       });
   }
 
-  function getTreeNodeItemsRecursive(node: TreeNodeInfo<CardSetSelectDto>, items?: Array<CardSetSelectDto>): Array<CardSetSelectDto> {
-    const result = items ?? new Array<CardSetSelectDto>();
+  function getTreeNodeItemsRecursive(node: TreeNodeInfo<CardSetDto>, items?: Array<CardSetDto>): Array<CardSetDto> {
+    const result = items ?? new Array<CardSetDto>();
     result.push(node.nodeData);
-    node.childNodes?.forEach((child: TreeNodeInfo<CardSetSelectDto>) => getTreeNodeItemsRecursive(child, result));
+    node.childNodes?.forEach((child: TreeNodeInfo<CardSetDto>) => getTreeNodeItemsRecursive(child, result));
     return result;
   }
 

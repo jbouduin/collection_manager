@@ -1,9 +1,9 @@
 import { Props } from "@blueprintjs/core";
-import { CardSelectDto, CardSetSelectDto, LanguageSelectDto } from "../../../../../common/dto";
+import { CardDto, CardSetDto, LanguageDto } from "../../../../../common/dto";
 
 export interface CardsTableProps extends Props {
   cachedSvg: Map<string, string>;
-  languages: Array<LanguageSelectDto>;
-  selectedSets: Array<CardSetSelectDto>;
-  onCardsSelected(cards?: Array<CardSelectDto>): void;
+  languages: Array<LanguageDto>;
+  selectedSets: Array<CardSetDto>;
+  onCardsSelected(cards?: Array<CardDto>): void;
 }

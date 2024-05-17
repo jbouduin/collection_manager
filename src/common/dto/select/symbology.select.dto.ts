@@ -1,6 +1,6 @@
 import { Symbology, SymbologyAlternative, SymbologyColorMap } from "../../../main/database/schema";
 
-export interface SymbologySelectDto {
+export interface SymbologyDto {
   symbology: Symbology;
   colors: Array<SymbologyColorMap>;
   alternatives: Array<SymbologyAlternative>;

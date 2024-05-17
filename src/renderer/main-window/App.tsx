@@ -7,7 +7,7 @@ import { createRoot } from "react-dom/client";
 import { Desktop } from "./components/desktop/desktop";
 import { IQueryParam } from "../../common/ipc-params";
 import { DesktopProps } from "./components/desktop/desktop.props";
-import { CardSetSelectDto, LanguageSelectDto } from "../../common/dto";
+import { CardSetDto, LanguageDto } from "../../common/dto";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
@@ -22,18 +22,18 @@ FocusStyleManager.onlyShowFocusOnTabs();
     options: null
   };
   const desktopProps: DesktopProps = {
-    cardSets: new Array<CardSetSelectDto>(),
+    cardSets: new Array<CardSetDto>(),
     cachedSvg: new Map<string, string>(),
-    languages: new Array<LanguageSelectDto>()
+    languages: new Array<LanguageDto>()
   };
   window.ipc.query(symbologyQueryParam)
     .then((cachedSvgs: Map<string, string>) => {
       desktopProps.cachedSvg = cachedSvgs;
     })
     .then(() => window.ipc.query({ type: "CardSet", options: null }))
-    .then((cardSets: Array<CardSetSelectDto>) => desktopProps.cardSets = cardSets)
+    .then((cardSets: Array<CardSetDto>) => desktopProps.cardSets = cardSets)
     .then(() => window.ipc.query({ type: "Language", options: null }))
-    .then((languages: Array<LanguageSelectDto>) => desktopProps.languages = languages)
+    .then((languages: Array<LanguageDto>) => desktopProps.languages = languages)
     .then(() => root.render(
       <BlueprintProvider>
         <Desktop {...desktopProps} />

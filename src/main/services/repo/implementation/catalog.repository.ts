@@ -1,6 +1,6 @@
 import { inject, injectable } from "tsyringe";
 
-import { CatalogItemSelectDto } from "../../../../common/dto";
+import { CatalogItemDto } from "../../../../common/dto";
 import { CatalogType } from "../../../../common/enums";
 import INFRATOKENS, { IDatabaseService } from "../../infra/interfaces";
 import { ICatalogRepository } from "../interfaces";
@@ -14,7 +14,7 @@ export class CatalogRepository extends BaseRepository implements ICatalogReposit
     super(databaseService);
   }
 
-  public async getAll(name: CatalogType): Promise<Array<CatalogItemSelectDto>> {
+  public async getAll(name: CatalogType): Promise<Array<CatalogItemDto>> {
     return this.database
       .selectFrom("catalog_item")
       .selectAll()

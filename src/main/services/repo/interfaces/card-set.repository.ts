@@ -1,6 +1,6 @@
 
-import { CardSetSelectDto } from "../../../../common/dto";
+import { CardSetDto } from "../../../../common/dto";
 
 export interface ICardSetRepository {
-  getAll(): Promise<Array<CardSetSelectDto>>;
+  getAll(): Promise<Array<CardSetDto>>;
 }

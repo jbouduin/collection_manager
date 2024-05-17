@@ -1,6 +1,6 @@
 import { inject, injectable } from "tsyringe";
 
-import { RulingsByCardIdSelectDto } from "../../../../common/dto";
+import { RulingLineDto } from "../../../../common/dto";
 import INFRATOKENS, { IDatabaseService } from "../../infra/interfaces";
 import { IRulingRepository } from "../interfaces";
 import { BaseRepository } from "./base.repository";
@@ -12,15 +12,14 @@ export class RulingRepository extends BaseRepository implements IRulingRepositor
     super(databaseService);
   }
 
-  public async getByCardId(cardId: string): Promise<RulingsByCardIdSelectDto> {
+  public async getByCardId(cardId: string): Promise<Array<RulingLineDto>> {
     return this.database
       .selectFrom("card")
-      .rightJoin("ruling", "ruling.oracle_id", "card.oracle_id")
-      .rightJoin("ruling_line", "ruling_line.oracle_id", "ruling.oracle_id")
+      .innerJoin("ruling", "ruling.oracle_id", "card.oracle_id")
+      .leftJoin("ruling_line", "ruling_line.oracle_id", "ruling.oracle_id")
       .where("card.id", "=", cardId)
       .selectAll("ruling_line")
+      // .$call(super.logCompilable)
       .execute();
   }
-
-
 }

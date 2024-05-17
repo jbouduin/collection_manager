@@ -1,6 +1,6 @@
 import { ImageType } from "../../../common/enums";
 
-export interface CardImageSelectDto {
+export interface CardImageDto {
   collectorNumber: string,
   imageUri: string,
   setCode: string,

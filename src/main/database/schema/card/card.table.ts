@@ -1,8 +1,7 @@
 import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
 
-import { CardBorderColor, CardFrame, CardLayout, CardRarity, ImageStatus, MTGLanguage } from "../../../../common/enums";
+import { CardBorderColor, CardFrame, CardLayout, CardRarity, CardSecurityStamp, ImageStatus, MTGLanguage } from "../../../../common/enums";
 import { SynchronizedWithStringId } from "../base.types";
-import { CardSecurityStamp } from "scryfall-sdk";
 
 export interface CardTable extends SynchronizedWithStringId {
   //#region Core fields -------------------------------------------------------

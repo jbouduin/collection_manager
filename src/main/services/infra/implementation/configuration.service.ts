@@ -41,9 +41,10 @@ export class ConfigurationService implements IConfigurationService {
   public get scryfallEndpoints(): Map<ScryfallEndpoint, string> {
     const result = new Map<ScryfallEndpoint, string>();
     result.set("card", "cards/search");
+    result.set("cardSet", "sets");
+    result.set("cardSymbol", "symbology");
     result.set("catalog", "catalog");
     result.set("ruling", "cards/:id/rulings");
-    result.set("cardSet", "sets");
     return result;
   }
 

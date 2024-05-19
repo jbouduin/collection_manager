@@ -4,7 +4,6 @@ import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser
 import { v1 as uuidV1 } from "uuid";
 
 import { sql } from "kysely";
-import { CardLayout } from "../../../../../common/enums";
 import { DatabaseSchema } from "../../../../database/schema";
 import { ICardfaceAdapter } from "../interface";
 import { ScryfallCardFace } from "../../types";
@@ -12,7 +11,6 @@ import { ScryfallCardFace } from "../../types";
 export class CardfaceAdapter implements ICardfaceAdapter {
 
   public toInsert(cardId: string, scryfall: ScryfallCardFace): InsertExpression<DatabaseSchema, "cardface"> {
-    // FEATURE replace scryfall-sdk: ScryFallCardface has prototype card and cards that return from scryfall with no cardface get an empty card-face object by default
     return {
       id: uuidV1(),
       artist: scryfall.artist,
@@ -22,7 +20,7 @@ export class CardfaceAdapter implements ICardfaceAdapter {
       defense: scryfall.defense,
       flavor_text: scryfall.flavor_text,
       illustration_id: scryfall.illustration_id,
-      layout: scryfall.layout as CardLayout, // FEATURE replace scryfall-sdk:  check, because this is not as expected
+      layout: scryfall.layout,
       loyalty: scryfall.loyalty,
       mana_cost: scryfall.mana_cost,
       name: scryfall.name,
@@ -46,7 +44,7 @@ export class CardfaceAdapter implements ICardfaceAdapter {
       defense: scryfall.defense,
       flavor_text: scryfall.flavor_text,
       illustration_id: scryfall.illustration_id,
-      layout: scryfall.layout as CardLayout,
+      layout: scryfall.layout,
       loyalty: scryfall.loyalty,
       mana_cost: scryfall.mana_cost,
       name: scryfall.name,

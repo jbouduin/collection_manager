@@ -3,7 +3,8 @@ enum EMTGColor {
   U,
   R,
   B,
-  G
+  G,
+  C // Colorless
 }
 
 export type MTGColor = keyof typeof EMTGColor;

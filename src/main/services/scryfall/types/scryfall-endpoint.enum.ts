@@ -1,6 +1,7 @@
 enum EScryfallEndpoint  {
   card,
   cardSet,
+  cardSymbol,
   catalog,
   ruling
 }

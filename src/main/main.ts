@@ -3,7 +3,6 @@ import * as fs from "fs";
 import { MigrationProvider } from "kysely";
 import * as path from "path";
 import "reflect-metadata";
-import { setCacheLimit } from "scryfall-sdk";
 import { container } from "tsyringe";
 import { updateElectronApp } from "update-electron-app";
 
@@ -15,12 +14,9 @@ import INFRATOKENS, { IImageCacheService, IWindowService } from "./services/infr
 import { IDatabaseService } from "./services/infra/interfaces/database.service";
 import { IIpcDispatcherService } from "./services/infra/interfaces/ipc-dispatcher.service";
 import REPOTOKENS, { ICardRepository } from "./services/repo/interfaces";
-import SYNCTOKENS, { ICardSetSyncService } from "./services/scryfall";
+import SYNCTOKENS, { ICardSetSyncService, ISymbologySyncService } from "./services/scryfall";
 import { ServicesDI } from "./services/services.di";
 
-
-// FEATURE Replace scrfall-sdk
-setCacheLimit(0);
 // check for updates
 updateElectronApp();
 
@@ -39,7 +35,7 @@ const bootFunction = async (splashWindow: BrowserWindow) => {
     //.then(async () => await container.resolve<ICatalogSyncService>(SYNCTOKENS.CatalogSyncService).sync({ catalogs: ["AbilityWords", "LandTypes", "ArtifactTypes"] }))
     // LATER make those things setting dependent
     // .then(async () => await container.resolve<ICardSetSyncService>(SYNCTOKENS.CardSetSyncService).sync(null, (label: string) => splashWindow.webContents.send("splash", label)))
-    // .then(() => container.resolve<ISymbologySyncService>(SYNCTOKENS.SymbologySyncService).sync(null, (label: string) => splashWindow.webContents.send("splash", label)));
+    .then(() => container.resolve<ISymbologySyncService>(SYNCTOKENS.SymbologySyncService).sync(null, (label: string) => splashWindow.webContents.send("splash", label)))
     .then(() => splashWindow.webContents.send("splash", "loading main program"));
 };
 

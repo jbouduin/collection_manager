@@ -1,4 +1,4 @@
-import { CardBorderColor, CardFinish, CardFrame, CardFrameEffect, CardLayout, CardLegality, CardPromoType, CardRarity, CardSecurityStamp, CardSetType, Game, GameFormat, ImageSize, ImageStatus, ManaColor, MTGColor, MTGLanguage } from "../../../../../common/enums";
+import { CardBorderColor, CardFinish, CardFrame, CardFrameEffect, CardLayout, CardLegality, CardPromoType, CardRarity, CardSecurityStamp, CardSetType, Game, GameFormat, ImageSize, ImageStatus, MTGColor, MTGLanguage } from "../../../../../common/enums";
 import { ScryfallCardFace } from "./scryfall-card-face";
 import { ScryfallPreviewInfo } from "./scryfall-preview-info";
 import { ScryfallRelatedCard } from "./scryfall-related-card";
@@ -201,7 +201,7 @@ export interface ScryfallCard {
   /**
    * Colors of mana that this card could produce.
    */
-  produced_mana?: ManaColor;
+  produced_mana?: MTGColor;
   /**
    * True if this card is on the Reserved List.
    */

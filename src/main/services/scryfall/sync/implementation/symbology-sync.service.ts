@@ -1,33 +1,37 @@
-// import { Symbology as ScryfallSymbology } from "scryfall-sdk";
-import { CardSymbol, Color as ScryfallColor, Symbology as ScryfallSymbology } from "scryfall-sdk";
 import { inject, injectable } from "tsyringe";
 
 import { ExpressionOrFactory, InsertResult, SqlBool, Transaction, UpdateResult } from "kysely";
+import { MTGColor } from "../../../../../common/enums";
 import { ProgressCallback } from "../../../../../common/ipc-params";
 import { DatabaseSchema, Symbology } from "../../../../../main/database/schema";
 import INFRATOKENS, { IDatabaseService, IImageCacheService } from "../../../infra/interfaces";
 import ADAPTTOKENS, { ISymbologyAdapter, ISymbologyAlternativeAdapter, ISymbologyColorMapAdapter } from "../../adapt/interface";
+import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
+import { ScryfallCardSymbol } from "../../types/card-symbol/scryfall-card-symbol";
 import { ISymbologySyncService } from "../interface/symbology-sync.service";
 import { BaseSyncService } from "./base-sync.service";
 
 @injectable()
 export class SymbologySyncService extends BaseSyncService implements ISymbologySyncService {
 
-  //#region Private readonly fields -------------------------------------------
+  //#region private readonly fields -------------------------------------------
+  private readonly scryfallclient: IScryfallClient;
   private readonly imageCacheService: IImageCacheService;
   private readonly symbologyAdapter: ISymbologyAdapter;
   private readonly symbologyAlternativeAdapter: ISymbologyAlternativeAdapter;
   private readonly symbologyColorMapAdapter: ISymbologyColorMapAdapter;
   //#endregion
 
-
+  //#region Constructor & C° --------------------------------------------------
   public constructor(
     @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
+    @inject(CLIENTTOKENS.ScryfallClient) scryfallclient: IScryfallClient,
     @inject(INFRATOKENS.ImageCacheService) imageCacheService: IImageCacheService,
     @inject(ADAPTTOKENS.SymbologyAdapter) symbologyAdapter: ISymbologyAdapter,
     @inject(ADAPTTOKENS.SymbologyAlternativeAdapter) symbologyAlternativeAdapter: ISymbologyAlternativeAdapter,
     @inject(ADAPTTOKENS.SymbologyColorMapAdapter) symbologyColorMapAdapter: ISymbologyColorMapAdapter) {
     super(databaseService);
+    this.scryfallclient = scryfallclient;
     this.imageCacheService = imageCacheService;
     this.symbologyAdapter = symbologyAdapter;
     this.symbologyAlternativeAdapter = symbologyAlternativeAdapter;
@@ -39,8 +43,8 @@ export class SymbologySyncService extends BaseSyncService implements ISymbologyS
     if (progressCallback) {
       progressCallback("Synchronizing card symbols");
     }
-    return ScryfallSymbology.all()
-      .then((all: Array<CardSymbol>) => this.processSync(all, progressCallback))
+    return this.scryfallclient.getCardSymbols()
+      .then((all: Array<ScryfallCardSymbol>) => this.processSync(all, progressCallback))
       .then(() => this.database.selectFrom("symbology").selectAll().execute()
         .then(async (allCardSymbols: Array<Symbology>) => {
           let result = Promise.resolve();
@@ -52,7 +56,7 @@ export class SymbologySyncService extends BaseSyncService implements ISymbologyS
   }
 
   // TODO remove items that are not on the server anymore or at least mark them
-  public async processSync(symbols: Array<CardSymbol>, progressCallback: ProgressCallback): Promise<void> {
+  public async processSync(symbols: Array<ScryfallCardSymbol>, progressCallback: ProgressCallback): Promise<void> {
     const total: number = symbols.length;
     if (progressCallback) {
       progressCallback(`Retrieved ${total} card symbols`);
@@ -60,7 +64,7 @@ export class SymbologySyncService extends BaseSyncService implements ISymbologyS
     // TODO because this one large transaction, the splash screen seems not to be updating until the commit at the end
     let cnt = 0;
     return this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
-      symbols.forEach(async (symbol: CardSymbol) => {
+      symbols.forEach(async (symbol: ScryfallCardSymbol) => {
         cnt++;
         if (progressCallback) {
           progressCallback(`Synchronizing ${symbol.symbol} ${cnt}/${total}`);
@@ -95,8 +99,8 @@ export class SymbologySyncService extends BaseSyncService implements ISymbologyS
     });
   }
 
-  private async syncColors(trx: Transaction<DatabaseSchema>, symbol: string, colors: Array<ScryfallColor>): Promise<void> {
-    colors.forEach(async (color: ScryfallColor) => {
+  private async syncColors(trx: Transaction<DatabaseSchema>, symbol: string, colors: Array<MTGColor>): Promise<void> {
+    colors.forEach(async (color: MTGColor) => {
       const filter: ExpressionOrFactory<DatabaseSchema, "symbology_color_map", SqlBool> = (eb) =>
         eb.and([
           eb("symbology_color_map.color_id", "=", color),
@@ -121,7 +125,7 @@ export class SymbologySyncService extends BaseSyncService implements ISymbologyS
   }
 
   private async syncAlternatives(trx: Transaction<DatabaseSchema>, symbol: string, alternatives: Array<string>): Promise<void> {
-    alternatives.forEach(async (alternative: ScryfallColor) => {
+    alternatives.forEach(async (alternative: string) => {
       const filter: ExpressionOrFactory<DatabaseSchema, "symbology_alternative", SqlBool> = (eb) =>
         eb.and([
           eb("symbology_alternative.symbology_id", "=", symbol),

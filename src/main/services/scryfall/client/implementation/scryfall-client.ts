@@ -6,6 +6,7 @@ import INFRATOKENS, { IConfigurationService } from "../../../../../main/services
 import { ScryfallCard, ScryfallCardSet, ScryfallCatalog, ScryfallEndpoint, ScryfallRuling } from "../../types";
 import { ScryfallList } from "../../types/scryfall-list";
 import { IScryfallClient, ScryfallSearchOptions } from "../interfaces";
+import { ScryfallCardSymbol } from "../../types/card-symbol/scryfall-card-symbol";
 
 
 @injectable()
@@ -45,6 +46,13 @@ export class ScryfallClient implements IScryfallClient {
       .then((response: Response) => response.body);
   }
 
+  public async getCatalog(type: CatalogType): Promise<ScryfallCatalog> {
+    const uri = `${this.scryfallApiRoot}/${this.scryfallEndpoints.get("catalog")}/${this.scryfallCatalogPaths.get(type)}`;
+    return this
+      .tryFetch(uri)
+      .then((fetchResult: Response) => fetchResult.json());
+  }
+
   // FEATURE use emitter in getCards or in getlist
   public async getCards(options: CardSyncOptions): Promise<Array<ScryfallCard>> {
     const scryfallOptions: ScryfallSearchOptions = {
@@ -62,12 +70,12 @@ export class ScryfallClient implements IScryfallClient {
     return this.fetchList<ScryfallCardSet>(uri, new Array<ScryfallCardSet>());
   }
 
-  public async getCatalog(type: CatalogType): Promise<ScryfallCatalog> {
-    const uri = `${this.scryfallApiRoot}/${this.scryfallEndpoints.get("catalog")}/${this.scryfallCatalogPaths.get(type)}`;
-    return this
-      .tryFetch(uri)
-      .then((fetchResult: Response) => fetchResult.json());
+  public getCardSymbols(): Promise<Array<ScryfallCardSymbol>> {
+    const uri = `${this.scryfallApiRoot}/${this.scryfallEndpoints.get("cardSymbol")}`;
+    return this.fetchList<ScryfallCardSymbol>(uri, new Array<ScryfallCardSymbol>());
   }
+
+
 
   public async getRulings(cardId: string): Promise<Array<ScryfallRuling>> {
     const uri = `${this.scryfallApiRoot}/${this.scryfallEndpoints.get("ruling").replace(":id", cardId)}`;

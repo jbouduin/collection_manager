@@ -2,7 +2,7 @@ import fs from "fs";
 import { ExpressionOrFactory, InsertResult, SqlBool, Transaction, UpdateResult, sql } from "kysely";
 import { inject, injectable } from "tsyringe";
 
-import { CardColorType, CardLegality, Game, GameFormat, ImageSize, MTGColor } from "../../../../../common/enums";
+import { MTGColorType, CardLegality, Game, GameFormat, ImageSize, MTGColor } from "../../../../../common/enums";
 import { CardSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
 import { DatabaseSchema } from "../../../../../main/database/schema";
 import INFRATOKENS, { IDatabaseService } from "../../../../../main/services/infra/interfaces";
@@ -176,7 +176,7 @@ export class CardSyncService extends BaseSyncService implements ICardSyncService
     }
   }
 
-  private async syncCardColorMaps(trx: Transaction<DatabaseSchema>, cardId: string, colorType: CardColorType, colors: Array<MTGColor> | null): Promise<void> {
+  private async syncCardColorMaps(trx: Transaction<DatabaseSchema>, cardId: string, colorType: MTGColorType, colors: Array<MTGColor> | null): Promise<void> {
     if (colors?.length > 0) {
       colors.forEach(async (color: MTGColor) => {
         const filter: ExpressionOrFactory<DatabaseSchema, "card_color_map", SqlBool> = (eb) => eb.and([
@@ -373,7 +373,7 @@ export class CardSyncService extends BaseSyncService implements ICardSyncService
     return Promise.resolve();
   }
 
-  private async syncCardfaceColorMaps(trx: Transaction<DatabaseSchema>, cardfaceId: string, colorType: CardColorType, colors: Array<MTGColor> | null): Promise<void> {
+  private async syncCardfaceColorMaps(trx: Transaction<DatabaseSchema>, cardfaceId: string, colorType: MTGColorType, colors: Array<MTGColor> | null): Promise<void> {
     if (colors?.length > 0) {
       const result: Array<Promise<InsertResult | UpdateResult>> = new Array<Promise<InsertResult | UpdateResult>>();
       colors.forEach(async (color: MTGColor) => {

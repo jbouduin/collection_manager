@@ -2,7 +2,7 @@ import { sql } from "kysely";
 import { InsertExpression } from "kysely/dist/cjs/parser/insert-values-parser";
 import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser";
 
-import { CardColorType, MTGColor } from "../../../../../common/enums";
+import { MTGColorType, MTGColor } from "../../../../../common/enums";
 import { DatabaseSchema } from "../../../../database/schema";
 import { ICardfaceColorMapAdapter } from "../interface";
 
@@ -11,7 +11,7 @@ export class CardfaceColorMapAdapter implements ICardfaceColorMapAdapter{
     return {
       cardface_id: leftId,
       color_id: rigthId as MTGColor,
-      color_type: scryfall as CardColorType
+      color_type: scryfall as MTGColorType
     };
 
   }

@@ -2,7 +2,7 @@ import fs from "fs";
 import { ExpressionOrFactory, InsertResult, SqlBool, Transaction, UpdateResult, sql } from "kysely";
 import { inject, injectable } from "tsyringe";
 
-import { MTGColorType, CardLegality, Game, GameFormat, ImageSize, MTGColor } from "../../../../../common/enums";
+import { CardLegality, Game, GameFormat, ImageSize, MTGColor, MTGColorType } from "../../../../../common/enums";
 import { CardSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
 import { DatabaseSchema } from "../../../../../main/database/schema";
 import INFRATOKENS, { IDatabaseService } from "../../../../../main/services/infra/interfaces";
@@ -17,7 +17,7 @@ import { BaseSyncService } from "./base-sync.service";
 
 
 @injectable()
-export class CardSyncService extends BaseSyncService implements ICardSyncService {
+export class CardSyncService extends BaseSyncService<CardSyncOptions> implements ICardSyncService {
 
   //#region Private readonly fields -------------------------------------------
   private readonly scryfallclient: IScryfallClient;
@@ -66,7 +66,7 @@ export class CardSyncService extends BaseSyncService implements ICardSyncService
   //#endregion
 
   //#region ICardSyncService methods ------------------------------------------
-  public async sync(options: CardSyncOptions, progressCallback?: ProgressCallback): Promise<void> {
+  public override async sync(options: CardSyncOptions, progressCallback: ProgressCallback): Promise<void> {
     console.log("start CardSyncService.sync");
     if (progressCallback) {
       progressCallback("Sync cards");

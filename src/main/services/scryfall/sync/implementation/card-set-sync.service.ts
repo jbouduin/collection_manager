@@ -1,9 +1,9 @@
 import { ExpressionOrFactory, SqlBool, Transaction } from "kysely";
 import { inject, injectable } from "tsyringe";
 
-import { ProgressCallback } from "../../../../../common/ipc-params";
+import { CardSetSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
 import { CardSet, DatabaseSchema } from "../../../../database/schema";
-import INFRATOKENS, { IDatabaseService, IImageCacheService } from "../../../infra/interfaces";
+import INFRATOKENS, { IConfigurationService, IDatabaseService, IImageCacheService } from "../../../infra/interfaces";
 import ADAPTTOKENS, { ICardSetAdapter } from "../../adapt/interface";
 import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
 import { ScryfallCardSet } from "../../types";
@@ -11,10 +11,11 @@ import { ICardSetSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
 
 @injectable()
-export class CardSetSyncService extends BaseSyncService implements ICardSetSyncService {
+export class CardSetSyncService extends BaseSyncService<CardSetSyncOptions> implements ICardSetSyncService {
 
   //#region private readonly fields -------------------------------------------
   private readonly scryfallclient: IScryfallClient;
+  private readonly configurationService: IConfigurationService;
   private readonly cardSetAdapter: ICardSetAdapter;
   private readonly imageCacheService: IImageCacheService;
   //#endregion
@@ -23,33 +24,41 @@ export class CardSetSyncService extends BaseSyncService implements ICardSetSyncS
   public constructor(
     @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
     @inject(CLIENTTOKENS.ScryfallClient) scryfallclient: IScryfallClient,
+    @inject(INFRATOKENS.ConfigurationService) configurationService: IConfigurationService,
     @inject(ADAPTTOKENS.CardSetAdapter) cardSetAdapter: ICardSetAdapter,
     @inject(INFRATOKENS.ImageCacheService) imageCacheService: IImageCacheService) {
     super(databaseService);
     this.scryfallclient = scryfallclient;
+    this.configurationService = configurationService;
     this.cardSetAdapter = cardSetAdapter;
     this.imageCacheService = imageCacheService;
   }
   //#endregion
 
   //#region ICardSetSyncService methods ---------------------------------------
-  public async sync(_options: null, progressCallback?: ProgressCallback): Promise<void> {
-    console.log("start CardSetSyncService.sync");
-    if (progressCallback) {
-      progressCallback("Synchronizing Card sets");
-    }
+  public override async sync(options: CardSetSyncOptions, progressCallback: ProgressCallback): Promise<void> {
 
-    const sets = this.scryfallclient.getCardSets();
-
-    return await sets
-      .then(async (sets: Array<ScryfallCardSet>) => await this.processSync(sets))
-      .then(() => this.database.selectFrom("card_set").selectAll().execute())
-      .then(async (cardSets: Array<CardSet>) => {
-        let result = Promise.resolve();
-        cardSets.forEach(async (cardset: CardSet) => {
-          result = result.then(async () => await this.imageCacheService.cacheCardSetSvg(cardset));
-        });
-        return result;
+    return this.shouldSync(options)
+      .then(async (shouldSync: boolean) => {
+        if (shouldSync) {
+          console.log("start CardSetSyncService.sync");
+          if (progressCallback) {
+            progressCallback("Synchronizing Card sets");
+          }
+          const sets = this.scryfallclient.getCardSets();
+          return await sets
+            .then(async (sets: Array<ScryfallCardSet>) => await this.processSync(sets))
+            .then(() => this.database.selectFrom("card_set").selectAll().execute())
+            .then(async (cardSets: Array<CardSet>) => {
+              let result = Promise.resolve();
+              cardSets.forEach(async (cardset: CardSet) => {
+                result = result.then(async () => await this.imageCacheService.cacheCardSetSvg(cardset));
+              });
+              return result;
+            });
+        } else {
+          console.log("skip CardSetSyncService.sync");
+        }
       });
   }
   //#endregion
@@ -78,6 +87,19 @@ export class CardSetSyncService extends BaseSyncService implements ICardSetSyncS
         }
       });
     });
+  }
+
+  private async shouldSync(options: CardSetSyncOptions): Promise<boolean> {
+    if (options.source == "user" || this.configurationService.syncAtStartup.indexOf("CardSet") >= 0) {
+      return Promise.resolve(true);
+    } else {
+      return await this.database
+        .selectFrom("card_set")
+        .selectAll()
+        .limit(1)
+        .executeTakeFirst()
+        .then((existing: CardSet) => existing ? false : true);
+    }
   }
   //#endregion
 }

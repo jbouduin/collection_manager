@@ -3,7 +3,7 @@ import { inject, injectable } from "tsyringe";
 
 import { CatalogType } from "../../../../../common/enums";
 import { CatalogSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
-import { DatabaseSchema } from "../../../../../main/database/schema";
+import { CatalogItem, DatabaseSchema } from "../../../../../main/database/schema";
 import INFRATOKENS, { IDatabaseService } from "../../../../../main/services/infra/interfaces";
 import { runSerial } from "../../../../../main/services/infra/util";
 import ADAPTTOKENS, { ICatalogAdapter } from "../../adapt/interface";
@@ -18,7 +18,7 @@ type SyncSingleCatalogParameter = {
 };
 
 @injectable()
-export class CatalogSyncService extends BaseSyncService implements ICatalogSyncService {
+export class CatalogSyncService extends BaseSyncService<CatalogSyncOptions> implements ICatalogSyncService {
 
   //#region private readonly fields -------------------------------------------
   private readonly scryfallclient: IScryfallClient;
@@ -32,15 +32,23 @@ export class CatalogSyncService extends BaseSyncService implements ICatalogSyncS
     @inject(ADAPTTOKENS.CatalogAdapter) catalogAdapter: ICatalogAdapter) {
     super(databaseService);
     this.scryfallclient = scryfallclient;
+
     this.catalogAdapter = catalogAdapter;
   }
   //#endregion
 
   //#region ICatalogSyncService methods ---------------------------------------
-  public async sync(options: CatalogSyncOptions, progressCallback?: ProgressCallback): Promise<void> {
-    console.log("start CatalogSyncService.sync:");
-    const serialExecutionArray = options.catalogs.map<SyncSingleCatalogParameter>((catalog: CatalogType) => { return { catalogType: catalog, progressCallback: progressCallback }; });
-    await runSerial<SyncSingleCatalogParameter>(serialExecutionArray, this.syncSingleCatalog.bind(this));
+  public override async sync(options: CatalogSyncOptions, progressCallback: ProgressCallback): Promise<void> {
+    return this.shouldSync(options)
+      .then(async (shouldSync: boolean) => {
+        if (shouldSync) {
+          console.log("Start CatalogSyncService.sync");
+          const serialExecutionArray = options.catalogs.map<SyncSingleCatalogParameter>((catalog: CatalogType) => { return { catalogType: catalog, progressCallback: progressCallback }; });
+          await runSerial<SyncSingleCatalogParameter>(serialExecutionArray, this.syncSingleCatalog.bind(this));
+        } else {
+          console.log("Skip CatalogSyncService.sync");
+        }
+      });
   }
   //#endregion
 
@@ -107,7 +115,6 @@ export class CatalogSyncService extends BaseSyncService implements ICatalogSyncS
     return catalog.then((fetched: ScryfallCatalog) => this.processSync(parameter, fetched));
   }
 
-  // TODO remove items that are not on the server anymore or at least mark them
   private async processSync(parameter: SyncSingleCatalogParameter, catalog: ScryfallCatalog): Promise<void> {
     console.log(`Retrieved ${catalog.total_values} items for catalog '${parameter.catalogType}'`);
     if (parameter.progressCallback) {
@@ -119,6 +126,19 @@ export class CatalogSyncService extends BaseSyncService implements ICatalogSyncS
         .values(catalog.data.map((item: string) => this.catalogAdapter.toInsert({ catalogType: parameter.catalogType, item: item })))
         .executeTakeFirstOrThrow();
     });
+  }
+
+  private async shouldSync(options: CatalogSyncOptions): Promise<boolean> {
+    if (options.source == "user") {
+      return Promise.resolve(true);
+    } else {
+      return await this.database
+        .selectFrom("catalog_item")
+        .selectAll()
+        .limit(1)
+        .executeTakeFirst()
+        .then((existing: CatalogItem) => existing ? false : true);
+    }
   }
   //#endregion
 }

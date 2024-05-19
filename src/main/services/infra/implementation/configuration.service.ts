@@ -4,6 +4,7 @@ import * as path from "path";
 import { CatalogType } from "../../../../common/enums";
 import { ScryfallEndpoint } from "../../scryfall";
 import { IConfigurationService } from "../interfaces";
+import { SyncType } from "../../../../common/ipc-params";
 
 // FEATURE configuration
 // cleanup the getters, they should not call fs methods
@@ -68,5 +69,9 @@ export class ConfigurationService implements IConfigurationService {
     result.set("Watermarks", "watermarks");
     result.set("WordBank", "word-bank");
     return result;
+  }
+
+  public get syncAtStartup(): Array<SyncType> {
+    return new Array<SyncType>();
   }
 }

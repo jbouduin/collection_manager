@@ -3,7 +3,7 @@ import * as React from "react";
 import { CardDetailPanelProps } from "../card-detail-panel.props";
 
 import { RulingLineDto } from "../../../../../../common/dto";
-import { IQueryParam, RulingQueryOptions } from "../../../../../../common/ipc-params";
+import { QueryParam, RulingQueryOptions } from "../../../../../../common/ipc-params";
 import { RulingLine } from "../ruling-line/ruling-line";
 
 export function CardRulings(props: CardDetailPanelProps) {
@@ -13,7 +13,7 @@ export function CardRulings(props: CardDetailPanelProps) {
   //#region Effects -----------------------------------------------------------
   React.useEffect(() => {
     if (props.card) {
-      const rulingQueryParam: IQueryParam<RulingQueryOptions> = {
+      const rulingQueryParam: QueryParam<RulingQueryOptions> = {
         type: "Ruling",
         options: {
           cardId: props.card.card.id

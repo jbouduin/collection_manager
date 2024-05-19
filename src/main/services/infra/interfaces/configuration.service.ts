@@ -1,3 +1,4 @@
+import { SyncType } from "../../../../common/ipc-params";
 import { CatalogType } from "../../../../common/enums";
 import { ScryfallEndpoint } from "../../scryfall";
 
@@ -9,4 +10,5 @@ export interface IConfigurationService {
   readonly scryfallApiRoot: string;
   readonly scryfallEndpoints: Map<ScryfallEndpoint, string>;
   readonly scryfallCatalogPaths: Map<CatalogType, string>;
+  readonly syncAtStartup: Array<SyncType>;
 }

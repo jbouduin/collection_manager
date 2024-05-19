@@ -95,7 +95,7 @@ export interface ScryfallCardFace {
      * This card’s colors, if the overall card has colors defined by the rules. Otherwise the colors will be on the card_faces objects.
      */
   colors: Array<MTGColor>;
-  // NOW create a type for those Record<x,y> properties
+  // TODO create a type for those Record<x,y> properties
   image_uris?: Record<ImageSize, string>;
   /**
    * The card’s mana value. Note that some funny cards have fractional mana costs.

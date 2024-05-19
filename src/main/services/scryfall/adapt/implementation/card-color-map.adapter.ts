@@ -11,7 +11,7 @@ export class CardColorMapAdapter implements ICardColorMapAdapter{
     return {
       card_id: leftId,
       color_id: rigthId as MTGColor,
-      color_type: scryfall as MTGColorType // NOW manacolor has one more value "Colorless"
+      color_type: scryfall as MTGColorType
     };
 
   }

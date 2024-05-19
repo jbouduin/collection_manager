@@ -12,7 +12,7 @@ import { BaseSyncService } from "./base-sync.service";
 
 
 @injectable()
-export class RulingSyncService extends BaseSyncService implements IRulingSyncService {
+export class RulingSyncService extends BaseSyncService<RulingSyncOptions> implements IRulingSyncService {
 
   //#region private readonly fields -------------------------------------------
   private readonly scryfallclient: IScryfallClient;
@@ -32,8 +32,7 @@ export class RulingSyncService extends BaseSyncService implements IRulingSyncSer
     this.rulingAdapter = rulingAdapter;
   }
 
-  public async sync(options: RulingSyncOptions, progressCallback?: ProgressCallback): Promise<void> {
-    console.log(`start RulingSyncService.sync for cardId ${options.cardId}`);
+  public override async sync(options: RulingSyncOptions, progressCallback: ProgressCallback): Promise<void> {
     if (progressCallback) {
       progressCallback("Synchronizing rulings");
     }

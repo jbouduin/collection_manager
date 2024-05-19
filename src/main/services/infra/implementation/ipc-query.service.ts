@@ -1,8 +1,8 @@
 import { container, singleton } from "tsyringe";
 
 import { RulingLineDto } from "../../../../common/dto";
-import { IQueryParam, QueryOptions, RulingQueryOptions } from "../../../../common/ipc-params";
-import { CardQueryOptions } from "../../../../common/ipc-params/card-query.options";
+import { QueryParam, QueryOptions, RulingQueryOptions } from "../../../../common/ipc-params";
+import { CardQueryOptions } from "../../../../common/ipc-params/query/card-query.options";
 import REPOTOKENS, { ICardRepository, ICardSetRepository, ICatalogRepository, IColorRepository, ILanguageRepository, IRulingRepository, ISymbologyRepository } from "../../repo/interfaces";
 import SYNCTOKENS, { IRulingSyncService } from "../../scryfall";
 import { IIpcQueryService } from "../interfaces";
@@ -13,11 +13,11 @@ export class IpcQueryService implements IIpcQueryService {
 
   //#region IIpcQueryService methods ------------------------------------------
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  public async handle(params: IQueryParam<QueryOptions>): Promise<any> {
+  public async handle(params: QueryParam<QueryOptions>): Promise<any> {
     // console.log("start IpcQueryService.handling", params);
     switch (params.type) {
       case "Card":
-        return container.resolve<ICardRepository>(REPOTOKENS.CardRepository).getWithOptions(params.options as CardQueryOptions);
+        return container.resolve<ICardRepository>(REPOTOKENS.CardRepository).getCards(params.options as CardQueryOptions);
       case "CardSet":
         return container.resolve<ICardSetRepository>(REPOTOKENS.CardSetRepository).getAll();
       case "Catalog":
@@ -42,7 +42,7 @@ export class IpcQueryService implements IIpcQueryService {
     return rulingRepository.getByCardId(options.cardId)
       .then((queryResult: Array<RulingLineDto>) => {
         if (queryResult.length == 0) {
-          return container.resolve<IRulingSyncService>(SYNCTOKENS.RulingSyncService).sync({ cardId: options.cardId })
+          return container.resolve<IRulingSyncService>(SYNCTOKENS.RulingSyncService).sync({source: "user", cardId: options.cardId}, null)
             .then(() => rulingRepository
               .getByCardId(options.cardId)
               .then((afterSync: Array<RulingLineDto>) => afterSync.filter((line: RulingLineDto) => line.oracle_id !== null))

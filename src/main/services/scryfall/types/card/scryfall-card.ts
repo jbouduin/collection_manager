@@ -383,7 +383,7 @@ export interface ScryfallCard {
   /**
    * An object listing available imagery for this card. See the Card Imagery article for more information.
    */
-  // NOW create a type for those Record<x,y> properties
+  // TODO create a type for those Record<x,y> properties
   image_uris?: Record<ImageSize, string>;
 
   /**

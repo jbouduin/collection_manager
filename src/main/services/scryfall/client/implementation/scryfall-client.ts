@@ -1,11 +1,11 @@
 import { inject, injectable } from "tsyringe";
 
 import { CatalogType } from "../../../../../common/enums";
-import { ProgressCallback } from "../../../../../common/ipc-params";
+import { CardSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
 import INFRATOKENS, { IConfigurationService } from "../../../../../main/services/infra/interfaces";
-import { ScryfallCardSet, ScryfallCatalog, ScryfallEndpoint, ScryfallRuling } from "../../types";
+import { ScryfallCard, ScryfallCardSet, ScryfallCatalog, ScryfallEndpoint, ScryfallRuling } from "../../types";
 import { ScryfallList } from "../../types/scryfall-list";
-import { IScryfallClient } from "../interfaces";
+import { IScryfallClient, ScryfallSearchOptions } from "../interfaces";
 
 
 @injectable()
@@ -45,6 +45,18 @@ export class ScryfallClient implements IScryfallClient {
       .then((response: Response) => response.body);
   }
 
+  // FEATURE use emitter in getCards or in getlist
+  public async getCards(options: CardSyncOptions): Promise<Array<ScryfallCard>> {
+    const scryfallOptions: ScryfallSearchOptions = {
+      unique: "prints",
+      include_extras: true,
+      include_multilingual: true,
+      include_variations: true
+    };
+    const uri = this.buildCardUri(options, scryfallOptions);
+    return this.fetchList<ScryfallCard>(uri, new Array<ScryfallCard>());
+  }
+
   public async getCardSets(): Promise<Array<ScryfallCardSet>> {
     const uri = `${this.scryfallApiRoot}/${this.scryfallEndpoints.get("cardSet")}`;
     return this.fetchList<ScryfallCardSet>(uri, new Array<ScryfallCardSet>());
@@ -66,7 +78,7 @@ export class ScryfallClient implements IScryfallClient {
   //#endregion
 
   //#region private methods ---------------------------------------------------
-  private async tryFetch(uri: string): Promise<Response> {
+  private async tryFetch(uri: string | URL): Promise<Response> {
     const now = Date.now();
     const sleepTime = this.nextQuery - now;
     this.nextQuery = now + this.minimumRequestTimeout;
@@ -86,7 +98,7 @@ export class ScryfallClient implements IScryfallClient {
     });
   }
 
-  private async fetchList<T extends object>(uri: string, previousPages: Array<T>, progressCallback?: ProgressCallback): Promise<Array<T>> {
+  private async fetchList<T extends object>(uri: string | URL, previousPages: Array<T>, progressCallback?: ProgressCallback): Promise<Array<T>> {
     return this.tryFetch(uri)
       .then(async (response: Response) => {
         const fetchedList = ((await response.json()) as ScryfallList<T>);
@@ -97,6 +109,19 @@ export class ScryfallClient implements IScryfallClient {
           return previousPages;
         }
       });
+  }
+
+  private buildCardUri(options: CardSyncOptions, scryfallOptions: ScryfallSearchOptions): URL {
+    const x = new URL(`${this.scryfallApiRoot}/${this.scryfallEndpoints.get("card")}`);
+    x.searchParams.set("include_extras", scryfallOptions.include_extras ? "true" : "false");
+    x.searchParams.set("unique",scryfallOptions.unique);
+    x.searchParams.set("include_multilingual", scryfallOptions.include_multilingual ? "true" : "false");
+    x.searchParams.set("include_variations", scryfallOptions.include_variations ? "true" : "false");
+    const query = new Array<string>();
+    query.push(`e=${options.setCode}`);
+    query.push("lang=any");
+    x.searchParams.set("q", query.join("+"));
+    return x;
   }
   //#endregion
 }

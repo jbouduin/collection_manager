@@ -1,4 +1,4 @@
-import { CardSetType } from "../../../../common/enums/card-set-type.enum";
+import { CardSetType } from "../../../../../common/enums/card-set-type.enum";
 
 export interface ScryfallCardSet {
   /**

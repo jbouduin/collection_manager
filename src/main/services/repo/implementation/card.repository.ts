@@ -1,7 +1,7 @@
 import { inject, injectable } from "tsyringe";
 
 import { CardDto, CardImageDto, } from "../../../../common/dto";
-import { ImageType } from "../../../../common/enums";
+import { ImageSize } from "../../../../common/enums";
 import { CardQueryOptions } from "../../../../common/ipc-params/card-query.options";
 import { Card } from "../../../../main/database/schema";
 import INFRATOKENS, { IDatabaseService } from "../../infra/interfaces";
@@ -29,7 +29,7 @@ export class CardRepository extends BaseRepository implements ICardRepository {
       .then((card: Card) => this.convertCardToCardSelectDto(card));
   }
 
-  public async getCardImageData(cardId: string, imageType: ImageType): Promise<CardImageDto> {
+  public async getCardImageData(cardId: string, imageType: ImageSize): Promise<CardImageDto> {
     return this.database.selectFrom("card")
       .leftJoin("card_image", "card_image.card_id", "card.id")
       .leftJoin("card_set", "card_set.id", "card.set_id")

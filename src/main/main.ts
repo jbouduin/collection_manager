@@ -8,7 +8,7 @@ import { container } from "tsyringe";
 import { updateElectronApp } from "update-electron-app";
 
 import { CardImageDto } from "../common/dto";
-import { ImageType } from "../common/enums";
+import { ImageSize } from "../common/enums";
 import MIGRATOKENS from "./database/migrations/migration.tokens";
 import { MigrationDi } from "./database/migrations/migrations.di";
 import INFRATOKENS, { IImageCacheService, IWindowService } from "./services/infra/interfaces";
@@ -38,7 +38,7 @@ const bootFunction = async (splashWindow: BrowserWindow) => {
     // TODO this should only be done when new installation
     //.then(async () => await container.resolve<ICatalogSyncService>(SYNCTOKENS.CatalogSyncService).sync({ catalogs: ["AbilityWords", "LandTypes", "ArtifactTypes"] }))
     // LATER make those things setting dependent
-    .then(async () => await container.resolve<ICardSetSyncService>(SYNCTOKENS.CardSetSyncService).sync(null, (label: string) => splashWindow.webContents.send("splash", label)))
+    // .then(async () => await container.resolve<ICardSetSyncService>(SYNCTOKENS.CardSetSyncService).sync(null, (label: string) => splashWindow.webContents.send("splash", label)))
     // .then(() => container.resolve<ISymbologySyncService>(SYNCTOKENS.SymbologySyncService).sync(null, (label: string) => splashWindow.webContents.send("splash", label)));
     .then(() => splashWindow.webContents.send("splash", "loading main program"));
 };
@@ -57,7 +57,7 @@ app.whenReady().then(async () => {
   protocol.handle("cached-image", async (request: Request) => {
     const url = new URL(request.url);
     return container.resolve<ICardRepository>(REPOTOKENS.CardRepository)
-      .getCardImageData(url.hostname, url.searchParams.get("size") as ImageType)
+      .getCardImageData(url.hostname, url.searchParams.get("size") as ImageSize)
       .then((data: CardImageDto) => {
         const cacheService = container.resolve<IImageCacheService>(INFRATOKENS.ImageCacheService);
         return cacheService.getCardImage(data);

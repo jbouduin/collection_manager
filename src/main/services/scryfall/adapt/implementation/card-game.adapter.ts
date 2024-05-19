@@ -7,7 +7,7 @@ import { DatabaseSchema } from "../../../../database/schema";
 import { ICardGameAdapter } from "../interface";
 
 export class CardGameAdapter implements ICardGameAdapter {
-  toInsert(cardId: string, game: string): InsertExpression<DatabaseSchema, "card_game"> {
+  toInsert(cardId: string, game: Game): InsertExpression<DatabaseSchema, "card_game"> {
     return {
       card_id: cardId,
       game: game as Game

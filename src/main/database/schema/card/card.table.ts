@@ -1,6 +1,6 @@
 import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
 
-import { CardBorder, CardFrame, CardLayout, CardRarity, ImageStatus, MTGLanguage } from "../../../../common/enums";
+import { CardBorderColor, CardFrame, CardLayout, CardRarity, ImageStatus, MTGLanguage } from "../../../../common/enums";
 import { SynchronizedWithStringId } from "../base.types";
 import { CardSecurityStamp } from "scryfall-sdk";
 
@@ -174,7 +174,7 @@ export interface CardTable extends SynchronizedWithStringId {
   /**
    * This card’s border color: black, white, borderless, silver, or gold.
    */
-  border: ColumnType<CardBorder>;
+  border: ColumnType<CardBorderColor>;
 
   /**
    * The Scryfall ID for the card back design present on this card.

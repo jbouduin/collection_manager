@@ -1,16 +1,17 @@
 import { InsertExpression } from "kysely/dist/cjs/parser/insert-values-parser";
 import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser";
-import { CardFace as ScryFallCardface } from "scryfall-sdk";
+
 import { v1 as uuidV1 } from "uuid";
 
 import { sql } from "kysely";
 import { CardLayout } from "../../../../../common/enums";
 import { DatabaseSchema } from "../../../../database/schema";
 import { ICardfaceAdapter } from "../interface";
+import { ScryfallCardFace } from "../../types";
 
 export class CardfaceAdapter implements ICardfaceAdapter {
 
-  public toInsert(cardId: string, scryfall: ScryFallCardface): InsertExpression<DatabaseSchema, "cardface"> {
+  public toInsert(cardId: string, scryfall: ScryfallCardFace): InsertExpression<DatabaseSchema, "cardface"> {
     // FEATURE replace scryfall-sdk: ScryFallCardface has prototype card and cards that return from scryfall with no cardface get an empty card-face object by default
     return {
       id: uuidV1(),
@@ -37,7 +38,7 @@ export class CardfaceAdapter implements ICardfaceAdapter {
     };
   }
 
-  public toUpdate(scryfall: ScryFallCardface): UpdateObjectExpression<DatabaseSchema, "cardface"> {
+  public toUpdate(scryfall: ScryfallCardFace): UpdateObjectExpression<DatabaseSchema, "cardface"> {
     return {
       artist: scryfall.artist,
       artist_id: scryfall.artist_id,

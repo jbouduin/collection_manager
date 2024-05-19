@@ -1,14 +1,15 @@
 import { InsertExpression } from "kysely/dist/cjs/parser/insert-values-parser";
 import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser";
-import { Card as ScryFallCard } from "scryfall-sdk";
+
 
 import { sql } from "kysely";
 import { MTGLanguage } from "../../../../../common/enums";
 import { DatabaseSchema } from "../../../../database/schema";
 import { ICardAdapter } from "../interface";
+import { ScryfallCard } from "../../types";
 
 export class CardAdapter implements ICardAdapter {
-  public toInsert(scryfall: ScryFallCard): InsertExpression<DatabaseSchema, "card"> {
+  public toInsert(scryfall: ScryfallCard): InsertExpression<DatabaseSchema, "card"> {
     return {
       arena_id: scryfall.arena_id,
       cardmarket_id: scryfall.cardmarket_id,
@@ -70,7 +71,7 @@ export class CardAdapter implements ICardAdapter {
     };
   }
 
-  public toUpdate(scryfall: ScryFallCard): UpdateObjectExpression<DatabaseSchema, "card"> {
+  public toUpdate(scryfall: ScryfallCard): UpdateObjectExpression<DatabaseSchema, "card"> {
     return {
       arena_id: scryfall.arena_id,
       cardmarket_id: scryfall.cardmarket_id,

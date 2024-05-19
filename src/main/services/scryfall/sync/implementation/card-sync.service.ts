@@ -1,12 +1,8 @@
 import fs from "fs";
 import { ExpressionOrFactory, InsertResult, SqlBool, Transaction, UpdateResult, sql } from "kysely";
-import {
-  Cards, Color, Game, ImageUris, Legalities, RelatedCard,
-  Card as ScryfallCard, CardFace as ScryfallCardface
-} from "scryfall-sdk";
 import { inject, injectable } from "tsyringe";
 
-import { CardColorType, CardLegality, GameFormat, ImageType } from "../../../../../common/enums";
+import { CardLegality, Game, GameFormat, ImageSize, MTGColor, MTGColorType } from "../../../../../common/enums";
 import { CardSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
 import { DatabaseSchema } from "../../../../../main/database/schema";
 import INFRATOKENS, { IDatabaseService } from "../../../../../main/services/infra/interfaces";
@@ -14,14 +10,17 @@ import ADAPTTOKENS, {
   ICardAdapter, ICardCardMapAdapter, ICardColorMapAdapter, ICardFormatLegalityAdapter, ICardGameAdapter,
   ICardImageAdapter, ICardKeywordAdapter, ICardMultiverseIdAdapter, ICardfaceAdapter, ICardfaceColorMapAdapter, ICardfaceImageAdapter
 } from "../../adapt/interface";
+import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
+import { ScryfallCard, ScryfallCardFace, ScryfallRelatedCard } from "../../types";
 import { ICardSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
 
 
 @injectable()
-export class CardSyncService extends BaseSyncService implements ICardSyncService {
+export class CardSyncService extends BaseSyncService<CardSyncOptions> implements ICardSyncService {
 
   //#region Private readonly fields -------------------------------------------
+  private readonly scryfallclient: IScryfallClient;
   private readonly cardCardMapAdapter: ICardCardMapAdapter;
   private readonly cardColorMapAdapter: ICardColorMapAdapter;
   private readonly cardfaceAdapter: ICardfaceAdapter;
@@ -38,6 +37,7 @@ export class CardSyncService extends BaseSyncService implements ICardSyncService
   //#region Constructor & C° --------------------------------------------------
   public constructor(
     @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
+    @inject(CLIENTTOKENS.ScryfallClient) scryfallclient: IScryfallClient,
     @inject(ADAPTTOKENS.CardCardMapAdapter) cardCardMapAdapter: ICardCardMapAdapter,
     @inject(ADAPTTOKENS.CardColorMapAdapter) cardColorMapAdapter: ICardColorMapAdapter,
     @inject(ADAPTTOKENS.CardfaceAdapter) cardfaceAdapter: ICardfaceAdapter,
@@ -50,6 +50,7 @@ export class CardSyncService extends BaseSyncService implements ICardSyncService
     @inject(ADAPTTOKENS.CardMultiverseIdAdapter) cardMultiverseIdAdapter: ICardMultiverseIdAdapter,
     @inject(ADAPTTOKENS.CardAdapter) cardAdapter: ICardAdapter,) {
     super(databaseService);
+    this.scryfallclient = scryfallclient;
     this.cardCardMapAdapter = cardCardMapAdapter;
     this.cardColorMapAdapter = cardColorMapAdapter;
     this.cardfaceAdapter = cardfaceAdapter;
@@ -65,29 +66,21 @@ export class CardSyncService extends BaseSyncService implements ICardSyncService
   //#endregion
 
   //#region ICardSyncService methods ------------------------------------------
-  public async sync(options: CardSyncOptions, progressCallback?: ProgressCallback): Promise<void> {
+  public override async sync(options: CardSyncOptions, progressCallback: ProgressCallback): Promise<void> {
     console.log("start CardSyncService.sync");
     if (progressCallback) {
       progressCallback("Sync cards");
     }
     // TODO: check if all required master data is available
-    const cards: Array<ScryfallCard> = new Array<ScryfallCard>();
-    // TODO user setting "always retrieve all available languages" or something similar
-    const emitter = Cards.search(`e=${options.setCode}+lang=any`, { include_extras: true, include_variations: true, include_multilingual: true,unique: "prints" });
-    // FEATURE replace scryfall-sdk:  sdk is not returning total number of results when querying, so we would never be able to show process
-    // consider adding required parts of scrfall-sdk to application
-    // emitter.addListener("data", (card: ScryfallCard) => {
-    //   cards.push(card);
-    // });
-    return emitter.waitForAll().then((all) => {
+    const cards = this.scryfallclient.getCards(options);
+    return cards.then((cardArray: Array<ScryfallCard>) => {
       const fileName = "c:/data/new-assistant/json/cards_" + options.setCode + ".json";
       if (!fs.existsSync(fileName)) {
-        const json = JSON.stringify(all);
+        const json = JSON.stringify(cardArray);
         fs.writeFileSync(fileName, json);
       }
-      console.log("Emitted %d cards", cards.length);
-      console.log("Found %d cards", all.length);
-      return this.processSync(all, progressCallback);
+      console.log("Found %d cards", cardArray.length);
+      return this.processSync(cardArray, progressCallback);
     });
   }
   //#endregion
@@ -156,9 +149,9 @@ export class CardSyncService extends BaseSyncService implements ICardSyncService
     );
   }
 
-  private async syncCardCardMap(trx: Transaction<DatabaseSchema>, cardId: string, relatedCards: Array<RelatedCard>): Promise<void> {
+  private async syncCardCardMap(trx: Transaction<DatabaseSchema>, cardId: string, relatedCards: Array<ScryfallRelatedCard>): Promise<void> {
     if (relatedCards?.length > 0) {
-      relatedCards.forEach(async (relatedCard: RelatedCard) => {
+      relatedCards.forEach(async (relatedCard: ScryfallRelatedCard) => {
         const filter: ExpressionOrFactory<DatabaseSchema, "card_card_map", SqlBool> = (eb) => eb.and([
           eb("card_card_map.card_id", "=", cardId),
           eb("card_card_map.related_card_id", "=", relatedCard.id)
@@ -183,9 +176,9 @@ export class CardSyncService extends BaseSyncService implements ICardSyncService
     }
   }
 
-  private async syncCardColorMaps(trx: Transaction<DatabaseSchema>, cardId: string, colorType: CardColorType, colors: Array<Color> | null): Promise<void> {
+  private async syncCardColorMaps(trx: Transaction<DatabaseSchema>, cardId: string, colorType: MTGColorType, colors: Array<MTGColor> | null): Promise<void> {
     if (colors?.length > 0) {
-      colors.forEach(async (color: Color) => {
+      colors.forEach(async (color: MTGColor) => {
         const filter: ExpressionOrFactory<DatabaseSchema, "card_color_map", SqlBool> = (eb) => eb.and([
           eb("card_color_map.card_id", "=", cardId),
           eb("card_color_map.color_type", "=", colorType),
@@ -211,10 +204,10 @@ export class CardSyncService extends BaseSyncService implements ICardSyncService
     }
   }
 
-  private async syncCardFormatLegalities(trx: Transaction<DatabaseSchema>, cardId: string, legalities: Legalities): Promise<void> {
+  private async syncCardFormatLegalities(trx: Transaction<DatabaseSchema>, cardId: string, legalities: Record<GameFormat, CardLegality>): Promise<void> {
     if (legalities) {
       Object.keys(legalities).forEach(async (key: string) => {
-        await this.syncSingleCardFormatLegality(trx, cardId, key as GameFormat, legalities[key as keyof Legalities] as CardLegality);
+        await this.syncSingleCardFormatLegality(trx, cardId, key as GameFormat, legalities[key as keyof Record<GameFormat, CardLegality>] as CardLegality);
       });
     }
   }
@@ -242,8 +235,8 @@ export class CardSyncService extends BaseSyncService implements ICardSyncService
     }
   }
 
-  private async syncCardGame(trx: Transaction<DatabaseSchema>, cardId: string, games: Array<(keyof typeof Game)>): Promise<void> {
-    games.forEach(async (game: keyof typeof Game) => {
+  private async syncCardGame(trx: Transaction<DatabaseSchema>, cardId: string, games: Array<Game>): Promise<void> {
+    games.forEach(async (game: Game) => {
       const filter: ExpressionOrFactory<DatabaseSchema, "card_game", SqlBool> = (eb) =>
         eb.and([
           eb("card_game.card_id", "=", cardId),
@@ -292,15 +285,15 @@ export class CardSyncService extends BaseSyncService implements ICardSyncService
     });
   }
 
-  private async syncCardImages(trx: Transaction<DatabaseSchema>, cardId: string, images: ImageUris): Promise<void> {
+  private async syncCardImages(trx: Transaction<DatabaseSchema>, cardId: string, images: Record<ImageSize, string>): Promise<void> {
     if (images) {
       Object.keys(images).forEach(async (key: string) => {
-        await this.syncSingleCardImage(trx, cardId, key as ImageType, images[key as keyof ImageUris] as string);
+        await this.syncSingleCardImage(trx, cardId, key as ImageSize, images[key as keyof Record<ImageSize, string>] as string);
       });
     }
   }
 
-  private async syncSingleCardImage(trx: Transaction<DatabaseSchema>, cardId: string, imageType: ImageType, uri: string): Promise<void> {
+  private async syncSingleCardImage(trx: Transaction<DatabaseSchema>, cardId: string, imageType: ImageSize, uri: string): Promise<void> {
     if (uri) {
       const filter: ExpressionOrFactory<DatabaseSchema, "card_image", SqlBool> = (eb) =>
         eb.and([
@@ -353,12 +346,14 @@ export class CardSyncService extends BaseSyncService implements ICardSyncService
     }
   }
 
-  private async syncCardfaces(trx: Transaction<DatabaseSchema>, cardId: string, cardfaces: Array<ScryfallCardface>): Promise<void> {
-    return Promise.all(cardfaces.map((cardface: ScryfallCardface) => this.syncSingleCardface(trx, cardId, cardface)))
-      .then(() => Promise.resolve());
+  private async syncCardfaces(trx: Transaction<DatabaseSchema>, cardId: string, cardfaces?: Array<ScryfallCardFace>): Promise<void> {
+    if (cardfaces) {
+      return Promise.all(cardfaces.map((cardface: ScryfallCardFace) => this.syncSingleCardface(trx, cardId, cardface)))
+        .then(() => Promise.resolve());
+    }
   }
 
-  private async syncSingleCardface(trx: Transaction<DatabaseSchema>, cardId: string, cardface: ScryfallCardface): Promise<void> {
+  private async syncSingleCardface(trx: Transaction<DatabaseSchema>, cardId: string, cardface: ScryfallCardFace): Promise<void> {
     // because cardfaces do not have a unique id, we delete the exisitng ones first, before re-creating them
     const deleteFilter: ExpressionOrFactory<DatabaseSchema, "cardface", SqlBool> = (eb) => eb("cardface.card_id", "=", cardId);
     trx.deleteFrom("cardface").where(deleteFilter).execute()
@@ -378,10 +373,10 @@ export class CardSyncService extends BaseSyncService implements ICardSyncService
     return Promise.resolve();
   }
 
-  private async syncCardfaceColorMaps(trx: Transaction<DatabaseSchema>, cardfaceId: string, colorType: CardColorType, colors: Array<Color> | null): Promise<void> {
+  private async syncCardfaceColorMaps(trx: Transaction<DatabaseSchema>, cardfaceId: string, colorType: MTGColorType, colors: Array<MTGColor> | null): Promise<void> {
     if (colors?.length > 0) {
       const result: Array<Promise<InsertResult | UpdateResult>> = new Array<Promise<InsertResult | UpdateResult>>();
-      colors.forEach(async (color: Color) => {
+      colors.forEach(async (color: MTGColor) => {
         const filter: ExpressionOrFactory<DatabaseSchema, "cardface_color_map", SqlBool> = (eb) => eb.and([
           eb("cardface_color_map.cardface_id", "=", cardfaceId),
           eb("cardface_color_map.color_type", "=", colorType),
@@ -413,17 +408,17 @@ export class CardSyncService extends BaseSyncService implements ICardSyncService
 
   }
 
-  private async syncCardfaceImages(trx: Transaction<DatabaseSchema>, cardfaceId: string, images?: ImageUris): Promise<void> {
+  private async syncCardfaceImages(trx: Transaction<DatabaseSchema>, cardfaceId: string, images?: Record<ImageSize, string>): Promise<void> {
     const result: Array<Promise<void>> = new Array<Promise<void>>();
     if (images) {
       Object.keys(images).forEach(async (key: string) => {
-        result.push(this.syncSingleCardfaceImage(trx, cardfaceId, key as ImageType, images[key as keyof ImageUris] as string));
+        result.push(this.syncSingleCardfaceImage(trx, cardfaceId, key as ImageSize, images[key as keyof Record<ImageSize, string>] as string));
       });
     }
     return Promise.all(result).then(() => Promise.resolve());
   }
 
-  private async syncSingleCardfaceImage(trx: Transaction<DatabaseSchema>, cardfaceId: string, imageType: ImageType, uri: string): Promise<void> {
+  private async syncSingleCardfaceImage(trx: Transaction<DatabaseSchema>, cardfaceId: string, imageType: ImageSize, uri: string): Promise<void> {
     if (uri) {
       const filter: ExpressionOrFactory<DatabaseSchema, "cardface_image", SqlBool> = (eb) =>
         eb.and([

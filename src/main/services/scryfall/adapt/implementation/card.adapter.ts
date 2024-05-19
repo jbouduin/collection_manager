@@ -1,14 +1,15 @@
 import { InsertExpression } from "kysely/dist/cjs/parser/insert-values-parser";
 import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser";
-import { Card as ScryFallCard } from "scryfall-sdk";
+
 
 import { sql } from "kysely";
 import { MTGLanguage } from "../../../../../common/enums";
 import { DatabaseSchema } from "../../../../database/schema";
 import { ICardAdapter } from "../interface";
+import { ScryfallCard } from "../../types";
 
 export class CardAdapter implements ICardAdapter {
-  public toInsert(scryfall: ScryFallCard): InsertExpression<DatabaseSchema, "card"> {
+  public toInsert(scryfall: ScryfallCard): InsertExpression<DatabaseSchema, "card"> {
     return {
       arena_id: scryfall.arena_id,
       cardmarket_id: scryfall.cardmarket_id,
@@ -25,7 +26,7 @@ export class CardAdapter implements ICardAdapter {
       tcgplayer_id: scryfall.tcgplayer_id,
       uri: scryfall.uri,
       cmc: scryfall.cmc,
-      defense: null, // FEATURE replace scryfall-sdk: scryfall-sdk does not return this
+      defense:  scryfall.defense,
       edhrec_rank: scryfall.edhrec_rank,
       hand_modfier: scryfall.hand_modifier,
       life_modfier: scryfall.life_modifier,
@@ -60,7 +61,7 @@ export class CardAdapter implements ICardAdapter {
       rarity: scryfall.rarity,
       released_at: scryfall.released_at,
       reprint: scryfall.reprint ? 0 : 1,
-      security_stamp: undefined, // // FEATURE replace scryfall-sdk: scryfall-sdk has strange value here
+      security_stamp: scryfall.security_stamp,
       set_id: scryfall.set_id,
       story_spotlight: scryfall.story_spotlight ? 0 : 1,
       textless: scryfall.textless ? 0 : 1,
@@ -70,7 +71,7 @@ export class CardAdapter implements ICardAdapter {
     };
   }
 
-  public toUpdate(scryfall: ScryFallCard): UpdateObjectExpression<DatabaseSchema, "card"> {
+  public toUpdate(scryfall: ScryfallCard): UpdateObjectExpression<DatabaseSchema, "card"> {
     return {
       arena_id: scryfall.arena_id,
       cardmarket_id: scryfall.cardmarket_id,
@@ -84,7 +85,7 @@ export class CardAdapter implements ICardAdapter {
       tcgplayer_id: scryfall.tcgplayer_id,
       uri: scryfall.uri,
       cmc: scryfall.cmc,
-      defense: null,
+      defense: scryfall.defense,
       edhrec_rank: scryfall.edhrec_rank,
       hand_modfier: scryfall.hand_modifier,
       life_modfier: scryfall.life_modifier,
@@ -119,7 +120,7 @@ export class CardAdapter implements ICardAdapter {
       rarity: scryfall.rarity,
       released_at: scryfall.released_at,
       reprint: scryfall.reprint ? 0 : 1,
-      security_stamp: undefined,
+      security_stamp: scryfall.security_stamp,
       set_id: scryfall.set_id,
       story_spotlight: scryfall.story_spotlight ? 0 : 1,
       textless: scryfall.textless ? 0 : 1,

@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from "electron";
-import { IQueryParam, QueryOptions } from "../../common/ipc-params";
+import { QueryParam, SyncParam, QueryOptions, SyncOptions } from "../../common/ipc-params";
 import { DarkmodeOption } from "../../common/ipc-params/darkmode.option";
 
 // define
@@ -11,8 +11,8 @@ const versions = {
 
 const ipc = {
   darkmode: (mode: DarkmodeOption) => ipcRenderer.invoke("darkmode", mode),
-  query: (param: IQueryParam<QueryOptions>) => ipcRenderer.invoke("query", param),
-  sync: (param: IQueryParam<QueryOptions>) => ipcRenderer.invoke("sync", param),
+  query: (param: QueryParam<QueryOptions>) => ipcRenderer.invoke("query", param),
+  sync: (param: SyncParam<SyncOptions>) => ipcRenderer.invoke("sync", param),
   // FEATURE extended progress reporting with two progress bars
   onProgress: (callback: (status: string) => void) => ipcRenderer.on("splash", (_event, value) => callback(value))
 };

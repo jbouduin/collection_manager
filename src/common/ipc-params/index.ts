@@ -1,20 +1,16 @@
-import { CardQueryOptions } from "./card-query.options";
-import { CardSetSyncOptions } from "./card-set-sync.options";
-import { CardSyncOptions } from "./card-sync.options";
-import { CatalogSyncOptions } from "./catalog-sync.options";
-import { RulingQueryOptions } from "./ruling-query.options";
-import { RulingSyncOptions } from "./ruling-sync.options";
-
-export * from "./card-query.options";
-export * from "./card-set-sync.options";
-export * from "./card-sync.options";
-export * from "./catalog-sync.options";
 export * from "./darkmode.option";
-export * from "./query-or-sync.param";
-export * from "./query-type.enum";
-export * from "./ruling-query.options";
-export * from "./ruling-sync.options";
 export * from "./ipc-channel.enum";
+export * from "./query/card-query.options";
+export * from "./query/query-type.enum";
+export * from "./query/query.param";
+export * from "./query/ruling-query.options";
+export * from "./sync/card-set-sync.options";
+export * from "./sync/card-symbol-sync.options";
+export * from "./sync/card-sync.options";
+export * from "./sync/catalog-sync.options";
+export * from "./sync/ruling-sync.options";
+export * from "./sync/sync-source.enum";
+export * from "./sync/sync.param";
+export * from "./sync/sync-type.enum";
 
-export type QueryOptions = CardSetSyncOptions | CardSyncOptions | CatalogSyncOptions | RulingQueryOptions | RulingSyncOptions | CardQueryOptions;
 export type ProgressCallback = (value: string) => void;

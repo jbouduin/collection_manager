@@ -1,6 +1,6 @@
-import { IQueryParam, QueryOptions } from "../../../../common/ipc-params";
+import { SyncOptions, SyncParam } from "../../../../common/ipc-params";
 
 
 export interface IIpcSyncService {
-  handle(params: IQueryParam<QueryOptions>): Promise<void>;
+  handle(params: SyncParam<SyncOptions>): Promise<void>;
 }

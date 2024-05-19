@@ -2,7 +2,7 @@ import { Cell, CellProps, CellRenderer, Column, Region, SelectionModes, Table2 }
 import * as React from "react";
 
 import { CardDto, CardSetDto, LanguageDto } from "../../../../../common/dto";
-import { CardQueryOptions, IQueryParam } from "../../../../../common/ipc-params";
+import { CardQueryOptions, QueryParam } from "../../../../../common/ipc-params";
 import { SvgProvider } from "../svg-provider/svg-provider";
 import { CardsTableProps } from "./cards-table.props";
 
@@ -84,7 +84,7 @@ export function CardsTable(props: CardsTableProps) {
   //#region Effects -----------------------------------------------------------
   React.useEffect(() => {
     if (props.selectedSets) {
-      const cardQueryParam: IQueryParam<CardQueryOptions> = {
+      const cardQueryParam: QueryParam<CardQueryOptions> = {
         type: "Card",
         options: {
           cardId: null,

@@ -1,7 +1,7 @@
 import { container, inject, singleton } from "tsyringe";
 
-import { CardSetSyncOptions, CardSyncOptions, CatalogSyncOptions, IQueryParam, QueryOptions } from "../../../../common/ipc-params";
-import SYNCTOKENS, { ICardSetSyncService, ICardSyncService, ICatalogSyncService, ISymbologySyncService } from "../../scryfall";
+import { CardSyncOptions, CatalogSyncOptions, SyncOptions, SyncParam } from "../../../../common/ipc-params";
+import SYNCTOKENS, { ICardSetSyncService, ICardSymbolSyncService, ICardSyncService, ICatalogSyncService } from "../../scryfall";
 import INFRATOKENS, { IIpcSyncService, IWindowService } from "../interfaces";
 
 
@@ -14,7 +14,7 @@ export class IpcSyncService implements IIpcSyncService {
     this.windowService = windowService;
   }
 
-  public async handle(params: IQueryParam<QueryOptions>): Promise<void> {
+  public async handle(params: SyncParam<SyncOptions>): Promise<void> {
     console.log("start IpcSyncService.handling", params);
     const splashWindow = this.windowService.createSplashWindow();
     splashWindow.on("ready-to-show", async () => {
@@ -23,16 +23,13 @@ export class IpcSyncService implements IIpcSyncService {
       switch (params.type) {
         case "CardSet":
           await container.resolve<ICardSetSyncService>(SYNCTOKENS.CardSetSyncService)
-            .sync(
-              (params as IQueryParam<CardSetSyncOptions>).options,
-              (value: string) => splashWindow.webContents.send("splash", value)
-            )
+            .sync({ source: "user", code: null }, (value: string) => splashWindow.webContents.send("splash", value))
             .then(() => splashWindow.close());
           break;
         case "Card":
           await container.resolve<ICardSyncService>(SYNCTOKENS.CardSyncService)
             .sync(
-              (params as IQueryParam<CardSyncOptions>).options,
+              (params as SyncParam<CardSyncOptions>).options,
               (value: string) => splashWindow.webContents.send("splash", value)
             )
             .then(() => splashWindow.close());
@@ -40,15 +37,15 @@ export class IpcSyncService implements IIpcSyncService {
         case "Catalog":
           await container.resolve<ICatalogSyncService>(SYNCTOKENS.CatalogSyncService)
             .sync(
-              (params as IQueryParam<CatalogSyncOptions>).options,
+              (params as SyncParam<CatalogSyncOptions>).options,
               (value: string) => splashWindow.webContents.send("splash", value)
             )
             .then(() => splashWindow.close());
           break;
-        case "Symbology":
-          await container.resolve<ISymbologySyncService>(SYNCTOKENS.SymbologySyncService)
+        case "CardSymbol":
+          await container.resolve<ICardSymbolSyncService>(SYNCTOKENS.CardSymbolSyncService)
             .sync(
-              null,
+              { source: "user" },
               (value: string) => splashWindow.webContents.send("splash", value)
             )
             .then(() => splashWindow.close());

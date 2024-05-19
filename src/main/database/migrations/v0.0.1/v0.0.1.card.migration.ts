@@ -116,6 +116,7 @@ async function createV0_0_1_CardMultiversId(db: Kysely<any>): Promise<void> {
   return createTable(db, options).execute();
 }
 
+// TODO validation: if type = Mana then color may not be C
 async function createV0_0_1_CardColorMap(db: Kysely<any>): Promise<void> {
   console.log("cardcolormap");
   const options: CreateTableOptions = {

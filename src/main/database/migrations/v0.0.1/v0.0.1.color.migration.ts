@@ -42,7 +42,6 @@ async function populateV0_0_1_Color(db: Kysely<any>): Promise<Array<InsertResult
   values.push({ id: "B", sequence: 2, display_text: "Black", land_type: "Plains", mana_symbol: "{B}" });
   values.push({ id: "R", sequence: 3, display_text: "Red", land_type: "Plains", mana_symbol: "{R}" });
   values.push({ id: "G", sequence: 4, display_text: "Green", land_type: "Plains", mana_symbol: "{G}" });
-  // TODO Pyhrexian and colorless as colors ???
   return db
     .insertInto("color")
     .values(values)

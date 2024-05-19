@@ -3,24 +3,20 @@ import * as fs from "fs";
 import { MigrationProvider } from "kysely";
 import * as path from "path";
 import "reflect-metadata";
-import { setCacheLimit } from "scryfall-sdk";
 import { container } from "tsyringe";
 import { updateElectronApp } from "update-electron-app";
 
 import { CardImageDto } from "../common/dto";
-import { ImageType } from "../common/enums";
+import { ImageSize } from "../common/enums";
 import MIGRATOKENS from "./database/migrations/migration.tokens";
 import { MigrationDi } from "./database/migrations/migrations.di";
 import INFRATOKENS, { IImageCacheService, IWindowService } from "./services/infra/interfaces";
 import { IDatabaseService } from "./services/infra/interfaces/database.service";
 import { IIpcDispatcherService } from "./services/infra/interfaces/ipc-dispatcher.service";
 import REPOTOKENS, { ICardRepository } from "./services/repo/interfaces";
+import SYNCTOKENS, { ICardSetSyncService, ICardSymbolSyncService, ICatalogSyncService } from "./services/scryfall";
 import { ServicesDI } from "./services/services.di";
-import SYNCTOKENS, { ICatalogSyncService } from "./services/scryfall";
 
-
-// FEATURE Replace scrfall-sdk
-setCacheLimit(0);
 // check for updates
 updateElectronApp();
 
@@ -35,11 +31,18 @@ const bootFunction = async (splashWindow: BrowserWindow) => {
     .connect("c:/data/new-assistant")
     .migrateToLatest(migrationContainer.resolve<MigrationProvider>(MIGRATOKENS.NewCustomMigrationProvider))
     .then(() => migrationContainer.dispose())
-    // TODO this should only be done when new installation
-    // .then(() => container.resolve<ICatalogSyncService>(SYNCTOKENS.CatalogSyncService).sync({ catalogs: ["AbilityWords", "LandTypes", "ArtifactTypes"] }))
-    // LATER make those things setting dependent
-    // .then(() => container.resolve<ICardSetSyncService>(SYNCTOKENS.CardSetSyncService).sync({ code: null }, (label: string) => splashWindow.webContents.send("splash", label)));
-    // .then(() => container.resolve<ISymbologySyncService>(SYNCTOKENS.SymbologySyncService).sync(null, (label: string) => splashWindow.webContents.send("splash", label)));
+    .then(async () => await container.resolve<ICatalogSyncService>(SYNCTOKENS.CatalogSyncService).sync(
+      { source: "startup", catalogs: ["AbilityWords", "LandTypes", "ArtifactTypes"] },  // TODO make this allCatalogs
+      (label: string) => splashWindow.webContents.send("splash", label))
+    )
+    .then(async () => await container.resolve<ICardSetSyncService>(SYNCTOKENS.CardSetSyncService).sync(
+      { source: "startup", code: null },
+      (label: string) => splashWindow.webContents.send("splash", label))
+    )
+    .then(() => container.resolve<ICardSymbolSyncService>(SYNCTOKENS.CardSymbolSyncService).sync(
+      { source: "startup" },
+      (label: string) => splashWindow.webContents.send("splash", label))
+    )
     .then(() => splashWindow.webContents.send("splash", "loading main program"));
 };
 
@@ -57,7 +60,7 @@ app.whenReady().then(async () => {
   protocol.handle("cached-image", async (request: Request) => {
     const url = new URL(request.url);
     return container.resolve<ICardRepository>(REPOTOKENS.CardRepository)
-      .getCardImageData(url.hostname, url.searchParams.get("size") as ImageType)
+      .getCardImageData(url.hostname, url.searchParams.get("size") as ImageSize)
       .then((data: CardImageDto) => {
         const cacheService = container.resolve<IImageCacheService>(INFRATOKENS.ImageCacheService);
         return cacheService.getCardImage(data);

@@ -1,15 +1,16 @@
 import { sql } from "kysely";
 import { InsertExpression } from "kysely/dist/cjs/parser/insert-values-parser";
 import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser";
-import { Set as ScryfallSet } from "scryfall-sdk";
+
 
 import { CardSetType } from "../../../../../common/enums/card-set-type.enum";
 import { DatabaseSchema } from "../../../../database/schema";
 import { ICardSetAdapter } from "../interface";
+import { ScryfallCardSet } from "../../types";
 
 export class CardSetAdapter implements ICardSetAdapter {
 
-  public toInsert(cardSet: ScryfallSet): InsertExpression<DatabaseSchema, "card_set"> {
+  public toInsert(cardSet: ScryfallCardSet): InsertExpression<DatabaseSchema, "card_set"> {
     return {
           arena_code : cardSet.arena_code,
           block: cardSet.block,
@@ -34,7 +35,7 @@ export class CardSetAdapter implements ICardSetAdapter {
     };
   }
 
-  public toUpdate(cardSet: ScryfallSet): UpdateObjectExpression<DatabaseSchema, "card_set"> {
+  public toUpdate(cardSet: ScryfallCardSet): UpdateObjectExpression<DatabaseSchema, "card_set"> {
     return {
       arena_code: cardSet.arena_code,
       block: cardSet.block,

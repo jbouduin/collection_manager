@@ -1,35 +1,42 @@
 import { DeleteResult, ExpressionOrFactory, InsertResult, SqlBool, Transaction, UpdateResult } from "kysely";
-import { Rulings, Ruling as ScryfallRuling } from "scryfall-sdk";
 import { inject, injectable } from "tsyringe";
 
 import { ProgressCallback, RulingSyncOptions } from "../../../../../common/ipc-params";
 import { Card, DatabaseSchema } from "../../../../database/schema";
 import INFRATOKENS, { IDatabaseService } from "../../../infra/interfaces";
 import ADAPTTOKENS, { IRulingAdapter, IRulingLineAdapter } from "../../adapt/interface";
+import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
+import { ScryfallRuling } from "../../types";
 import { IRulingSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
 
 
 @injectable()
-export class RulingSyncService extends BaseSyncService implements IRulingSyncService {
+export class RulingSyncService extends BaseSyncService<RulingSyncOptions> implements IRulingSyncService {
 
-  private rulingLineAdapter: IRulingLineAdapter;
-  private rulingAdapter: IRulingAdapter;
+  //#region private readonly fields -------------------------------------------
+  private readonly scryfallclient: IScryfallClient;
+  private readonly rulingLineAdapter: IRulingLineAdapter;
+  private readonly rulingAdapter: IRulingAdapter;
+  //#endregion
 
-  public constructor(@inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
+  //#region Constructor & C° --------------------------------------------------
+  public constructor(
+    @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
+    @inject(CLIENTTOKENS.ScryfallClient) scryfallclient: IScryfallClient,
     @inject(ADAPTTOKENS.RulingLineAdapter) rulingLineAdapter: IRulingLineAdapter,
     @inject(ADAPTTOKENS.RulingAdapter) rulingAdapter: IRulingAdapter) {
     super(databaseService);
+    this.scryfallclient = scryfallclient;
     this.rulingLineAdapter = rulingLineAdapter;
     this.rulingAdapter = rulingAdapter;
   }
 
-  public async sync(options: RulingSyncOptions, progressCallback?: ProgressCallback): Promise<void> {
-    console.log(`start RulingSyncService.sync for cardId ${options.cardId}`);
+  public override async sync(options: RulingSyncOptions, progressCallback: ProgressCallback): Promise<void> {
     if (progressCallback) {
       progressCallback("Synchronizing rulings");
     }
-    return Rulings.byId(options.cardId)
+    return this.scryfallclient.getRulings(options.cardId)
       .then((scryFall: Array<ScryfallRuling>) => this.processSync(options.cardId, scryFall));
   }
 

@@ -36,6 +36,7 @@ export class ImageCacheService implements IImageCacheService {
 
   // TODO if the svg has no fill property, insert it as fill="#000" otherwise the colors could screw up
   public async cacheCardSetSvg(cardSet: CardSet): Promise<void> {
+    console.log(`  -> start cache svg for '${cardSet.name}'`);
     await this.apiClient.fetchSvg(cardSet.icon_svg_uri)
       .then((arrayBuffer: ArrayBuffer) => {
         const buffer = Buffer.from(arrayBuffer);

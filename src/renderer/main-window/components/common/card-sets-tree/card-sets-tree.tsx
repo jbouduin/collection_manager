@@ -1,12 +1,13 @@
-import * as React from "react";
 import classNames from "classnames";
-import { CardSetTreeProps } from "./card-sets-tree.props";
+import * as _ from "lodash";
+import * as React from "react";
+
 import { Classes, ContextMenu, Menu, MenuItem, Tree, TreeNodeInfo } from "@blueprintjs/core";
+import { CardSetTreeProps } from "./card-sets-tree.props";
 // import { CardSetTreeState } from "./card-sets-tree.state";
 import { CardSetDto } from "../../../../../common/dto";
+import { CardSyncOptions, SyncParam } from "../../../../../common/ipc-params";
 import { SvgProvider } from "../svg-provider/svg-provider";
-import { CardSyncOptions, IQueryParam } from "../../../../../common/ipc-params";
-import * as _ from "lodash";
 
 type NodePath = Array<number>;
 
@@ -120,9 +121,9 @@ export function CardSetsTree(props: CardSetTreeProps) {
   }
 
   function synchronizeSet(code: string): void {
-    const params: IQueryParam<CardSyncOptions> = {
+    const params: SyncParam<CardSyncOptions> = {
       type: "Card",
-      options: { setCode: code }
+      options: { source: "user", setCode: code }
     };
     console.log("before");
     window.ipc.sync(params);

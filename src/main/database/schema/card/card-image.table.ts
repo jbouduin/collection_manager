@@ -1,12 +1,12 @@
 import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
 
-import { ImageType } from "../../../../common/enums";
+import { ImageSize } from "../../../../common/enums";
 import { Synchronized } from "../base.types";
 
 // LATER make this non synchronized and delete existing once when syncing
 export interface CardImageTable extends Synchronized{
   card_id: ColumnType<string, string, never>;
-  image_type: ColumnType<ImageType, ImageType, never>;
+  image_type: ColumnType<ImageSize, ImageSize, never>;
   uri: ColumnType<string>;
 }
 

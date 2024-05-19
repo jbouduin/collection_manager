@@ -1,17 +1,15 @@
 import { InsertExpression } from "kysely/dist/cjs/parser/insert-values-parser";
 import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser";
-import { Ruling as ScryfallRuling } from "scryfall-sdk";
 
-import { RulingSource } from "../../../../../common/enums";
 import { DatabaseSchema } from "../../../../database/schema";
 import { IRulingLineAdapter } from "../interface";
+import { ScryfallRuling } from "../../types";
 
 export class RulingLineAdapter implements IRulingLineAdapter {
   public toInsert(oracleId: string, scryfall: ScryfallRuling): InsertExpression<DatabaseSchema, "ruling_line"> {
     return {
-      // FEATURE replace scryfall-sdk: the sdk has the property not defined!
       oracle_id: oracleId,
-      source: scryfall.source as RulingSource,
+      source: scryfall.source,
       comments: scryfall.comment,
       published_at: `${scryfall.published_at} 00:00:00`
     };

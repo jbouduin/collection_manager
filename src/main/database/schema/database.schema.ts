@@ -4,8 +4,9 @@ import {
   CardSymbolAlternativeTable, CardSymbolColorMapTable, CardSymbolTable,
   OracleRulingLineTable,
   CardFaceTable,
-  CardFaceImageTable,
-  CardFaceColorMapTable
+  CardFaceLocalizationImageTable,
+  CardFaceColorMapTable,
+  CardFaceLocalization
 } from ".";
 import {  } from "./oracle/oracle-key-word.table";
 import { OracleTable } from "./oracle/oracle.table";
@@ -14,15 +15,17 @@ import { OracleTable } from "./oracle/oracle.table";
 export interface DatabaseSchema {
   //#region card --------------------------------------------------------------
   card: CardTable;
+  card_multiverse_id: CardMultiverseIdTable;
+  card_game: CardGameTable;
+  cardface: CardFaceTable;
+  card_face_localization: CardFaceLocalization;
+
   card_card_map: CardCardMapTable;
   card_color_map: CardColorMapTable;
   card_format_legality: OracleLegalityTable;
-  card_game: CardGameTable;
   card_image: CardImageTable;
-  card_multiverse_id: CardMultiverseIdTable;
   cardface_color_map: CardFaceColorMapTable;
-  cardface_image: CardFaceImageTable;
-  cardface: CardFaceTable;
+  cardface_image: CardFaceLocalizationImageTable;
   //#endregion
 
   //#region oracle-------------------------------------------------------------

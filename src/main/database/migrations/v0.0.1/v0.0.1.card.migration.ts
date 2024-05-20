@@ -5,7 +5,7 @@ import { CreateTableOptions, IBaseMigration, createTable } from "../base.migrati
 
 export class V0_0_1_Card_Migration implements IBaseMigration {
   public get keyName(): string {
-    return "0007: v.0.0.1.Card";
+    return "0006: v.0.0.1.Card";
   }
 
   public async up(db: Kysely<any>): Promise<void> {

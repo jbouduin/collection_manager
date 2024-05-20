@@ -8,7 +8,7 @@ export * from "./card/card-image.table";
 export * from "./card/card-multiverse-id.table";
 export * from "./card/card.table";
 export * from "./card/cardface-color-map.table";
-export * from "./card/cardface-image.table";
+export * from "./card/cardface-localization-image.table";
 export * from "./card/cardface-localization.table";
 export * from "./card/cardface-table";
 export * from "./database.schema";

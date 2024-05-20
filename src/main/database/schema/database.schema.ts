@@ -1,7 +1,7 @@
 import {
   CardTable, CardCardMapTable, CardColorMapTable, CardFormatLegalityTable, CardGameTable, CardImageTable, CardKeywordTable, CardMultiverseIdTable,
   CardSetTable, CatalogItemTable, ColorTable, LanguageTable, RulingTable,
-  SymbologyAlternativeTable, SymbologyColorMapTable, SymbologyTable,
+  CardSymbolAlternativeTable, CardSymbolColorMapTable, CardSymbolTable,
   RulingLineTable,
   CardFaceTable,
   CardFaceImageTable,
@@ -37,10 +37,10 @@ export interface DatabaseSchema {
   ruling_line: RulingLineTable;
   //#endregion
 
-  //#region Symbology ---------------------------------------------------------
-  symbology: SymbologyTable;
-  symbology_alternative: SymbologyAlternativeTable;
-  symbology_color_map: SymbologyColorMapTable;
+  //#region Card symbol -------------------------------------------------------
+  card_symbol: CardSymbolTable;
+  card_symbol_alternative: CardSymbolAlternativeTable;
+  card_symbol_color_map: CardSymbolColorMapTable;
   //#endregion
 
 

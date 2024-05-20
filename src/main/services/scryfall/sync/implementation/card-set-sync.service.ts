@@ -1,4 +1,4 @@
-import { ExpressionOrFactory, SqlBool, Transaction } from "kysely";
+import { ExpressionOrFactory, InsertResult, SqlBool, Transaction, UpdateResult } from "kysely";
 import { inject, injectable } from "tsyringe";
 
 import { CardSetSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
@@ -9,6 +9,7 @@ import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
 import { ScryfallCardSet } from "../../types";
 import { ICardSetSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
+import { runSerial } from "../../../../../main/services/infra/util";
 
 @injectable()
 export class CardSetSyncService extends BaseSyncService<CardSetSyncOptions> implements ICardSetSyncService {
@@ -38,26 +39,28 @@ export class CardSetSyncService extends BaseSyncService<CardSetSyncOptions> impl
   //#region ICardSetSyncService methods ---------------------------------------
   public override async sync(options: CardSetSyncOptions, progressCallback: ProgressCallback): Promise<void> {
 
-    return this.shouldSync(options)
+    return await this.shouldSync(options)
       .then(async (shouldSync: boolean) => {
         if (shouldSync) {
           console.log("start CardSetSyncService.sync");
           if (progressCallback) {
             progressCallback("Synchronizing Card sets");
           }
-          const sets = this.scryfallclient.getCardSets();
-          return await sets
-            .then(async (sets: Array<ScryfallCardSet>) => await this.processSync(sets))
-            .then(() => this.database.selectFrom("card_set").selectAll().execute())
+          return await this.scryfallclient.getCardSets()
+            .then(async (sets: Array<ScryfallCardSet>) => this.processSync(sets))
+            .then(async () => await this.database.selectFrom("card_set").selectAll().execute())
             .then(async (cardSets: Array<CardSet>) => {
               let result = Promise.resolve();
+              console.log((`retrieved ${cardSets.length} saved card sets`));
               cardSets.forEach(async (cardset: CardSet) => {
                 result = result.then(async () => await this.imageCacheService.cacheCardSetSvg(cardset));
+                await result;
               });
               return result;
             });
         } else {
           console.log("skip CardSetSyncService.sync");
+          return Promise.resolve();
         }
       });
   }
@@ -67,9 +70,10 @@ export class CardSetSyncService extends BaseSyncService<CardSetSyncOptions> impl
   // TODO remove items that are not on the server anymore or at least mark them => how ?
   // then we should prevent synchronizing single sets !
   public async processSync(cardSets: Array<ScryfallCardSet>): Promise<void> {
-    return this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
-      cardSets.forEach(async (cardSet: ScryfallCardSet) => {
-        const filter: ExpressionOrFactory<DatabaseSchema, "card_set", SqlBool> = (eb) => eb("card_set.id", "=", cardSet.id);
+    return await this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
+      await runSerial<ScryfallCardSet>(cardSets, async (scryfallCardSet: ScryfallCardSet) => {
+        // cardSets.forEach(async (cardSet: ScryfallCardSet) => {
+        const filter: ExpressionOrFactory<DatabaseSchema, "card_set", SqlBool> = (eb) => eb("card_set.id", "=", scryfallCardSet.id);
         const existingCardSet = await trx
           .selectFrom("card_set")
           .select("card_set.id")
@@ -77,12 +81,12 @@ export class CardSetSyncService extends BaseSyncService<CardSetSyncOptions> impl
           .executeTakeFirst();
         if (existingCardSet) {
           await trx.updateTable("card_set")
-            .set(this.cardSetAdapter.toUpdate(cardSet))
+            .set(this.cardSetAdapter.toUpdate(scryfallCardSet))
             .where(filter)
             .executeTakeFirstOrThrow();
         } else {
           await trx.insertInto("card_set")
-            .values(this.cardSetAdapter.toInsert(cardSet))
+            .values(this.cardSetAdapter.toInsert(scryfallCardSet))
             .executeTakeFirstOrThrow();
         }
       });
@@ -91,7 +95,7 @@ export class CardSetSyncService extends BaseSyncService<CardSetSyncOptions> impl
 
   private async shouldSync(options: CardSetSyncOptions): Promise<boolean> {
     if (options.source == "user" || this.configurationService.syncAtStartup.indexOf("CardSet") >= 0) {
-      return Promise.resolve(true);
+      return await Promise.resolve(true);
     } else {
       return await this.database
         .selectFrom("card_set")

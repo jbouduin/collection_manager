@@ -3,11 +3,11 @@ import { InsertExpression } from "kysely/dist/cjs/parser/insert-values-parser";
 import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser";
 
 import { DatabaseSchema } from "../../../../database/schema";
-import { ISymbologyAdapter } from "../interface";
+import { ICardSymbolAdapter } from "../interface";
 import { ScryfallCardSymbol } from "../../types/card-symbol/scryfall-card-symbol";
 
-export class SymbologyAdapter implements ISymbologyAdapter {
-  public toInsert(cardSymbol: ScryfallCardSymbol): InsertExpression<DatabaseSchema, "symbology"> {
+export class CardSymbolAdapter implements ICardSymbolAdapter {
+  public toInsert(cardSymbol: ScryfallCardSymbol): InsertExpression<DatabaseSchema, "card_symbol"> {
     return {
       id: cardSymbol.symbol,
       appears_in_mana_costs: cardSymbol.appears_in_mana_costs ? 1 : 0,
@@ -24,7 +24,7 @@ export class SymbologyAdapter implements ISymbologyAdapter {
     };
   }
 
-  public toUpdate(cardSymbol: ScryfallCardSymbol): UpdateObjectExpression<DatabaseSchema, "symbology"> {
+  public toUpdate(cardSymbol: ScryfallCardSymbol): UpdateObjectExpression<DatabaseSchema, "card_symbol"> {
     return {
       appears_in_mana_costs: cardSymbol.appears_in_mana_costs ? 1 : 0,
       cmc: cardSymbol.mana_value,

@@ -6,8 +6,8 @@ import { CatalogRepository } from "./implementation/catalog.repository";
 import { ColorRepository } from "./implementation/color-repository";
 import { LanguageRepository } from "./implementation/language.repository";
 import { RulingRepository } from "./implementation/ruling.repository";
-import { SymbologyRepository } from "./implementation/symbology.repository";
-import REPOTOKENS, { ICardRepository, ICardSetRepository, ICatalogRepository, IColorRepository, ILanguageRepository, IRulingRepository, ISymbologyRepository } from "./interfaces";
+import { CardSymbolRepository } from "./implementation/card-symbol.repository";
+import REPOTOKENS, { ICardRepository, ICardSetRepository, ICatalogRepository, IColorRepository, ILanguageRepository, IRulingRepository, ICardSymbolRepository } from "./interfaces";
 
 
 export class RepositoryDi {
@@ -19,6 +19,6 @@ export class RepositoryDi {
     container.register<IColorRepository>(REPOTOKENS.ColorRepository, { useClass: ColorRepository });
     container.register<ILanguageRepository>(REPOTOKENS.LanguageRepository, { useClass: LanguageRepository });
     container.register<IRulingRepository>(REPOTOKENS.RulingRepository, { useClass: RulingRepository });
-    container.register<ISymbologyRepository>(REPOTOKENS.SymbologyRepository, { useClass: SymbologyRepository });
+    container.register<ICardSymbolRepository>(REPOTOKENS.CardSymbolRepository, { useClass: CardSymbolRepository });
   }
 }

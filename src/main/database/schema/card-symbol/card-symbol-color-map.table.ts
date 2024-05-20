@@ -3,13 +3,13 @@ import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
 import { MTGColor } from "../../../../common/enums";
 import { Synchronized } from "../base.types";
 
-export interface SymbologyColorMapTable extends Synchronized {
+export interface CardSymbolColorMapTable extends Synchronized {
   /***
    * The plaintext symbol. Often surrounded with curly braces {}. Note that not all symbols are ASCII text (for example, {∞}).
    * Contains the property "symbol" as returned by scryfall
    * @example "{T}"
    */
-  symbology_id: ColumnType<string, string, never>;
+  card_symbol_id: ColumnType<string, string, never>;
 
   /**
    * The single character color Id
@@ -18,6 +18,6 @@ export interface SymbologyColorMapTable extends Synchronized {
   color_id: ColumnType<MTGColor, string, never>;
 }
 
-export type SymbologyColorMap = Selectable<SymbologyColorMapTable>;
-export type NewSymbologyColorMap = Insertable<SymbologyColorMapTable>;
-export type UpdateSymbologyColorMap = Updateable<SymbologyColorMapTable>;
+export type CardSymbolColorMap = Selectable<CardSymbolColorMapTable>;
+export type NewCardSymbolColorMap = Insertable<CardSymbolColorMapTable>;
+export type UpdateCardSymbolColorMap = Updateable<CardSymbolColorMapTable>;

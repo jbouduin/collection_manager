@@ -6,8 +6,8 @@ enum EQueryType {
   Color,
   Language,
   Ruling,
-  Symbology,
-  SymbologyCachedSvg
+  CardSymbol,
+  CardSymbolCachedSvg
 }
 
 export type QueryType = keyof typeof EQueryType;

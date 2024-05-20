@@ -18,9 +18,9 @@ export type ICardfaceImageAdapter = IChildTableAdapter<DatabaseSchema, "cardface
 export type ICatalogAdapter = ITableAdapter<DatabaseSchema, "catalog_item">;
 export type IRulingLineAdapter = IChildTableAdapter<DatabaseSchema, "ruling_line">;
 export type IRulingAdapter = ITableAdapter<DatabaseSchema, "ruling">;
-export type ISymbologyAlternativeAdapter = IChildTableAdapter<DatabaseSchema, "symbology_alternative">;
-export type ISymbologyColorMapAdapter = IMapTableAdapter<DatabaseSchema, "symbology_color_map">;
-export type ISymbologyAdapter = ITableAdapter<DatabaseSchema, "symbology">;
+export type ICardSymbolAlternativeAdapter = IChildTableAdapter<DatabaseSchema, "card_symbol_alternative">;
+export type ICardSymbolColorMapAdapter = IMapTableAdapter<DatabaseSchema, "card_symbol_color_map">;
+export type ICardSymbolAdapter = ITableAdapter<DatabaseSchema, "card_symbol">;
 
 const ADAPTTOKENS = Object.freeze({
   CardCardMapAdapter: "CardCardMapAdapter",
@@ -40,9 +40,9 @@ const ADAPTTOKENS = Object.freeze({
   LanguageAdapter: "LanguageAdapter",
   RulingLineAdapter: "RulingLineAdapter",
   RulingAdapter: "RulingAdapter",
-  SymbologyAdapter: "SymbologyAdapter",
-  SymbologyAlternativeAdapter: "SymbologyAlternativeAdapter",
-  SymbologyColorMapAdapter: "SymbologyColorMapAdapter"
+  CardSymbolAdapter: "CardSymbolAdapter",
+  CardSymbolAlternativeAdapter: "CardSymbolAlternativeAdapter",
+  CardSymbolColorMapAdapter: "CardSymbolColorMapAdapter"
 });
 
 export default ADAPTTOKENS;

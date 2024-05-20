@@ -5,7 +5,7 @@ import { inject, injectable } from "tsyringe";
 
 import { CardImageDto } from "../../../../common/dto";
 import INFRATOKENS, { IConfigurationService, IImageCacheService } from "../interfaces";
-import { CardSet, Symbology } from "../../../../main/database/schema";
+import { CardSet, CardSymbol } from "../../../../main/database/schema";
 import SCRYTOKENS, { IScryfallClient } from "../../scryfall/client/interfaces";
 
 @injectable()
@@ -26,7 +26,7 @@ export class ImageCacheService implements IImageCacheService {
   //#endregion
 
   //#region IImageCacheService methods ----------------------------------------
-  public async cacheCardSymbolSvg(cardSymbol: Symbology): Promise<void> {
+  public async cacheCardSymbolSvg(cardSymbol: CardSymbol): Promise<void> {
     return this.apiClient.fetchSvg(cardSymbol.svg_uri)
       .then((arrayBuffer: ArrayBuffer) => {
         const buffer = Buffer.from(arrayBuffer);
@@ -59,7 +59,7 @@ export class ImageCacheService implements IImageCacheService {
     }
   }
 
-  public getCardSymbolSvg(cardSymbol: Symbology): string {
+  public getCardSymbolSvg(cardSymbol: CardSymbol): string {
     return fs.readFileSync(this.pathToCardSymbolSvg(cardSymbol), { encoding: "utf-8" });
   }
   //#endregion
@@ -69,7 +69,7 @@ export class ImageCacheService implements IImageCacheService {
     return fs.readFileSync(this.pathToCardSetSvg(cardSet), { encoding: "utf-8" });
   }
 
-  private pathToCardSymbolSvg(cardSymbol: Symbology): string {
+  private pathToCardSymbolSvg(cardSymbol: CardSymbol): string {
     const fileName = new URL(cardSymbol.svg_uri).pathname.split("/").pop();
     const dirName = path.join(this.configurationService.cacheDirectory, "cardsymbols");
     if (!fs.existsSync(dirName)) {

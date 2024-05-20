@@ -39,7 +39,7 @@ export class CatalogSyncService extends BaseSyncService<CatalogSyncOptions> impl
 
   //#region ICatalogSyncService methods ---------------------------------------
   public override async sync(options: CatalogSyncOptions, progressCallback: ProgressCallback): Promise<void> {
-    return this.shouldSync(options)
+    return await this.shouldSync(options)
       .then(async (shouldSync: boolean) => {
         if (shouldSync) {
           console.log("Start CatalogSyncService.sync");

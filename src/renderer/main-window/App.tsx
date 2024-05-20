@@ -17,8 +17,8 @@ FocusStyleManager.onlyShowFocusOnTabs();
   // TODO await import("./App.css");
   const container = document.getElementById("root") as HTMLElement;
   const root = createRoot(container);
-  const symbologyQueryParam: QueryParam<null> = {
-    type: "SymbologyCachedSvg",
+  const cardSymbolQueryParam: QueryParam<null> = {
+    type: "CardSymbolCachedSvg",
     options: null
   };
   const desktopProps: DesktopProps = {
@@ -26,7 +26,7 @@ FocusStyleManager.onlyShowFocusOnTabs();
     cachedSvg: new Map<string, string>(),
     languages: new Array<LanguageDto>()
   };
-  window.ipc.query(symbologyQueryParam)
+  window.ipc.query(cardSymbolQueryParam)
     .then((cachedSvgs: Map<string, string>) => {
       desktopProps.cachedSvg = cachedSvgs;
     })

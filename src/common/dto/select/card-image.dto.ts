@@ -1,4 +1,4 @@
-import { ImageSize } from "../../../common/enums";
+import { ImageSize } from "../../enums";
 
 export interface CardImageDto {
   collectorNumber: string,

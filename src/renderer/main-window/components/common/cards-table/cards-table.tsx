@@ -48,7 +48,8 @@ export function CardsTable(props: CardsTableProps) {
   }
 
   function languageRenderer(row: number): React.ReactElement<CellProps> {
-    const lang = cards[row].card.lang;
+    // NOW const lang = cards[row].card.lang;
+    const lang = "en";
     const languageDef = props.languages.filter((lng: LanguageDto) => lng.id == lang);
     return (
       <Cell>
@@ -70,7 +71,7 @@ export function CardsTable(props: CardsTableProps) {
                 if (cachedSvg) {
                   return (<SvgProvider svg={props.cachedSvg.get(manaCost)} key={`manacost_${idx}`} />);
                 } else {
-                  console.log(`no cached svg for "${manaCost}" of ${cards[row].card.name} `);
+                  // NOW console.log(`no cached svg for "${manaCost}" of ${cards[row].card.name} `);
                   return;
                 }
               }
@@ -100,19 +101,20 @@ export function CardsTable(props: CardsTableProps) {
   //#endregion
 
   //#region Main --------------------------------------------------------------
+  // NOW correct columns
   return (
     <div className="cards-table-wrapper">
       <Table2 className={props.className} numRows={cards?.length ?? 0} selectionModes={SelectionModes.ROWS_AND_CELLS} onSelection={onSelection} selectedRegionTransform={selectedRegionTransform}>
         <Column name="Number" cellRenderer={textCellRenderer((card: CardDto) => card.card.collector_number)} />
-        <Column name="Name" cellRenderer={textCellRenderer((card: CardDto) => card.card.name)} />
         <Column name="Rarity" cellRenderer={textCellRenderer((card: CardDto) => card.card.rarity)} />
         <Column name="Mana cost" cellRenderer={manaCostRenderer} />
-        <Column name="Power" cellRenderer={textCellRenderer((card: CardDto) => card.card.power)} />
-        <Column name="Thoughness" cellRenderer={textCellRenderer((card: CardDto) => card.card.thoughness)} />
         <Column name="Language" cellRenderer={languageRenderer} />
         <Column name="Set" cellRenderer={setNameRenderer} />
       </Table2>
     </div>
   );
+  // <Column name="Name" cellRenderer={textCellRenderer((card: CardDto) => card.card.name)} />
+  // <Column name="Power" cellRenderer={textCellRenderer((card: CardDto) => card.card.power)} />
+  // <Column name="Thoughness" cellRenderer={textCellRenderer((card: CardDto) => card.card.thoughness)} />
   //#endregion
 }

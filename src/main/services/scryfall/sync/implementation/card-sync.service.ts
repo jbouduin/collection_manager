@@ -8,7 +8,7 @@ import { DatabaseSchema } from "../../../../../main/database/schema";
 import INFRATOKENS, { IDatabaseService } from "../../../../../main/services/infra/interfaces";
 import ADAPTTOKENS, {
   ICardAdapter, ICardCardMapAdapter, ICardColorMapAdapter, ICardFormatLegalityAdapter, ICardGameAdapter,
-  ICardImageAdapter, ICardKeywordAdapter, ICardMultiverseIdAdapter, ICardfaceAdapter, ICardfaceColorMapAdapter, ICardfaceImageAdapter
+  ICardImageAdapter, ICardMultiverseIdAdapter, ICardfaceAdapter, ICardfaceColorMapAdapter, ICardfaceImageAdapter
 } from "../../adapt/interface";
 import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
 import { ScryfallCard, ScryfallCardFace, ScryfallRelatedCard } from "../../types";
@@ -29,7 +29,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
   private readonly cardFormatLegalityAdapter: ICardFormatLegalityAdapter;
   private readonly cardGameAdapter: ICardGameAdapter;
   private readonly cardImageAdapter: ICardImageAdapter;
-  private readonly cardKeywordAdapter: ICardKeywordAdapter;
+  // private readonly cardKeywordAdapter: ICardKeywordAdapter;
   private readonly cardMultiverseIdAdapter: ICardMultiverseIdAdapter;
   private readonly cardAdapter: ICardAdapter;
   //#endregion
@@ -46,7 +46,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
     @inject(ADAPTTOKENS.CardFormatLegalityAdapter) cardFormatLegalityAdapter: ICardFormatLegalityAdapter,
     @inject(ADAPTTOKENS.CardGameAdapter) cardGameAdapter: ICardGameAdapter,
     @inject(ADAPTTOKENS.CardImageAdapter) cardImageAdapter: ICardImageAdapter,
-    @inject(ADAPTTOKENS.CardKeywordAdapter) cardKeywordAdapter: ICardKeywordAdapter,
+    // @inject(ADAPTTOKENS.CardKeywordAdapter) cardKeywordAdapter: ICardKeywordAdapter,
     @inject(ADAPTTOKENS.CardMultiverseIdAdapter) cardMultiverseIdAdapter: ICardMultiverseIdAdapter,
     @inject(ADAPTTOKENS.CardAdapter) cardAdapter: ICardAdapter,) {
     super(databaseService);
@@ -59,7 +59,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
     this.cardFormatLegalityAdapter = cardFormatLegalityAdapter;
     this.cardGameAdapter = cardGameAdapter;
     this.cardImageAdapter = cardImageAdapter;
-    this.cardKeywordAdapter = cardKeywordAdapter;
+    // this.cardKeywordAdapter = cardKeywordAdapter;
     this.cardMultiverseIdAdapter = cardMultiverseIdAdapter;
     this.cardAdapter = cardAdapter;
   }
@@ -213,26 +213,28 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
   }
 
   private async syncSingleCardFormatLegality(trx: Transaction<DatabaseSchema>, cardId: string, format: GameFormat, legality: CardLegality): Promise<void> {
-    const filter: ExpressionOrFactory<DatabaseSchema, "card_format_legality", SqlBool> = (eb) =>
-      eb.and([
-        eb("card_format_legality.card_id", "=", cardId),
-        eb("card_format_legality.format", "=", format)
-      ]
-      );
-    const existing = await trx.selectFrom("card_format_legality")
-      .select("card_format_legality.card_id")
-      .where(filter)
-      .executeTakeFirst();
-    if (existing) {
-      await trx.updateTable("card_format_legality")
-        .set(this.cardFormatLegalityAdapter.toUpdate({ format: format, legality: legality }))
-        .where(filter)
-        .executeTakeFirstOrThrow();
-    } else {
-      await trx.insertInto("card_format_legality")
-        .values(this.cardFormatLegalityAdapter.toInsert(cardId, { format: format, legality: legality }))
-        .executeTakeFirstOrThrow();
-    }
+    // NOW
+    return Promise.resolve();
+    // const filter: ExpressionOrFactory<DatabaseSchema, "card_format_legality", SqlBool> = (eb) =>
+    //   eb.and([
+    //     eb("card_format_legality.card_id", "=", cardId),
+    //     eb("card_format_legality.format", "=", format)
+    //   ]
+    //   );
+    // const existing = await trx.selectFrom("card_format_legality")
+    //   .select("card_format_legality.card_id")
+    //   .where(filter)
+    //   .executeTakeFirst();
+    // if (existing) {
+    //   await trx.updateTable("card_format_legality")
+    //     .set(this.cardFormatLegalityAdapter.toUpdate({ format: format, legality: legality }))
+    //     .where(filter)
+    //     .executeTakeFirstOrThrow();
+    // } else {
+    //   await trx.insertInto("card_format_legality")
+    //     .values(this.cardFormatLegalityAdapter.toInsert(cardId, { format: format, legality: legality }))
+    //     .executeTakeFirstOrThrow();
+    // }
   }
 
   private async syncCardGame(trx: Transaction<DatabaseSchema>, cardId: string, games: Array<Game>): Promise<void> {
@@ -261,61 +263,67 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
   }
 
   private async syncCardKeyword(trx: Transaction<DatabaseSchema>, cardId: string, keywords: Array<string>): Promise<void> {
-    keywords.forEach(async (keyword: string) => {
-      const filter: ExpressionOrFactory<DatabaseSchema, "card_keyword", SqlBool> = (eb) =>
-        eb.and([
-          eb("card_keyword.card_id", "=", cardId),
-          eb("card_keyword.keyword", "=", keyword)
-        ]
-        );
-      const existing = await trx.selectFrom("card_keyword")
-        .select("card_keyword.card_id")
-        .where(filter)
-        .executeTakeFirst();
-      if (existing) {
-        await trx.updateTable("card_keyword")
-          .set(this.cardKeywordAdapter.toUpdate(null))
-          .where(filter)
-          .executeTakeFirstOrThrow();
-      } else {
-        await trx.insertInto("card_keyword")
-          .values(this.cardKeywordAdapter.toInsert(cardId, keyword))
-          .executeTakeFirstOrThrow();
-      }
-    });
+    // NOW
+    return Promise.resolve();
+    // keywords.forEach(async (keyword: string) => {
+    //   const filter: ExpressionOrFactory<DatabaseSchema, "card_keyword", SqlBool> = (eb) =>
+    //     eb.and([
+    //       eb("card_keyword.card_id", "=", cardId),
+    //       eb("card_keyword.keyword", "=", keyword)
+    //     ]
+    //     );
+    //   const existing = await trx.selectFrom("card_keyword")
+    //     .select("card_keyword.card_id")
+    //     .where(filter)
+    //     .executeTakeFirst();
+    //   if (existing) {
+    //     await trx.updateTable("card_keyword")
+    //       .set(this.cardKeywordAdapter.toUpdate(null))
+    //       .where(filter)
+    //       .executeTakeFirstOrThrow();
+    //   } else {
+    //     await trx.insertInto("card_keyword")
+    //       .values(this.cardKeywordAdapter.toInsert(cardId, keyword))
+    //       .executeTakeFirstOrThrow();
+    //   }
+    // });
   }
 
   private async syncCardImages(trx: Transaction<DatabaseSchema>, cardId: string, images: Record<ImageSize, string>): Promise<void> {
-    if (images) {
-      Object.keys(images).forEach(async (key: string) => {
-        await this.syncSingleCardImage(trx, cardId, key as ImageSize, images[key as keyof Record<ImageSize, string>] as string);
-      });
-    }
+    // NOW
+    return Promise.resolve();
+    // if (images) {
+    //   Object.keys(images).forEach(async (key: string) => {
+    //     await this.syncSingleCardImage(trx, cardId, key as ImageSize, images[key as keyof Record<ImageSize, string>] as string);
+    //   });
+    // }
   }
 
   private async syncSingleCardImage(trx: Transaction<DatabaseSchema>, cardId: string, imageType: ImageSize, uri: string): Promise<void> {
-    if (uri) {
-      const filter: ExpressionOrFactory<DatabaseSchema, "card_image", SqlBool> = (eb) =>
-        eb.and([
-          eb("card_image.card_id", "=", cardId),
-          eb("card_image.image_type", "=", imageType)
-        ]);
-      const existing = await trx.selectFrom("card_image")
-        .select("card_image.card_id")
-        .where(filter)
-        .executeTakeFirst();
+    // NOW
+    return Promise.resolve();
+    // if (uri) {
+    //   const filter: ExpressionOrFactory<DatabaseSchema, "card_image", SqlBool> = (eb) =>
+    //     eb.and([
+    //       eb("card_image.card_id", "=", cardId),
+    //       eb("card_image.image_type", "=", imageType)
+    //     ]);
+    //   const existing = await trx.selectFrom("card_image")
+    //     .select("card_image.card_id")
+    //     .where(filter)
+    //     .executeTakeFirst();
 
-      if (existing) {
-        await trx.updateTable("card_image")
-          .set(this.cardImageAdapter.toUpdate({ type: imageType, uri: uri }))
-          .where(filter)
-          .executeTakeFirstOrThrow();
-      } else {
-        await trx.insertInto("card_image")
-          .values(this.cardImageAdapter.toInsert(cardId, { type: imageType, uri: uri }))
-          .executeTakeFirstOrThrow();
-      }
-    }
+    //   if (existing) {
+    //     await trx.updateTable("card_image")
+    //       .set(this.cardImageAdapter.toUpdate({ type: imageType, uri: uri }))
+    //       .where(filter)
+    //       .executeTakeFirstOrThrow();
+    //   } else {
+    //     await trx.insertInto("card_image")
+    //       .values(this.cardImageAdapter.toInsert(cardId, { type: imageType, uri: uri }))
+    //       .executeTakeFirstOrThrow();
+    //   }
+    // }
   }
 
   private async syncMultiversId(trx: Transaction<DatabaseSchema>, cardId: string, multiverseIds: Array<number> | null): Promise<void> {
@@ -347,100 +355,110 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
   }
 
   private async syncCardfaces(trx: Transaction<DatabaseSchema>, cardId: string, cardfaces?: Array<ScryfallCardFace>): Promise<void> {
-    if (cardfaces) {
-      return Promise.all(cardfaces.map((cardface: ScryfallCardFace) => this.syncSingleCardface(trx, cardId, cardface)))
-        .then(() => Promise.resolve());
-    }
+    // NOW
+    return Promise.resolve();
+    // if (cardfaces) {
+    //   return Promise.all(cardfaces.map((cardface: ScryfallCardFace) => this.syncSingleCardface(trx, cardId, cardface)))
+    //     .then(() => Promise.resolve());
+    // }
   }
 
   private async syncSingleCardface(trx: Transaction<DatabaseSchema>, cardId: string, cardface: ScryfallCardFace): Promise<void> {
-    // because cardfaces do not have a unique id, we delete the exisitng ones first, before re-creating them
-    const deleteFilter: ExpressionOrFactory<DatabaseSchema, "cardface", SqlBool> = (eb) => eb("cardface.card_id", "=", cardId);
-    trx.deleteFrom("cardface").where(deleteFilter).execute()
-      .then(() => {
-        trx.insertInto("cardface").values(this.cardfaceAdapter.toInsert(cardId, cardface)).executeTakeFirstOrThrow()
-          .then((insertResult: InsertResult) => {
-            trx.selectFrom("cardface").select("cardface.id").where(sql`ROWID`, "=", insertResult.insertId).executeTakeFirst()
-              .then((cardfaceId: { id: string }) => {
-                return Promise.all([
-                  this.syncCardfaceColorMaps(trx, cardfaceId.id, "indicator", cardface.color_indicator), // found no json yet where this was set
-                  this.syncCardfaceColorMaps(trx, cardfaceId.id, "card", cardface.colors),
-                  this.syncCardfaceImages(trx, cardfaceId.id, cardface.image_uris)
-                ]);
-              });
-          });
-      });
+    // NOW
     return Promise.resolve();
+    // because cardfaces do not have a unique id, we delete the exisitng ones first, before re-creating them
+    // const deleteFilter: ExpressionOrFactory<DatabaseSchema, "cardface", SqlBool> = (eb) => eb("cardface.card_id", "=", cardId);
+    // trx.deleteFrom("cardface").where(deleteFilter).execute()
+    //   .then(() => {
+    //     trx.insertInto("cardface").values(this.cardfaceAdapter.toInsert(cardId, cardface)).executeTakeFirstOrThrow()
+    //       .then((insertResult: InsertResult) => {
+    //         trx.selectFrom("cardface").select("cardface.id").where(sql`ROWID`, "=", insertResult.insertId).executeTakeFirst()
+    //           .then((cardfaceId: { id: string }) => {
+    //             return Promise.all([
+    //               this.syncCardfaceColorMaps(trx, cardfaceId.id, "indicator", cardface.color_indicator), // found no json yet where this was set
+    //               this.syncCardfaceColorMaps(trx, cardfaceId.id, "card", cardface.colors),
+    //               this.syncCardfaceImages(trx, cardfaceId.id, cardface.image_uris)
+    //             ]);
+    //           });
+    //       });
+    //   });
+    // return Promise.resolve();
   }
 
   private async syncCardfaceColorMaps(trx: Transaction<DatabaseSchema>, cardfaceId: string, colorType: MTGColorType, colors: Array<MTGColor> | null): Promise<void> {
-    if (colors?.length > 0) {
-      const result: Array<Promise<InsertResult | UpdateResult>> = new Array<Promise<InsertResult | UpdateResult>>();
-      colors.forEach(async (color: MTGColor) => {
-        const filter: ExpressionOrFactory<DatabaseSchema, "cardface_color_map", SqlBool> = (eb) => eb.and([
-          eb("cardface_color_map.cardface_id", "=", cardfaceId),
-          eb("cardface_color_map.color_type", "=", colorType),
-          eb("cardface_color_map.color_id", "=", color),
-        ]);
-        const existing = trx
-          .selectFrom("cardface_color_map")
-          .select("cardface_color_map.cardface_id")
-          .where(filter)
-          .executeTakeFirst();
+    // NOW
+    return Promise.resolve();
+    // if (colors?.length > 0) {
+    //   const result: Array<Promise<InsertResult | UpdateResult>> = new Array<Promise<InsertResult | UpdateResult>>();
+    //   colors.forEach(async (color: MTGColor) => {
+    //     const filter: ExpressionOrFactory<DatabaseSchema, "cardface_color_map", SqlBool> = (eb) => eb.and([
+    //       eb("cardface_color_map.cardface_id", "=", cardfaceId),
+    //       eb("cardface_color_map.color_type", "=", colorType),
+    //       eb("cardface_color_map.color_id", "=", color),
+    //     ]);
+    //     const existing = trx
+    //       .selectFrom("cardface_color_map")
+    //       .select("cardface_color_map.cardface_id")
+    //       .where(filter)
+    //       .executeTakeFirst();
 
-        existing.then((queryResult: { cardface_id: string }) => {
-          if (queryResult) {
-            result.push(trx.updateTable("cardface_color_map")
-              .set(this.cardfaceColorMapAdapter.toUpdate(null))
-              .executeTakeFirstOrThrow());
-          }
-          else {
-            result.push(trx.insertInto("cardface_color_map")
-              .values(this.cardfaceColorMapAdapter.toInsert(cardfaceId, color, colorType))
-              .executeTakeFirstOrThrow());
-          }
-        });
-      });
-      return Promise.all(result).then(() => Promise.resolve());
-    } else {
-      return Promise.resolve();
-    }
+    //     existing.then((queryResult: { cardface_id: string }) => {
+    //       if (queryResult) {
+    //         result.push(trx.updateTable("cardface_color_map")
+    //           .set(this.cardfaceColorMapAdapter.toUpdate(null))
+    //           .executeTakeFirstOrThrow());
+    //       }
+    //       else {
+    //         result.push(trx.insertInto("cardface_color_map")
+    //           .values(this.cardfaceColorMapAdapter.toInsert(cardfaceId, color, colorType))
+    //           .executeTakeFirstOrThrow());
+    //       }
+    //     });
+    //   });
+    //   return Promise.all(result).then(() => Promise.resolve());
+    // } else {
+    //   return Promise.resolve();
+    // }
 
   }
 
   private async syncCardfaceImages(trx: Transaction<DatabaseSchema>, cardfaceId: string, images?: Record<ImageSize, string>): Promise<void> {
-    const result: Array<Promise<void>> = new Array<Promise<void>>();
-    if (images) {
-      Object.keys(images).forEach(async (key: string) => {
-        result.push(this.syncSingleCardfaceImage(trx, cardfaceId, key as ImageSize, images[key as keyof Record<ImageSize, string>] as string));
-      });
-    }
-    return Promise.all(result).then(() => Promise.resolve());
+    // NOW
+    return Promise.resolve();
+    // const result: Array<Promise<void>> = new Array<Promise<void>>();
+    // if (images) {
+    //   Object.keys(images).forEach(async (key: string) => {
+    //     result.push(this.syncSingleCardfaceImage(trx, cardfaceId, key as ImageSize, images[key as keyof Record<ImageSize, string>] as string));
+    //   });
+    // }
+    // return Promise.all(result).then(() => Promise.resolve());
   }
 
   private async syncSingleCardfaceImage(trx: Transaction<DatabaseSchema>, cardfaceId: string, imageType: ImageSize, uri: string): Promise<void> {
-    if (uri) {
-      const filter: ExpressionOrFactory<DatabaseSchema, "cardface_image", SqlBool> = (eb) =>
-        eb.and([
-          eb("cardface_image.cardface_id", "=", cardfaceId),
-          eb("cardface_image.image_type", "=", imageType)
-        ]);
-      const existing = await trx.selectFrom("cardface_image")
-        .select("cardface_image.cardface_id")
-        .where(filter)
-        .executeTakeFirst();
+    // NOW
+    return Promise.resolve();
+    // if (uri) {
+    //   const filter: ExpressionOrFactory<DatabaseSchema, "cardface_image", SqlBool> = (eb) =>
+    //     eb.and([
+    //       eb("cardface_image.cardface_id", "=", cardfaceId),
+    //       eb("cardface_image.image_type", "=", imageType)
+    //     ]);
+    //   const existing = await trx.selectFrom("cardface_image")
+    //     .select("cardface_image.cardface_id")
+    //     .where(filter)
+    //     .executeTakeFirst();
 
-      if (existing) {
-        await trx.updateTable("cardface_image")
-          .set(this.cardfaceImageAdapter.toUpdate({ type: imageType, uri: uri }))
-          .where(filter)
-          .executeTakeFirstOrThrow();
-      } else {
-        await trx.insertInto("cardface_image")
-          .values(this.cardfaceImageAdapter.toInsert(cardfaceId, { type: imageType, uri: uri }))
-          .executeTakeFirstOrThrow();
-      }
-    }
+    //   if (existing) {
+    //     await trx.updateTable("cardface_image")
+    //       .set(this.cardfaceImageAdapter.toUpdate({ type: imageType, uri: uri }))
+    //       .where(filter)
+    //       .executeTakeFirstOrThrow();
+    //   } else {
+    //     await trx.insertInto("cardface_image")
+    //       .values(this.cardfaceImageAdapter.toInsert(cardfaceId, { type: imageType, uri: uri }))
+    //       .executeTakeFirstOrThrow();
+    //   }
+    // }
   }
   //#endregion
 

@@ -1,9 +1,9 @@
 import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
 
 import { MTGColorType, MTGColor } from "../../../../common/enums";
-import { Synchronized } from "../base.types";
+import { NonSynchronized, Synchronized } from "../base.types";
 
-export interface CardFaceColorMapTable extends Synchronized {
+export interface CardFaceColorMapTable extends NonSynchronized {
   cardface_id: ColumnType<string, string, never>;
   color_type: ColumnType<MTGColorType, MTGColorType, never>
   color_id: ColumnType<MTGColor, MTGColor, never>;

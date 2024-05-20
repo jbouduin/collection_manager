@@ -12,10 +12,11 @@ export function CardDetailPanel(props: CardDetailPanelProps) {
 
   function buildTitle(card: CardDto): React.JSX.Element {
     // TODO cards with "released_at" in the future are unreleased and should be marked as such
+    // NOW correct fields
     return (
       <div>
-        <H3> <SvgProvider svg={props.cardSet.svg} height={25} width={25} /> {card.card.name} </H3>
-        <H5 >{card.card.type_line} </H5>
+        <H3> <SvgProvider svg={props.cardSet.svg} height={25} width={25} /> card.card.name </H3>
+        <H5 >card.card.type_line </H5>
       </div>
     );
   }

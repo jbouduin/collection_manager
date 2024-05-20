@@ -1,13 +1,14 @@
 import {
-  CardTable, CardCardMapTable, CardColorMapTable, CardFormatLegalityTable, CardGameTable, CardImageTable, CardKeywordTable, CardMultiverseIdTable,
-  CardSetTable, CatalogItemTable, ColorTable, LanguageTable, RulingTable,
+  CardTable, CardCardMapTable, CardColorMapTable, OracleLegalityTable, CardGameTable, CardImageTable, CardMultiverseIdTable,
+  CardSetTable, CatalogItemTable, ColorTable, LanguageTable, OracleRulingTable,
   CardSymbolAlternativeTable, CardSymbolColorMapTable, CardSymbolTable,
-  RulingLineTable,
+  OracleRulingLineTable,
   CardFaceTable,
   CardFaceImageTable,
   CardFaceColorMapTable
 } from ".";
-import {  } from "./card/card-key-word.table";
+import {  } from "./oracle/oracle-key-word.table";
+import { OracleTable } from "./oracle/oracle.table";
 
 
 export interface DatabaseSchema {
@@ -15,14 +16,20 @@ export interface DatabaseSchema {
   card: CardTable;
   card_card_map: CardCardMapTable;
   card_color_map: CardColorMapTable;
-  card_format_legality: CardFormatLegalityTable;
+  card_format_legality: OracleLegalityTable;
   card_game: CardGameTable;
   card_image: CardImageTable;
-  card_keyword: CardKeywordTable;
   card_multiverse_id: CardMultiverseIdTable;
   cardface_color_map: CardFaceColorMapTable;
   cardface_image: CardFaceImageTable;
   cardface: CardFaceTable;
+  //#endregion
+
+  //#region oracle-------------------------------------------------------------
+  oracle: OracleTable;
+  oracle_legality: OracleLegalityTable;
+  oracle_ruling: OracleRulingTable;
+  oracle_ruling_line: OracleRulingLineTable;
   //#endregion
 
   //#region master data -------------------------------------------------------
@@ -30,11 +37,6 @@ export interface DatabaseSchema {
   catalog_item: CatalogItemTable;
   color: ColorTable,
   language: LanguageTable;
-  //#endregion
-
-  //#region ruling ------------------------------------------------------------
-  ruling: RulingTable;
-  ruling_line: RulingLineTable;
   //#endregion
 
   //#region Card symbol -------------------------------------------------------

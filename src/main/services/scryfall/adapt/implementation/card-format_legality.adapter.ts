@@ -9,7 +9,7 @@ import { ICardFormatLegalityAdapter } from "../interface";
 export class CardFormatLegalityAdapter implements ICardFormatLegalityAdapter {
   public toInsert(cardId: string, scryfall: { format: GameFormat, legality: CardLegality }): InsertExpression<DatabaseSchema, "card_format_legality"> {
     return {
-      card_id: cardId,
+      // card_id: cardId,
       format: scryfall.format,
       legality: scryfall.legality
     };
@@ -18,7 +18,7 @@ export class CardFormatLegalityAdapter implements ICardFormatLegalityAdapter {
   public toUpdate(scryfall: { format: GameFormat, legality: CardLegality }): UpdateObjectExpression<DatabaseSchema, "card_format_legality"> {
     return {
       legality: scryfall.legality,
-      last_synced_at: sql`CURRENT_TIMESTAMP`
+      // last_synced_at: sql`CURRENT_TIMESTAMP`
     };
   }
 }

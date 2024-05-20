@@ -1,27 +1,16 @@
 import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
 
 import { CardLayout } from "../../../../common/enums";
-import { SynchronizedWithStringId } from "../base.types";
+import { NonSynchronized, NonSynchronizedWithStringId, SynchronizedWithStringId } from "../base.types";
 
-export interface CardFaceTable extends SynchronizedWithStringId {
+export interface CardFaceTable extends NonSynchronizedWithStringId {
 
   card_id: ColumnType<string, string, never>;
+  // put (oracle card name here in case of single face card
+  // otherwise put face name
+  face_name: ColumnType<string, string, never>;
 
-  /**
-   * The name of the illustrator of this card face.
-   * Newly spoiled cards may not have this field yet.
-   */
   artist?: ColumnType<string, string | undefined>;
-
-  /**
-   * The ID of the illustrator of this card face.
-   * Newly spoiled cards may not have this field yet.
-   */
-  artist_id?: ColumnType<string, string | undefined>;
-
-  /**
-   * The mana value of this particular face, if the card is reversible.
-   */
   cmc?: ColumnType<number, number | undefined>;
 
   /**
@@ -38,11 +27,6 @@ export interface CardFaceTable extends SynchronizedWithStringId {
    * This face’s defense, if the game defines colors for the individual face of this card.
    */
   defense?: ColumnType<string, string | undefined>;
-
-  /**
-   * The flavor text printed on this face, if any.
-   */
-  flavor_text?: ColumnType<string, string | undefined>
 
   /**
    * A unique identifier for the card face artwork that remains consistent across reprints.
@@ -72,53 +56,16 @@ export interface CardFaceTable extends SynchronizedWithStringId {
    * Remember that per the game rules, a missing mana cost and a mana cost of {0} are different values.
    */
   mana_cost: ColumnType<string>;
-
-  /**
-   * The name of this particular face.
-   */
-
-  name: ColumnType<string>;
-
   /**
    * The Oracle ID of this particular face, if the card is reversible.
    */
   oracle_id?: ColumnType<string | string | undefined>
-
-  /**
-   * The Oracle text for this face, if any.
-   */
-  oracle_text?: ColumnType<string, string | undefined>;
-
   /**
    * This face’s power, if any.
    * Note that some cards have powers that are not numeric, such as *.
    */
   power?: ColumnType<string, string | undefined>;
-
-  /**
-   * The localized name printed on this face, if any.
-   */
-  printed_name?: ColumnType<string, string | undefined>;
-
-  /**
-   * The localized text printed on this face, if any.
-   */
-  printed_text?: ColumnType<string, string | undefined>;
-
-  /**
-   * The localized type line printed on this face, if any.
-   */
-  printed_type_line?: ColumnType<string, string | undefined>;
-  /**
-   * This face’s toughness, if any.
-   */
   toughness?: ColumnType<string, string | undefined>;
-  /**
-   * The type line of this particular face, if the card is reversible.
-   */
-
-  type_line?: ColumnType<string, string | undefined>;
-
   /**
    * The watermark on this particulary card face, if any.
    */

@@ -16,7 +16,7 @@ export class CardGameAdapter implements ICardGameAdapter {
 
   toUpdate(): UpdateObjectExpression<DatabaseSchema, "card_game"> {
     return {
-      last_synced_at: sql`CURRENT_TIMESTAMP`
+      // last_synced_at: sql`CURRENT_TIMESTAMP`
     };
   }
 }

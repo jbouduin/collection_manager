@@ -17,7 +17,7 @@ export class CardfaceColorMapAdapter implements ICardfaceColorMapAdapter{
   }
   public toUpdate(): UpdateObjectExpression<DatabaseSchema, "cardface_color_map"> {
     return {
-      last_synced_at: sql`CURRENT_TIMESTAMP`
+      // last_synced_at: sql`CURRENT_TIMESTAMP`
     };
   }
 

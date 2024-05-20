@@ -15,7 +15,7 @@ export class CardMultiverseIdAdapter implements ICardMultiverseIdAdapter {
 
   public toUpdate(): UpdateObjectExpression<DatabaseSchema, "card_multiverse_id"> {
     return {
-      last_synced_at: sql`CURRENT_TIMESTAMP`
+      // last_synced_at: sql`CURRENT_TIMESTAMP`
     };
   }
 }

@@ -2,11 +2,11 @@ import { InsertExpression } from "kysely/dist/cjs/parser/insert-values-parser";
 import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser";
 
 import { DatabaseSchema } from "../../../../database/schema";
-import { IRulingLineAdapter } from "../interface";
+import { IOracleRulingLineAdapter } from "../interface";
 import { ScryfallRuling } from "../../types";
 
-export class RulingLineAdapter implements IRulingLineAdapter {
-  public toInsert(oracleId: string, scryfall: ScryfallRuling): InsertExpression<DatabaseSchema, "ruling_line"> {
+export class OracleRulingLineAdapter implements IOracleRulingLineAdapter {
+  public toInsert(oracleId: string, scryfall: ScryfallRuling): InsertExpression<DatabaseSchema, "oracle_ruling_line"> {
     return {
       oracle_id: oracleId,
       source: scryfall.source,
@@ -15,7 +15,7 @@ export class RulingLineAdapter implements IRulingLineAdapter {
     };
   }
 
-  public toUpdate(): UpdateObjectExpression<DatabaseSchema, "ruling_line"> {
+  public toUpdate(): UpdateObjectExpression<DatabaseSchema, "oracle_ruling_line"> {
     throw new Error("Not supported");
   }
 }

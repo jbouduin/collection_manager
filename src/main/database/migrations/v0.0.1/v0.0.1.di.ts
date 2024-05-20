@@ -2,13 +2,15 @@ import { DependencyContainer, Lifecycle } from "tsyringe";
 
 import { IBaseMigration } from "../base.migration";
 import MIGRATOKENS from "../migration.tokens";
+import { V0_0_1_CardSymbol_Migration } from "./v0.0.1.card-symbol.migration";
 import { V0_0_1_Card_Migration } from "./v0.0.1.card.migration";
 import { V0_0_1_Catalog_Migration } from "./v0.0.1.catalog.migration";
-import { V0_0_1_Language_Migration } from "./v0.0.1.language.migration";
-import { V0_0_1_Set_Migration } from "./v0.0.1.set.migration";
-import { V0_0_1_CardSymbol_Migration } from "./v0.0.1.card-symbol";
 import { V0_0_1_Color_Migration } from "./v0.0.1.color.migration";
+import { V0_0_1_Language_Migration } from "./v0.0.1.language.migration";
 import { V0_0_1_Ruling_Migration } from "./v0.0.1.ruling.migration";
+import { V0_0_1_Set_Migration } from "./v0.0.1.set.migration";
+import { V0_0_1_Oracle_Migration } from "./v0.0.1.oracle.migration";
+
 
 export class V0_0_1_Di {
 
@@ -17,6 +19,7 @@ export class V0_0_1_Di {
     container.register<IBaseMigration>(MIGRATOKENS.Migration, { useClass: V0_0_1_Catalog_Migration }, { lifecycle: Lifecycle.ResolutionScoped });
     container.register<IBaseMigration>(MIGRATOKENS.Migration, { useClass: V0_0_1_Color_Migration }, { lifecycle: Lifecycle.ResolutionScoped });
     container.register<IBaseMigration>(MIGRATOKENS.Migration, { useClass: V0_0_1_Language_Migration }, { lifecycle: Lifecycle.ResolutionScoped });
+    // container.register<IBaseMigration>(MIGRATOKENS.Migration, { useClass: V0_0_1_Oracle_Migration }, { lifecycle: Lifecycle.ResolutionScoped });
     container.register<IBaseMigration>(MIGRATOKENS.Migration, { useClass: V0_0_1_Ruling_Migration }, { lifecycle: Lifecycle.ResolutionScoped });
     container.register<IBaseMigration>(MIGRATOKENS.Migration, { useClass: V0_0_1_Set_Migration }, { lifecycle: Lifecycle.ResolutionScoped });
     container.register<IBaseMigration>(MIGRATOKENS.Migration, { useClass: V0_0_1_CardSymbol_Migration }, { lifecycle: Lifecycle.ResolutionScoped });

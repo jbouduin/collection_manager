@@ -21,19 +21,21 @@ export class CardRepository extends BaseRepository implements ICardRepository {
 
   //#region ICardRepository methods -------------------------------------------
   public async getCardImageData(cardId: string, imageType: ImageSize): Promise<CardImageDto> {
-    return this.database.selectFrom("card")
-      .leftJoin("card_image", "card_image.card_id", "card.id")
-      .leftJoin("card_set", "card_set.id", "card.set_id")
-      .select([
-        "card.collector_number as collectorNumber",
-        "card_image.uri as imageUri",
-        "card_set.code as setCode",
-        "card.lang as language",
-        "card_image.image_type as imageType"
-      ])
-      .where("card.id", "=", cardId)
-      .where("card_image.image_type", "=", imageType)
-      .executeTakeFirst();
+    // NOW
+    throw new Error();
+    // return this.database.selectFrom("card")
+    //   .leftJoin("card_image", "card_image.card_id", "card.id")
+    //   .leftJoin("card_set", "card_set.id", "card.set_id")
+    //   .select([
+    //     "card.collector_number as collectorNumber",
+    //     "card_image.uri as imageUri",
+    //     "card_set.code as setCode",
+    //     "card.lang as language",
+    //     "card_image.image_type as imageType"
+    //   ])
+    //   .where("card.id", "=", cardId)
+    //   .where("card_image.image_type", "=", imageType)
+    //   .executeTakeFirst();
   }
 
   public async getCards(options: CardQueryOptions): Promise<Array<CardDto>> {
@@ -62,17 +64,19 @@ export class CardRepository extends BaseRepository implements ICardRepository {
 
   //#region private get related methods ---------------------------------------
   private convertCardToCardSelectDto(card: Card): CardDto {
+    // NOW
+
     const manaCostArray = new Array<string>();
-    if (card.mana_cost?.length > 0) {
-      card.mana_cost
-        .split("//")
-        .forEach((singleManaCost: string, idx: number) => {
-          if (idx > 0) {
-            manaCostArray.push("//");
-          }
-          manaCostArray.push(...this.convertSingleManaCostToArray(singleManaCost.trim()));
-        });
-    }
+    // if (card.mana_cost?.length > 0) {
+    //   card.mana_cost
+    //     .split("//")
+    //     .forEach((singleManaCost: string, idx: number) => {
+    //       if (idx > 0) {
+    //         manaCostArray.push("//");
+    //       }
+    //       manaCostArray.push(...this.convertSingleManaCostToArray(singleManaCost.trim()));
+    //     });
+    // }
     return {
       card: card,
       manaCostArray: manaCostArray,

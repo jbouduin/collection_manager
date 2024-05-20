@@ -25,7 +25,7 @@ export function DatabaseView(props: DatabaseViewProps) {
   }
 
   function onCardSelected(cards?: Array<CardDto>): void {
-    console.log("Cards selected in table", cards.map((c: CardDto) => c.card.name));
+    // NOW console.log("Cards selected in table", cards.map((c: CardDto) => c.card.name));
     setState({ selectedCards: cards, selectedSets: state.selectedSets });
   }
   //#endregion

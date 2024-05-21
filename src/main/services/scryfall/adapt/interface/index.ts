@@ -1,4 +1,4 @@
-import { CardLegality, GameFormat } from "../../../../../common/enums";
+import { CardLegality, Game, GameFormat } from "../../../../../common/enums";
 import { DatabaseSchema } from "../../../../database/schema";
 import { ScryfallCard } from "../../types";
 import { IChildTableAdapter } from "./child-table.adapter";
@@ -8,7 +8,7 @@ import { INewTableAdapter, ITableAdapter } from "./table.adapter";
 
 export type ICardCardMapAdapter = IMapTableAdapter<DatabaseSchema, "card_card_map">;
 export type ICardColorMapAdapter = IMapTableAdapter<DatabaseSchema, "card_color_map">;
-export type ICardGameAdapter = IChildTableAdapter<DatabaseSchema, "card_game">;
+export type ICardGameAdapter = INewTableAdapter<"card_game", CardGameAdapterParameter>;
 export type ICardImageAdapter = IChildTableAdapter<DatabaseSchema, "card_image">;
 export type ICardMultiverseIdAdapter = IChildTableAdapter<DatabaseSchema, "card_multiverse_id">;
 export type ICardSetAdapter = ITableAdapter<DatabaseSchema, "card_set">;
@@ -25,6 +25,11 @@ export type ICardSymbolAdapter = ITableAdapter<DatabaseSchema, "card_symbol">;
 export type IOracleAdapter = INewTableAdapter<"oracle", OracleAdapterParameter>;
 export type IOracleKeywordAdapter = INewTableAdapter<"oracle_keyword", OracleKeywordAdapterParameter>;
 export type IOracleLegalityAdapter = INewTableAdapter<"oracle_legality", OracleLegalityAdapterParameter>;
+
+export type CardGameAdapterParameter = {
+  card_id: string;
+  games: Array<Game>;
+}
 
 export type OracleAdapterParameter = {
   faceName: string,

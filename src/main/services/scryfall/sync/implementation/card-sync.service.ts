@@ -41,12 +41,12 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
   private readonly oracleAdapter: IOracleAdapter;
   private readonly oracleKeywordAdapter: IOracleKeywordAdapter;
   private readonly oracleLegalityAdapter: IOracleLegalityAdapter;
+  private readonly cardGameAdapter: ICardGameAdapter;
   // private readonly cardCardMapAdapter: ICardCardMapAdapter;
   // private readonly cardColorMapAdapter: ICardColorMapAdapter;
   // private readonly cardfaceAdapter: ICardfaceAdapter;
   // private readonly cardfaceColorMapAdapter: ICardfaceColorMapAdapter;
   // private readonly cardfaceImageAdapter: ICardfaceImageAdapter;
-  // private readonly cardGameAdapter: ICardGameAdapter;
   // private readonly cardImageAdapter: ICardImageAdapter;
   private readonly cardMultiverseIdAdapter: ICardMultiverseIdAdapter;
 
@@ -57,12 +57,12 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
     @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
     @inject(CLIENTTOKENS.ScryfallClient) scryfallclient: IScryfallClient,
     @inject(ADAPTTOKENS.CardAdapter) cardAdapter: ICardAdapter,
+    @inject(ADAPTTOKENS.CardGameAdapter) cardGameAdapter: ICardGameAdapter,
     // @inject(ADAPTTOKENS.CardCardMapAdapter) cardCardMapAdapter: ICardCardMapAdapter,
     // @inject(ADAPTTOKENS.CardColorMapAdapter) cardColorMapAdapter: ICardColorMapAdapter,
     // @inject(ADAPTTOKENS.CardfaceAdapter) cardfaceAdapter: ICardfaceAdapter,
     // @inject(ADAPTTOKENS.CardfaceColorMapAdapter) cardfaceColorMapAdapter: ICardfaceColorMapAdapter,
     // @inject(ADAPTTOKENS.CardfaceImageAdapter) cardfaceImageAdapter: ICardfaceImageAdapter,
-    // @inject(ADAPTTOKENS.CardGameAdapter) cardGameAdapter: ICardGameAdapter,
     // @inject(ADAPTTOKENS.CardImageAdapter) cardImageAdapter: ICardImageAdapter,
     @inject(ADAPTTOKENS.CardMultiverseIdAdapter) cardMultiverseIdAdapter: ICardMultiverseIdAdapter,
     @inject(ADAPTTOKENS.OracleAdapter) oracleAdapter: IOracleAdapter,
@@ -74,12 +74,12 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
     this.oracleAdapter = oracleAdapter;
     this.oracleKeywordAdapter = oracleKeywordAdapter;
     this.oracleLegalityAdapter = oracleLegalityAdapter;
+    this.cardGameAdapter = cardGameAdapter;
     // this.cardCardMapAdapter = cardCardMapAdapter;
     // this.cardColorMapAdapter = cardColorMapAdapter;
     // this.cardfaceAdapter = cardfaceAdapter;
     // this.cardfaceColorMapAdapter = cardfaceColorMapAdapter;
     // this.cardfaceImageAdapter = cardfaceImageAdapter;
-    // this.cardGameAdapter = cardGameAdapter;
     // this.cardImageAdapter = cardImageAdapter;
     this.cardMultiverseIdAdapter = cardMultiverseIdAdapter;
   }
@@ -151,7 +151,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
 
   private async serialGenericSingleSync<TB extends keyof DatabaseSchema, S>(
     taskParameter: GenericSingleSyncParameter<TB, S>, _index: number, _total: number): Promise<void> {
-      await this.genericSingleSync(taskParameter.trx, taskParameter.tableName, taskParameter.filter, taskParameter.adapter, taskParameter.scryfall);
+    await this.genericSingleSync(taskParameter.trx, taskParameter.tableName, taskParameter.filter, taskParameter.adapter, taskParameter.scryfall);
   }
 
   private async genericDeleteAndRecreate<TB extends keyof DatabaseSchema, S>(
@@ -191,6 +191,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
         .then(async () => await this.syncOracle(trx, card))
         .then(async () => await this.syncOracleKeywords(trx, card))
         .then(async () => await this.syncOracleLegalities(trx, card))
+        .then(async () => await this.syncCardGames(trx, card))
       // return insertOrUpdate.then(() =>
       //   Promise.all([
       //     this.syncCardCardMap(trx, card.id, null),
@@ -275,6 +276,20 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
     }
   }
 
+  private async syncCardGames(trx: Transaction<DatabaseSchema>, scryfallCard: ScryfallCard): Promise<void> {
+    if (scryfallCard.games?.length > 0) {
+      await this.genericDeleteAndRecreate(
+        trx,
+        "card_game",
+        (eb) => eb("card_game.card_id", "=", scryfallCard.id),
+        this.cardGameAdapter,
+        { card_id: scryfallCard.id, games: scryfallCard.games }
+      );
+    } else {
+      return Promise.resolve();
+    }
+  }
+
   // private async syncCardCardMap(trx: Transaction<DatabaseSchema>, cardId: string, relatedCards: Array<ScryfallRelatedCard>): Promise<void> {
   //   if (relatedCards?.length > 0) {
   //     relatedCards.forEach(async (relatedCard: ScryfallRelatedCard) => {
@@ -330,30 +345,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
   //   }
   // }
 
-  // private async syncCardGame(trx: Transaction<DatabaseSchema>, cardId: string, games: Array<Game>): Promise<void> {
-  //   games.forEach(async (game: Game) => {
-  //     const filter: ExpressionOrFactory<DatabaseSchema, "card_game", SqlBool> = (eb) =>
-  //       eb.and([
-  //         eb("card_game.card_id", "=", cardId),
-  //         eb("card_game.game", "=", game)
-  //       ]
-  //       );
-  //     const existing = await trx.selectFrom("card_game")
-  //       .select("card_game.card_id")
-  //       .where(filter)
-  //       .executeTakeFirst();
-  //     if (existing) {
-  //       await trx.updateTable("card_game")
-  //         .set(this.cardGameAdapter.toUpdate(null))
-  //         .where(filter)
-  //         .executeTakeFirstOrThrow();
-  //     } else {
-  //       await trx.insertInto("card_game")
-  //         .values(this.cardGameAdapter.toInsert(cardId, game))
-  //         .executeTakeFirstOrThrow();
-  //     }
-  //   });
-  // }
+
 
   // private async syncCardKeyword(trx: Transaction<DatabaseSchema>, cardId: string, keywords: Array<string>): Promise<void> {
   //   // NOW

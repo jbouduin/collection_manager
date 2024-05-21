@@ -120,18 +120,11 @@ async function createV0_0_1_CardMultiversId(db: Kysely<any>): Promise<void> {
 
 async function createV0_0_1_CardGame(db: Kysely<any>): Promise<void> {
   console.log("cardgame");
-  const options: CreateTableOptions = {
-    isSynced: false,
-    tableName: "card_game",
-    defaultIdPrimaryKey: false,
-    primaryKey: [
-      { columnName: "card_id", dataType: "text", callback: (col: ColumnDefinitionBuilder) => col.references("card.id").onDelete("cascade").notNull() },
-      { columnName: "game", dataType: "text", callback: (col: ColumnDefinitionBuilder) => col.notNull() }
-    ]
-  };
-  return createTable(db, options)
-    .execute()
-    .then(() => db.schema.createIndex("card_game_game_index").on("card_game").column("game").execute());
+  return db.schema.createTable("card_game")
+    .addColumn("card_id", "text", (col: ColumnDefinitionBuilder) => col.references("card.id").onDelete("cascade").notNull())
+    .addColumn("game", "text", (col: ColumnDefinitionBuilder) => col.notNull())
+    .addPrimaryKeyConstraint("CARD_GAME_PK", ["card_id", "game"])
+    .execute();
 }
 
 async function createV0_0_1_Cardface(db: Kysely<any>): Promise<void> {

@@ -7,7 +7,7 @@ import { DatabaseSchema } from "../../../../database/schema";
 import { ScryfallCard } from "../../types";
 import { ICardAdapter } from "../interface";
 
-export class CardAdapter implements ICardAdapter { // INewTableAdapter<DatabaseSchema, "card", ScryfallCard> {
+export class CardAdapter implements ICardAdapter {
   public toInsert(scryfall: ScryfallCard): InsertExpression<DatabaseSchema, "card"> {
     return {
       id: scryfall.id,

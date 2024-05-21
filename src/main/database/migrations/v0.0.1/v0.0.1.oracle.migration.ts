@@ -92,15 +92,9 @@ async function createV0_0_1_OracleLegality(db: Kysely<any>): Promise<void> {
 
 async function createV0_0_1_OracleKeyword(db: Kysely<any>): Promise<void> {
   console.log("oraclekeyword");
-  const options: CreateTableOptions = {
-    isSynced: true,
-    tableName: "oracle_keyword",
-    defaultIdPrimaryKey: false,
-    primaryKey: [
-      { columnName: "oracle_id", dataType: "text", callback: (col: ColumnDefinitionBuilder) => col.notNull() },
-      { columnName: "keyword", dataType: "text", callback: (col: ColumnDefinitionBuilder) => col.notNull() }
-    ]
-  };
-
-  return createTable(db, options).execute();
+  return db.schema.createTable("oracle_keyword")
+    .addColumn("oracle_id", "text", (col: ColumnDefinitionBuilder) => col.notNull())
+    .addColumn("keyword", "text", (col: ColumnDefinitionBuilder) => col.notNull())
+    .addPrimaryKeyConstraint("ORACLE_KEYWORD_PK", ["oracle_id", "keyword"])
+    .execute();
 }

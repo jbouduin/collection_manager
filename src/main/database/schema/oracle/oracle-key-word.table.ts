@@ -1,6 +1,6 @@
 import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
 
-import { NonSynchronized, Synchronized } from "../base.types";
+import { NonSynchronized } from "../base.types";
 
 export interface OracleKeywordTable extends NonSynchronized {
   oracle_id: ColumnType<string, string, never>;

@@ -8,7 +8,7 @@ import {
   CardFaceColorMapTable,
   CardFaceLocalization
 } from ".";
-import {  } from "./oracle/oracle-key-word.table";
+import { OracleKeyword, OracleKeywordTable } from "./oracle/oracle-key-word.table";
 import { OracleTable } from "./oracle/oracle.table";
 
 
@@ -30,6 +30,7 @@ export interface DatabaseSchema {
 
   //#region oracle-------------------------------------------------------------
   oracle: OracleTable;
+  oracle_keyword: OracleKeywordTable;
   oracle_legality: OracleLegalityTable;
   oracle_ruling: OracleRulingTable;
   oracle_ruling_line: OracleRulingLineTable;

@@ -18,8 +18,6 @@ export class V0_0_1_Card_Migration implements IBaseMigration {
       // .then(() => createV0_0_1_CardImage(db))
       .then(() => createV0_0_1_CardfaceLocalizationImage(db))
       .then(() => createV0_0_1_CardFaceColorMap(db));
-      // .then(() => createV0_0_1_CardFormatLegality(db))
-      // .then(() => createV0_0_1_CardKeyword(db))
   }
 
   public async down(db: Kysely<any>): Promise<void> {
@@ -134,38 +132,6 @@ async function createV0_0_1_CardGame(db: Kysely<any>): Promise<void> {
   return createTable(db, options)
     .execute()
     .then(() => db.schema.createIndex("card_game_game_index").on("card_game").column("game").execute());
-}
-
-async function createV0_0_1_CardFormatLegality(db: Kysely<any>): Promise<void> {
-  console.log("cardformatlegality");
-  const options: CreateTableOptions = {
-    isSynced: true,
-    tableName: "card_format_legality",
-    defaultIdPrimaryKey: false,
-    primaryKey: [
-      { columnName: "card_id", dataType: "text", callback: (col: ColumnDefinitionBuilder) => col.references("card.id").onDelete("cascade").notNull() },
-      { columnName: "format", dataType: "text", callback: (col: ColumnDefinitionBuilder) => col.notNull() }
-    ]
-  };
-
-  return createTable(db, options)
-    .addColumn("legality", "text", (col: ColumnDefinitionBuilder) => col.notNull())
-    .execute();
-}
-
-async function createV0_0_1_CardKeyword(db: Kysely<any>): Promise<void> {
-  console.log("cardkeyword");
-  const options: CreateTableOptions = {
-    isSynced: true,
-    tableName: "card_keyword",
-    defaultIdPrimaryKey: false,
-    primaryKey: [
-      { columnName: "card_id", dataType: "text", callback: (col: ColumnDefinitionBuilder) => col.references("card.id").onDelete("cascade").notNull() },
-      { columnName: "keyword", dataType: "text", callback: (col: ColumnDefinitionBuilder) => col.notNull() }
-    ]
-  };
-
-  return createTable(db, options).execute();
 }
 
 async function createV0_0_1_Cardface(db: Kysely<any>): Promise<void> {

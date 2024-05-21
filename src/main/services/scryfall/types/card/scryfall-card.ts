@@ -6,6 +6,8 @@ import { ScryfallPrices } from "./scryfall-prices";
 import { ScryfallPurchaseUris } from "./scryfall-purchase-uris";
 import { ScryfallRelatedUris } from "./scryfall-related-uris";
 
+export type ScryfallLegalities = Record<GameFormat, CardLegality>;
+
 export interface ScryfallCard {
 
   //#region Core fields -------------------------------------------------------
@@ -112,7 +114,7 @@ export interface ScryfallCard {
   /**
    * An object describing the legality of this card across play formats. Possible legalities are legal, not_legal, restricted, and banned.
    */
-  legalities: Record<GameFormat, CardLegality>;
+  legalities: ScryfallLegalities;
   /**
    * An array of Card Face objects, if this card is multifaced.
    */

@@ -5,7 +5,7 @@ import { CardCardMapAdapter } from "./implementation/card-card-map.adapter";
 import { CardColorMapAdapter } from "./implementation/card-color-map.adapter";
 import { CardGameAdapter } from "./implementation/card-game.adapter";
 import { CardImageAdapter } from "./implementation/card-image.adapter";
-import { CardMultiverseIdAdapter } from "./implementation/card-multi-verse-id.adapter";
+import { CardMultiverseIdAdapter } from "./implementation/card-multiverse-id.adapter";
 import { CardSetAdapter } from "./implementation/card-set.adapter";
 import { CardAdapter } from "./implementation/card.adapter";
 import { CardfaceColorMapAdapter } from "./implementation/cardface-color-map.adapter";

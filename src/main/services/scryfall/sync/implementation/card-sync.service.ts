@@ -42,13 +42,13 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
   private readonly oracleKeywordAdapter: IOracleKeywordAdapter;
   private readonly oracleLegalityAdapter: IOracleLegalityAdapter;
   private readonly cardGameAdapter: ICardGameAdapter;
+  private readonly cardMultiverseIdAdapter: ICardMultiverseIdAdapter;
   // private readonly cardCardMapAdapter: ICardCardMapAdapter;
   // private readonly cardColorMapAdapter: ICardColorMapAdapter;
   // private readonly cardfaceAdapter: ICardfaceAdapter;
   // private readonly cardfaceColorMapAdapter: ICardfaceColorMapAdapter;
   // private readonly cardfaceImageAdapter: ICardfaceImageAdapter;
   // private readonly cardImageAdapter: ICardImageAdapter;
-  private readonly cardMultiverseIdAdapter: ICardMultiverseIdAdapter;
 
   //#endregion
 
@@ -58,13 +58,13 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
     @inject(CLIENTTOKENS.ScryfallClient) scryfallclient: IScryfallClient,
     @inject(ADAPTTOKENS.CardAdapter) cardAdapter: ICardAdapter,
     @inject(ADAPTTOKENS.CardGameAdapter) cardGameAdapter: ICardGameAdapter,
+    @inject(ADAPTTOKENS.CardMultiverseIdAdapter) cardMultiverseIdAdapter: ICardMultiverseIdAdapter,
     // @inject(ADAPTTOKENS.CardCardMapAdapter) cardCardMapAdapter: ICardCardMapAdapter,
     // @inject(ADAPTTOKENS.CardColorMapAdapter) cardColorMapAdapter: ICardColorMapAdapter,
     // @inject(ADAPTTOKENS.CardfaceAdapter) cardfaceAdapter: ICardfaceAdapter,
     // @inject(ADAPTTOKENS.CardfaceColorMapAdapter) cardfaceColorMapAdapter: ICardfaceColorMapAdapter,
     // @inject(ADAPTTOKENS.CardfaceImageAdapter) cardfaceImageAdapter: ICardfaceImageAdapter,
     // @inject(ADAPTTOKENS.CardImageAdapter) cardImageAdapter: ICardImageAdapter,
-    @inject(ADAPTTOKENS.CardMultiverseIdAdapter) cardMultiverseIdAdapter: ICardMultiverseIdAdapter,
     @inject(ADAPTTOKENS.OracleAdapter) oracleAdapter: IOracleAdapter,
     @inject(ADAPTTOKENS.OracleKeywordAdapter) oracleKeywordAdapter: IOracleKeywordAdapter,
     @inject(ADAPTTOKENS.OracleLegalityAdapter) oracleLegalityAdapter: IOracleLegalityAdapter) {
@@ -192,6 +192,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
         .then(async () => await this.syncOracleKeywords(trx, card))
         .then(async () => await this.syncOracleLegalities(trx, card))
         .then(async () => await this.syncCardGames(trx, card))
+        .then(async () => await this.syncMultiversIds(trx, card))
       // return insertOrUpdate.then(() =>
       //   Promise.all([
       //     this.syncCardCardMap(trx, card.id, null),
@@ -290,6 +291,20 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
     }
   }
 
+  private async syncMultiversIds(trx: Transaction<DatabaseSchema>, scryfallCard: ScryfallCard): Promise<void> {
+    if (scryfallCard.multiverse_ids?.length > 0) {
+      await this.genericDeleteAndRecreate(
+        trx,
+        "card_multiverse_id",
+        (eb) => eb("card_multiverse_id.card_id", "=", scryfallCard.id),
+        this.cardMultiverseIdAdapter,
+        { card_id: scryfallCard.id, multiverseIds: scryfallCard.multiverse_ids }
+      );
+    } else {
+      return Promise.resolve();
+    }
+  }
+
   // private async syncCardCardMap(trx: Transaction<DatabaseSchema>, cardId: string, relatedCards: Array<ScryfallRelatedCard>): Promise<void> {
   //   if (relatedCards?.length > 0) {
   //     relatedCards.forEach(async (relatedCard: ScryfallRelatedCard) => {
@@ -346,34 +361,6 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
   // }
 
 
-
-  // private async syncCardKeyword(trx: Transaction<DatabaseSchema>, cardId: string, keywords: Array<string>): Promise<void> {
-  //   // NOW
-  //   return Promise.resolve();
-  //   // keywords.forEach(async (keyword: string) => {
-  //   //   const filter: ExpressionOrFactory<DatabaseSchema, "card_keyword", SqlBool> = (eb) =>
-  //   //     eb.and([
-  //   //       eb("card_keyword.card_id", "=", cardId),
-  //   //       eb("card_keyword.keyword", "=", keyword)
-  //   //     ]
-  //   //     );
-  //   //   const existing = await trx.selectFrom("card_keyword")
-  //   //     .select("card_keyword.card_id")
-  //   //     .where(filter)
-  //   //     .executeTakeFirst();
-  //   //   if (existing) {
-  //   //     await trx.updateTable("card_keyword")
-  //   //       .set(this.cardKeywordAdapter.toUpdate(null))
-  //   //       .where(filter)
-  //   //       .executeTakeFirstOrThrow();
-  //   //   } else {
-  //   //     await trx.insertInto("card_keyword")
-  //   //       .values(this.cardKeywordAdapter.toInsert(cardId, keyword))
-  //   //       .executeTakeFirstOrThrow();
-  //   //   }
-  //   // });
-  // }
-
   // private async syncCardImages(trx: Transaction<DatabaseSchema>, cardId: string, images: Record<ImageSize, string>): Promise<void> {
   //   // NOW
   //   return Promise.resolve();
@@ -411,33 +398,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
   //   // }
   // }
 
-  // private async syncMultiversId(trx: Transaction<DatabaseSchema>, cardId: string, multiverseIds: Array<number> | null): Promise<void> {
-  //   if (multiverseIds?.length > 0) {
-  //     multiverseIds.forEach(async (game: number) => {
-  //       const filter: ExpressionOrFactory<DatabaseSchema, "card_multiverse_id", SqlBool> = (eb) =>
-  //         eb.and([
-  //           eb("card_multiverse_id.card_id", "=", cardId),
-  //           eb("card_multiverse_id.multiverse_id", "=", game)
-  //         ]);
 
-  //       const existing = await trx.selectFrom("card_multiverse_id")
-  //         .select("card_multiverse_id.multiverse_id")
-  //         .where(filter)
-  //         .executeTakeFirst();
-
-  //       if (existing) {
-  //         await trx.updateTable("card_multiverse_id")
-  //           .set(this.cardMultiverseIdAdapter.toUpdate(null))
-  //           .where(filter)
-  //           .executeTakeFirstOrThrow();
-  //       } else {
-  //         await trx.insertInto("card_multiverse_id")
-  //           .values(this.cardMultiverseIdAdapter.toInsert(cardId, game))
-  //           .executeTakeFirstOrThrow();
-  //       }
-  //     });
-  //   }
-  // }
 
   // private async syncCardfaces(trx: Transaction<DatabaseSchema>, cardId: string, cardfaces?: Array<ScryfallCardFace>): Promise<void> {
   //   // NOW

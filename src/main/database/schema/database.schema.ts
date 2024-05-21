@@ -1,5 +1,5 @@
 import {
-  CardTable, CardCardMapTable, OracleLegalityTable, CardGameTable, CardImageTable, CardMultiverseIdTable,
+  CardTable, CardCardMapTable, OracleLegalityTable, CardGameTable, CardMultiverseIdTable,
   CardSetTable, CatalogItemTable, ColorTable, LanguageTable, OracleRulingTable,
   CardSymbolAlternativeTable, CardSymbolColorMapTable, CardSymbolTable,
   OracleRulingLineTable,
@@ -21,7 +21,6 @@ export interface DatabaseSchema {
   cardface_color_map: CardFaceColorMapTable;
   cardface_localization: CardFaceLocalizationTable;
   cardface_localization_image: CardFaceLocalizationImageTable;
-  card_image: CardImageTable;
   card_card_map: CardCardMapTable;
   //#endregion
 

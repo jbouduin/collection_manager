@@ -12,7 +12,7 @@ import { ICardSymbolSyncService } from "../interface/card-symbol-sync.service";
 import { BaseSyncService } from "./base-sync.service";
 import { runSerial } from "../../../../../main/services/infra/util";
 
-
+// NOW refactor sync service after making child tables non synchronized
 @injectable()
 export class CardSymbolSyncService extends BaseSyncService<CardSymbolSyncOptions> implements ICardSymbolSyncService {
 
@@ -76,7 +76,7 @@ export class CardSymbolSyncService extends BaseSyncService<CardSymbolSyncOptions
   //#region Private methods ---------------------------------------------------
   // TODO remove items that are not on the server anymore or at least mark them
   private async processSync(symbols: Array<ScryfallCardSymbol>, progressCallback: ProgressCallback): Promise<void> {
-    // TODO because this one large transaction, the splash screen seems not to be updating until the commit at the end
+    // NOW refactor
     return await this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
       await runSerial<ScryfallCardSymbol>(symbols, async (symbol: ScryfallCardSymbol, idx: number, total: number) => {
         if (progressCallback) {

@@ -5,6 +5,7 @@ import { ImageSize } from "../../../../../common/enums";
 import { DatabaseSchema } from "../../../../database/schema";
 import { ICardfaceLocalizationImageAdapter } from "../interface";
 import { CardfaceLocalizationImageAdapterParameter } from "../interface/param";
+import { ScryfallImageUris } from "../../types";
 
 export class CardfaceLocalizationImageAdapter implements ICardfaceLocalizationImageAdapter {
   toInsert(scryfall: CardfaceLocalizationImageAdapterParameter): InsertExpression<DatabaseSchema, "cardface_localization_image"> {
@@ -13,7 +14,7 @@ export class CardfaceLocalizationImageAdapter implements ICardfaceLocalizationIm
       result.push({
         cardface_localization_id: scryfall.cardfaceLocalizationId,
         image_type: key as ImageSize,
-        uri: scryfall.scryfallCard.image_uris[key as keyof Record<ImageSize, string>] as string
+        uri: scryfall.scryfallCard.image_uris[key as keyof ScryfallImageUris]
       })
     );
     return result;

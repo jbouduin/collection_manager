@@ -3,7 +3,7 @@ import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
 import { CatalogType } from "../../../../common/enums";
 import { SynchronizedWithStringId } from "../base.types";
 
-// TODO create a synchronized table catalog and fill it in the migration
+// NOW create a synchronized table catalog and fill it in the migration
 // make this one a child of it and non synchronized as we delete them
 export interface CatalogItemTable extends SynchronizedWithStringId{
   /***

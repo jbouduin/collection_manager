@@ -1,12 +1,14 @@
-import { CardBorderColor, CardFinish, CardFrame, CardFrameEffect, CardLayout, CardLegality, CardPromoType, CardRarity, CardSecurityStamp, CardSetType, Game, GameFormat, ImageSize, ImageStatus, MTGColor, MTGLanguage } from "../../../../../common/enums";
+import { CardBorderColor, CardFinish, CardFrame, CardFrameEffect, CardLayout, CardPromoType, CardRarity, CardSecurityStamp, CardSetType, Game, ImageStatus, MTGColor, MTGLanguage } from "../../../../../common/enums";
 import { ScryfallCardFace } from "./scryfall-card-face";
+import { ScryfallImageUris } from "./scryfall-image-uris";
+import { ScryfallLegalities } from "./scryfall-legalities";
 import { ScryfallPreviewInfo } from "./scryfall-preview-info";
-import { ScryfallRelatedCard } from "./scryfall-related-card";
 import { ScryfallPrices } from "./scryfall-prices";
 import { ScryfallPurchaseUris } from "./scryfall-purchase-uris";
+import { ScryfallRelatedCard } from "./scryfall-related-card";
 import { ScryfallRelatedUris } from "./scryfall-related-uris";
 
-export type ScryfallLegalities = Record<GameFormat, CardLegality>;
+
 
 export interface ScryfallCard {
 
@@ -385,8 +387,7 @@ export interface ScryfallCard {
   /**
    * An object listing available imagery for this card. See the Card Imagery article for more information.
    */
-  // TODO create a type for those Record<x,y> properties
-  image_uris?: Record<ImageSize, string>;
+image_uris?: ScryfallImageUris;
 
   /**
    * The just-for-fun name printed on the card (such as for Godzilla series cards).

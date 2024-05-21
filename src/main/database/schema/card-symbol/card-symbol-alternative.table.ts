@@ -2,6 +2,7 @@ import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
 
 import { Synchronized } from "../base.types";
 
+// NOW not synchronized
 export interface CardSymbolAlternativeTable extends Synchronized {
   /**
    * The Id

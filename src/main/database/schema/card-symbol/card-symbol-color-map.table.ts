@@ -3,6 +3,7 @@ import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
 import { MTGColor } from "../../../../common/enums";
 import { Synchronized } from "../base.types";
 
+// NOW not synchronized
 export interface CardSymbolColorMapTable extends Synchronized {
   /***
    * The plaintext symbol. Often surrounded with curly braces {}. Note that not all symbols are ASCII text (for example, {∞}).

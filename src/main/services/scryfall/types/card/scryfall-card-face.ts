@@ -1,4 +1,5 @@
-import { CardLayout, ImageSize, MTGColor } from "../../../../../common/enums";
+import { CardLayout, MTGColor } from "../../../../../common/enums";
+import { ScryfallImageUris } from "./scryfall-image-uris";
 
 export interface ScryfallCardFace {
 
@@ -95,8 +96,8 @@ export interface ScryfallCardFace {
      * This card’s colors, if the overall card has colors defined by the rules. Otherwise the colors will be on the card_faces objects.
      */
   colors: Array<MTGColor>;
-  // TODO create a type for those Record<x,y> properties
-  image_uris?: Record<ImageSize, string>;
+
+  image_uris?: ScryfallImageUris;
   /**
    * The card’s mana value. Note that some funny cards have fractional mana costs.
    *

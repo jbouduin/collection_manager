@@ -6,16 +6,16 @@ import { IOracleRulingLineAdapter } from "../interface";
 import { ScryfallRuling } from "../../types";
 
 export class OracleRulingLineAdapter implements IOracleRulingLineAdapter {
-  public toInsert(oracleId: string, scryfall: ScryfallRuling): InsertExpression<DatabaseSchema, "oracle_ruling_line"> {
+  public toInsert(scryfall: ScryfallRuling): InsertExpression<DatabaseSchema, "oracle_ruling_line"> {
     return {
-      oracle_id: oracleId,
+      oracle_id: scryfall.oracle_id,
       source: scryfall.source,
       comments: scryfall.comment,
-      published_at: `${scryfall.published_at} 00:00:00`
+      published_at: `${scryfall.published_at} 00:00:00` // TODO these times are probably GMT -08:00:00
     };
   }
 
   public toUpdate(): UpdateObjectExpression<DatabaseSchema, "oracle_ruling_line"> {
-    throw new Error("Not supported");
+    throw new Error("Method not supported");
   }
 }

@@ -1,39 +1,30 @@
 import fs from "fs";
-import { Compilable, ExpressionOrFactory, InsertResult, SqlBool, Transaction, UpdateResult, sql } from "kysely";
+import { InsertResult, Transaction, UpdateResult } from "kysely";
 import { inject, injectable } from "tsyringe";
 import { v1 as uuidV1 } from "uuid";
 
-import { CardLegality, Game, GameFormat, ImageSize, MTGColor, MTGColorType } from "../../../../../common/enums";
+import { CardLegality, GameFormat } from "../../../../../common/enums";
 import { CardSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
 import { DatabaseSchema } from "../../../../../main/database/schema";
 import INFRATOKENS, { IDatabaseService } from "../../../../../main/services/infra/interfaces";
+import { runSerial } from "../../../../../main/services/infra/util";
 import ADAPTTOKENS, {
-  CardfaceColorMapAdapterParameter,
-  ICardAdapter, ICardCardMapAdapter, ICardfaceLocalizationImageAdapter, ICardGameAdapter,
+  ICardAdapter,
+  ICardGameAdapter,
   ICardMultiverseIdAdapter, ICardfaceAdapter, ICardfaceColorMapAdapter,
   ICardfaceLocalizationAdapter,
+  ICardfaceLocalizationImageAdapter,
   IOracleAdapter,
   IOracleKeywordAdapter,
-  IOracleLegalityAdapter,
-  OracleLegalityAdapterParameter
+  IOracleLegalityAdapter
 } from "../../adapt/interface";
 import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
 import { ScryfallCard } from "../../types";
 import { ICardSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
-import { ExtractTableAlias } from "kysely/dist/cjs/parser/table-parser";
-import { INewTableAdapter } from "../../adapt/interface/table.adapter";
-import { runSerial } from "../../../../../main/services/infra/util";
-
-type GenericSyncTaskParameter<TB extends keyof DatabaseSchema, S> = {
-  trx: Transaction<DatabaseSchema>,
-  tableName: TB,
-  filter: ExpressionOrFactory<DatabaseSchema, ExtractTableAlias<DatabaseSchema, TB>, SqlBool>,
-  adapter: INewTableAdapter<TB, S>,
-  scryfall: S,
-
-};
-
+import { GenericSyncTaskParameter } from "./generic-sync-task.parameter";
+import { CardfaceColorMapAdapterParameter } from "../../adapt/interface/param/cardface-color-map-adapter.param";
+import { OracleLegalityAdapterParameter } from "../../adapt/interface/param/oracle-legality-adapter.param";
 
 @injectable()
 export class CardSyncService extends BaseSyncService<CardSyncOptions> implements ICardSyncService {
@@ -110,77 +101,14 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
       .then(() => Promise.resolve());
   }
 
-  protected logCompilable<T extends Compilable>(compilable: T): T {
-    console.log(compilable.compile());
-    return compilable;
-  }
 
-  private async genericSingleSync<TB extends keyof DatabaseSchema, S>(
-    trx: Transaction<DatabaseSchema>,
-    tableName: TB,
-    filter: ExpressionOrFactory<DatabaseSchema, ExtractTableAlias<DatabaseSchema, TB>, SqlBool>,
-    adapter: INewTableAdapter<TB, S>,
-    scryfall: S): Promise<InsertResult | UpdateResult> {
-    const queryExisting = trx
-      .selectFrom(tableName)
-      .selectAll()
-      .where(filter)
-      .executeTakeFirst();
-
-    const insertOrUpdate: Promise<InsertResult | UpdateResult> = queryExisting.then(async (queryResult) => {
-      let result: Promise<InsertResult | UpdateResult>;
-      if (queryResult) {
-        result = trx.updateTable(tableName)
-          .set(adapter.toUpdate(scryfall))
-          .where(filter)
-          .executeTakeFirstOrThrow();
-
-      } else {
-        result = trx.insertInto(tableName)
-          .values(adapter.toInsert(scryfall))
-          .executeTakeFirstOrThrow();
-      }
-      return result;
-    });
-    return insertOrUpdate;
-  }
-
-  private async serialGenericSingleSync<TB extends keyof DatabaseSchema, S>(
-    taskParameter: GenericSyncTaskParameter<TB, S>, _index: number, _total: number): Promise<void> {
-    await this.genericSingleSync(taskParameter.trx, taskParameter.tableName, taskParameter.filter, taskParameter.adapter, taskParameter.scryfall);
-  }
-
-  private async genericDeleteAndRecreate<TB extends keyof DatabaseSchema, S>(
-    trx: Transaction<DatabaseSchema>,
-    tableName: TB,
-    filter: ExpressionOrFactory<DatabaseSchema, ExtractTableAlias<DatabaseSchema, TB>, SqlBool>,
-    adapter: INewTableAdapter<TB, S>,
-    scryfall: S) {
-
-    return trx
-      .deleteFrom(tableName)
-      .where(filter)
-      // .$call(this.logCompilable)
-      .execute()
-      .then(async () => await trx
-        .insertInto(tableName)
-        .values(adapter.toInsert(scryfall))
-        // .$call(this.logCompilable)
-        .executeTakeFirstOrThrow()
-      );
-  }
-
-  private async serialGenericDeleteAndRecreate<TB extends keyof DatabaseSchema, S>(
-    taskParameter: GenericSyncTaskParameter<TB, S>, _index: number, _total: number): Promise<void> {
-    await this.genericDeleteAndRecreate(taskParameter.trx, taskParameter.tableName, taskParameter.filter, taskParameter.adapter, taskParameter.scryfall);
-  }
 
   private async syncSingleCard(card: ScryfallCard, cnt: number, total: number, progressCallback?: ProgressCallback): Promise<void> {
     return this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
       if (progressCallback) {
         progressCallback(`Processing ${card.name} (${cnt}/${total})`);
       }
-      let insertOrUpdate: Promise<InsertResult | UpdateResult> = this.genericSingleSync(
+      const insertOrUpdate: Promise<InsertResult | UpdateResult> = this.genericSingleSync(
         trx,
         "card",
         (eb) => eb("card.id", "=", card.id),
@@ -205,7 +133,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
   }
 
   private async syncOracle(trx: Transaction<DatabaseSchema>, scryfallCard: ScryfallCard): Promise<void> {
-    if (scryfallCard.layout = "normal") {
+    if (scryfallCard.layout == "normal") {
       await this.genericSingleSync(
         trx,
         "oracle",
@@ -220,7 +148,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
 
   private async syncOracleKeywords(trx: Transaction<DatabaseSchema>, scryfallCard: ScryfallCard): Promise<void> {
     if (scryfallCard.keywords?.length > 0) {
-      if (scryfallCard.layout = "normal") {
+      if (scryfallCard.layout == "normal") {
         await this.genericDeleteAndRecreate(
           trx,
           "oracle_keyword",
@@ -253,10 +181,10 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
         })
       );
 
-      if (scryfallCard.layout = "normal") {
+      if (scryfallCard.layout ==  "normal") {
         await runSerial<GenericSyncTaskParameter<"oracle_legality", OracleLegalityAdapterParameter>>(
           taskParameters,
-          async (param: GenericSyncTaskParameter<"oracle_legality", OracleLegalityAdapterParameter>, index: number, total: number) => this.serialGenericSingleSync(param, index, total)
+          async (param: GenericSyncTaskParameter<"oracle_legality", OracleLegalityAdapterParameter>, index: number, total: number) => super.serialGenericSingleSync(param, index, total)
         );
       } else {
         return Promise.resolve();
@@ -296,7 +224,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
 
   private async syncCardFaces(trx: Transaction<DatabaseSchema>, scryfallCard: ScryfallCard): Promise<void> {
     // if layout is normal: scrfall does not return cardfaces, so we save the whole card a single cardface
-    if (scryfallCard.layout = "normal") {
+    if (scryfallCard.layout == "normal") {
       const cardfaceUuid = uuidV1();
       await this
         .genericDeleteAndRecreate(
@@ -361,7 +289,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
             "cardface_localization",
             (eb) => eb("cardface_localization.cardface_id", "=", cardfaceUuid), // TODO not required because of cascaded delete
             this.cardfaceLocalizationAdapter,
-            { uuid: localizationUuid, cardfaceId: cardfaceUuid, scryfallCard: scryfallCard}
+            { uuid: localizationUuid, cardfaceId: cardfaceUuid, scryfallCard: scryfallCard }
           ).then(async () => {
             await this.genericDeleteAndRecreate(
               trx,
@@ -370,7 +298,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
               this.cardfaceLocalizationImageAdapter,
               { cardfaceLocalizationId: localizationUuid, scryfallCard: scryfallCard }
             );
-          })
+          });
         });
     }
   }

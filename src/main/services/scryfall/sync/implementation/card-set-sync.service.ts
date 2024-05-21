@@ -1,7 +1,8 @@
-import { ExpressionOrFactory, InsertResult, SqlBool, Transaction, UpdateResult } from "kysely";
+import { ExpressionOrFactory, SqlBool, Transaction } from "kysely";
 import { inject, injectable } from "tsyringe";
 
 import { CardSetSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
+import { runSerial } from "../../../../../main/services/infra/util";
 import { CardSet, DatabaseSchema } from "../../../../database/schema";
 import INFRATOKENS, { IConfigurationService, IDatabaseService, IImageCacheService } from "../../../infra/interfaces";
 import ADAPTTOKENS, { ICardSetAdapter } from "../../adapt/interface";
@@ -9,7 +10,6 @@ import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
 import { ScryfallCardSet } from "../../types";
 import { ICardSetSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
-import { runSerial } from "../../../../../main/services/infra/util";
 
 @injectable()
 export class CardSetSyncService extends BaseSyncService<CardSetSyncOptions> implements ICardSetSyncService {

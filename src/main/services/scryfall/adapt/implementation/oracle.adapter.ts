@@ -3,7 +3,8 @@ import { InsertExpression } from "kysely/dist/cjs/parser/insert-values-parser";
 import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser";
 
 import { DatabaseSchema } from "../../../../../main/database/schema";
-import { IOracleAdapter, OracleAdapterParameter } from "../interface";
+import { IOracleAdapter, } from "../interface";
+import { OracleAdapterParameter } from "../interface/param";
 
 export class OracleAdapter implements IOracleAdapter {
   public toInsert(scryfall: OracleAdapterParameter): InsertExpression<DatabaseSchema, "oracle"> {
@@ -13,7 +14,7 @@ export class OracleAdapter implements IOracleAdapter {
       oracle_name: scryfall.scryfallCard.name,
       oracle_text: scryfall.scryfallCard.oracle_text,
       type_line: scryfall.scryfallCard.type_line
-    }
+    };
   }
 
   public toUpdate(scryfall: OracleAdapterParameter): UpdateObjectExpression<DatabaseSchema, "oracle"> {
@@ -22,7 +23,7 @@ export class OracleAdapter implements IOracleAdapter {
       oracle_text: scryfall.scryfallCard.oracle_text,
       type_line: scryfall.scryfallCard.type_line,
       last_synced_at: sql`CURRENT_TIMESTAMP`
-    }
+    };
   }
 
 }

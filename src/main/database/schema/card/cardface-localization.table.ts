@@ -1,5 +1,5 @@
 import { ColumnType } from "kysely";
-import { Synchronized, SynchronizedWithStringId } from "../base.types";
+
 import { CardFrame, MTGLanguage } from "../../../../common/enums";
 
 export interface CardFaceLocalizationTable {

@@ -44,12 +44,10 @@ export class RulingSyncService extends BaseSyncService<RulingSyncOptions> implem
     if (rulings.length > 0) {
       const groupByOracleid: Map<string, Array<ScryfallRuling>> = new Map<string, Array<ScryfallRuling>>();
       rulings.forEach((ruling: ScryfallRuling) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const oracleId = (ruling as any)["oracle_id"] as string;
-        if (groupByOracleid.has(oracleId)) {
-          groupByOracleid.get(oracleId).push(ruling);
+        if (groupByOracleid.has(ruling.oracle_id)) {
+          groupByOracleid.get(ruling.oracle_id).push(ruling);
         } else {
-          groupByOracleid.set(oracleId, new Array<ScryfallRuling>(ruling));
+          groupByOracleid.set(ruling.oracle_id, new Array<ScryfallRuling>(ruling));
         }
       });
       if (groupByOracleid.size > 1) {
@@ -72,6 +70,7 @@ export class RulingSyncService extends BaseSyncService<RulingSyncOptions> implem
   }
 
   private async syncRulingForSingleOracleId(trx: Transaction<DatabaseSchema>, oracleId: string, rulings: Array<ScryfallRuling>): Promise<InsertResult | void> {
+
     const rulingFilter: ExpressionOrFactory<DatabaseSchema, "oracle_ruling", SqlBool> = (eb) => eb("oracle_ruling.oracle_id", "=", oracleId);
     const existingRulingPromise = trx
       .selectFrom("oracle_ruling")
@@ -101,7 +100,7 @@ export class RulingSyncService extends BaseSyncService<RulingSyncOptions> implem
 
     if (rulings.length > 0) {
       return deleteLinesPromise.then(() => {
-        const allRulingLines = rulings.map((ruling: ScryfallRuling) => this.rulingLineAdapter.toInsert(oracleId, ruling));
+        const allRulingLines = rulings.map((ruling: ScryfallRuling) => this.rulingLineAdapter.toInsert(ruling));
         return trx
           .insertInto("oracle_ruling_line")
           .values(allRulingLines)

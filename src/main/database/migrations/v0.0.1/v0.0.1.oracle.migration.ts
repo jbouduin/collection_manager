@@ -36,11 +36,6 @@ async function createV0_0_1_Ruling(db: Kysely<any>): Promise<void> {
 }
 
 async function createV0_0_1_RulingLine(db: Kysely<any>): Promise<void> {
-  const options: CreateTableOptions = {
-    isSynced: false,
-    tableName: "oracle_ruling_line",
-    defaultIdPrimaryKey: false
-  };
   return db.schema.createTable("oracle_ruling_line")
     .addColumn("oracle_id", "text", (col: ColumnDefinitionBuilder) => col.references("oracle_ruling.oracle_id").onDelete("cascade").notNull())
     .addColumn("source", "text", (col: ColumnDefinitionBuilder) => col.notNull())

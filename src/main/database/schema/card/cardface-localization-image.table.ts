@@ -1,7 +1,6 @@
 import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
 
 import { ImageSize } from "../../../../common/enums";
-import { Synchronized } from "../base.types";
 
 export interface CardFaceLocalizationImageTable {
   cardface_localization_id: ColumnType<string, string, never>;

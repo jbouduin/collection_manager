@@ -4,17 +4,18 @@ import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser
 
 import { DatabaseSchema } from "../../../../database/schema";
 import { ICardSymbolAlternativeAdapter } from "../interface";
+import { CardSymbolAlternativeAdapterParam } from "../interface/param";
 
 
 export class CardSymbolAlternativeAdapter implements ICardSymbolAlternativeAdapter {
-  public toInsert(cardSymbolId: string, alternative: string): InsertExpression<DatabaseSchema, "card_symbol_alternative"> {
+  public toInsert(scryfall: CardSymbolAlternativeAdapterParam): InsertExpression<DatabaseSchema, "card_symbol_alternative"> {
     return {
-      card_symbol_id: cardSymbolId,
-      alternative: alternative,
+      card_symbol_id: scryfall.cardSymbolId,
+      alternative: scryfall.alternative,
     };
   }
 
-  public toUpdate(): UpdateObjectExpression<DatabaseSchema, "card_symbol_alternative"> {
+  public toUpdate(_scryfall: CardSymbolAlternativeAdapterParam): UpdateObjectExpression<DatabaseSchema, "card_symbol_alternative"> {
     return {
       last_synced_at: sql`CURRENT_TIMESTAMP`
     };

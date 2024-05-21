@@ -1,10 +1,10 @@
-import { sql } from "kysely";
 import { InsertExpression } from "kysely/dist/cjs/parser/insert-values-parser";
 import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser";
 
-import { MTGColorType, MTGColor } from "../../../../../common/enums";
+import { MTGColor } from "../../../../../common/enums";
 import { DatabaseSchema } from "../../../../database/schema";
-import { CardfaceColorMapAdapterParameter, ICardfaceColorMapAdapter } from "../interface";
+import { ICardfaceColorMapAdapter } from "../interface";
+import { CardfaceColorMapAdapterParameter } from "../interface/param";
 
 export class CardfaceColorMapAdapter implements ICardfaceColorMapAdapter{
   public toInsert(scryfall: CardfaceColorMapAdapterParameter): InsertExpression<DatabaseSchema, "cardface_color_map"> {
@@ -13,7 +13,7 @@ export class CardfaceColorMapAdapter implements ICardfaceColorMapAdapter{
         cardface_id: scryfall.cardfaceId,
         color_type: scryfall.colorType,
         color_id: color
-      }
+      };
     });
 
   }

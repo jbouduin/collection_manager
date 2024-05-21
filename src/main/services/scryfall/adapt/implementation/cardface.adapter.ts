@@ -1,10 +1,9 @@
 import { InsertExpression } from "kysely/dist/cjs/parser/insert-values-parser";
 import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser";
 
-import { sql } from "kysely";
 import { DatabaseSchema } from "../../../../database/schema";
-import { CardFaceAdapterParameter, ICardfaceAdapter } from "../interface";
-import { ScryfallCard, ScryfallCardFace } from "../../types";
+import { ICardfaceAdapter } from "../interface";
+import { CardFaceAdapterParameter } from "../interface/param";
 
 export class CardfaceAdapter implements ICardfaceAdapter {
 

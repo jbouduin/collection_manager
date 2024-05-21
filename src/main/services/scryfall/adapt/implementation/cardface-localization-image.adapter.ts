@@ -1,11 +1,10 @@
-import { sql } from "kysely";
 import { InsertExpression } from "kysely/dist/cjs/parser/insert-values-parser";
 import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser";
 
 import { ImageSize } from "../../../../../common/enums";
 import { DatabaseSchema } from "../../../../database/schema";
-import { CardfaceLocalizationImageAdapterParameter, ICardfaceLocalizationImageAdapter } from "../interface";
-import { ScryfallCard } from "../../types";
+import { ICardfaceLocalizationImageAdapter } from "../interface";
+import { CardfaceLocalizationImageAdapterParameter } from "../interface/param";
 
 export class CardfaceLocalizationImageAdapter implements ICardfaceLocalizationImageAdapter {
   toInsert(scryfall: CardfaceLocalizationImageAdapterParameter): InsertExpression<DatabaseSchema, "cardface_localization_image"> {
@@ -20,7 +19,7 @@ export class CardfaceLocalizationImageAdapter implements ICardfaceLocalizationIm
     return result;
   }
 
-  toUpdate(scryfall: CardfaceLocalizationImageAdapterParameter): UpdateObjectExpression<DatabaseSchema, "cardface_localization_image"> {
+  toUpdate(_scryfall: CardfaceLocalizationImageAdapterParameter): UpdateObjectExpression<DatabaseSchema, "cardface_localization_image"> {
     throw new Error("Method not implemented.");
   }
 

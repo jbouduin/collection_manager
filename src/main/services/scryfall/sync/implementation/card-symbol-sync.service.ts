@@ -131,7 +131,7 @@ export class CardSymbolSyncService extends BaseSyncService<CardSymbolSyncOptions
           .executeTakeFirstOrThrow();
       } else {
         await trx.insertInto("card_symbol_color_map")
-          .values(this.cardSymbolColorMapAdapter.toInsert(symbol, color, null))
+          .values(this.cardSymbolColorMapAdapter.toInsert({ card_symbol_id: symbol, color_id: color }))
           .executeTakeFirstOrThrow();
       }
     });
@@ -157,7 +157,7 @@ export class CardSymbolSyncService extends BaseSyncService<CardSymbolSyncOptions
           .executeTakeFirstOrThrow();
       } else {
         await trx.insertInto("card_symbol_alternative")
-          .values(this.cardSymbolAlternativeAdapter.toInsert(symbol, alternative))
+          .values(this.cardSymbolAlternativeAdapter.toInsert({ cardSymbolId: symbol, alternative: alternative }))
           .executeTakeFirstOrThrow();
       }
     });

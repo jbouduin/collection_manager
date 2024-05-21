@@ -1,9 +1,10 @@
 import { InsertExpression } from "kysely/dist/cjs/parser/insert-values-parser";
 import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser";
 
-import { DatabaseSchema } from "../../../../database/schema";
-import { CardGameAdapterParameter, ICardGameAdapter } from "../interface";
 import { Game } from "../../../../../common/enums";
+import { DatabaseSchema } from "../../../../database/schema";
+import { ICardGameAdapter } from "../interface";
+import { CardGameAdapterParameter } from "../interface/param";
 
 export class CardGameAdapter implements ICardGameAdapter {
   public toInsert(scryfall: CardGameAdapterParameter): InsertExpression<DatabaseSchema, "card_game"> {
@@ -11,7 +12,7 @@ export class CardGameAdapter implements ICardGameAdapter {
       return {
         card_id: scryfall.card_id,
         game: game
-      }
+      };
     });
   }
 

@@ -2,7 +2,8 @@ import { InsertExpression } from "kysely/dist/cjs/parser/insert-values-parser";
 import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser";
 
 import { DatabaseSchema } from "../../../../database/schema";
-import { IOracleKeywordAdapter, OracleKeywordAdapterParameter } from "../interface";
+import { IOracleKeywordAdapter } from "../interface";
+import { OracleKeywordAdapterParameter } from "../interface/param";
 
 
 export class OracleKeywordAdapter implements IOracleKeywordAdapter {
@@ -11,7 +12,7 @@ export class OracleKeywordAdapter implements IOracleKeywordAdapter {
       return {
         oracle_id: scryfall.oracle_id,
         keyword: keyword
-      }
+      };
     });
   }
 

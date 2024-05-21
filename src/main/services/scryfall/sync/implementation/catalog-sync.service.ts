@@ -121,8 +121,8 @@ export class CatalogSyncService extends BaseSyncService<CatalogSyncOptions> impl
       parameter.progressCallback(`Retrieved ${catalog.total_values} items for catalog '${parameter.catalogType}'`);
     }
     return await this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
-      trx.deleteFrom("catalog_item").where("catalog_item.catalog_name", "=", parameter.catalogType).execute();
-      trx.insertInto("catalog_item")
+      await trx.deleteFrom("catalog_item").where("catalog_item.catalog_name", "=", parameter.catalogType).execute();
+      await trx.insertInto("catalog_item")
         .values(catalog.data.map((item: string) => this.catalogAdapter.toInsert({ catalogType: parameter.catalogType, item: item })))
         .executeTakeFirstOrThrow();
     });

@@ -14,8 +14,6 @@ export class V0_0_1_Card_Migration implements IBaseMigration {
       .then(() => createV0_0_1_CardGame(db))
       .then(() => createV0_0_1_Cardface(db))
       .then(() => createV0_0_1_CardfaceLocalization(db))
-      // .then(() => createV0_0_1_CardColorMap(db))
-      // .then(() => createV0_0_1_CardImage(db))
       .then(() => createV0_0_1_CardfaceLocalizationImage(db))
       .then(() => createV0_0_1_CardFaceColorMap(db));
   }
@@ -27,7 +25,7 @@ export class V0_0_1_Card_Migration implements IBaseMigration {
       .then(() => db.schema.dropTable("cardface").execute())
       .then(() => db.schema.dropTable("card_game").execute())
       .then(() => db.schema.dropTable("card_multiverse_id").execute())
-      .then(() => db.schema.dropTable("card").execute())
+      .then(() => db.schema.dropTable("card").execute());
       // .then(() => db.schema.dropTable("card_color_map").execute())
       // .then(() => db.schema.dropTable("card_image").execute())
       // .then(() => db.schema.dropTable("card_keyword").execute())

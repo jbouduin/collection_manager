@@ -1,81 +1,42 @@
-import { CardLegality, Game, GameFormat, MTGColor, MTGColorType } from "../../../../../common/enums";
-import { DatabaseSchema } from "../../../../database/schema";
-import { ScryfallCard } from "../../types";
-import { IChildTableAdapter } from "./child-table.adapter";
-import { IMapTableAdapter } from "./map-table.adapter";
-import { INewTableAdapter, ITableAdapter } from "./table.adapter";
+import { ScryfallCard, ScryfallCardSet, ScryfallCardSymbol, ScryfallRuling } from "../../types";
+import {
+  CardCardMapAdapterParameter, CardFaceAdapterParameter, CardGameAdapterParameter, CardMultiversIdAdapterParameter,
+  CardSymbolAlternativeAdapterParam, CardSymbolColorMapAdapterParam,
+  CardfaceColorMapAdapterParameter, CardfaceLocalizationAdapterParameter, CardfaceLocalizationImageAdapterParameter, CatalogAdapterParam,
+  OracleAdapterParameter, OracleKeywordAdapterParameter, OracleLegalityAdapterParameter
+} from "./param";
+
+import { ITableAdapter } from "./table.adapter";
 
 
-export type ICardCardMapAdapter = IMapTableAdapter<DatabaseSchema, "card_card_map">;
-export type ICardSetAdapter = ITableAdapter<DatabaseSchema, "card_set">;
-export type ICatalogAdapter = ITableAdapter<DatabaseSchema, "catalog_item">;
-export type IOracleRulingLineAdapter = IChildTableAdapter<DatabaseSchema, "oracle_ruling_line">;
-export type IOracleRulingAdapter = ITableAdapter<DatabaseSchema, "oracle_ruling">;
-export type ICardSymbolAlternativeAdapter = IChildTableAdapter<DatabaseSchema, "card_symbol_alternative">;
-export type ICardSymbolColorMapAdapter = IMapTableAdapter<DatabaseSchema, "card_symbol_color_map">;
-export type ICardSymbolAdapter = ITableAdapter<DatabaseSchema, "card_symbol">;
+export type ICardSetAdapter = ITableAdapter<"card_set", ScryfallCardSet>;
+export type ICatalogAdapter = ITableAdapter<"catalog_item",CatalogAdapterParam>;
+export type ICardSymbolAdapter = ITableAdapter<"card_symbol", ScryfallCardSymbol>;
+export type ICardSymbolAlternativeAdapter = ITableAdapter<"card_symbol_alternative", CardSymbolAlternativeAdapterParam>;
+export type ICardSymbolColorMapAdapter = ITableAdapter<"card_symbol_color_map", CardSymbolColorMapAdapterParam>;
 
-export type ICardAdapter = INewTableAdapter<"card", ScryfallCard>;
-export type IOracleAdapter = INewTableAdapter<"oracle", OracleAdapterParameter>;
-export type IOracleKeywordAdapter = INewTableAdapter<"oracle_keyword", OracleKeywordAdapterParameter>;
-export type IOracleLegalityAdapter = INewTableAdapter<"oracle_legality", OracleLegalityAdapterParameter>;
-export type ICardGameAdapter = INewTableAdapter<"card_game", CardGameAdapterParameter>;
-export type ICardMultiverseIdAdapter = INewTableAdapter<"card_multiverse_id", CardMultiversIdAdapterParameter>;
-export type ICardfaceAdapter = INewTableAdapter<"cardface", CardFaceAdapterParameter>;
-export type ICardfaceColorMapAdapter = INewTableAdapter<"cardface_color_map", CardfaceColorMapAdapterParameter>;
-export type ICardfaceLocalizationAdapter = INewTableAdapter<"cardface_localization", CardfaceLocalizationAdapterParameter>;
-export type ICardfaceLocalizationImageAdapter = INewTableAdapter<"cardface_localization_image", CardfaceLocalizationImageAdapterParameter>;
+export type ICardAdapter = ITableAdapter<"card", ScryfallCard>;
+export type ICardGameAdapter = ITableAdapter<"card_game", CardGameAdapterParameter>;
+export type ICardMultiverseIdAdapter = ITableAdapter<"card_multiverse_id", CardMultiversIdAdapterParameter>;
+export type ICardfaceAdapter = ITableAdapter<"cardface", CardFaceAdapterParameter>;
+export type ICardfaceColorMapAdapter = ITableAdapter<"cardface_color_map", CardfaceColorMapAdapterParameter>;
+export type ICardfaceLocalizationAdapter = ITableAdapter<"cardface_localization", CardfaceLocalizationAdapterParameter>;
+export type ICardfaceLocalizationImageAdapter = ITableAdapter<"cardface_localization_image", CardfaceLocalizationImageAdapterParameter>;
+export type ICardCardMapAdapter = ITableAdapter<"card_card_map", CardCardMapAdapterParameter>;
 
-export type CardfaceLocalizationImageAdapterParameter = {
-  cardfaceLocalizationId: string,
-  scryfallCard: ScryfallCard
-}
-
-export type CardfaceLocalizationAdapterParameter = {
-  uuid: string,
-  cardfaceId: string,
-  scryfallCard: ScryfallCard
-}
-
-export type CardfaceColorMapAdapterParameter = {
-  cardfaceId: string,
-  colorType:  MTGColorType,
-  colors: Array<MTGColor>
-}
-export type CardFaceAdapterParameter = {
-  uuid: string,
-  faceName: string,
-  scryfallCard: ScryfallCard
-}
-
-export type CardMultiversIdAdapterParameter = {
-  card_id: string;
-  multiverseIds: Array<number>
-}
-
-export type CardGameAdapterParameter = {
-  card_id: string;
-  games: Array<Game>;
-}
-
-export type OracleAdapterParameter = {
-  faceName: string,
-  scryfallCard: ScryfallCard
-};
-
-export type OracleKeywordAdapterParameter = {
-  oracle_id: string,
-  keywords: Array<string>
-};
-
-export type OracleLegalityAdapterParameter = {
-  oracle_id: string,
-  gameFormat: GameFormat,
-  legality: CardLegality
-};
+export type IOracleAdapter = ITableAdapter<"oracle", OracleAdapterParameter>;
+export type IOracleKeywordAdapter = ITableAdapter<"oracle_keyword", OracleKeywordAdapterParameter>;
+export type IOracleLegalityAdapter = ITableAdapter<"oracle_legality", OracleLegalityAdapterParameter>;
+export type IOracleRulingAdapter = ITableAdapter<"oracle_ruling", string>;
+export type IOracleRulingLineAdapter = ITableAdapter<"oracle_ruling_line", ScryfallRuling>;
 
 const ADAPTTOKENS = Object.freeze({
   CardSetAdapter: "CardSetAdapter",
+  CatalogAdapter: "CatalogAdapter",
+
+  CardSymbolAdapter: "CardSymbolAdapter",
+  CardSymbolAlternativeAdapter: "CardSymbolAlternativeAdapter",
+  CardSymbolColorMapAdapter: "CardSymbolColorMapAdapter",
 
   CardAdapter: "CardAdapter",
   CardGameAdapter: "CardGameAdapter",
@@ -90,15 +51,7 @@ const ADAPTTOKENS = Object.freeze({
   OracleKeywordAdapter: "OracleKeywordAdapter",
   OracleLegalityAdapter: "OracleLegalityAdapter",
   OracleRulingLineAdapter: "OracleRulingLineAdapter",
-  OracleRulingAdapter: "OracleRulingAdapter",
-
-  CatalogAdapter: "CatalogAdapter",
-  ColorAdapter: "ColorAdapter",
-  LanguageAdapter: "LanguageAdapter",
-  CardSymbolAdapter: "CardSymbolAdapter",
-  CardSymbolAlternativeAdapter: "CardSymbolAlternativeAdapter",
-  CardSymbolColorMapAdapter: "CardSymbolColorMapAdapter",
-
+  OracleRulingAdapter: "OracleRulingAdapter"
 });
 
 export default ADAPTTOKENS;

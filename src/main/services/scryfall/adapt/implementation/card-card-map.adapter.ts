@@ -4,18 +4,18 @@ import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser
 
 import { DatabaseSchema } from "../../../../database/schema";
 import { ICardCardMapAdapter } from "../interface";
-import { ScryfallRelatedCard } from "../../types";
+import { CardCardMapAdapterParameter } from "../interface/param";
 
 export class CardCardMapAdapter implements ICardCardMapAdapter{
-  public toInsert(leftId: string, rigthId: string, scryfall: ScryfallRelatedCard): InsertExpression<DatabaseSchema, "card_card_map"> {
+  public toInsert(scryfall: CardCardMapAdapterParameter): InsertExpression<DatabaseSchema, "card_card_map"> {
     return {
-      card_id: leftId,
-      related_card_id: rigthId,
-      component: scryfall.component
+      card_id: scryfall.cardId,
+      related_card_id: scryfall.relatedCard.id,
+      component: scryfall.relatedCard.component
     };
   }
 
-  public toUpdate(): UpdateObjectExpression<DatabaseSchema, "card_card_map"> {
+  public toUpdate(_scryfall: CardCardMapAdapterParameter): UpdateObjectExpression<DatabaseSchema, "card_card_map"> {
     return {
       last_synced_at: sql`CURRENT_TIMESTAMP`
     };

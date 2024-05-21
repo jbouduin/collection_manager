@@ -4,12 +4,13 @@ import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser
 
 import { DatabaseSchema } from "../../../../database/schema";
 import { ICardSymbolColorMapAdapter } from "../interface";
+import { CardSymbolColorMapAdapterParam } from "../interface/param";
 
 export class CardSymbolColorMapAdapter implements ICardSymbolColorMapAdapter {
-  public toInsert(leftId: string, rightId: string): InsertExpression<DatabaseSchema, "card_symbol_color_map"> {
+  public toInsert(scryfall: CardSymbolColorMapAdapterParam): InsertExpression<DatabaseSchema, "card_symbol_color_map"> {
     return {
-      color_id: rightId,
-      card_symbol_id: leftId
+      color_id: scryfall.color_id,
+      card_symbol_id: scryfall.card_symbol_id
     };
   }
 

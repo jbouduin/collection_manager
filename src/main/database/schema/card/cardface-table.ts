@@ -1,7 +1,6 @@
 import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
 
 import { CardLayout } from "../../../../common/enums";
-import { NonSynchronized, NonSynchronizedWithStringId, SynchronizedWithStringId } from "../base.types";
 
 export interface CardFaceTable {
 

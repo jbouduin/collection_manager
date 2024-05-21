@@ -2,7 +2,8 @@ import { InsertExpression } from "kysely/dist/cjs/parser/insert-values-parser";
 import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser";
 
 import { DatabaseSchema } from "../../../../../main/database/schema";
-import { CardfaceLocalizationAdapterParameter, ICardfaceLocalizationAdapter } from "../interface";
+import { ICardfaceLocalizationAdapter } from "../interface";
+import { CardfaceLocalizationAdapterParameter } from "../interface/param";
 
 export class CardfaceLocalizationAdapter implements ICardfaceLocalizationAdapter {
   public toInsert(scryfall: CardfaceLocalizationAdapterParameter): InsertExpression<DatabaseSchema, "cardface_localization"> {
@@ -16,7 +17,7 @@ export class CardfaceLocalizationAdapter implements ICardfaceLocalizationAdapter
       printed_name: scryfall.scryfallCard.printed_name ?? scryfall.scryfallCard.name, // because scryfall does not return this for "en"
       printed_text: scryfall.scryfallCard.printed_text ?? scryfall.scryfallCard.oracle_text,
       printed_type_line: scryfall.scryfallCard.printed_type_line ?? scryfall.scryfallCard.type_line
-    }
+    };
   }
 
   public toUpdate(_scryfall: CardfaceLocalizationAdapterParameter): UpdateObjectExpression<DatabaseSchema, "cardface_localization"> {

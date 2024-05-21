@@ -1,5 +1,6 @@
 import { ColumnType } from "kysely";
-import { Synchronized, SynchronizedWithStringId } from "../base.types";
+
+import { Synchronized } from "../base.types";
 
 export interface OracleTable extends Synchronized {
   oracle_id: ColumnType<string, string, string | undefined>;

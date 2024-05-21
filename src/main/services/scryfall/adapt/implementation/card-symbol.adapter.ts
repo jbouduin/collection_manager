@@ -4,7 +4,7 @@ import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser
 
 import { DatabaseSchema } from "../../../../database/schema";
 import { ICardSymbolAdapter } from "../interface";
-import { ScryfallCardSymbol } from "../../types/card-symbol/scryfall-card-symbol";
+import { ScryfallCardSymbol } from "../../types";
 
 export class CardSymbolAdapter implements ICardSymbolAdapter {
   public toInsert(cardSymbol: ScryfallCardSymbol): InsertExpression<DatabaseSchema, "card_symbol"> {

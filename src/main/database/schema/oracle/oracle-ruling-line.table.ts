@@ -1,7 +1,6 @@
-import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
+import { ColumnType, Insertable, Selectable } from "kysely";
 
 import { RulingSource } from "../../../../common/enums";
-import { NonSynchronized, Synchronized } from "../base.types";
 
 // LATER sqlite + tsyringe never returns a date in the selectable
 export interface OracleRulingLineTable {

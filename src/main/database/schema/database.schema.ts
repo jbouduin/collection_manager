@@ -1,14 +1,14 @@
 import {
-  CardTable, CardCardMapTable, CardColorMapTable, OracleLegalityTable, CardGameTable, CardImageTable, CardMultiverseIdTable,
+  CardTable, CardCardMapTable, OracleLegalityTable, CardGameTable, CardImageTable, CardMultiverseIdTable,
   CardSetTable, CatalogItemTable, ColorTable, LanguageTable, OracleRulingTable,
   CardSymbolAlternativeTable, CardSymbolColorMapTable, CardSymbolTable,
   OracleRulingLineTable,
   CardFaceTable,
   CardFaceLocalizationImageTable,
   CardFaceColorMapTable,
-  CardFaceLocalization
+  CardFaceLocalizationTable
 } from ".";
-import { OracleKeyword, OracleKeywordTable } from "./oracle/oracle-key-word.table";
+import { OracleKeywordTable } from "./oracle/oracle-key-word.table";
 import { OracleTable } from "./oracle/oracle.table";
 
 
@@ -18,14 +18,11 @@ export interface DatabaseSchema {
   card_multiverse_id: CardMultiverseIdTable;
   card_game: CardGameTable;
   cardface: CardFaceTable;
-  card_face_localization: CardFaceLocalization;
-
-  card_card_map: CardCardMapTable;
-  card_color_map: CardColorMapTable;
-  card_format_legality: OracleLegalityTable;
-  card_image: CardImageTable;
   cardface_color_map: CardFaceColorMapTable;
-  cardface_image: CardFaceLocalizationImageTable;
+  cardface_localization: CardFaceLocalizationTable;
+  cardface_localization_image: CardFaceLocalizationImageTable;
+  card_image: CardImageTable;
+  card_card_map: CardCardMapTable;
   //#endregion
 
   //#region oracle-------------------------------------------------------------

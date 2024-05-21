@@ -3,26 +3,15 @@ import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
 import { CardLayout } from "../../../../common/enums";
 import { NonSynchronized, NonSynchronizedWithStringId, SynchronizedWithStringId } from "../base.types";
 
-export interface CardFaceTable extends NonSynchronizedWithStringId {
+export interface CardFaceTable {
 
+  id: ColumnType<string, string, never>;
   card_id: ColumnType<string, string, never>;
   // put (oracle card name here in case of single face card
   // otherwise put face name
   face_name: ColumnType<string, string, never>;
-
   artist?: ColumnType<string, string | undefined>;
   cmc?: ColumnType<number, number | undefined>;
-
-  /**
-   * The colors in this face’s color indicator, if any.
-   */
-  // table face_color_map color_indicator 	Colors 	Nullable
-
-  /**
-   * This face’s colors, if the game defines colors for the individual face of this card.
-   */
-  // table face_color_map colors 	Colors 	Nullable
-
   /**
    * This face’s defense, if the game defines colors for the individual face of this card.
    */

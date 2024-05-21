@@ -2,7 +2,6 @@ export * from "./card-symbol/card-symbol-alternative.table";
 export * from "./card-symbol/card-symbol-color-map.table";
 export * from "./card-symbol/card-symbol.table";
 export * from "./card/card-card-map.table";
-export * from "./card/card-color-map.table";
 export * from "./card/card-game.table";
 export * from "./card/card-image.table";
 export * from "./card/card-multiverse-id.table";

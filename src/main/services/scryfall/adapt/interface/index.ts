@@ -1,4 +1,4 @@
-import { CardLegality, Game, GameFormat } from "../../../../../common/enums";
+import { CardLegality, Game, GameFormat, MTGColor, MTGColorType } from "../../../../../common/enums";
 import { DatabaseSchema } from "../../../../database/schema";
 import { ScryfallCard } from "../../types";
 import { IChildTableAdapter } from "./child-table.adapter";
@@ -7,12 +7,7 @@ import { INewTableAdapter, ITableAdapter } from "./table.adapter";
 
 
 export type ICardCardMapAdapter = IMapTableAdapter<DatabaseSchema, "card_card_map">;
-export type ICardColorMapAdapter = IMapTableAdapter<DatabaseSchema, "card_color_map">;
-export type ICardImageAdapter = IChildTableAdapter<DatabaseSchema, "card_image">;
 export type ICardSetAdapter = ITableAdapter<DatabaseSchema, "card_set">;
-export type ICardfaceAdapter = IChildTableAdapter<DatabaseSchema, "cardface">;
-export type ICardfaceColorMapAdapter = IMapTableAdapter<DatabaseSchema, "cardface_color_map">;
-export type ICardfaceImageAdapter = IChildTableAdapter<DatabaseSchema, "cardface_image">;
 export type ICatalogAdapter = ITableAdapter<DatabaseSchema, "catalog_item">;
 export type IOracleRulingLineAdapter = IChildTableAdapter<DatabaseSchema, "oracle_ruling_line">;
 export type IOracleRulingAdapter = ITableAdapter<DatabaseSchema, "oracle_ruling">;
@@ -26,7 +21,32 @@ export type IOracleKeywordAdapter = INewTableAdapter<"oracle_keyword", OracleKey
 export type IOracleLegalityAdapter = INewTableAdapter<"oracle_legality", OracleLegalityAdapterParameter>;
 export type ICardGameAdapter = INewTableAdapter<"card_game", CardGameAdapterParameter>;
 export type ICardMultiverseIdAdapter = INewTableAdapter<"card_multiverse_id", CardMultiversIdAdapterParameter>;
+export type ICardfaceAdapter = INewTableAdapter<"cardface", CardFaceAdapterParameter>;
+export type ICardfaceColorMapAdapter = INewTableAdapter<"cardface_color_map", CardfaceColorMapAdapterParameter>;
+export type ICardfaceLocalizationAdapter = INewTableAdapter<"cardface_localization", CardfaceLocalizationAdapterParameter>;
+export type ICardfaceLocalizationImageAdapter = INewTableAdapter<"cardface_localization_image", CardfaceLocalizationImageAdapterParameter>;
 
+export type CardfaceLocalizationImageAdapterParameter = {
+  cardfaceLocalizationId: string,
+  scryfallCard: ScryfallCard
+}
+
+export type CardfaceLocalizationAdapterParameter = {
+  uuid: string,
+  cardfaceId: string,
+  scryfallCard: ScryfallCard
+}
+
+export type CardfaceColorMapAdapterParameter = {
+  cardfaceId: string,
+  colorType:  MTGColorType,
+  colors: Array<MTGColor>
+}
+export type CardFaceAdapterParameter = {
+  uuid: string,
+  faceName: string,
+  scryfallCard: ScryfallCard
+}
 
 export type CardMultiversIdAdapterParameter = {
   card_id: string;
@@ -55,28 +75,30 @@ export type OracleLegalityAdapterParameter = {
 };
 
 const ADAPTTOKENS = Object.freeze({
-  CardCardMapAdapter: "CardCardMapAdapter",
-  CardColorMapAdapter: "CardColorMapAdapter",
-  CardImageAdapter: "CardImageAdapter",
   CardSetAdapter: "CardSetAdapter",
+
+  CardAdapter: "CardAdapter",
+  CardGameAdapter: "CardGameAdapter",
+  CardMultiverseIdAdapter: "CardMultiverseIdAdapter",
   CardfaceAdapter: "CardfaceAdapter",
   CardfaceColorMapAdapter: "CardfaceColorMapAdapter",
-  CardfaceImageAdapter: "CardfaceImageAdapter",
+  CardfaceLocalizationAdapter: "CardfaceLocalizationAdapter",
+  CardfaceLocalizationImageAdapter: "CardfaceLocalizationImageAdapter",
+  CardCardMapAdapter: "CardCardMapAdapter",
+
+  OracleAdapter: "OracleAdapter",
+  OracleKeywordAdapter: "OracleKeywordAdapter",
+  OracleLegalityAdapter: "OracleLegalityAdapter",
+  OracleRulingLineAdapter: "OracleRulingLineAdapter",
+  OracleRulingAdapter: "OracleRulingAdapter",
+
   CatalogAdapter: "CatalogAdapter",
   ColorAdapter: "ColorAdapter",
   LanguageAdapter: "LanguageAdapter",
-  OracleRulingLineAdapter: "OracleRulingLineAdapter",
-  OracleRulingAdapter: "OracleRulingAdapter",
   CardSymbolAdapter: "CardSymbolAdapter",
   CardSymbolAlternativeAdapter: "CardSymbolAlternativeAdapter",
   CardSymbolColorMapAdapter: "CardSymbolColorMapAdapter",
 
-  CardAdapter: "CardAdapter",
-  OracleAdapter: "OracleAdapter",
-  OracleKeywordAdapter: "OracleKeywordAdapter",
-  OracleLegalityAdapter: "OracleLegalityAdapter",
-  CardGameAdapter: "CardGameAdapter",
-  CardMultiverseIdAdapter: "CardMultiverseIdAdapter",
 });
 
 export default ADAPTTOKENS;

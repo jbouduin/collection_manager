@@ -203,7 +203,7 @@ export interface ScryfallCard {
   /**
    * Colors of mana that this card could produce.
    */
-  produced_mana?: MTGColor;
+  produced_mana?: Array< MTGColor>;
   /**
    * True if this card is on the Reserved List.
    */

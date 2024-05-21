@@ -1,28 +1,31 @@
 import fs from "fs";
 import { Compilable, ExpressionOrFactory, InsertResult, SqlBool, Transaction, UpdateResult, sql } from "kysely";
 import { inject, injectable } from "tsyringe";
+import { v1 as uuidV1 } from "uuid";
 
 import { CardLegality, Game, GameFormat, ImageSize, MTGColor, MTGColorType } from "../../../../../common/enums";
 import { CardSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
 import { DatabaseSchema } from "../../../../../main/database/schema";
 import INFRATOKENS, { IDatabaseService } from "../../../../../main/services/infra/interfaces";
 import ADAPTTOKENS, {
-  ICardAdapter, ICardCardMapAdapter, ICardColorMapAdapter, ICardGameAdapter,
-  ICardImageAdapter, ICardMultiverseIdAdapter, ICardfaceAdapter, ICardfaceColorMapAdapter, ICardfaceImageAdapter,
+  CardfaceColorMapAdapterParameter,
+  ICardAdapter, ICardCardMapAdapter, ICardfaceLocalizationImageAdapter, ICardGameAdapter,
+  ICardMultiverseIdAdapter, ICardfaceAdapter, ICardfaceColorMapAdapter,
+  ICardfaceLocalizationAdapter,
   IOracleAdapter,
   IOracleKeywordAdapter,
   IOracleLegalityAdapter,
   OracleLegalityAdapterParameter
 } from "../../adapt/interface";
 import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
-import { ScryfallCard, ScryfallCardFace, ScryfallRelatedCard } from "../../types";
+import { ScryfallCard } from "../../types";
 import { ICardSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
 import { ExtractTableAlias } from "kysely/dist/cjs/parser/table-parser";
 import { INewTableAdapter } from "../../adapt/interface/table.adapter";
 import { runSerial } from "../../../../../main/services/infra/util";
 
-type GenericSingleSyncParameter<TB extends keyof DatabaseSchema, S> = {
+type GenericSyncTaskParameter<TB extends keyof DatabaseSchema, S> = {
   trx: Transaction<DatabaseSchema>,
   tableName: TB,
   filter: ExpressionOrFactory<DatabaseSchema, ExtractTableAlias<DatabaseSchema, TB>, SqlBool>,
@@ -38,18 +41,15 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
   //#region Private readonly fields -------------------------------------------
   private readonly scryfallclient: IScryfallClient;
   private readonly cardAdapter: ICardAdapter;
+  private readonly cardGameAdapter: ICardGameAdapter;
+  private readonly cardMultiverseIdAdapter: ICardMultiverseIdAdapter;
+  private readonly cardfaceAdapter: ICardfaceAdapter;
+  private readonly cardfaceColorMapAdapter: ICardfaceColorMapAdapter;
+  private readonly cardfaceLocalizationAdapter: ICardfaceLocalizationAdapter;
+  private readonly cardfaceLocalizationImageAdapter: ICardfaceLocalizationImageAdapter;
   private readonly oracleAdapter: IOracleAdapter;
   private readonly oracleKeywordAdapter: IOracleKeywordAdapter;
   private readonly oracleLegalityAdapter: IOracleLegalityAdapter;
-  private readonly cardGameAdapter: ICardGameAdapter;
-  private readonly cardMultiverseIdAdapter: ICardMultiverseIdAdapter;
-  // private readonly cardCardMapAdapter: ICardCardMapAdapter;
-  // private readonly cardColorMapAdapter: ICardColorMapAdapter;
-  // private readonly cardfaceAdapter: ICardfaceAdapter;
-  // private readonly cardfaceColorMapAdapter: ICardfaceColorMapAdapter;
-  // private readonly cardfaceImageAdapter: ICardfaceImageAdapter;
-  // private readonly cardImageAdapter: ICardImageAdapter;
-
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
@@ -59,29 +59,25 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
     @inject(ADAPTTOKENS.CardAdapter) cardAdapter: ICardAdapter,
     @inject(ADAPTTOKENS.CardGameAdapter) cardGameAdapter: ICardGameAdapter,
     @inject(ADAPTTOKENS.CardMultiverseIdAdapter) cardMultiverseIdAdapter: ICardMultiverseIdAdapter,
-    // @inject(ADAPTTOKENS.CardCardMapAdapter) cardCardMapAdapter: ICardCardMapAdapter,
-    // @inject(ADAPTTOKENS.CardColorMapAdapter) cardColorMapAdapter: ICardColorMapAdapter,
-    // @inject(ADAPTTOKENS.CardfaceAdapter) cardfaceAdapter: ICardfaceAdapter,
-    // @inject(ADAPTTOKENS.CardfaceColorMapAdapter) cardfaceColorMapAdapter: ICardfaceColorMapAdapter,
-    // @inject(ADAPTTOKENS.CardfaceImageAdapter) cardfaceImageAdapter: ICardfaceImageAdapter,
-    // @inject(ADAPTTOKENS.CardImageAdapter) cardImageAdapter: ICardImageAdapter,
+    @inject(ADAPTTOKENS.CardfaceAdapter) cardfaceAdapter: ICardfaceAdapter,
+    @inject(ADAPTTOKENS.CardfaceColorMapAdapter) cardfaceColorMapAdapter: ICardfaceColorMapAdapter,
+    @inject(ADAPTTOKENS.CardfaceLocalizationAdapter) cardfaceLocalizationAdapter: ICardfaceLocalizationAdapter,
+    @inject(ADAPTTOKENS.CardfaceLocalizationImageAdapter) cardfaceLocalizationImageAdapter: ICardfaceLocalizationImageAdapter,
     @inject(ADAPTTOKENS.OracleAdapter) oracleAdapter: IOracleAdapter,
     @inject(ADAPTTOKENS.OracleKeywordAdapter) oracleKeywordAdapter: IOracleKeywordAdapter,
     @inject(ADAPTTOKENS.OracleLegalityAdapter) oracleLegalityAdapter: IOracleLegalityAdapter) {
     super(databaseService);
     this.scryfallclient = scryfallclient;
     this.cardAdapter = cardAdapter;
+    this.cardGameAdapter = cardGameAdapter;
+    this.cardMultiverseIdAdapter = cardMultiverseIdAdapter;
+    this.cardfaceAdapter = cardfaceAdapter;
+    this.cardfaceColorMapAdapter = cardfaceColorMapAdapter;
+    this.cardfaceLocalizationAdapter = cardfaceLocalizationAdapter;
+    this.cardfaceLocalizationImageAdapter = cardfaceLocalizationImageAdapter;
     this.oracleAdapter = oracleAdapter;
     this.oracleKeywordAdapter = oracleKeywordAdapter;
     this.oracleLegalityAdapter = oracleLegalityAdapter;
-    this.cardGameAdapter = cardGameAdapter;
-    // this.cardCardMapAdapter = cardCardMapAdapter;
-    // this.cardColorMapAdapter = cardColorMapAdapter;
-    // this.cardfaceAdapter = cardfaceAdapter;
-    // this.cardfaceColorMapAdapter = cardfaceColorMapAdapter;
-    // this.cardfaceImageAdapter = cardfaceImageAdapter;
-    // this.cardImageAdapter = cardImageAdapter;
-    this.cardMultiverseIdAdapter = cardMultiverseIdAdapter;
   }
   //#endregion
 
@@ -150,7 +146,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
   }
 
   private async serialGenericSingleSync<TB extends keyof DatabaseSchema, S>(
-    taskParameter: GenericSingleSyncParameter<TB, S>, _index: number, _total: number): Promise<void> {
+    taskParameter: GenericSyncTaskParameter<TB, S>, _index: number, _total: number): Promise<void> {
     await this.genericSingleSync(taskParameter.trx, taskParameter.tableName, taskParameter.filter, taskParameter.adapter, taskParameter.scryfall);
   }
 
@@ -174,6 +170,11 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
       );
   }
 
+  private async serialGenericDeleteAndRecreate<TB extends keyof DatabaseSchema, S>(
+    taskParameter: GenericSyncTaskParameter<TB, S>, _index: number, _total: number): Promise<void> {
+    await this.genericDeleteAndRecreate(taskParameter.trx, taskParameter.tableName, taskParameter.filter, taskParameter.adapter, taskParameter.scryfall);
+  }
+
   private async syncSingleCard(card: ScryfallCard, cnt: number, total: number, progressCallback?: ProgressCallback): Promise<void> {
     return this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
       if (progressCallback) {
@@ -193,19 +194,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
         .then(async () => await this.syncOracleLegalities(trx, card))
         .then(async () => await this.syncCardGames(trx, card))
         .then(async () => await this.syncMultiversIds(trx, card))
-      // return insertOrUpdate.then(() =>
-      //   Promise.all([
-      //     this.syncCardCardMap(trx, card.id, null),
-      //     this.syncCardColorMaps(trx, card.id, "card", card.colors),
-      //     this.syncCardColorMaps(trx, card.id, "identity", card.color_identity),
-      //     this.syncCardColorMaps(trx, card.id, "indicator", card.color_indicator),
-      //     this.syncCardColorMaps(trx, card.id, "produced_mana", card.color_indicator),
-      //     this.syncCardGame(trx, card.id, card.games),
-      //     this.syncCardImages(trx, card.id, card.image_uris),
-      //     this.syncMultiversId(trx, card.id, card.multiverse_ids),
-      //     this.syncCardfaces(trx, card.id, card.card_faces)
-      //   ])
-      // ); //.then(() =>
+        .then(async () => await this.syncCardFaces(trx, card));
     }).then(
       null,
       (reason) => {
@@ -249,7 +238,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
 
   private async syncOracleLegalities(trx: Transaction<DatabaseSchema>, scryfallCard: ScryfallCard): Promise<void> {
     if (scryfallCard.legalities) {
-      const taskParameters = new Array<GenericSingleSyncParameter<"oracle_legality", OracleLegalityAdapterParameter>>();
+      const taskParameters = new Array<GenericSyncTaskParameter<"oracle_legality", OracleLegalityAdapterParameter>>();
       Object.keys(scryfallCard.legalities).forEach((key: string) =>
         taskParameters.push({
           trx: trx,
@@ -265,9 +254,9 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
       );
 
       if (scryfallCard.layout = "normal") {
-        await runSerial<GenericSingleSyncParameter<"oracle_legality", OracleLegalityAdapterParameter>>(
+        await runSerial<GenericSyncTaskParameter<"oracle_legality", OracleLegalityAdapterParameter>>(
           taskParameters,
-          async (param: GenericSingleSyncParameter<"oracle_legality", OracleLegalityAdapterParameter>, index: number, total: number) => this.serialGenericSingleSync(param, index, total)
+          async (param: GenericSyncTaskParameter<"oracle_legality", OracleLegalityAdapterParameter>, index: number, total: number) => this.serialGenericSingleSync(param, index, total)
         );
       } else {
         return Promise.resolve();
@@ -305,6 +294,87 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
     }
   }
 
+  private async syncCardFaces(trx: Transaction<DatabaseSchema>, scryfallCard: ScryfallCard): Promise<void> {
+    // if layout is normal: scrfall does not return cardfaces, so we save the whole card a single cardface
+    if (scryfallCard.layout = "normal") {
+      const cardfaceUuid = uuidV1();
+      await this
+        .genericDeleteAndRecreate(
+          trx,
+          "cardface",
+          (eb) => eb("cardface.card_id", "=", scryfallCard.id),
+          this.cardfaceAdapter,
+          { uuid: cardfaceUuid, faceName: scryfallCard.name, scryfallCard: scryfallCard }
+        )
+        .then(async () => {
+          const taskParameters = new Array<GenericSyncTaskParameter<"cardface_color_map", CardfaceColorMapAdapterParameter>>();
+
+          if (scryfallCard.colors?.length > 0) {
+            taskParameters.push({
+              trx: trx,
+              tableName: "cardface_color_map",
+              filter: (eb) => eb("cardface_color_map.cardface_id", "=", cardfaceUuid), // TODO useless as cascaded delete should have removed old stuff
+              adapter: this.cardfaceColorMapAdapter,
+              scryfall: { cardfaceId: cardfaceUuid, colorType: "card", colors: scryfallCard.colors }
+            });
+          }
+
+          if (scryfallCard.color_identity?.length > 0) {
+            taskParameters.push({
+              trx: trx,
+              tableName: "cardface_color_map",
+              filter: (eb) => eb("cardface_color_map.cardface_id", "=", cardfaceUuid),
+              adapter: this.cardfaceColorMapAdapter,
+              scryfall: { cardfaceId: cardfaceUuid, colorType: "identity", colors: scryfallCard.color_identity }
+            });
+          }
+
+          if (scryfallCard.color_indicator?.length > 0) {
+            taskParameters.push({
+              trx: trx,
+              tableName: "cardface_color_map",
+              filter: (eb) => eb("cardface_color_map.cardface_id", "=", cardfaceUuid),
+              adapter: this.cardfaceColorMapAdapter,
+              scryfall: { cardfaceId: cardfaceUuid, colorType: "indicator", colors: scryfallCard.color_indicator }
+            });
+          }
+
+          if (scryfallCard.produced_mana?.length > 0) {
+            taskParameters.push({
+              trx: trx,
+              tableName: "cardface_color_map",
+              filter: (eb) => eb("cardface_color_map.cardface_id", "=", cardfaceUuid),
+              adapter: this.cardfaceColorMapAdapter,
+              scryfall: { cardfaceId: cardfaceUuid, colorType: "produced_mana", colors: scryfallCard.produced_mana }
+            });
+          }
+
+          await runSerial<GenericSyncTaskParameter<"cardface_color_map", CardfaceColorMapAdapterParameter>>(
+            taskParameters,
+            async (param: GenericSyncTaskParameter<"cardface_color_map", CardfaceColorMapAdapterParameter>, index: number, total: number) => this.serialGenericDeleteAndRecreate(param, index, total)
+          );
+        })
+        .then(async () => {
+          const localizationUuid = uuidV1();
+          await this.genericDeleteAndRecreate(
+            trx,
+            "cardface_localization",
+            (eb) => eb("cardface_localization.cardface_id", "=", cardfaceUuid), // TODO not required because of cascaded delete
+            this.cardfaceLocalizationAdapter,
+            { uuid: localizationUuid, cardfaceId: cardfaceUuid, scryfallCard: scryfallCard}
+          ).then(async () => {
+            await this.genericDeleteAndRecreate(
+              trx,
+              "cardface_localization_image",
+              (eb) => eb("cardface_localization_image.cardface_localization_id", "=", localizationUuid), // TODO not required because of cascaded delete
+              this.cardfaceLocalizationImageAdapter,
+              { cardfaceLocalizationId: localizationUuid, scryfallCard: scryfallCard }
+            );
+          })
+        });
+    }
+  }
+
   // private async syncCardCardMap(trx: Transaction<DatabaseSchema>, cardId: string, relatedCards: Array<ScryfallRelatedCard>): Promise<void> {
   //   if (relatedCards?.length > 0) {
   //     relatedCards.forEach(async (relatedCard: ScryfallRelatedCard) => {
@@ -331,35 +401,6 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
   //     });
   //   }
   // }
-
-  // private async syncCardColorMaps(trx: Transaction<DatabaseSchema>, cardId: string, colorType: MTGColorType, colors: Array<MTGColor> | null): Promise<void> {
-  //   if (colors?.length > 0) {
-  //     colors.forEach(async (color: MTGColor) => {
-  //       const filter: ExpressionOrFactory<DatabaseSchema, "card_color_map", SqlBool> = (eb) => eb.and([
-  //         eb("card_color_map.card_id", "=", cardId),
-  //         eb("card_color_map.color_type", "=", colorType),
-  //         eb("card_color_map.color_id", "=", color),
-  //       ]);
-  //       const existing = await trx
-  //         .selectFrom("card_color_map")
-  //         .select("card_color_map.card_id")
-  //         .where(filter)
-  //         .executeTakeFirst();
-
-  //       if (existing) {
-  //         await trx.updateTable("card_color_map")
-  //           .set(this.cardColorMapAdapter.toUpdate(null))
-  //           .executeTakeFirstOrThrow();
-  //       }
-  //       else {
-  //         await trx.insertInto("card_color_map")
-  //           .values(this.cardColorMapAdapter.toInsert(cardId, color, colorType))
-  //           .executeTakeFirstOrThrow();
-  //       }
-  //     });
-  //   }
-  // }
-
 
   // private async syncCardImages(trx: Transaction<DatabaseSchema>, cardId: string, images: Record<ImageSize, string>): Promise<void> {
   //   // NOW
@@ -400,14 +441,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
 
 
 
-  // private async syncCardfaces(trx: Transaction<DatabaseSchema>, cardId: string, cardfaces?: Array<ScryfallCardFace>): Promise<void> {
-  //   // NOW
-  //   return Promise.resolve();
-  //   // if (cardfaces) {
-  //   //   return Promise.all(cardfaces.map((cardface: ScryfallCardFace) => this.syncSingleCardface(trx, cardId, cardface)))
-  //   //     .then(() => Promise.resolve());
-  //   // }
-  // }
+
 
   // private async syncSingleCardface(trx: Transaction<DatabaseSchema>, cardId: string, cardface: ScryfallCardFace): Promise<void> {
   //   // NOW

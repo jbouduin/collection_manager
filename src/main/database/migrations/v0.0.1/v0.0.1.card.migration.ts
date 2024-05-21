@@ -124,13 +124,9 @@ async function createV0_0_1_CardGame(db: Kysely<any>): Promise<void> {
 
 async function createV0_0_1_Cardface(db: Kysely<any>): Promise<void> {
   console.log("cardface");
-  const options: CreateTableOptions = {
-    isSynced: false,
-    tableName: "cardface",
-    defaultIdPrimaryKey: true
-  };
 
-  await createTable(db, options)
+  await db.schema.createTable("cardface")
+    .addColumn("id", "text", (col: ColumnDefinitionBuilder) => col.primaryKey().notNull())
     .addColumn("card_id", "text", (col: ColumnDefinitionBuilder) => col.references("card.id").onDelete("cascade").notNull())
     .addColumn("face_name", "text", (col: ColumnDefinitionBuilder) => col.notNull())
     .addColumn("artist", "text")
@@ -155,12 +151,9 @@ async function createV0_0_1_Cardface(db: Kysely<any>): Promise<void> {
 
 async function createV0_0_1_CardfaceLocalization(db: Kysely<any>): Promise<void> {
   console.log("cardface_localization");
-  const options: CreateTableOptions = {
-    isSynced: true,
-    tableName: "cardface_localization",
-    defaultIdPrimaryKey: true
-  };
-  await createTable(db, options)
+
+  await db.schema.createTable("cardface_localization")
+    .addColumn("id", "text", (col: ColumnDefinitionBuilder) => col.primaryKey().notNull())
     .addColumn("cardface_id", "text", (col: ColumnDefinitionBuilder) => col.references("cardface.id").onDelete("cascade").notNull())
     .addColumn("lang", "text", (col: ColumnDefinitionBuilder) => col.references("language.id").onDelete("cascade").notNull() )
     .addColumn("frame", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
@@ -180,40 +173,21 @@ async function createV0_0_1_CardfaceLocalization(db: Kysely<any>): Promise<void>
 
 async function createV0_0_1_CardfaceLocalizationImage(db: Kysely<any>): Promise<void> {
   console.log("cardface_localization_image");
-  const options: CreateTableOptions = {
-    isSynced: true,
-    tableName: "cardface_localization_image",
-    defaultIdPrimaryKey: false,
-    primaryKey: [
-      {
-        columnName: "cardface_localization_id",
-        dataType: "text",
-        callback: (col: ColumnDefinitionBuilder) => col.references("cardface_localiation.id").onDelete("cascade").notNull()
-      },
-      {
-        columnName: "image_type",
-        dataType: "text",
-        callback: (col: ColumnDefinitionBuilder) => col.notNull()
-      }
-    ]
-  };
-  return createTable(db, options)
+  return db.schema.createTable("cardface_localization_image")
+    .addColumn("cardface_localization_id", "text", (col: ColumnDefinitionBuilder) => col.references("cardface_localization.id").onDelete("cascade").notNull())
+    .addColumn("image_type", "text", (col: ColumnDefinitionBuilder) => col.notNull())
     .addColumn("uri", "text", (col: ColumnDefinitionBuilder) => col.notNull())
+    .addPrimaryKeyConstraint("CARDFACE_LOCALIZATION_IMAGE_PK", ["cardface_localization_id", "image_type"])
     .execute();
 }
 
 async function createV0_0_1_CardFaceColorMap(db: Kysely<any>): Promise<void> {
   console.log("cardfacecolormap");
-  const options: CreateTableOptions = {
-    isSynced: false,
-    tableName: "cardface_color_map",
-    defaultIdPrimaryKey: false,
-    primaryKey: [
-      { columnName: "cardface_id", dataType: "text", callback: (col: ColumnDefinitionBuilder) => col.references("cardface.id").onDelete("cascade").notNull() },
-      { columnName: "color_type", dataType: "text", callback: (col: ColumnDefinitionBuilder) => col.notNull() },
-      { columnName: "color_id", dataType: "text", callback: (col: ColumnDefinitionBuilder) => col.references("color.id").onDelete("cascade").notNull() }
-    ]
-  };
-  return createTable(db, options).execute()
+  return db.schema.createTable("cardface_color_map")
+    .addColumn("cardface_id", "text", (col: ColumnDefinitionBuilder) => col.references("cardface.id").onDelete("cascade").notNull())
+    .addColumn("color_type", "text", (col: ColumnDefinitionBuilder) => col.notNull())
+    .addColumn("color_id", "text", (col: ColumnDefinitionBuilder) => col.references("color.id").onDelete("cascade").notNull())
+    .addPrimaryKeyConstraint("CARDFACE_COLOR_MAP_PK", ["cardface_id", "color_type", "color_id"])
+    .execute()
     .then(() => db.schema.createIndex("cardface_color_map_color_id_idx").on("cardface_color_map").column("color_id").execute());
 }

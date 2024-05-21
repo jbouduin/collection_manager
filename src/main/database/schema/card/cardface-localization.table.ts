@@ -2,8 +2,9 @@ import { ColumnType } from "kysely";
 import { Synchronized, SynchronizedWithStringId } from "../base.types";
 import { CardFrame, MTGLanguage } from "../../../../common/enums";
 
-export interface CardFaceLocalizationTable extends SynchronizedWithStringId {
-  cardface_id?: ColumnType<string, string | undefined>;
+export interface CardFaceLocalizationTable {
+  id: ColumnType<string, string | undefined, never>;
+  cardface_id?: ColumnType<string, string | undefined, never>;
   lang: ColumnType<MTGLanguage, MTGLanguage, never>;
   // frame is here due to Fourth Edition Foreign Black Border
   frame: ColumnType<CardFrame, string>;

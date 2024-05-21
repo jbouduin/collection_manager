@@ -7,3 +7,8 @@ export interface ITableAdapter<DB, TB extends keyof DB> {
   toInsert(scryfall: any): InsertExpression<DB, TB>;
   toUpdate(scryfall: any): UpdateObjectExpression<DB, TB>;
 }
+
+export interface INewTableAdapter<DB, TB extends keyof DB, S> {
+  toInsert(scryfall: S): InsertExpression<DB, TB>;
+  toUpdate(scryfall: S): UpdateObjectExpression<DB, TB>;
+}

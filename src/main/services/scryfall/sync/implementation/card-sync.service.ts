@@ -103,7 +103,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
         .where(filter)
         .executeTakeFirst();
 
-      const insertOrUpdate: Promise<InsertResult | UpdateResult> = queryExisting.then((queryResult: { id: string }) => {
+      const insertOrUpdate: Promise<InsertResult | UpdateResult> = queryExisting.then(async (queryResult: { id: string }) => {
         let result: Promise<InsertResult | UpdateResult>;
         if (queryResult) {
           if (progressCallback) {
@@ -125,21 +125,22 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
         return result;
       });
 
-      return insertOrUpdate.then(() =>
-        Promise.all([
-          this.syncCardCardMap(trx, card.id, null),
-          this.syncCardColorMaps(trx, card.id, "card", card.colors),
-          this.syncCardColorMaps(trx, card.id, "identity", card.color_identity),
-          this.syncCardColorMaps(trx, card.id, "indicator", card.color_indicator),
-          this.syncCardColorMaps(trx, card.id, "produced_mana", card.color_indicator),
-          this.syncCardFormatLegalities(trx, card.id, card.legalities),
-          this.syncCardGame(trx, card.id, card.games),
-          this.syncCardKeyword(trx, card.id, card.keywords),
-          this.syncCardImages(trx, card.id, card.image_uris),
-          this.syncMultiversId(trx, card.id, card.multiverse_ids),
-          this.syncCardfaces(trx, card.id, card.card_faces)
-        ])
-      ); //.then(() => Promise.resolve())
+      // return insertOrUpdate.then(() =>
+      //   Promise.all([
+      //     this.syncCardCardMap(trx, card.id, null),
+      //     this.syncCardColorMaps(trx, card.id, "card", card.colors),
+      //     this.syncCardColorMaps(trx, card.id, "identity", card.color_identity),
+      //     this.syncCardColorMaps(trx, card.id, "indicator", card.color_indicator),
+      //     this.syncCardColorMaps(trx, card.id, "produced_mana", card.color_indicator),
+      //     this.syncCardFormatLegalities(trx, card.id, card.legalities),
+      //     this.syncCardGame(trx, card.id, card.games),
+      //     this.syncCardKeyword(trx, card.id, card.keywords),
+      //     this.syncCardImages(trx, card.id, card.image_uris),
+      //     this.syncMultiversId(trx, card.id, card.multiverse_ids),
+      //     this.syncCardfaces(trx, card.id, card.card_faces)
+      //   ])
+      // ); //.then(() =>
+      return Promise.resolve();
     }).then(
       null,
       (reason) => {

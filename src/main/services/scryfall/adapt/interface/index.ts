@@ -1,7 +1,8 @@
 import { DatabaseSchema } from "../../../../database/schema";
+import { ScryfallCard } from "../../types";
 import { IChildTableAdapter } from "./child-table.adapter";
 import { IMapTableAdapter } from "./map-table.adapter";
-import { ITableAdapter } from "./table.adapter";
+import { INewTableAdapter, ITableAdapter } from "./table.adapter";
 
 export type ICardCardMapAdapter = IMapTableAdapter<DatabaseSchema, "card_card_map">;
 export type ICardColorMapAdapter = IMapTableAdapter<DatabaseSchema, "card_color_map">;
@@ -11,7 +12,7 @@ export type ICardImageAdapter = IChildTableAdapter<DatabaseSchema, "card_image">
 // export type ICardKeywordAdapter = IChildTableAdapter<DatabaseSchema, "card_keyword">;
 export type ICardMultiverseIdAdapter = IChildTableAdapter<DatabaseSchema, "card_multiverse_id">;
 export type ICardSetAdapter = ITableAdapter<DatabaseSchema, "card_set">;
-export type ICardAdapter = ITableAdapter<DatabaseSchema, "card">;
+export type ICardAdapter = INewTableAdapter<DatabaseSchema, "card", ScryfallCard>;
 export type ICardfaceAdapter = IChildTableAdapter<DatabaseSchema, "cardface">;
 export type ICardfaceColorMapAdapter = IMapTableAdapter<DatabaseSchema, "cardface_color_map">;
 export type ICardfaceImageAdapter = IChildTableAdapter<DatabaseSchema, "cardface_image">;

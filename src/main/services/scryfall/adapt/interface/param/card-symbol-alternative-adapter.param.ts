@@ -1,4 +1,4 @@
 export type CardSymbolAlternativeAdapterParam = {
   cardSymbolId: string,
-  alternative: string
+  alternatives: Array<string>
 };

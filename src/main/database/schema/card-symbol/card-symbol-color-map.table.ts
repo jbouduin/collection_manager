@@ -1,10 +1,9 @@
 import { ColumnType } from "kysely";
 
 import { MTGColor } from "../../../../common/enums";
-import { Synchronized } from "../base.types";
 
 // NOW make table not synchronized
-export interface CardSymbolColorMapTable extends Synchronized {
+export interface CardSymbolColorMapTable {
   /***
    * The plaintext symbol. Often surrounded with curly braces {}. Note that not all symbols are ASCII text (for example, {∞}).
    * Contains the property "symbol" as returned by scryfall

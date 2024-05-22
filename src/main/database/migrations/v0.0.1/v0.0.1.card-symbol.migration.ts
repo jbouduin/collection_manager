@@ -43,28 +43,17 @@ async function createV0_0_1_CardSymbol(db: Kysely<any>): Promise<void> {
 }
 
 async function createV0_0_1_CardSymbolColorMap(db: Kysely<any>): Promise<void> {
-  const options: CreateTableOptions = {
-    isSynced: true,
-    tableName: "card_symbol_color_map",
-    defaultIdPrimaryKey: false,
-    primaryKey: [
-      { columnName: "card_symbol_id", dataType: "text", callback: (col: ColumnDefinitionBuilder) => col.references("card_symbol.id").onDelete("cascade").notNull() },
-      { columnName: "color_id", dataType: "text", callback: (col: ColumnDefinitionBuilder) => col.references("color.id").onDelete("cascade").notNull() }
-    ]
-  };
-  await createTable(db, options).execute();
-
+  return db.schema.createTable("card_symbol_color_map")
+    .addColumn("card_symbol_id", "text", (col: ColumnDefinitionBuilder) => col.references("card_symbol.id").onDelete("cascade").notNull())
+    .addColumn("color_id", "text", (col: ColumnDefinitionBuilder) => col.references("color.id").onDelete("cascade").notNull())
+    .addPrimaryKeyConstraint("CARD_SYMBOL_COLR_MAP_PK", ["card_symbol_id", "color_id"])
+    .execute();
 }
 
 async function createV0_0_1_CardSymbolAlternative(db: Kysely<any>): Promise<void> {
-  const options: CreateTableOptions = {
-    isSynced: true,
-    tableName: "card_symbol_alternative",
-    defaultIdPrimaryKey: false,
-    primaryKey: [
-      { columnName: "card_symbol_id", dataType: "text", callback: (col: ColumnDefinitionBuilder) => col.references("card_symbol.id").onDelete("cascade").notNull() },
-      { columnName: "alternative", dataType: "text", callback: (col: ColumnDefinitionBuilder) => col.notNull() }
-    ]
-  };
-  await createTable(db, options).execute();
+  return db.schema.createTable("card_symbol_alternative")
+    .addColumn("card_symbol_id", "text", (col: ColumnDefinitionBuilder) => col.references("card_symbol.id").onDelete("cascade").notNull())
+    .addColumn("alternative", "text", (col: ColumnDefinitionBuilder) => col.notNull())
+    .addPrimaryKeyConstraint("CARD_SYMBOL_ALTERNATIVE_PK", ["card_symbol_id", "alternative"])
+    .execute();
 }

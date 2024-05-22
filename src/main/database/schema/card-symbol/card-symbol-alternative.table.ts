@@ -1,9 +1,7 @@
 import { ColumnType } from "kysely";
 
-import { Synchronized } from "../base.types";
 
-// NOW make table not synchronized
-export interface CardSymbolAlternativeTable extends Synchronized {
+export interface CardSymbolAlternativeTable  {
   /**
    * The Id
    * @example "W"

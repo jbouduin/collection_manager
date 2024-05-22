@@ -44,7 +44,10 @@ export class CatalogSyncService extends BaseSyncService<CatalogSyncOptions> impl
         if (shouldSync) {
           console.log("Start CatalogSyncService.sync");
           const serialExecutionArray = options.catalogs.map<SyncSingleCatalogParameter>((catalog: CatalogType) => { return { catalogType: catalog, progressCallback: progressCallback }; });
-          await runSerial<SyncSingleCatalogParameter>(serialExecutionArray, this.syncSingleCatalog.bind(this));
+          await runSerial<SyncSingleCatalogParameter>(
+            serialExecutionArray,
+            (param: SyncSingleCatalogParameter) => `Processing catalog '${param.catalogType}'`,
+            this.syncSingleCatalog.bind(this));
         } else {
           console.log("Skip CatalogSyncService.sync");
         }

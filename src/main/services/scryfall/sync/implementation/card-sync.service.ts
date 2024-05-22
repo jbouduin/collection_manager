@@ -181,9 +181,10 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
         })
       );
 
-      if (scryfallCard.layout ==  "normal") {
+      if (scryfallCard.layout == "normal") {
         await runSerial<GenericSyncTaskParameter<"oracle_legality", OracleLegalityAdapterParameter>>(
           taskParameters,
+          (param: GenericSyncTaskParameter<"oracle_legality", OracleLegalityAdapterParameter>) => "Processing oracle legality",
           async (param: GenericSyncTaskParameter<"oracle_legality", OracleLegalityAdapterParameter>, index: number, total: number) => super.serialGenericSingleSync(param, index, total)
         );
       } else {
@@ -279,6 +280,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
 
           await runSerial<GenericSyncTaskParameter<"cardface_color_map", CardfaceColorMapAdapterParameter>>(
             taskParameters,
+            (param: GenericSyncTaskParameter<"cardface_color_map", CardfaceColorMapAdapterParameter>) => "Processing cardface color map",
             async (param: GenericSyncTaskParameter<"cardface_color_map", CardfaceColorMapAdapterParameter>, index: number, total: number) => this.serialGenericDeleteAndRecreate(param, index, total)
           );
         })

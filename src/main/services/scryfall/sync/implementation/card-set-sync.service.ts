@@ -1,4 +1,4 @@
-import { ExpressionOrFactory, Selectable, SqlBool, Transaction } from "kysely";
+import { Selectable, Transaction } from "kysely";
 import { inject, injectable } from "tsyringe";
 
 import { CardSetSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
@@ -38,7 +38,6 @@ export class CardSetSyncService extends BaseSyncService<CardSetSyncOptions> impl
 
   //#region ICardSetSyncService methods ---------------------------------------
   public override async sync(options: CardSetSyncOptions, progressCallback: ProgressCallback): Promise<void> {
-
     return await this.shouldSync(options)
       .then(async (shouldSync: boolean) => {
         if (shouldSync) {
@@ -67,28 +66,19 @@ export class CardSetSyncService extends BaseSyncService<CardSetSyncOptions> impl
   //#endregion
 
   //#region Private methods ---------------------------------------------------
-  // TODO remove items that are not on the server anymore or at least mark them => how ?
-  // then we should prevent synchronizing single sets !
   public async processSync(cardSets: Array<ScryfallCardSet>): Promise<void> {
     return await this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
-      await runSerial<ScryfallCardSet>(cardSets, async (scryfallCardSet: ScryfallCardSet) => {
-        // cardSets.forEach(async (cardSet: ScryfallCardSet) => {
-        const filter: ExpressionOrFactory<DatabaseSchema, "card_set", SqlBool> = (eb) => eb("card_set.id", "=", scryfallCardSet.id);
-        const existingCardSet = await trx
-          .selectFrom("card_set")
-          .select("card_set.id")
-          .where(filter)
-          .executeTakeFirst();
-        if (existingCardSet) {
-          await trx.updateTable("card_set")
-            .set(this.cardSetAdapter.toUpdate(scryfallCardSet))
-            .where(filter)
-            .executeTakeFirstOrThrow();
-        } else {
-          await trx.insertInto("card_set")
-            .values(this.cardSetAdapter.toInsert(scryfallCardSet))
-            .executeTakeFirstOrThrow();
-        }
+      await runSerial<ScryfallCardSet>(
+        cardSets,
+        (scryfallCardSet: ScryfallCardSet) => `Processing '${scryfallCardSet.name}'`,
+        async (scryfallCardSet: ScryfallCardSet, _idx: number, _total: number) => {
+        await this.genericSingleSync(
+          trx,
+          "card_set",
+          (eb) => eb("card_set.id", "=", scryfallCardSet.id),
+          this.cardSetAdapter,
+          scryfallCardSet
+        );
       });
     });
   }

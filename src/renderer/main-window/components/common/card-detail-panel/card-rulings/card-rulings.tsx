@@ -16,7 +16,7 @@ export function CardRulings(props: CardDetailPanelProps) {
       const rulingQueryParam: QueryParam<RulingQueryOptions> = {
         type: "Ruling",
         options: {
-          cardId: props.card.card.id
+          cardId: props.card.cardId
         }
       };
       window.ipc.query(rulingQueryParam)

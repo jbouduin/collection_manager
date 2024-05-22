@@ -1,8 +1,8 @@
-import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
+import { ColumnType } from "kysely";
 
 import { CardLayout } from "../../../../common/enums";
 
-export interface CardFaceTable {
+export interface CardfaceTable {
 
   id: ColumnType<string, string, never>;
   card_id: ColumnType<string, string, never>;
@@ -59,7 +59,3 @@ export interface CardFaceTable {
    */
   watermark?: ColumnType<string, string | undefined>;
 }
-
-export type CardFace = Selectable<CardFaceTable>;
-export type InsertFace = Insertable<CardFaceTable>;
-export type UpdateCardFace = Updateable<CardFaceTable>;

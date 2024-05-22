@@ -1,6 +1,7 @@
-import { CardSet } from "../../../main/database/schema";
+import { Selectable } from "kysely";
+import { CardSetTable } from "../../../main/database/schema";
 
 export interface CardSetDto {
-  cardSet: CardSet;
+  cardSet: Selectable<CardSetTable>;
   svg: string;
 }

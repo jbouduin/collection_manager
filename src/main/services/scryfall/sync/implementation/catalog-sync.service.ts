@@ -1,9 +1,9 @@
-import { Transaction } from "kysely";
+import { Selectable, Transaction } from "kysely";
 import { inject, injectable } from "tsyringe";
 
 import { CatalogType } from "../../../../../common/enums";
 import { CatalogSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
-import { CatalogItem, DatabaseSchema } from "../../../../../main/database/schema";
+import { CatalogItemTable, DatabaseSchema } from "../../../../../main/database/schema";
 import INFRATOKENS, { IDatabaseService } from "../../../../../main/services/infra/interfaces";
 import { runSerial } from "../../../../../main/services/infra/util";
 import ADAPTTOKENS, { ICatalogAdapter } from "../../adapt/interface";
@@ -137,7 +137,7 @@ export class CatalogSyncService extends BaseSyncService<CatalogSyncOptions> impl
         .selectAll()
         .limit(1)
         .executeTakeFirst()
-        .then((existing: CatalogItem) => existing ? false : true);
+        .then((existing: Selectable<CatalogItemTable>) => existing ? false : true);
     }
   }
   //#endregion

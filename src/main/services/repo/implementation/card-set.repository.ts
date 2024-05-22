@@ -1,10 +1,11 @@
 import { inject, injectable } from "tsyringe";
 
 import { CardSetDto } from "../../../../common/dto";
-import { CardSet } from "../../../database/schema";
+import { CardSetTable } from "../../../database/schema";
 import INFRATOKENS, { IDatabaseService, IImageCacheService } from "../../infra/interfaces";
 import { ICardSetRepository } from "../interfaces";
 import { BaseRepository } from "./base.repository";
+import { Selectable } from "kysely";
 
 @injectable()
 export class CardSetRepository extends BaseRepository implements ICardSetRepository {
@@ -28,7 +29,7 @@ export class CardSetRepository extends BaseRepository implements ICardSetReposit
       .selectFrom("card_set")
       .selectAll()
       .execute()
-      .then((cardSets: Array<CardSet>) => cardSets.map<CardSetDto>((cardSet: CardSet) => {
+      .then((cardSets: Array<Selectable<CardSetTable>>) => cardSets.map<CardSetDto>((cardSet: Selectable<CardSetTable>) => {
         return {
           cardSet: cardSet,
           svg: this.imageCacheService.getCardSetSvg(cardSet)

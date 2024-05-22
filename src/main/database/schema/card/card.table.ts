@@ -1,4 +1,4 @@
-import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
+import { ColumnType } from "kysely";
 
 import { CardBorderColor, CardLayout, CardRarity } from "../../../../common/enums";
 import { SynchronizedWithStringId } from "../base.types";
@@ -202,7 +202,3 @@ export interface CardTable extends SynchronizedWithStringId {
 //   // preview.source 	String 	Nullable 	The name of the source that previewed this card.
 //   //#endregion
 // }
-
-export type Card = Selectable<CardTable>;
-export type NewCard = Insertable<CardTable>;
-export type UpdateCard = Updateable<CardTable>;

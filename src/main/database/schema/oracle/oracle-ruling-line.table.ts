@@ -1,4 +1,4 @@
-import { ColumnType, Insertable, Selectable } from "kysely";
+import { ColumnType } from "kysely";
 
 import { RulingSource } from "../../../../common/enums";
 
@@ -9,7 +9,3 @@ export interface OracleRulingLineTable {
   published_at: ColumnType<Date, string, never>;
   comments: ColumnType<string>;
 }
-
-export type OracleRulingLine = Selectable<OracleRulingLineTable>;
-export type OracleInsertRulingLine = Insertable<OracleRulingLineTable>;
-// NOT used export type UpdateRulingLine = Updateable<OracleRulingLineTable>;

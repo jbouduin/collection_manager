@@ -1,9 +1,9 @@
-import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
+import { ColumnType } from "kysely";
 
 import { MTGColor } from "../../../../common/enums";
 import { Synchronized } from "../base.types";
 
-// NOW not synchronized
+// NOW make table not synchronized
 export interface CardSymbolColorMapTable extends Synchronized {
   /***
    * The plaintext symbol. Often surrounded with curly braces {}. Note that not all symbols are ASCII text (for example, {∞}).
@@ -18,7 +18,3 @@ export interface CardSymbolColorMapTable extends Synchronized {
    */
   color_id: ColumnType<MTGColor, string, never>;
 }
-
-export type CardSymbolColorMap = Selectable<CardSymbolColorMapTable>;
-export type NewCardSymbolColorMap = Insertable<CardSymbolColorMapTable>;
-export type UpdateCardSymbolColorMap = Updateable<CardSymbolColorMapTable>;

@@ -1,7 +1,9 @@
 import { Props } from "@blueprintjs/core";
-import { CardDto, CardSetDto } from "../../../../../common/dto";
+
+import { CardSetDto } from "../../../../../common/dto";
+import { CardViewmodel } from "../../../view-models/card.view-model";
 
 export interface CardDetailPanelProps extends Props {
-  card?: CardDto;
+  card?: CardViewmodel;
   cardSet?: CardSetDto;
 }

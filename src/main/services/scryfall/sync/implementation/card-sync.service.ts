@@ -3,7 +3,7 @@ import { InsertResult, Transaction, UpdateResult } from "kysely";
 import { inject, injectable } from "tsyringe";
 import { v1 as uuidV1 } from "uuid";
 
-import { CardLegality, GameFormat } from "../../../../../common/enums";
+import { GameFormat } from "../../../../../common/enums";
 import { CardSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
 import { DatabaseSchema } from "../../../../../main/database/schema";
 import INFRATOKENS, { IDatabaseService } from "../../../../../main/services/infra/interfaces";
@@ -18,13 +18,13 @@ import ADAPTTOKENS, {
   IOracleKeywordAdapter,
   IOracleLegalityAdapter
 } from "../../adapt/interface";
+import { CardfaceColorMapAdapterParameter } from "../../adapt/interface/param/cardface-color-map-adapter.param";
+import { OracleLegalityAdapterParameter } from "../../adapt/interface/param/oracle-legality-adapter.param";
 import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
 import { ScryfallCard, ScryfallLegalities } from "../../types";
 import { ICardSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
 import { GenericSyncTaskParameter } from "./generic-sync-task.parameter";
-import { CardfaceColorMapAdapterParameter } from "../../adapt/interface/param/cardface-color-map-adapter.param";
-import { OracleLegalityAdapterParameter } from "../../adapt/interface/param/oracle-legality-adapter.param";
 
 @injectable()
 export class CardSyncService extends BaseSyncService<CardSyncOptions> implements ICardSyncService {

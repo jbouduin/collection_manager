@@ -1,8 +1,8 @@
 
 /* eslint-disable  @typescript-eslint/no-explicit-any */
-import { ColumnDefinitionBuilder, InsertResult, Kysely } from "kysely";
+import { ColumnDefinitionBuilder, InsertResult, Insertable, Kysely } from "kysely";
 
-import { NewColor } from "../../schema";
+import { ColorTable } from "../../schema";
 import { IBaseMigration, CreateTableOptions, createTable } from "../base.migration";
 
 export class V0_0_1_Color_Migration implements IBaseMigration {
@@ -36,7 +36,7 @@ async function createV0_0_1_Color(db: Kysely<any>): Promise<void> {
 }
 
 async function populateV0_0_1_Color(db: Kysely<any>): Promise<Array<InsertResult>> {
-  const values: Array<NewColor> = new Array<NewColor>();
+  const values = new Array<Insertable<ColorTable>>();
   values.push({ id: "W", sequence: 0, display_text: "White", land_type: "Plains", mana_symbol: "{W}" });
   values.push({ id: "U", sequence: 1, display_text: "Blue", land_type: "Plains", mana_symbol: "{U}" });
   values.push({ id: "B", sequence: 2, display_text: "Black", land_type: "Plains", mana_symbol: "{B}" });

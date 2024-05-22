@@ -1,7 +1,7 @@
-import { CardDto, CardSetDto } from "../../../../common/dto";
+import { CardSetDto } from "../../../../common/dto";
+import { CardViewmodel } from "../../view-models/card.view-model";
 
 export interface DatabaseViewState {
-  // selectedSetPath?: Array<number>;
   selectedSets?: Array<CardSetDto>;
-  selectedCards?: Array<CardDto>;
+  selectedCards?: Array<CardViewmodel>;
 }

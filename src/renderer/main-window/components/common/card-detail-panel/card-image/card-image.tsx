@@ -8,7 +8,7 @@ export function CardImage(props: CardImageProps) {
   //#region Main --------------------------------------------------------------
   return (props.card ?
     <div className="image-wrapper">
-      <img className="card-image" src={`cached-image://${props.card.card.id}?size=normal`} />
+      <img className="card-image" src={`cached-image://${props.card.localizationId}?size=normal`} />
     </div>
     :
     <div></div>

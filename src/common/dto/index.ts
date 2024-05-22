@@ -1,11 +1,16 @@
-import { CatalogItem, Color, Language, OracleRulingLine, } from "../../main/database/schema";
+import { Selectable } from "kysely";
+import { CardFaceLocalizationTable, CardSymbolAlternativeTable, CardSymbolColorMapTable, CatalogItemTable, ColorTable, LanguageTable, OracleRulingLineTable, OracleTable } from "../../main/database/schema";
 
 export * from "./select/card-image.dto";
 export * from "./select/card-set.dto";
-export * from "./select/card.dto";
 export * from "./select/card-symbol.dto";
+export * from "./select/card.dto";
 
-export type CatalogItemDto = CatalogItem;
-export type ColorDto = Color;
-export type LanguageDto = Language;
-export type RulingLineDto = OracleRulingLine;
+export type CatalogItemDto = Selectable<CatalogItemTable>;
+export type ColorDto = Selectable<ColorTable>;
+export type LanguageDto = Selectable<LanguageTable>;
+export type RulingLineDto = Selectable<OracleRulingLineTable>;
+export type CardSymbolColorMapDto = Selectable<CardSymbolColorMapTable>;
+export type CardSymbolAlternativeDto = Selectable<CardSymbolAlternativeTable>;
+export type CardfaceLocalizationDto = Selectable<CardFaceLocalizationTable>;
+export type OracleDto = Selectable<OracleTable>;

@@ -1,9 +1,9 @@
-import { ExpressionOrFactory, SqlBool, Transaction } from "kysely";
+import { ExpressionOrFactory, Selectable, SqlBool, Transaction } from "kysely";
 import { inject, injectable } from "tsyringe";
 
 import { CardSetSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
 import { runSerial } from "../../../../../main/services/infra/util";
-import { CardSet, DatabaseSchema } from "../../../../database/schema";
+import { CardSetTable, DatabaseSchema } from "../../../../database/schema";
 import INFRATOKENS, { IConfigurationService, IDatabaseService, IImageCacheService } from "../../../infra/interfaces";
 import ADAPTTOKENS, { ICardSetAdapter } from "../../adapt/interface";
 import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
@@ -49,10 +49,10 @@ export class CardSetSyncService extends BaseSyncService<CardSetSyncOptions> impl
           return await this.scryfallclient.getCardSets()
             .then(async (sets: Array<ScryfallCardSet>) => this.processSync(sets))
             .then(async () => await this.database.selectFrom("card_set").selectAll().execute())
-            .then(async (cardSets: Array<CardSet>) => {
+            .then(async (cardSets: Array<Selectable<CardSetTable>>) => {
               let result = Promise.resolve();
               console.log((`retrieved ${cardSets.length} saved card sets`));
-              cardSets.forEach(async (cardset: CardSet) => {
+              cardSets.forEach(async (cardset: Selectable<CardSetTable>) => {
                 result = result.then(async () => await this.imageCacheService.cacheCardSetSvg(cardset));
                 await result;
               });
@@ -102,7 +102,7 @@ export class CardSetSyncService extends BaseSyncService<CardSetSyncOptions> impl
         .selectAll()
         .limit(1)
         .executeTakeFirst()
-        .then((existing: CardSet) => existing ? false : true);
+        .then((existing: Selectable<CardSetTable>) => existing ? false : true);
     }
   }
   //#endregion

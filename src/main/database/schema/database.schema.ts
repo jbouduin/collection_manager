@@ -3,7 +3,7 @@ import {
   CardSetTable, CatalogItemTable, ColorTable, LanguageTable, OracleRulingTable,
   CardSymbolAlternativeTable, CardSymbolColorMapTable, CardSymbolTable,
   OracleRulingLineTable,
-  CardFaceTable,
+  CardfaceTable,
   CardFaceLocalizationImageTable,
   CardFaceColorMapTable,
   CardFaceLocalizationTable
@@ -17,7 +17,7 @@ export interface DatabaseSchema {
   card: CardTable;
   card_multiverse_id: CardMultiverseIdTable;
   card_game: CardGameTable;
-  cardface: CardFaceTable;
+  cardface: CardfaceTable;
   cardface_color_map: CardFaceColorMapTable;
   cardface_localization: CardFaceLocalizationTable;
   cardface_localization_image: CardFaceLocalizationImageTable;

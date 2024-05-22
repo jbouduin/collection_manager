@@ -1,9 +1,9 @@
 import { inject, injectable } from "tsyringe";
 
-import { ExpressionOrFactory, InsertResult, SqlBool, Transaction, UpdateResult } from "kysely";
+import { ExpressionOrFactory, InsertResult, Selectable, SqlBool, Transaction, UpdateResult } from "kysely";
 import { MTGColor } from "../../../../../common/enums";
 import { CardSymbolSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
-import { CardSymbol, DatabaseSchema } from "../../../../database/schema";
+import { CardSymbolTable, DatabaseSchema } from "../../../../database/schema";
 import INFRATOKENS, { IConfigurationService, IDatabaseService, IImageCacheService } from "../../../infra/interfaces";
 import ADAPTTOKENS, { ICardSymbolAdapter, ICardSymbolAlternativeAdapter, ICardSymbolColorMapAdapter } from "../../adapt/interface";
 import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
@@ -12,7 +12,7 @@ import { ICardSymbolSyncService } from "../interface/card-symbol-sync.service";
 import { BaseSyncService } from "./base-sync.service";
 import { runSerial } from "../../../../../main/services/infra/util";
 
-// NOW refactor sync service after making child tables non synchronized
+
 @injectable()
 export class CardSymbolSyncService extends BaseSyncService<CardSymbolSyncOptions> implements ICardSymbolSyncService {
 
@@ -56,10 +56,10 @@ export class CardSymbolSyncService extends BaseSyncService<CardSymbolSyncOptions
           return await this.scryfallclient.getCardSymbols()
             .then(async (all: Array<ScryfallCardSymbol>) => this.processSync(all, progressCallback))
             .then(async () => await this.database.selectFrom("card_symbol").selectAll().execute())
-            .then(async (allCardSymbols: Array<CardSymbol>) => {
+            .then(async (allCardSymbols: Array<Selectable<CardSymbolTable>>) => {
               console.log((`retrieved ${allCardSymbols.length} saved card symbols`));
               let result = Promise.resolve();
-              allCardSymbols.forEach(async (cardSymbol: CardSymbol) => {
+              allCardSymbols.forEach(async (cardSymbol: Selectable<CardSymbolTable>) => {
                 result = result.then(async () => await this.imageCacheService.cacheCardSymbolSvg(cardSymbol));
                 await result;
               });
@@ -74,9 +74,8 @@ export class CardSymbolSyncService extends BaseSyncService<CardSymbolSyncOptions
   //#endregion
 
   //#region Private methods ---------------------------------------------------
-  // TODO remove items that are not on the server anymore or at least mark them
   private async processSync(symbols: Array<ScryfallCardSymbol>, progressCallback: ProgressCallback): Promise<void> {
-    // NOW refactor
+    // NOW refactor sync service after making child tables non synchronized
     return await this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
       await runSerial<ScryfallCardSymbol>(symbols, async (symbol: ScryfallCardSymbol, idx: number, total: number) => {
         if (progressCallback) {
@@ -102,10 +101,10 @@ export class CardSymbolSyncService extends BaseSyncService<CardSymbolSyncOptions
         await insertOrUpdate.then(async () => {
           if (symbol.colors.length > 0) {
             await this.syncColors(trx, symbol.symbol, symbol.colors);
-          } // TODO else remove existing
+          }
           if (symbol.gatherer_alternates?.length > 0) {
             await this.syncAlternatives(trx, symbol.symbol, symbol.gatherer_alternates);
-          } // TODO else remove existing
+          }
         });
       });
     });
@@ -172,7 +171,7 @@ export class CardSymbolSyncService extends BaseSyncService<CardSymbolSyncOptions
         .selectAll()
         .limit(1)
         .executeTakeFirst()
-        .then((existing: CardSymbol) => existing ? false : true);
+        .then((existing: Selectable<CardSymbolTable>) => existing ? false : true);
     }
   }
   //#endregion

@@ -2,10 +2,11 @@
 import { inject, injectable } from "tsyringe";
 
 import { CardSymbolDto } from "../../../../common/dto";
-import { CardSymbol, CardSymbolAlternative, CardSymbolColorMap } from "../../../database/schema";
+import { CardSymbolAlternativeTable, CardSymbolColorMapTable, CardSymbolTable } from "../../../database/schema";
 import INFRATOKENS, { IDatabaseService, IImageCacheService } from "../../infra/interfaces";
 import { ICardSymbolRepository } from "../interfaces";
 import { BaseRepository } from "./base.repository";
+import { Selectable } from "kysely";
 
 
 @injectable()
@@ -31,13 +32,16 @@ export class CardSymbolRepository extends BaseRepository implements ICardSymbolR
       this.database.selectFrom("card_symbol_color_map").selectAll().execute(),
       this.database.selectFrom("card_symbol_alternative").selectAll().execute()
     ])
-      .then((result: [Array<CardSymbol>, Array<CardSymbolColorMap>, Array<CardSymbolAlternative>]) => {
+      .then((result: [
+        Array<Selectable<CardSymbolTable>>,
+        Array<Selectable<CardSymbolColorMapTable>>,
+        Array<Selectable<CardSymbolAlternativeTable>>]) => {
 
-        return result[0].map((symbol: CardSymbol) => {
+        return result[0].map((symbol: Selectable<CardSymbolTable>) => {
           const dto: CardSymbolDto = {
             cardSymbol: symbol,
-            alternatives: result[2].filter((alternative: CardSymbolAlternative) => alternative.card_symbol_id == symbol.id),
-            colors: result[1].filter((color: CardSymbolColorMap) => color.card_symbol_id == symbol.id)
+            alternatives: result[2].filter((alternative: Selectable<CardSymbolAlternativeTable>) => alternative.card_symbol_id == symbol.id),
+            colors: result[1].filter((color: Selectable<CardSymbolColorMapTable>) => color.card_symbol_id == symbol.id)
           };
           return dto;
         });
@@ -50,9 +54,9 @@ export class CardSymbolRepository extends BaseRepository implements ICardSymbolR
       .selectFrom("card_symbol")
       .selectAll()
       .execute()
-      .then(((cardSymbols: Array<CardSymbol>) => {
+      .then(((cardSymbols: Array<Selectable<CardSymbolTable>>) => {
       const result = new Map<string, string>();
-      cardSymbols.forEach((cardSymbol: CardSymbol) =>
+        cardSymbols.forEach((cardSymbol: Selectable<CardSymbolTable>) =>
         result.set(cardSymbol.id, this.imageCacheService.getCardSymbolSvg(cardSymbol))
       );
       return result;

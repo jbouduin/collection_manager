@@ -5,8 +5,9 @@ import { inject, injectable } from "tsyringe";
 
 import { CardImageDto } from "../../../../common/dto";
 import INFRATOKENS, { IConfigurationService, IImageCacheService } from "../interfaces";
-import { CardSet, CardSymbol } from "../../../../main/database/schema";
+import { CardSetTable, CardSymbolTable } from "../../../../main/database/schema";
 import SCRYTOKENS, { IScryfallClient } from "../../scryfall/client/interfaces";
+import { Selectable } from "kysely";
 
 @injectable()
 export class ImageCacheService implements IImageCacheService {
@@ -26,7 +27,7 @@ export class ImageCacheService implements IImageCacheService {
   //#endregion
 
   //#region IImageCacheService methods ----------------------------------------
-  public async cacheCardSymbolSvg(cardSymbol: CardSymbol): Promise<void> {
+  public async cacheCardSymbolSvg(cardSymbol: Selectable<CardSymbolTable>): Promise<void> {
     return this.apiClient.fetchSvg(cardSymbol.svg_uri)
       .then((arrayBuffer: ArrayBuffer) => {
         const buffer = Buffer.from(arrayBuffer);
@@ -35,7 +36,7 @@ export class ImageCacheService implements IImageCacheService {
   }
 
   // TODO if the svg has no fill property, insert it as fill="#000" otherwise the colors could screw up
-  public async cacheCardSetSvg(cardSet: CardSet): Promise<void> {
+  public async cacheCardSetSvg(cardSet: Selectable<CardSetTable>): Promise<void> {
     console.log(`  -> start cache svg for '${cardSet.name}'`);
     await this.apiClient.fetchSvg(cardSet.icon_svg_uri)
       .then((arrayBuffer: ArrayBuffer) => {
@@ -59,17 +60,17 @@ export class ImageCacheService implements IImageCacheService {
     }
   }
 
-  public getCardSymbolSvg(cardSymbol: CardSymbol): string {
+  public getCardSymbolSvg(cardSymbol: Selectable<CardSymbolTable>): string {
     return fs.readFileSync(this.pathToCardSymbolSvg(cardSymbol), { encoding: "utf-8" });
   }
   //#endregion
 
   //#region Private methods ---------------------------------------------------
-  public getCardSetSvg(cardSet: CardSet): string {
+  public getCardSetSvg(cardSet: Selectable<CardSetTable>): string {
     return fs.readFileSync(this.pathToCardSetSvg(cardSet), { encoding: "utf-8" });
   }
 
-  private pathToCardSymbolSvg(cardSymbol: CardSymbol): string {
+  private pathToCardSymbolSvg(cardSymbol: Selectable<CardSymbolTable>): string {
     const fileName = new URL(cardSymbol.svg_uri).pathname.split("/").pop();
     const dirName = path.join(this.configurationService.cacheDirectory, "cardsymbols");
     if (!fs.existsSync(dirName)) {
@@ -87,7 +88,7 @@ export class ImageCacheService implements IImageCacheService {
     return path.join(dirName, fileName);
   }
 
-  private pathToCardSetSvg(cardSet: CardSet): string {
+  private pathToCardSetSvg(cardSet: Selectable<CardSetTable>): string {
     const fileName = `${cardSet.code}${path.extname(new URL(cardSet.icon_svg_uri).pathname.split("/").pop())}`;
     const dirName = path.join(this.configurationService.cacheDirectory, "sets");
     if (!fs.existsSync(dirName)) {

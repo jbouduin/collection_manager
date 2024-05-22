@@ -1,8 +1,8 @@
-import { DeleteResult, ExpressionOrFactory, InsertResult, SqlBool, Transaction, UpdateResult } from "kysely";
+import { DeleteResult, ExpressionOrFactory, InsertResult, Selectable, SqlBool, Transaction, UpdateResult } from "kysely";
 import { inject, injectable } from "tsyringe";
 
 import { ProgressCallback, RulingSyncOptions } from "../../../../../common/ipc-params";
-import { Card, DatabaseSchema } from "../../../../database/schema";
+import { CardTable, DatabaseSchema } from "../../../../database/schema";
 import INFRATOKENS, { IDatabaseService } from "../../../infra/interfaces";
 import ADAPTTOKENS, { IOracleRulingAdapter, IOracleRulingLineAdapter } from "../../adapt/interface";
 import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
@@ -64,7 +64,7 @@ export class RulingSyncService extends BaseSyncService<RulingSyncOptions> implem
           .selectAll()
           .where("card.id", "=", cardId)
           .executeTakeFirst()
-          .then((card: Card) => this.syncRulingForSingleOracleId(trx, card.oracle_id, new Array<ScryfallRuling>()));
+          .then((card: Selectable<CardTable>) => this.syncRulingForSingleOracleId(trx, card.oracle_id, new Array<ScryfallRuling>()));
       });
     }
   }

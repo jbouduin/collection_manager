@@ -1,8 +1,8 @@
-import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
+import { ColumnType } from "kysely";
 
 import { Synchronized } from "../base.types";
 
-// NOW not synchronized
+// NOW make table not synchronized
 export interface CardSymbolAlternativeTable extends Synchronized {
   /**
    * The Id
@@ -16,7 +16,3 @@ export interface CardSymbolAlternativeTable extends Synchronized {
    */
   alternative: ColumnType<string, string, never>;
 }
-
-export type CardSymbolAlternative = Selectable<CardSymbolAlternativeTable>;
-export type NewCardSymbolAlternative = Insertable<CardSymbolAlternativeTable>;
-export type UpdateCardSymbolAlternative = Updateable<CardSymbolAlternativeTable>;

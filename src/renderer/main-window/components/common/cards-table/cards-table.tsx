@@ -1,8 +1,9 @@
 import { Cell, CellProps, CellRenderer, Column, Region, SelectionModes, Table2 } from "@blueprintjs/table";
 import * as React from "react";
 
-import { CardDto, CardSetDto, LanguageDto } from "../../../../../common/dto";
+import { CardDto, CardSetDto } from "../../../../../common/dto";
 import { CardQueryOptions, QueryParam } from "../../../../../common/ipc-params";
+import { CardViewmodel } from "../../../view-models/card.view-model";
 import { SvgProvider } from "../svg-provider/svg-provider";
 import { CardsTableProps } from "./cards-table.props";
 
@@ -10,7 +11,7 @@ import { CardsTableProps } from "./cards-table.props";
 export function CardsTable(props: CardsTableProps) {
   console.log("in cards table function");
   //#region State -------------------------------------------------------------
-  const [cards, setCards] = React.useState(new Array<CardDto>());
+  const [cards, setCards] = React.useState(new Array<CardViewmodel>());
   //#endregion
 
   //#region event handling ----------------------------------------------------
@@ -23,7 +24,7 @@ export function CardsTable(props: CardsTableProps) {
   }
 
   function onSelection(selectedRegions: Array<Region>): void {
-    const selectedCards = new Array<CardDto>();
+    const selectedCards = new Array<CardViewmodel>();
     selectedRegions
       .filter((region: Region) => region.rows)
       .forEach((region: Region) => {
@@ -38,31 +39,32 @@ export function CardsTable(props: CardsTableProps) {
   //#endregion
 
   //#region Cell renderers ----------------------------------------------------
-  function textCellRenderer(valueCallBack: (card: CardDto) => string): CellRenderer {
+  function textCellRenderer(valueCallBack: (card: CardViewmodel) => string): CellRenderer {
     return (row: number) => (<Cell>{valueCallBack(cards[row])}</Cell>);
   }
 
-  function setNameRenderer(row: number): React.ReactElement<CellProps> {
-    const set = props.selectedSets.filter((s: CardSetDto) => s.cardSet.id == cards[row].card.set_id);
+  function cardSetNameRenderer(row: number): React.ReactElement<CellProps> {
+    const set = props.selectedSets.filter((s: CardSetDto) => s.cardSet.id == cards[row].setId);
     return (<Cell>{set[0]?.cardSet.name}</Cell>);
   }
 
-  function languageRenderer(row: number): React.ReactElement<CellProps> {
-    // NOW const lang = cards[row].card.lang;
-    const lang = "en";
-    const languageDef = props.languages.filter((lng: LanguageDto) => lng.id == lang);
-    return (
-      <Cell>
-        {languageDef.length > 0 ? languageDef[0].display_text : lang}
-      </Cell>
-    );
-  }
+  // FEATURE multilanguage
+  // function languageRenderer(row: number): React.ReactElement<CellProps> {
+  //   const lang = cards[row].card.lang;
+  //   const lang = "en";
+  //   const languageDef = props.languages.filter((lng: LanguageDto) => lng.id == lang);
+  //   return (
+  //     <Cell>
+  //       {languageDef.length > 0 ? languageDef[0].display_text : lang}
+  //     </Cell>
+  //   );
+  // }
 
   function manaCostRenderer(row: number): React.ReactElement<CellProps> {
     return (
       <Cell>
         {
-          cards[row].manaCostArray
+          cards[row].cardManacost
             .map((manaCost: string, idx: number) => {
               if (manaCost == "//") {
                 return (<span>&nbsp; &nbsp;//&nbsp;&nbsp;</span>);
@@ -71,7 +73,7 @@ export function CardsTable(props: CardsTableProps) {
                 if (cachedSvg) {
                   return (<SvgProvider svg={props.cachedSvg.get(manaCost)} key={`manacost_${idx}`} />);
                 } else {
-                  // NOW console.log(`no cached svg for "${manaCost}" of ${cards[row].card.name} `);
+                    console.log(`no cached svg for "${manaCost}" of ${cards[row].cardName} `);
                   return;
                 }
               }
@@ -93,28 +95,31 @@ export function CardsTable(props: CardsTableProps) {
         }
       };
       window.ipc.query(cardQueryParam)
-        .then((cardResult: Array<CardDto>) => setCards(cardResult.sort((a: CardDto, b: CardDto) => a.collectorNumberSortValue.localeCompare(b.collectorNumberSortValue))));
+        .then((cardResult: Array<CardDto>) => setCards(
+          cardResult
+            .map((card: CardDto) => new CardViewmodel(card))
+            .sort((a: CardViewmodel, b: CardViewmodel) => a.collectorNumberSortValue.localeCompare(b.collectorNumberSortValue))
+        ));
     } else {
-      setCards(new Array<CardDto>());
+      setCards(new Array<CardViewmodel>());
     }
   }, [props.selectedSets]);
   //#endregion
 
   //#region Main --------------------------------------------------------------
-  // NOW correct columns
   return (
     <div className="cards-table-wrapper">
       <Table2 className={props.className} numRows={cards?.length ?? 0} selectionModes={SelectionModes.ROWS_AND_CELLS} onSelection={onSelection} selectedRegionTransform={selectedRegionTransform}>
-        <Column name="Number" cellRenderer={textCellRenderer((card: CardDto) => card.card.collector_number)} />
-        <Column name="Rarity" cellRenderer={textCellRenderer((card: CardDto) => card.card.rarity)} />
+        <Column name="Number" cellRenderer={textCellRenderer((card: CardViewmodel) => card.collectorNumber)} />
+        <Column name="Name" cellRenderer={textCellRenderer((card: CardViewmodel) => card.cardName)} />
+        <Column name="Rarity" cellRenderer={textCellRenderer((card: CardViewmodel) => card.rarity)} />
         <Column name="Mana cost" cellRenderer={manaCostRenderer} />
-        <Column name="Language" cellRenderer={languageRenderer} />
-        <Column name="Set" cellRenderer={setNameRenderer} />
+        <Column name="Set" cellRenderer={cardSetNameRenderer} />
+        <Column name="Power" cellRenderer={textCellRenderer((card: CardViewmodel) => card.cardPower)} />
+        <Column name="Thoughness" cellRenderer={textCellRenderer((card: CardViewmodel) => card.cardThoughness)} />
       </Table2>
     </div>
   );
-  // <Column name="Name" cellRenderer={textCellRenderer((card: CardDto) => card.card.name)} />
-  // <Column name="Power" cellRenderer={textCellRenderer((card: CardDto) => card.card.power)} />
-  // <Column name="Thoughness" cellRenderer={textCellRenderer((card: CardDto) => card.card.thoughness)} />
+  // <Column name="Language" cellRenderer={languageRenderer} />
   //#endregion
 }

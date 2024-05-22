@@ -1,6 +1,6 @@
 import { Selectable } from "kysely";
 import { inject, injectable } from "tsyringe";
-
+import * as fs from "fs";
 import { CardDto, CardImageDto, CardfaceDto, } from "../../../../common/dto";
 import { ImageSize } from "../../../../common/enums";
 import { CardQueryOptions } from "../../../../common/ipc-params/query/card-query.options";
@@ -28,17 +28,17 @@ export class CardRepository extends BaseRepository implements ICardRepository {
       .innerJoin("card", "card.id", "cardface.card_id")
       .innerJoin("card_set", "card_set.id", "card.set_id")
       .innerJoin("cardface_localization_image", "cardface_localization_image.cardface_localization_id", "cardface_localization.id")
-       .select([
-         "card.collector_number as collectorNumber",
-         "cardface_localization_image.uri as imageUri",
-         "card_set.code as setCode",
-         "cardface_localization.lang as language",
-         "cardface_localization_image.image_type as imageType"
-         // LATER sql`${imageType} as imageType`
-       ])
-       .where("cardface_localization.id", "=", localizationId)
-       .where("cardface_localization_image.image_type", "=", imageType)
-       .executeTakeFirst();
+      .select([
+        "card.collector_number as collectorNumber",
+        "cardface_localization_image.uri as imageUri",
+        "card_set.code as setCode",
+        "cardface_localization.lang as language",
+        "cardface_localization_image.image_type as imageType"
+        // LATER sql`${imageType} as imageType`
+      ])
+      .where("cardface_localization.id", "=", localizationId)
+      .where("cardface_localization_image.image_type", "=", imageType)
+      .executeTakeFirst();
   }
 
   public async getCards(options: CardQueryOptions): Promise<Array<CardDto>> {
@@ -54,8 +54,7 @@ export class CardRepository extends BaseRepository implements ICardRepository {
     else if (options.setIds) {
       cardQueryResult = this.database
         .selectFrom("card")
-        .selectAll()
-        .leftJoin("card_set", "card_set.id", "card.set_id")
+        .innerJoin("card_set", "card_set.id", "card.set_id")
         .selectAll("card")
         .where("card.set_id", "in", options.setIds)
         .execute();
@@ -82,8 +81,11 @@ export class CardRepository extends BaseRepository implements ICardRepository {
       .selectAll()
       .where("cardface_color_map.cardface_id", "in", cardfaces.map((cardface: Selectable<CardfaceTable>) => cardface.id))
       .execute()
-      .then((colorMaps: Array<Selectable<CardFaceColorMapTable>>) =>
-        this.createCardDtos(cards, oracles, cardfaces, localizations, colorMaps));
+      .then((colorMaps: Array<Selectable<CardFaceColorMapTable>>) => {
+        const result = this.createCardDtos(cards, oracles, cardfaces, localizations, colorMaps);
+        fs.writeFileSync("c:/data/new-assistant/json/cardquery.json", JSON.stringify(result, null, 2));
+        return result;
+      });
 
 
 
@@ -112,7 +114,7 @@ export class CardRepository extends BaseRepository implements ICardRepository {
     cardId: string,
     cardfaces: Array<Selectable<CardfaceTable>>,
     localizations: Array<Selectable<CardFaceLocalizationTable>>,
-    colorMaps: Array<Selectable<CardFaceColorMapTable>>): Array<CardfaceDto>  {
+    colorMaps: Array<Selectable<CardFaceColorMapTable>>): Array<CardfaceDto> {
     return cardfaces
       .filter((cardface: Selectable<CardfaceTable>) => cardface.card_id == cardId)
       .map((cardface: Selectable<CardfaceTable>) => {

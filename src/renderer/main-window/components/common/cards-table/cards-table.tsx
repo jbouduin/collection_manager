@@ -73,7 +73,7 @@ export function CardsTable(props: CardsTableProps) {
                 if (cachedSvg) {
                   return (<SvgProvider svg={props.cachedSvg.get(manaCost)} key={`manacost_${idx}`} />);
                 } else {
-                    console.log(`no cached svg for "${manaCost}" of ${cards[row].cardName} `);
+                  console.log(`no cached svg for "${manaCost}" of ${cards[row].cardName} `);
                   return;
                 }
               }
@@ -95,11 +95,14 @@ export function CardsTable(props: CardsTableProps) {
         }
       };
       window.ipc.query(cardQueryParam)
-        .then((cardResult: Array<CardDto>) => setCards(
-          cardResult
-            .map((card: CardDto) => new CardViewmodel(card))
-            .sort((a: CardViewmodel, b: CardViewmodel) => a.collectorNumberSortValue.localeCompare(b.collectorNumberSortValue))
-        ));
+        .then((cardResult: Array<CardDto>) => {
+          console.log(`retrieved ${cardResult.length} cards`)
+          setCards(
+            cardResult
+              .map((card: CardDto) => new CardViewmodel(card))
+              .sort((a: CardViewmodel, b: CardViewmodel) => a.collectorNumberSortValue.localeCompare(b.collectorNumberSortValue))
+          );
+        });
     } else {
       setCards(new Array<CardViewmodel>());
     }
@@ -109,14 +112,14 @@ export function CardsTable(props: CardsTableProps) {
   //#region Main --------------------------------------------------------------
   return (
     <div className="cards-table-wrapper">
-      <Table2 className={props.className} numRows={cards?.length ?? 0} selectionModes={SelectionModes.ROWS_AND_CELLS} onSelection={onSelection} selectedRegionTransform={selectedRegionTransform}>
+      <Table2 className={props.className} numRows={cards?.length ?? 0} selectionModes={SelectionModes.ROWS_AND_CELLS} onSelection={onSelection} selectedRegionTransform={selectedRegionTransform} >
         <Column name="Number" cellRenderer={textCellRenderer((card: CardViewmodel) => card.collectorNumber)} />
         <Column name="Name" cellRenderer={textCellRenderer((card: CardViewmodel) => card.cardName)} />
         <Column name="Rarity" cellRenderer={textCellRenderer((card: CardViewmodel) => card.rarity)} />
         <Column name="Mana cost" cellRenderer={manaCostRenderer} />
         <Column name="Set" cellRenderer={cardSetNameRenderer} />
-        <Column name="Power" cellRenderer={textCellRenderer((card: CardViewmodel) => card.cardPower)} />
-        <Column name="Thoughness" cellRenderer={textCellRenderer((card: CardViewmodel) => card.cardThoughness)} />
+        <Column name="Power" cellRenderer={textCellRenderer((card: CardViewmodel) => "card.cardPower")} />
+        <Column name="Thoughness" cellRenderer={textCellRenderer((card: CardViewmodel) => "card.cardThoughness")} />
       </Table2>
     </div>
   );

@@ -5,6 +5,7 @@ import { v1 as uuidV1 } from "uuid";
 
 import { GameFormat } from "../../../../../common/enums";
 import { CardSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
+import { isSingleCardFaceLayout } from "../../../../../common/util";
 import { DatabaseSchema } from "../../../../../main/database/schema";
 import INFRATOKENS, { IDatabaseService } from "../../../../../main/services/infra/interfaces";
 import { runSerial } from "../../../../../main/services/infra/util";
@@ -133,7 +134,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
   }
 
   private async syncOracle(trx: Transaction<DatabaseSchema>, scryfallCard: ScryfallCard): Promise<void> {
-    if (scryfallCard.layout == "normal") {
+    if (isSingleCardFaceLayout(scryfallCard.layout)) {
       await this.genericSingleSync(
         trx,
         "oracle",
@@ -148,7 +149,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
 
   private async syncOracleKeywords(trx: Transaction<DatabaseSchema>, scryfallCard: ScryfallCard): Promise<void> {
     if (scryfallCard.keywords?.length > 0) {
-      if (scryfallCard.layout == "normal") {
+      if (isSingleCardFaceLayout(scryfallCard.layout)) {
         await this.genericDeleteAndRecreate(
           trx,
           "oracle_keyword",
@@ -181,10 +182,10 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
         })
       );
 
-      if (scryfallCard.layout == "normal") {
+      if (isSingleCardFaceLayout(scryfallCard.layout)) {
         await runSerial<GenericSyncTaskParameter<"oracle_legality", OracleLegalityAdapterParameter>>(
           taskParameters,
-          (param: GenericSyncTaskParameter<"oracle_legality", OracleLegalityAdapterParameter>) => "Processing oracle legality",
+          (_param: GenericSyncTaskParameter<"oracle_legality", OracleLegalityAdapterParameter>) => "Processing oracle legality",
           async (param: GenericSyncTaskParameter<"oracle_legality", OracleLegalityAdapterParameter>, index: number, total: number) => super.serialGenericSingleSync(param, index, total)
         );
       } else {
@@ -225,7 +226,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
 
   private async syncCardFaces(trx: Transaction<DatabaseSchema>, scryfallCard: ScryfallCard): Promise<void> {
     // if layout is normal: scrfall does not return cardfaces, so we save the whole card a single cardface
-    if (scryfallCard.layout == "normal") {
+    if (isSingleCardFaceLayout(scryfallCard.layout)) {
       const cardfaceUuid = uuidV1();
       await this
         .genericDeleteAndRecreate(

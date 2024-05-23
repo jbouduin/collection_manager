@@ -1,7 +1,7 @@
 import { Cell, CellProps, CellRenderer, Column, Region, SelectionModes, Table2 } from "@blueprintjs/table";
 import * as React from "react";
 
-import { DtoCard, CardSetDto } from "../../../../../common/dto";
+import { DtoCard, DtoCardSet } from "../../../../../common/dto";
 import { CardQueryOptions, QueryParam } from "../../../../../common/ipc-params";
 import { CardViewmodel } from "../../../view-models/card.view-model";
 import { SvgProvider } from "../svg-provider/svg-provider";
@@ -44,8 +44,8 @@ export function CardsTable(props: CardsTableProps) {
   }
 
   function cardSetNameRenderer(row: number): React.ReactElement<CellProps> {
-    const set = props.selectedSets.filter((s: CardSetDto) => s.cardSet.id == cards[row].setId);
-    return (<Cell>{set[0]?.cardSet.name}</Cell>);
+    const set = props.selectedSets.filter((s: DtoCardSet) => s.id == cards[row].setId);
+    return (<Cell>{set[0]?.name}</Cell>);
   }
 
   // FEATURE multilanguage
@@ -91,7 +91,7 @@ export function CardsTable(props: CardsTableProps) {
         type: "Card",
         options: {
           cardId: null,
-          setIds: props.selectedSets.map((set: CardSetDto) => set.cardSet.id)
+          setIds: props.selectedSets.map((set: DtoCardSet) => set.id)
         }
       };
       window.ipc.query(cardQueryParam)

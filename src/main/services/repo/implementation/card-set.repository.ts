@@ -1,11 +1,9 @@
 import { inject, injectable } from "tsyringe";
 
-import { CardSetDto } from "../../../../common/dto";
-import { CardSetTable } from "../../../database/schema";
+import { DtoCardSet } from "../../../../common/dto";
 import INFRATOKENS, { IDatabaseService, IImageCacheService } from "../../infra/interfaces";
 import { ICardSetRepository } from "../interfaces";
 import { BaseRepository } from "./base.repository";
-import { Selectable } from "kysely";
 
 @injectable()
 export class CardSetRepository extends BaseRepository implements ICardSetRepository {
@@ -24,17 +22,16 @@ export class CardSetRepository extends BaseRepository implements ICardSetReposit
   //#endregion
 
   //#region ICardSetRepository methods ----------------------------------------
-  public getAll(): Promise<Array<CardSetDto>> {
+  public getAll(): Promise<Array<DtoCardSet>> {
     return this.database
       .selectFrom("card_set")
       .selectAll()
+      .$castTo<DtoCardSet>()
       .execute()
-      .then((cardSets: Array<Selectable<CardSetTable>>) => cardSets.map<CardSetDto>((cardSet: Selectable<CardSetTable>) => {
-        return {
-          cardSet: cardSet,
-          svg: this.imageCacheService.getCardSetSvg(cardSet)
-        } as CardSetDto;
-      }));
+      .then((qryResult: Array<DtoCardSet>) => {
+        qryResult.forEach((cardSet: DtoCardSet) => cardSet.svg = this.imageCacheService.getCardSetSvg(cardSet));
+        return qryResult;
+      });
   }
   //#endregion
 }

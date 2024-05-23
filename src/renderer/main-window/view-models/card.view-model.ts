@@ -1,5 +1,5 @@
-import { MTGLanguage } from "../../../common/enums";
 import { DtoCard, DtoCardface } from "../../../common/dto";
+import { MTGLanguage } from "../../../common/enums";
 
 export class CardViewmodel {
   private readonly cardDto: DtoCard;
@@ -12,6 +12,10 @@ export class CardViewmodel {
 
   public get setId(): string {
     return this.cardDto.set_id;
+  }
+
+  public get isMultipleLanguage(): boolean {
+    return this.cardDto.languages.length > 1;
   }
 
   public get cardManacost(): Array<string> {

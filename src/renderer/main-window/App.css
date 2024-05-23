@@ -79,6 +79,16 @@ body {
   margin: auto;
 }
 
+.card-header-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-header-line {
+    display: flex;
+    flex-direction: row;
+}
+
 @media (prefers-color-scheme: dark) {
 
   body,

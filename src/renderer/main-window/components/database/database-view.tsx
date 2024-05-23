@@ -3,12 +3,12 @@ import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
 
 import { DtoCardSet } from "../../../../common/dto";
+import { CardViewmodel } from "../../view-models/card.view-model";
 import { CardDetailPanel } from "../common/card-detail-panel/card-detail-panel";
 import { CardSetsTree } from "../common/card-sets-tree/card-sets-tree";
 import { CardsTable } from "../common/cards-table/cards-table";
 import { DatabaseViewProps } from "./database-view.props";
 import { DatabaseViewState } from "./database-view.state";
-import { CardViewmodel } from "../../view-models/card.view-model";
 
 
 export function DatabaseView(props: DatabaseViewProps) {
@@ -53,7 +53,12 @@ export function DatabaseView(props: DatabaseViewProps) {
         </Panel>
         <PanelResizeHandle />
         <Panel defaultSize={20}>
-          <CardDetailPanel className={props.className} card={state.selectedCards ? state.selectedCards[0] : null} cardSet={calculateSetOfSelectedCard()}/>
+          <CardDetailPanel
+            className={props.className}
+            card={state.selectedCards ? state.selectedCards[0] : null}
+            cardSet={calculateSetOfSelectedCard()}
+            languages={props.languages}
+          />
           </Panel>
       </PanelGroup>
     </div >

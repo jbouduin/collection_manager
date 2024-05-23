@@ -1,12 +1,14 @@
-
+import * as helpers from "kysely/helpers/sqlite";
 import { inject, injectable } from "tsyringe";
 
-import { CardSymbolDto } from "../../../../common/dto";
-import { CardSymbolAlternativeTable, CardSymbolColorMapTable, CardSymbolTable } from "../../../database/schema";
+import { Selectable } from "kysely";
+import { DtoCardSymbol, DtoCardSymbolAlternative, DtoCardSymbolColorMap } from "../../../../common/dto";
+import { cardSymbolAlternativeTableFields, cardSymbolColorMapTableFields, cardSymbolTableFields } from "../../../../main/database/schema/card-symbol/table-field.constants";
+import { CardSymbolTable } from "../../../database/schema";
 import INFRATOKENS, { IDatabaseService, IImageCacheService } from "../../infra/interfaces";
 import { ICardSymbolRepository } from "../interfaces";
 import { BaseRepository } from "./base.repository";
-import { Selectable } from "kysely";
+
 
 
 @injectable()
@@ -26,30 +28,29 @@ export class CardSymbolRepository extends BaseRepository implements ICardSymbolR
   //#endregion
 
   //#region ICardSymbolRepository methods -------------------------------------
-  public async getAll(): Promise<Array<CardSymbolDto>> {
-    return Promise.all([
-      this.database.selectFrom("card_symbol").selectAll().execute(),
-      this.database.selectFrom("card_symbol_color_map").selectAll().execute(),
-      this.database.selectFrom("card_symbol_alternative").selectAll().execute()
-    ])
-      .then((result: [
-        Array<Selectable<CardSymbolTable>>,
-        Array<Selectable<CardSymbolColorMapTable>>,
-        Array<Selectable<CardSymbolAlternativeTable>>]) => {
-
-        return result[0].map((symbol: Selectable<CardSymbolTable>) => {
-          const dto: CardSymbolDto = {
-            cardSymbol: symbol,
-            alternatives: result[2].filter((alternative: Selectable<CardSymbolAlternativeTable>) => alternative.card_symbol_id == symbol.id),
-            colors: result[1].filter((color: Selectable<CardSymbolColorMapTable>) => color.card_symbol_id == symbol.id)
-          };
-          return dto;
-        });
-      });
-
+  public async getAll(): Promise<Array<DtoCardSymbol>> {
+    return await this.database
+      .selectFrom("card_symbol")
+      .select((eb) => [
+        ...cardSymbolTableFields,
+        helpers.jsonArrayFrom<DtoCardSymbolColorMap>(
+          eb.selectFrom("card_symbol_color_map")
+            .select(cardSymbolColorMapTableFields)
+            .whereRef("card_symbol_color_map.card_symbol_id", "=", "card_symbol.id")
+            .$castTo<DtoCardSymbolColorMap>()
+        ).as("colors"),
+        helpers.jsonObjectFrom<DtoCardSymbolAlternative>(
+          eb.selectFrom("card_symbol_alternative")
+            .select(cardSymbolAlternativeTableFields)
+            .whereRef("card_symbol_alternative.card_symbol_id", "=", "card_symbol.id")
+            .$castTo<DtoCardSymbolAlternative>()
+        ).as("alternatives")
+      ])
+      .$castTo<DtoCardSymbol>()
+      .execute();
   }
 
-  public getAllWithCachedSvg(): Promise<Map<string, string>> {
+  public getCardSymbolSvg(): Promise<Map<string, string>> {
     return this.database
       .selectFrom("card_symbol")
       .selectAll()

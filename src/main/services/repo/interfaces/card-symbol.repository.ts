@@ -1,7 +1,7 @@
 
-import { CardSymbolDto } from "../../../../common/dto";
+import { DtoCardSymbol } from "../../../../common/dto";
 
 export interface ICardSymbolRepository {
-  getAll(): Promise<Array<CardSymbolDto>>;
-  getAllWithCachedSvg(): Promise<Map<string, string>>;
+  getAll(): Promise<Array<DtoCardSymbol>>;
+  getCardSymbolSvg(): Promise<Map<string, string>>;
 }

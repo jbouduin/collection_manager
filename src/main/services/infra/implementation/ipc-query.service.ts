@@ -29,7 +29,7 @@ export class IpcQueryService implements IIpcQueryService {
       case "CardSymbol":
         return container.resolve<ICardSymbolRepository>(REPOTOKENS.CardSymbolRepository).getAll();
       case "CardSymbolCachedSvg":
-        return container.resolve<ICardSymbolRepository>(REPOTOKENS.CardSymbolRepository).getAllWithCachedSvg();
+        return container.resolve<ICardSymbolRepository>(REPOTOKENS.CardSymbolRepository).getCardSymbolSvg();
       case "Ruling":
         return this.handleRuling(params.options as RulingQueryOptions);
     }

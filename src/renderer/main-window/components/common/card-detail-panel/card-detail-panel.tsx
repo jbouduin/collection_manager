@@ -14,7 +14,7 @@ export function CardDetailPanel(props: CardDetailPanelProps) {
     // TODO cards with "released_at" in the future are unreleased and should be marked as such
     return (
       <div>
-        <H3> <SvgProvider svg={props.cardSet.svg} height={25} width={25} /> card.card.name </H3>
+        <H3> <SvgProvider svg={props.cardSet.svg} height={25} width={25} /> {card.cardName} </H3>
         <H5 >{card.cardtypeLine} </H5>
       </div>
     );

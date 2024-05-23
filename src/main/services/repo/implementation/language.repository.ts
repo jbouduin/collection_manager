@@ -1,6 +1,6 @@
 import { inject, injectable } from "tsyringe";
 
-import { LanguageDto } from "../../../../common/dto";
+import { DtoLanguage } from "../../../../common/dto";
 import INFRATOKENS, { IDatabaseService } from "../../infra/interfaces";
 import { ILanguageRepository } from "../interfaces";
 import { BaseRepository } from "./base.repository";
@@ -12,7 +12,7 @@ export class LanguageRepository extends BaseRepository implements ILanguageRepos
     super(databaseService);
   }
 
-  getAll(): Promise<Array<LanguageDto>> {
+  getAll(): Promise<Array<DtoLanguage>> {
     return this.database.selectFrom("language").selectAll().execute();
   }
 }

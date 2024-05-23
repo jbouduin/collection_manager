@@ -1,3 +1,4 @@
+import { MTGLanguage } from "../../../common/enums";
 import { DtoCard, DtoCardface } from "../../../common/dto";
 
 export class CardViewmodel {
@@ -70,6 +71,22 @@ export class CardViewmodel {
 
   public get flavorText(): string {
     return this.cardDto.cardfaces[0].flavor_text;
+  }
+
+  public get languages(): Array<MTGLanguage> {
+    return this.cardDto.languages.map((language: { lang: MTGLanguage }) => language.lang);
+  }
+
+  public get printedName(): string {
+    return this.cardDto.cardfaces[0].printed_name;
+  }
+
+  public get printedText(): string {
+    return this.cardDto.cardfaces[0].printed_text;
+  }
+
+  public get printedTypeLine(): string {
+    return this.cardDto.cardfaces[0].printed_type_line;
   }
 
   public constructor(cardDto: DtoCard) {

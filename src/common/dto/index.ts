@@ -10,6 +10,6 @@ export * from "./select/card.dto";
 
 export type CatalogItemDto = Selectable<CatalogItemTable>;
 export type ColorDto = Selectable<ColorTable>;
-export type LanguageDto = Selectable<LanguageTable>;
+export type DtoLanguage = Selectable<LanguageTable>;
 export type RulingLineDto = Selectable<OracleRulingLineTable>;
 export type OracleDto = Selectable<OracleTable>;

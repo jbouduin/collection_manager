@@ -11,6 +11,7 @@ import INFRATOKENS, { IDatabaseService } from "../../infra/interfaces";
 import { ICardRepository } from "../interfaces";
 import { BaseRepository } from "./base.repository";
 
+
 @injectable()
 export class CardRepository extends BaseRepository implements ICardRepository {
 
@@ -40,10 +41,9 @@ export class CardRepository extends BaseRepository implements ICardRepository {
       .executeTakeFirst();
   }
 
-  public async getCards(options: CardQueryOptions): Promise<Array<DtoCard>>{
+  public async getCards(options: CardQueryOptions): Promise<Array<DtoCard>> {
     return await this.database
       .selectFrom("card")
-      .innerJoin("card_set", "card_set.id", "card.set_id")
       .select((eb) => [
         ...cardTableFields,
         helpers.jsonArrayFrom<DtoCardface>(
@@ -57,12 +57,19 @@ export class CardRepository extends BaseRepository implements ICardRepository {
             .select(oracleTableFields)
             .whereRef("oracle.oracle_id", "=", "card.oracle_id")
             .$castTo<OracleDto>()
-        ).as("oracle")
+        ).as("oracle"),
+        helpers.jsonArrayFrom(
+          eb.selectFrom("card as c2")
+            .select("c2.lang")
+            .whereRef("c2.set_id", "=", "card.set_id")
+            .whereRef("c2.collector_number", "=", "card.collector_number")
+        ).as("languages")
       ])
       .where("card.set_id", "in", options.setIds)
-      .where("card.lang", "=", "en")
       // .$call(this.logCompilable)
       .$castTo<DtoCard>()
+      .groupBy(["card.set_id", "card.collector_number"])
+      .orderBy(["card.set_id", "card.collector_number"])
       .execute()
       .then((qryResult: Array<DtoCard>) => {
         qryResult.forEach((card: DtoCard) => {

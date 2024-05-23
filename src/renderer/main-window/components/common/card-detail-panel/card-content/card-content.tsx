@@ -10,10 +10,11 @@ export function CardContent(props: CardDetailPanelProps) {
     <SectionCard padded={true} className={props.className}>
       <p>{props.card.oracleText}</p>
       <p><i>{props.card.flavorText}</i></p>
+      <p>{props.card.printedName}</p>
+      <p>{props.card.printedTypeLine}</p>
+      <p>{props.card.printedText}</p>
     </SectionCard>
   );
   // FEATURE multi-language
-  // <p>props.card.card.printed_name</p>
-  // <p>props.card.card.printed_text</p>
   //#endregion
 }

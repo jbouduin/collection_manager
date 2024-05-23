@@ -143,7 +143,7 @@ export interface CardTable extends SynchronizedWithStringId {
 //   /**
 //    * A computer - readable indicator for the state of this card’s image, one of missing, placeholder, lowres, or highres_scan.
 //    */
-//   // LATER makes highres_image property probably redundant ???
+//   // FEATURE store imagestatus and allow resync of those who have no high-res
 //   image_status: ColumnType<ImageStatus>;
 
 //   /**
@@ -181,7 +181,7 @@ export interface CardTable extends SynchronizedWithStringId {
 //   /**
 //    * Whether this card is a variation of another printing.
 //    */
-//   // LATER redundant ? if variation_of has a value, this one is true
+//   // redundant ? if variation_of has a value, this one is true
 //   variation: ColumnType<boolean, number, number>;
 
 //   /**
@@ -199,9 +199,6 @@ export interface CardTable extends SynchronizedWithStringId {
 //    */
 //   watermark?: ColumnType<string, string | undefined>;
 
-//   // FEATURE store "preview fields". (Meaning is unclear)
-//   // preview.previewed_at 	Date 	Nullable 	The date this card was previewed.
-//   // preview.source_uri 	URI 	Nullable 	A link to the preview for this card.
-//   // preview.source 	String 	Nullable 	The name of the source that previewed this card.
+
 //   //#endregion
 // }

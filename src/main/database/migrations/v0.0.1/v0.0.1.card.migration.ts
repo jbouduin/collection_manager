@@ -40,7 +40,7 @@ async function createV0_0_1_Card(db: Kysely<any>): Promise<void> {
     .addColumn("lang", "text", (col: ColumnDefinitionBuilder) => col.references("language.id").onDelete("cascade").notNull())
     .addColumn("name", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
     .addColumn("oracle_id", "text")
-    .addColumn("set_id", "text", (cb: ColumnDefinitionBuilder) => cb.notNull()) // LATER references set.id and if required create index on the field
+    .addColumn("set_id", "text", (cb: ColumnDefinitionBuilder) => cb.references("set.id").onDelete("cascade").notNull())
     .addColumn("collector_number", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
     .addColumn("released_at", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
     .addColumn("rarity", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
@@ -53,7 +53,8 @@ async function createV0_0_1_Card(db: Kysely<any>): Promise<void> {
     .addColumn("digital", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
     .addColumn("full_art", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
     .addColumn("reprint", "boolean", (cb: ColumnDefinitionBuilder) => cb.notNull())
-    .execute();
+    .execute()
+    .then(() => db.schema.createIndex("card_set_id_idx").on("card").column("set_id"));
 
 }
 

@@ -15,7 +15,7 @@
   "homepage": "https://github.com/jbouduin/collection_manager#readme",
   "keywords": [],
   "scripts": {
-    "start": "electron-forge start",
+    "start": "electron-forge start 2>&1 | tee-x64.exe output.txt",
     "package": "env-cmd electron-forge package",
     "make": "env-cmd electron-forge make",
     "publish": "env-cmd electron-forge publish",

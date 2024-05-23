@@ -10,23 +10,22 @@ export class V0_0_1_Card_Migration implements IBaseMigration {
 
   public async up(db: Kysely<any>): Promise<void> {
     return createV0_0_1_Card(db)
-      .then(() => createV0_0_1_CardMultiversId(db))
-      .then(() => createV0_0_1_CardGame(db))
-      .then(() => createV0_0_1_Cardface(db))
-      .then(() => createV0_0_1_CardfaceImage(db))
-      .then(() => createV0_0_1_CardFaceColorMap(db));
+      .then(async () => await createV0_0_1_CardMultiversId(db))
+      .then(async () => await createV0_0_1_CardGame(db))
+      .then(async () => await createV0_0_1_Cardface(db))
+      .then(async () => await createV0_0_1_CardCardMap(db))
+      .then(async () => await createV0_0_1_CardfaceImage(db))
+      .then(async () => await createV0_0_1_CardFaceColorMap(db));
   }
 
   public async down(db: Kysely<any>): Promise<void> {
     return db.schema.dropTable("cardface_color_map").execute()
-      .then(() => db.schema.dropTable("cardface_image").execute())
-      .then(() => db.schema.dropTable("cardface").execute())
-      .then(() => db.schema.dropTable("card_game").execute())
-      .then(() => db.schema.dropTable("card_multiverse_id").execute())
-      .then(() => db.schema.dropTable("card").execute());
-      // .then(() => db.schema.dropTable("card_color_map").execute())
-      // .then(() => db.schema.dropTable("card_image").execute())
-      // .then(() => db.schema.dropTable("card_keyword").execute())
+      .then(async () => await db.schema.dropTable("cardface_image").execute())
+      .then(async () => await db.schema.dropTable("cardface").execute())
+      .then(async () => await db.schema.dropTable("card_card_map").execute())
+      .then(async () => await db.schema.dropTable("card_game").execute())
+      .then(async () => await db.schema.dropTable("card_multiverse_id").execute())
+      .then(async () => await db.schema.dropTable("card").execute());
   }
 }
 
@@ -54,50 +53,6 @@ async function createV0_0_1_Card(db: Kysely<any>): Promise<void> {
     .addColumn("digital", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
     .addColumn("full_art", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
     .addColumn("reprint", "boolean", (cb: ColumnDefinitionBuilder) => cb.notNull())
-
-    // .addColumn("lang", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
-    // .addColumn("layout", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
-    // .addColumn("prints_search_uri", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
-    // .addColumn("rulings_uri", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
-    // .addColumn("uri", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
-    // .addColumn("arena_id", "integer")
-    // .addColumn("mtgo_id", "integer")
-    // .addColumn("mtgo_foil_id", "integer")
-    // .addColumn("tcgplayer_id", "integer")
-    // .addColumn("tcgplayer_etched_id", "integer")
-    // .addColumn("cardmarket_id", "integer")
-    // .addColumn("cmc", "numeric", (cb: ColumnDefinitionBuilder) => cb.notNull())
-    // .addColumn("defense", "text")
-    // .addColumn("edhrec_rank", "integer")
-    // .addColumn("hand_modifier", "text")
-    // .addColumn("life_modifier", "text")
-    // .addColumn("loyalty", "text")
-    // .addColumn("mana_cost", "text")
-    // .addColumn("name", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
-    // .addColumn("oracle_text", "text")
-    // .addColumn("penny_rank", "integer")
-    // .addColumn("power", "text")
-    // .addColumn("reserved", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
-    // .addColumn("thoughness", "text")
-    // .addColumn("type_line", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
-    // .addColumn("artist", "text")
-    // .addColumn("flavor_name", "text")
-    // .addColumn("flavor_text", "text")
-    // .addColumn("frame", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
-    // .addColumn("highres_image", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
-    // .addColumn("illustration_id", "text")
-    // .addColumn("image_status", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
-    // .addColumn("oversized", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
-    // .addColumn("printed_name", "text")
-    // .addColumn("printed_text", "text")
-    // .addColumn("printed_type_line", "text")
-    // .addColumn("promo", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
-    // .addColumn("story_spotlight", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
-    // .addColumn("textless", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
-    // .addColumn("variation", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
-    // .addColumn("variation_of", "text")
-    // .addColumn("security_stamp", "text")
-    // .addColumn("watermark", "text")
     .execute();
 
 }
@@ -172,4 +127,14 @@ async function createV0_0_1_CardFaceColorMap(db: Kysely<any>): Promise<void> {
     .addPrimaryKeyConstraint("CARDFACE_COLOR_MAP_PK", ["cardface_id", "color_type", "color_id"])
     .execute()
     .then(() => db.schema.createIndex("cardface_color_map_color_id_idx").on("cardface_color_map").column("color_id").execute());
+}
+
+async function createV0_0_1_CardCardMap(db: Kysely<any>): Promise<void> {
+  console.log("card_card_map");
+  return db.schema.createTable("card_card_map")
+    .addColumn("card_id", "text", (col: ColumnDefinitionBuilder) => col.references("card.id").onDelete("cascade").notNull())
+    .addColumn("related_card_id", "text", (col: ColumnDefinitionBuilder) => col.notNull())
+    .addColumn("component", "text", (col: ColumnDefinitionBuilder) => col.notNull())
+    .addPrimaryKeyConstraint("CARD_CARD_MAP_PK", ["card_id", "related_card_id", "component"])
+    .execute();
 }

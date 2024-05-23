@@ -2,7 +2,6 @@ import { ColumnType } from "kysely";
 
 import { MTGColor } from "../../../../common/enums";
 
-// NOW make table not synchronized
 export interface CardSymbolColorMapTable {
   /***
    * The plaintext symbol. Often surrounded with curly braces {}. Note that not all symbols are ASCII text (for example, {∞}).

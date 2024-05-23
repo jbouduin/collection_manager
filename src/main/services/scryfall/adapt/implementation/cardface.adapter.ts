@@ -16,12 +16,16 @@ export class CardfaceAdapter implements ICardfaceAdapter {
       artist: scryfall.scryfallCard.artist,
       cmc: scryfall.scryfallCard.cmc,
       defense: scryfall.scryfallCard.defense,
+      frame: scryfall.scryfallCard.frame,
       illustration_id: scryfall.scryfallCard.illustration_id,
       layout: scryfall.scryfallCard.layout,
       loyalty: scryfall.scryfallCard.loyalty,
       mana_cost: scryfall.scryfallCard.mana_cost,
       oracle_id: scryfall.scryfallCard.oracle_id,
       power: scryfall.scryfallCard.power,
+      printed_name: scryfall.scryfallCard.printed_name ?? scryfall.scryfallCard.name, // because scryfall does not return this for "en"
+      printed_text: scryfall.scryfallCard.printed_text ?? scryfall.scryfallCard.oracle_text,
+      printed_type_line: scryfall.scryfallCard.printed_type_line ?? scryfall.scryfallCard.type_line,
       toughness: scryfall.scryfallCard.toughness,
       watermark: scryfall.scryfallCard.watermark
     };
@@ -32,12 +36,16 @@ export class CardfaceAdapter implements ICardfaceAdapter {
       artist: scryfall.scryfallCard.artist,
       cmc: scryfall.scryfallCard.cmc,
       defense: scryfall.scryfallCard.defense,
+      frame: scryfall.scryfallCard.frame,
       illustration_id: scryfall.scryfallCard.illustration_id,
       layout: scryfall.scryfallCard.layout,
       loyalty: scryfall.scryfallCard.loyalty,
       mana_cost: scryfall.scryfallCard.mana_cost,
       oracle_id: scryfall.scryfallCard.oracle_id,
       power: scryfall.scryfallCard.power,
+      printed_name: scryfall.scryfallCard.printed_name ?? scryfall.scryfallCard.name, // because scryfall does not return this for "en"
+      printed_text: scryfall.scryfallCard.printed_text ?? scryfall.scryfallCard.oracle_text,
+      printed_type_line: scryfall.scryfallCard.printed_type_line ?? scryfall.scryfallCard.type_line,
       toughness: scryfall.scryfallCard.toughness,
       watermark: scryfall.scryfallCard.watermark
     };

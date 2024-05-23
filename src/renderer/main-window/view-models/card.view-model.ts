@@ -1,22 +1,21 @@
-import { MTGLanguage } from "../../../common/enums";
-import { CardDto, CardfaceDto, CardfaceLocalizationDto } from "../../../common/dto";
+import { DtoCard, DtoCardface } from "../../../common/dto";
 
 export class CardViewmodel {
-  private readonly cardDto: CardDto;
+  private readonly cardDto: DtoCard;
 
   // FEATURE cards with multiple faces:
   // non normal layout cards: this field is used for getting the image
-  public get localizationId(): string {
-    return this.getLocalizedCardfaces("en")[0].localizations[0].id;
+  public get cardfaceId(): string {
+    return this.cardDto.cardfaces[0].id;
   }
 
   public get setId(): string {
-    return this.cardDto.card.set_id;
+    return this.cardDto.set_id;
   }
 
   public get cardManacost(): Array<string> {
     const result = new Array<string>();
-    this.getLocalizedCardfaces("en").forEach((cardface: CardfaceDto, idx: number) => {
+    this.cardDto.cardfaces.forEach((cardface: DtoCardface, idx: number) => {
       if (idx > 0) {
         result.push("//");
       }
@@ -26,18 +25,18 @@ export class CardViewmodel {
   }
 
   public get cardName(): string {
-    return this.cardDto.oracle.oracle_name;
+    return this.cardDto.oracle?.oracle_name ?? this.cardDto.name;
   }
 
   public get cardPower(): string {
-    return this.getLocalizedCardfaces("en")
-      .map((cardface: CardfaceDto) => cardface.cardface.power)
+    return this.cardDto.cardfaces
+      .map((cardface: DtoCardface) => cardface.power)
       .join(" // ");
   }
 
   public get cardThoughness(): string {
-    return this.getLocalizedCardfaces("en")
-      .map((cardface: CardfaceDto) => cardface.cardface.toughness)
+    return this.cardDto.cardfaces
+      .map((cardface: DtoCardface) => cardface.toughness)
       .join(" // ");
   }
 
@@ -50,19 +49,19 @@ export class CardViewmodel {
   }
 
   public get collectorNumber(): string {
-    return this.cardDto.card.collector_number;
+    return this.cardDto.collector_number;
   }
 
   public get rarity(): string {
-    return this.cardDto.card.rarity;
+    return this.cardDto.rarity;
   }
 
   public get oracleId(): string {
-    return this.cardDto.card.oracle_id;
+    return this.cardDto.oracle_id;
   }
 
   public get cardId(): string {
-    return this.cardDto.card.id;
+    return this.cardDto.id;
   }
 
   public get oracleText(): string {
@@ -70,16 +69,17 @@ export class CardViewmodel {
   }
 
   public get flavorText(): string {
-    return this.getLocalizedCardfaces("en")[0].localizations[0].flavor_text;
+    return this.cardDto.cardfaces[0].flavor_text;
   }
-  public constructor(cardDto: CardDto) {
+
+  public constructor(cardDto: DtoCard) {
     this.cardDto = cardDto;
   }
 
-  private getLocalizedCardfaces(lang: MTGLanguage): Array<CardfaceDto> {
-    return this.cardDto.cardfaces
-      .filter((cardface: CardfaceDto) =>
-        cardface.localizations.filter((localization: CardfaceLocalizationDto) => localization.lang == lang).length > 0
-      );
-  }
+  // private getLocalizedCardfaces(lang: MTGLanguage): Array<CardfaceDto> {
+  //   return this.cardDto.cardfaces
+  //     .filter((cardface: CardfaceDto) =>
+  //       cardface.localizations.filter((localization: CardfaceLocalizationDto) => localization.lang == lang).length > 0
+  //     );
+  // }
 }

@@ -1,7 +1,7 @@
 import { Cell, CellProps, CellRenderer, Column, Region, SelectionModes, Table2 } from "@blueprintjs/table";
 import * as React from "react";
 
-import { CardDto, CardSetDto } from "../../../../../common/dto";
+import { DtoCard, CardSetDto } from "../../../../../common/dto";
 import { CardQueryOptions, QueryParam } from "../../../../../common/ipc-params";
 import { CardViewmodel } from "../../../view-models/card.view-model";
 import { SvgProvider } from "../svg-provider/svg-provider";
@@ -95,11 +95,11 @@ export function CardsTable(props: CardsTableProps) {
         }
       };
       window.ipc.query(cardQueryParam)
-        .then((cardResult: Array<CardDto>) => {
-          console.log(`retrieved ${cardResult.length} cards`)
+        .then((cardResult: Array<DtoCard>) => {
+          console.log(`retrieved ${cardResult.length} cards`);
           setCards(
             cardResult
-              .map((card: CardDto) => new CardViewmodel(card))
+              .map((card: DtoCard) => new CardViewmodel(card))
               .sort((a: CardViewmodel, b: CardViewmodel) => a.collectorNumberSortValue.localeCompare(b.collectorNumberSortValue))
           );
         });
@@ -118,8 +118,8 @@ export function CardsTable(props: CardsTableProps) {
         <Column name="Rarity" cellRenderer={textCellRenderer((card: CardViewmodel) => card.rarity)} />
         <Column name="Mana cost" cellRenderer={manaCostRenderer} />
         <Column name="Set" cellRenderer={cardSetNameRenderer} />
-        <Column name="Power" cellRenderer={textCellRenderer((card: CardViewmodel) => "card.cardPower")} />
-        <Column name="Thoughness" cellRenderer={textCellRenderer((card: CardViewmodel) => "card.cardThoughness")} />
+        <Column name="Power" cellRenderer={textCellRenderer((card: CardViewmodel) => card.cardPower)} />
+        <Column name="Thoughness" cellRenderer={textCellRenderer((card: CardViewmodel) => card.cardThoughness)} />
       </Table2>
     </div>
   );

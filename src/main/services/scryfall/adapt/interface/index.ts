@@ -2,7 +2,7 @@ import { ScryfallCard, ScryfallCardSet, ScryfallCardSymbol, ScryfallRuling } fro
 import {
   CardCardMapAdapterParameter, CardFaceAdapterParameter, CardGameAdapterParameter, CardMultiversIdAdapterParameter,
   CardSymbolAlternativeAdapterParam, CardSymbolColorMapAdapterParam,
-  CardfaceColorMapAdapterParameter, CardfaceLocalizationAdapterParameter, CardfaceLocalizationImageAdapterParameter, CatalogAdapterParam,
+  CardfaceColorMapAdapterParameter, CardfaceImageAdapterParameter, CatalogAdapterParam,
   OracleAdapterParameter, OracleKeywordAdapterParameter, OracleLegalityAdapterParameter
 } from "./param";
 
@@ -20,8 +20,7 @@ export type ICardGameAdapter = ITableAdapter<"card_game", CardGameAdapterParamet
 export type ICardMultiverseIdAdapter = ITableAdapter<"card_multiverse_id", CardMultiversIdAdapterParameter>;
 export type ICardfaceAdapter = ITableAdapter<"cardface", CardFaceAdapterParameter>;
 export type ICardfaceColorMapAdapter = ITableAdapter<"cardface_color_map", CardfaceColorMapAdapterParameter>;
-export type ICardfaceLocalizationAdapter = ITableAdapter<"cardface_localization", CardfaceLocalizationAdapterParameter>;
-export type ICardfaceLocalizationImageAdapter = ITableAdapter<"cardface_localization_image", CardfaceLocalizationImageAdapterParameter>;
+export type ICardfaceImageAdapter = ITableAdapter<"cardface_image", CardfaceImageAdapterParameter>;
 export type ICardCardMapAdapter = ITableAdapter<"card_card_map", CardCardMapAdapterParameter>;
 
 export type IOracleAdapter = ITableAdapter<"oracle", OracleAdapterParameter>;
@@ -43,8 +42,7 @@ const ADAPTTOKENS = Object.freeze({
   CardMultiverseIdAdapter: "CardMultiverseIdAdapter",
   CardfaceAdapter: "CardfaceAdapter",
   CardfaceColorMapAdapter: "CardfaceColorMapAdapter",
-  CardfaceLocalizationAdapter: "CardfaceLocalizationAdapter",
-  CardfaceLocalizationImageAdapter: "CardfaceLocalizationImageAdapter",
+  CardfaceImageAdapter: "CardfaceImageAdapter",
   CardCardMapAdapter: "CardCardMapAdapter",
 
   OracleAdapter: "OracleAdapter",

@@ -1,7 +1,6 @@
 import { ScryfallCard } from "../../../types";
 
-export type CardfaceLocalizationAdapterParameter = {
-  uuid: string,
+export type CardfaceImageAdapterParameter = {
   cardfaceId: string,
   scryfallCard: ScryfallCard
 };

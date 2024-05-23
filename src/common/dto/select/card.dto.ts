@@ -1,17 +1,9 @@
 import { Selectable } from "kysely";
-import { CardFaceColorMapTable, CardFaceLocalizationTable, CardfaceTable, CardTable } from "../../../main/database/schema";
-import { OracleDto } from "..";
+import { CardTable } from "../../../main/database/schema";
+import { DtoCardface, OracleDto } from "..";
 
-export interface CardDto {
-  card: Selectable<CardTable>;
-  cardfaces: Array<CardfaceDto>;
+export interface DtoCard extends Selectable<CardTable> {
+  cardfaces: Array<DtoCardface>;
   oracle: OracleDto;
   collectorNumberSortValue: string;
-}
-
-export interface CardfaceDto {
-  cardface: Selectable<CardfaceTable>;
-  localizations: Array<Selectable<CardFaceLocalizationTable>>;
-  colorMaps: Array<Selectable<CardFaceColorMapTable>>;
-  manaCostArray: Array<string>;
 }

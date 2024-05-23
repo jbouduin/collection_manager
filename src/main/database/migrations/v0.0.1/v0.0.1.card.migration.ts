@@ -13,15 +13,13 @@ export class V0_0_1_Card_Migration implements IBaseMigration {
       .then(() => createV0_0_1_CardMultiversId(db))
       .then(() => createV0_0_1_CardGame(db))
       .then(() => createV0_0_1_Cardface(db))
-      .then(() => createV0_0_1_CardfaceLocalization(db))
-      .then(() => createV0_0_1_CardfaceLocalizationImage(db))
+      .then(() => createV0_0_1_CardfaceImage(db))
       .then(() => createV0_0_1_CardFaceColorMap(db));
   }
 
   public async down(db: Kysely<any>): Promise<void> {
     return db.schema.dropTable("cardface_color_map").execute()
       .then(() => db.schema.dropTable("cardface_image").execute())
-      .then(() => db.schema.dropTable("cardface_localization").execute())
       .then(() => db.schema.dropTable("cardface").execute())
       .then(() => db.schema.dropTable("card_game").execute())
       .then(() => db.schema.dropTable("card_multiverse_id").execute())
@@ -40,6 +38,8 @@ async function createV0_0_1_Card(db: Kysely<any>): Promise<void> {
     defaultIdPrimaryKey: true
   };
   await createTable(db, options)
+    .addColumn("lang", "text", (col: ColumnDefinitionBuilder) => col.references("language.id").onDelete("cascade").notNull())
+    .addColumn("name", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
     .addColumn("oracle_id", "text")
     .addColumn("set_id", "text", (cb: ColumnDefinitionBuilder) => cb.notNull()) // LATER references set.id and if required create index on the field
     .addColumn("collector_number", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
@@ -138,6 +138,12 @@ async function createV0_0_1_Cardface(db: Kysely<any>): Promise<void> {
     .addColumn("power", "text")
     .addColumn("toughness", "text")
     .addColumn("watermark", "text")
+    .addColumn("frame", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
+    .addColumn("printed_name", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
+    .addColumn("printed_text", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
+    .addColumn("printed_type_line", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
+    .addColumn("flavor_name", "text")
+    .addColumn("flavor_text", "text")
     .execute()
     .then(async () => await db.schema.createIndex("cardface_card_id_face_name_idx")
       .on("cardface")
@@ -147,35 +153,13 @@ async function createV0_0_1_Cardface(db: Kysely<any>): Promise<void> {
     );
 }
 
-async function createV0_0_1_CardfaceLocalization(db: Kysely<any>): Promise<void> {
-  console.log("cardface_localization");
-
-  await db.schema.createTable("cardface_localization")
-    .addColumn("id", "text", (col: ColumnDefinitionBuilder) => col.primaryKey().notNull())
+async function createV0_0_1_CardfaceImage(db: Kysely<any>): Promise<void> {
+  console.log("cardface_image");
+  return db.schema.createTable("cardface_image")
     .addColumn("cardface_id", "text", (col: ColumnDefinitionBuilder) => col.references("cardface.id").onDelete("cascade").notNull())
-    .addColumn("lang", "text", (col: ColumnDefinitionBuilder) => col.references("language.id").onDelete("cascade").notNull() )
-    .addColumn("frame", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
-    .addColumn("printed_name", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
-    .addColumn("printed_text", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
-    .addColumn("printed_type_line", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
-    .addColumn("flavor_name", "text")
-    .addColumn("flavor_text", "text")
-    .execute()
-    .then(async () => db.schema.createIndex("cardface_localization_cardface_id_lang_idx")
-      .on("cardface_localization")
-      .columns(["cardface_id", "lang"])
-      .unique()
-      .execute()
-    );
-}
-
-async function createV0_0_1_CardfaceLocalizationImage(db: Kysely<any>): Promise<void> {
-  console.log("cardface_localization_image");
-  return db.schema.createTable("cardface_localization_image")
-    .addColumn("cardface_localization_id", "text", (col: ColumnDefinitionBuilder) => col.references("cardface_localization.id").onDelete("cascade").notNull())
     .addColumn("image_type", "text", (col: ColumnDefinitionBuilder) => col.notNull())
     .addColumn("uri", "text", (col: ColumnDefinitionBuilder) => col.notNull())
-    .addPrimaryKeyConstraint("CARDFACE_LOCALIZATION_IMAGE_PK", ["cardface_localization_id", "image_type"])
+    .addPrimaryKeyConstraint("CARDFACE_LOCALIZATION_IMAGE_PK", ["cardface_id", "image_type"])
     .execute();
 }
 

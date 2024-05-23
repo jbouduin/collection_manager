@@ -13,8 +13,7 @@ import ADAPTTOKENS, {
   ICardAdapter,
   ICardGameAdapter,
   ICardMultiverseIdAdapter, ICardfaceAdapter, ICardfaceColorMapAdapter,
-  ICardfaceLocalizationAdapter,
-  ICardfaceLocalizationImageAdapter,
+  ICardfaceImageAdapter,
   IOracleAdapter,
   IOracleKeywordAdapter,
   IOracleLegalityAdapter
@@ -27,6 +26,8 @@ import { ICardSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
 import { GenericSyncTaskParameter } from "./generic-sync-task.parameter";
 
+
+// NOW some cards are missing (only available in one language or not at all)
 @injectable()
 export class CardSyncService extends BaseSyncService<CardSyncOptions> implements ICardSyncService {
 
@@ -37,8 +38,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
   private readonly cardMultiverseIdAdapter: ICardMultiverseIdAdapter;
   private readonly cardfaceAdapter: ICardfaceAdapter;
   private readonly cardfaceColorMapAdapter: ICardfaceColorMapAdapter;
-  private readonly cardfaceLocalizationAdapter: ICardfaceLocalizationAdapter;
-  private readonly cardfaceLocalizationImageAdapter: ICardfaceLocalizationImageAdapter;
+  private readonly cardfaceImageAdapter: ICardfaceImageAdapter;
   private readonly oracleAdapter: IOracleAdapter;
   private readonly oracleKeywordAdapter: IOracleKeywordAdapter;
   private readonly oracleLegalityAdapter: IOracleLegalityAdapter;
@@ -53,8 +53,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
     @inject(ADAPTTOKENS.CardMultiverseIdAdapter) cardMultiverseIdAdapter: ICardMultiverseIdAdapter,
     @inject(ADAPTTOKENS.CardfaceAdapter) cardfaceAdapter: ICardfaceAdapter,
     @inject(ADAPTTOKENS.CardfaceColorMapAdapter) cardfaceColorMapAdapter: ICardfaceColorMapAdapter,
-    @inject(ADAPTTOKENS.CardfaceLocalizationAdapter) cardfaceLocalizationAdapter: ICardfaceLocalizationAdapter,
-    @inject(ADAPTTOKENS.CardfaceLocalizationImageAdapter) cardfaceLocalizationImageAdapter: ICardfaceLocalizationImageAdapter,
+    @inject(ADAPTTOKENS.CardfaceImageAdapter) cardfaceImageAdapter: ICardfaceImageAdapter,
     @inject(ADAPTTOKENS.OracleAdapter) oracleAdapter: IOracleAdapter,
     @inject(ADAPTTOKENS.OracleKeywordAdapter) oracleKeywordAdapter: IOracleKeywordAdapter,
     @inject(ADAPTTOKENS.OracleLegalityAdapter) oracleLegalityAdapter: IOracleLegalityAdapter) {
@@ -65,8 +64,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
     this.cardMultiverseIdAdapter = cardMultiverseIdAdapter;
     this.cardfaceAdapter = cardfaceAdapter;
     this.cardfaceColorMapAdapter = cardfaceColorMapAdapter;
-    this.cardfaceLocalizationAdapter = cardfaceLocalizationAdapter;
-    this.cardfaceLocalizationImageAdapter = cardfaceLocalizationImageAdapter;
+    this.cardfaceImageAdapter = cardfaceImageAdapter;
     this.oracleAdapter = oracleAdapter;
     this.oracleKeywordAdapter = oracleKeywordAdapter;
     this.oracleLegalityAdapter = oracleLegalityAdapter;
@@ -101,8 +99,6 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
       .all(cards.map((card: ScryfallCard) => this.syncSingleCard(card, ++cnt, total, progressCallback)))
       .then(() => Promise.resolve());
   }
-
-
 
   private async syncSingleCard(card: ScryfallCard, cnt: number, total: number, progressCallback?: ProgressCallback): Promise<void> {
     return this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
@@ -281,25 +277,15 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
 
           await runSerial<GenericSyncTaskParameter<"cardface_color_map", CardfaceColorMapAdapterParameter>>(
             taskParameters,
-            (param: GenericSyncTaskParameter<"cardface_color_map", CardfaceColorMapAdapterParameter>) => "Processing cardface color map",
+            (_param: GenericSyncTaskParameter<"cardface_color_map", CardfaceColorMapAdapterParameter>) => "Processing cardface color map",
             async (param: GenericSyncTaskParameter<"cardface_color_map", CardfaceColorMapAdapterParameter>, index: number, total: number) => this.serialGenericDeleteAndRecreate(param, index, total)
-          );
-        })
-        .then(async () => {
-          const localizationUuid = uuidV1();
-          await this.genericDeleteAndRecreate(
-            trx,
-            "cardface_localization",
-            (eb) => eb("cardface_localization.cardface_id", "=", cardfaceUuid), // TODO not required because of cascaded delete
-            this.cardfaceLocalizationAdapter,
-            { uuid: localizationUuid, cardfaceId: cardfaceUuid, scryfallCard: scryfallCard }
           ).then(async () => {
             await this.genericDeleteAndRecreate(
               trx,
-              "cardface_localization_image",
-              (eb) => eb("cardface_localization_image.cardface_localization_id", "=", localizationUuid), // TODO not required because of cascaded delete
-              this.cardfaceLocalizationImageAdapter,
-              { cardfaceLocalizationId: localizationUuid, scryfallCard: scryfallCard }
+              "cardface_image",
+              (eb) => eb("cardface_image.cardface_id", "=", cardfaceUuid), // TODO not required because of cascaded delete
+              this.cardfaceImageAdapter,
+              { cardfaceId: cardfaceUuid, scryfallCard: scryfallCard }
             );
           });
         });

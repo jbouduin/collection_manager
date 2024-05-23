@@ -1,6 +1,6 @@
 import { ColumnType } from "kysely";
 
-import { CardLayout } from "../../../../common/enums";
+import { CardFrame, CardLayout } from "../../../../common/enums";
 
 export interface CardfaceTable {
 
@@ -58,4 +58,11 @@ export interface CardfaceTable {
    * The watermark on this particulary card face, if any.
    */
   watermark?: ColumnType<string, string | undefined>;
+  // frame is here due to Fourth Edition Foreign Black Border
+  frame: ColumnType<CardFrame, string>;
+  printed_name?: ColumnType<string, string | undefined>;
+  printed_text?: ColumnType<string, string | undefined>;
+  printed_type_line: ColumnType<string, string | undefined>;
+  flavor_name?: ColumnType<string, string | undefined>;
+  flavor_text?: ColumnType<string, string | undefined>;
 }

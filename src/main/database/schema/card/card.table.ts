@@ -1,9 +1,11 @@
 import { ColumnType } from "kysely";
 
-import { CardBorderColor, CardLayout, CardRarity } from "../../../../common/enums";
+import { CardBorderColor, CardLayout, CardRarity, MTGLanguage } from "../../../../common/enums";
 import { SynchronizedWithStringId } from "../base.types";
 
 export interface CardTable extends SynchronizedWithStringId {
+  lang: ColumnType<MTGLanguage, MTGLanguage | undefined, never>;
+  name: ColumnType<string, string | undefined>;
   oracle_id?: ColumnType<string, string | undefined>;
   set_id: ColumnType<string>;
   collector_number: ColumnType<string, string, string | undefined>;
@@ -11,7 +13,6 @@ export interface CardTable extends SynchronizedWithStringId {
   rarity: ColumnType<CardRarity>;
   layout: ColumnType<CardLayout, CardLayout>;
   scryfall_uri: ColumnType<string>;
-  // mana_cost?: ColumnType<string, string | undefined>;
   booster: ColumnType<boolean, number, number>;
   border: ColumnType<CardBorderColor>;
   card_back_id: ColumnType<string>;
@@ -21,6 +22,8 @@ export interface CardTable extends SynchronizedWithStringId {
   reprint: ColumnType<boolean, number, number>;
   // LATER store property "finishes" in a table (An array of computer - readable flags that indicate if this card can come in foil, nonfoil, or etched finishes.)
 }
+
+
 
 // export interface OldCardTable extends SynchronizedWithStringId {
 //   //#region Core fields -------------------------------------------------------

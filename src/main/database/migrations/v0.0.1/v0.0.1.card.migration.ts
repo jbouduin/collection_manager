@@ -54,7 +54,8 @@ async function createV0_0_1_Card(db: Kysely<any>): Promise<void> {
     .addColumn("full_art", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
     .addColumn("reprint", "boolean", (cb: ColumnDefinitionBuilder) => cb.notNull())
     .execute()
-    .then(() => db.schema.createIndex("card_set_id_idx").on("card").column("set_id"));
+    .then(async() => await db.schema.createIndex("card_set_id_idx").on("card").column("set_id").execute())
+    .then(async () => await db.schema.createIndex("card_oracle_id_idx").on("card").column("oracle_id").execute());
 
 }
 
@@ -127,7 +128,7 @@ async function createV0_0_1_CardFaceColorMap(db: Kysely<any>): Promise<void> {
     .addColumn("color_id", "text", (col: ColumnDefinitionBuilder) => col.references("color.id").onDelete("cascade").notNull())
     .addPrimaryKeyConstraint("CARDFACE_COLOR_MAP_PK", ["cardface_id", "color_type", "color_id"])
     .execute()
-    .then(() => db.schema.createIndex("cardface_color_map_color_id_idx").on("cardface_color_map").column("color_id").execute());
+    .then(async () => await db.schema.createIndex("cardface_color_map_color_id_idx").on("cardface_color_map").column("color_id").execute());
 }
 
 async function createV0_0_1_CardCardMap(db: Kysely<any>): Promise<void> {

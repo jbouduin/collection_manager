@@ -77,6 +77,10 @@ export class CardViewmodel {
     return this.cardDto.cardfaces[0].flavor_text;
   }
 
+  public get hasFlavorText(): boolean {
+    return this.cardDto.cardfaces[0].flavor_text?.length > 0;
+  }
+
   public get languages(): Array<MTGLanguage> {
     return this.cardDto.languages.map((language: { lang: MTGLanguage }) => language.lang);
   }
@@ -96,11 +100,4 @@ export class CardViewmodel {
   public constructor(cardDto: DtoCard) {
     this.cardDto = cardDto;
   }
-
-  // private getLocalizedCardfaces(lang: MTGLanguage): Array<CardfaceDto> {
-  //   return this.cardDto.cardfaces
-  //     .filter((cardface: CardfaceDto) =>
-  //       cardface.localizations.filter((localization: CardfaceLocalizationDto) => localization.lang == lang).length > 0
-  //     );
-  // }
 }

@@ -42,7 +42,7 @@ async function createV0_0_1_RulingLine(db: Kysely<any>): Promise<void> {
     .addColumn("published_at", "text", (col: ColumnDefinitionBuilder) => col.notNull())
     .addColumn("comments", "text", (col: ColumnDefinitionBuilder) => col.notNull())
     .execute()
-    .then(() => db.schema
+    .then(async () => await db.schema
       .createIndex("ruling_line_oracle_id_idx")
       .on("oracle_ruling_line")
       .column("oracle_id")

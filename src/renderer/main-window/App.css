@@ -100,6 +100,13 @@ body {
   justify-content: space-between;
 }
 
+.bp5-section-card.bp5-padded {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
 @media (prefers-color-scheme: dark) {
 
   body,

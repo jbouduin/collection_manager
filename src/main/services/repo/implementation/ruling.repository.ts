@@ -15,10 +15,10 @@ export class RulingRepository extends BaseRepository implements IRulingRepositor
   public async getByCardId(cardId: string): Promise<Array<RulingLineDto>> {
     return this.database
       .selectFrom("card")
-      .innerJoin("ruling", "ruling.oracle_id", "card.oracle_id")
-      .leftJoin("ruling_line", "ruling_line.oracle_id", "ruling.oracle_id")
+      .innerJoin("oracle_ruling", "oracle_ruling.oracle_id", "card.oracle_id")
+      .leftJoin("oracle_ruling_line", "oracle_ruling_line.oracle_id", "oracle_ruling.oracle_id")
       .where("card.id", "=", cardId)
-      .selectAll("ruling_line")
+      .selectAll("oracle_ruling_line")
       // .$call(super.logCompilable)
       .execute();
   }

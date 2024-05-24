@@ -1,24 +1,24 @@
-import { sql } from "kysely";
 import { InsertExpression } from "kysely/dist/cjs/parser/insert-values-parser";
 import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser";
 
-import { MTGColorType, MTGColor } from "../../../../../common/enums";
+import { MTGColor } from "../../../../../common/enums";
 import { DatabaseSchema } from "../../../../database/schema";
 import { ICardfaceColorMapAdapter } from "../interface";
+import { CardfaceColorMapAdapterParameter } from "../interface/param";
 
 export class CardfaceColorMapAdapter implements ICardfaceColorMapAdapter{
-  public toInsert(leftId: string, rigthId: string, scryfall: MTGColor): InsertExpression<DatabaseSchema, "cardface_color_map"> {
-    return {
-      cardface_id: leftId,
-      color_id: rigthId as MTGColor,
-      color_type: scryfall as MTGColorType
-    };
+  public toInsert(scryfall: CardfaceColorMapAdapterParameter): InsertExpression<DatabaseSchema, "cardface_color_map"> {
+    return scryfall.colors.map((color: MTGColor) => {
+      return {
+        cardface_id: scryfall.cardfaceId,
+        color_type: scryfall.colorType,
+        color_id: color
+      };
+    });
 
   }
-  public toUpdate(): UpdateObjectExpression<DatabaseSchema, "cardface_color_map"> {
-    return {
-      last_synced_at: sql`CURRENT_TIMESTAMP`
-    };
+  public toUpdate(_scryfall: CardfaceColorMapAdapterParameter): UpdateObjectExpression<DatabaseSchema, "cardface_color_map"> {
+    throw new Error("Method not supported.");
   }
 
 }

@@ -1,10 +1,10 @@
-import { DeleteResult, ExpressionOrFactory, InsertResult, SqlBool, Transaction, UpdateResult } from "kysely";
+import { DeleteResult, ExpressionOrFactory, InsertResult, Selectable, SqlBool, Transaction, UpdateResult } from "kysely";
 import { inject, injectable } from "tsyringe";
 
 import { ProgressCallback, RulingSyncOptions } from "../../../../../common/ipc-params";
-import { Card, DatabaseSchema } from "../../../../database/schema";
+import { CardTable, DatabaseSchema } from "../../../../database/schema";
 import INFRATOKENS, { IDatabaseService } from "../../../infra/interfaces";
-import ADAPTTOKENS, { IRulingAdapter, IRulingLineAdapter } from "../../adapt/interface";
+import ADAPTTOKENS, { IOracleRulingAdapter, IOracleRulingLineAdapter } from "../../adapt/interface";
 import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
 import { ScryfallRuling } from "../../types";
 import { IRulingSyncService } from "../interface";
@@ -16,16 +16,16 @@ export class RulingSyncService extends BaseSyncService<RulingSyncOptions> implem
 
   //#region private readonly fields -------------------------------------------
   private readonly scryfallclient: IScryfallClient;
-  private readonly rulingLineAdapter: IRulingLineAdapter;
-  private readonly rulingAdapter: IRulingAdapter;
+  private readonly rulingLineAdapter: IOracleRulingLineAdapter;
+  private readonly rulingAdapter: IOracleRulingAdapter;
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
   public constructor(
     @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
     @inject(CLIENTTOKENS.ScryfallClient) scryfallclient: IScryfallClient,
-    @inject(ADAPTTOKENS.RulingLineAdapter) rulingLineAdapter: IRulingLineAdapter,
-    @inject(ADAPTTOKENS.RulingAdapter) rulingAdapter: IRulingAdapter) {
+    @inject(ADAPTTOKENS.OracleRulingLineAdapter) rulingLineAdapter: IOracleRulingLineAdapter,
+    @inject(ADAPTTOKENS.OracleRulingAdapter) rulingAdapter: IOracleRulingAdapter) {
     super(databaseService);
     this.scryfallclient = scryfallclient;
     this.rulingLineAdapter = rulingLineAdapter;
@@ -44,12 +44,10 @@ export class RulingSyncService extends BaseSyncService<RulingSyncOptions> implem
     if (rulings.length > 0) {
       const groupByOracleid: Map<string, Array<ScryfallRuling>> = new Map<string, Array<ScryfallRuling>>();
       rulings.forEach((ruling: ScryfallRuling) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const oracleId = (ruling as any)["oracle_id"] as string;
-        if (groupByOracleid.has(oracleId)) {
-          groupByOracleid.get(oracleId).push(ruling);
+        if (groupByOracleid.has(ruling.oracle_id)) {
+          groupByOracleid.get(ruling.oracle_id).push(ruling);
         } else {
-          groupByOracleid.set(oracleId, new Array<ScryfallRuling>(ruling));
+          groupByOracleid.set(ruling.oracle_id, new Array<ScryfallRuling>(ruling));
         }
       });
       if (groupByOracleid.size > 1) {
@@ -66,28 +64,29 @@ export class RulingSyncService extends BaseSyncService<RulingSyncOptions> implem
           .selectAll()
           .where("card.id", "=", cardId)
           .executeTakeFirst()
-          .then((card: Card) => this.syncRulingForSingleOracleId(trx, card.oracle_id, new Array<ScryfallRuling>()));
+          .then((card: Selectable<CardTable>) => this.syncRulingForSingleOracleId(trx, card.oracle_id, new Array<ScryfallRuling>()));
       });
     }
   }
 
   private async syncRulingForSingleOracleId(trx: Transaction<DatabaseSchema>, oracleId: string, rulings: Array<ScryfallRuling>): Promise<InsertResult | void> {
-    const rulingFilter: ExpressionOrFactory<DatabaseSchema, "ruling", SqlBool> = (eb) => eb("ruling.oracle_id", "=", oracleId);
+
+    const rulingFilter: ExpressionOrFactory<DatabaseSchema, "oracle_ruling", SqlBool> = (eb) => eb("oracle_ruling.oracle_id", "=", oracleId);
     const existingRulingPromise = trx
-      .selectFrom("ruling")
-      .select("ruling.oracle_id")
+      .selectFrom("oracle_ruling")
+      .select("oracle_ruling.oracle_id")
       .where(rulingFilter)
       .executeTakeFirst();
 
     const insertOrUpdateRulingPromise = existingRulingPromise.then((queryResult) => {
       let insertedOrUpdatedRuling: Promise<InsertResult | UpdateResult>;
       if (queryResult) {
-        insertedOrUpdatedRuling = trx.updateTable("ruling")
+        insertedOrUpdatedRuling = trx.updateTable("oracle_ruling")
           .set(this.rulingAdapter.toUpdate(null))
           .where(rulingFilter)
           .executeTakeFirstOrThrow();
       } else {
-        insertedOrUpdatedRuling = trx.insertInto("ruling")
+        insertedOrUpdatedRuling = trx.insertInto("oracle_ruling")
           .values(this.rulingAdapter.toInsert(oracleId))
           .executeTakeFirstOrThrow();
       }
@@ -95,15 +94,15 @@ export class RulingSyncService extends BaseSyncService<RulingSyncOptions> implem
     });
 
     const deleteLinesPromise: Promise<Array<DeleteResult>> = insertOrUpdateRulingPromise.then(() => {
-      const rulingLineFilter: ExpressionOrFactory<DatabaseSchema, "ruling_line", SqlBool> = (eb) => eb("ruling_line.oracle_id", "=", oracleId);
-      return trx.deleteFrom("ruling_line").where(rulingLineFilter).execute();
+      const rulingLineFilter: ExpressionOrFactory<DatabaseSchema, "oracle_ruling_line", SqlBool> = (eb) => eb("oracle_ruling_line.oracle_id", "=", oracleId);
+      return trx.deleteFrom("oracle_ruling_line").where(rulingLineFilter).execute();
     });
 
     if (rulings.length > 0) {
       return deleteLinesPromise.then(() => {
-        const allRulingLines = rulings.map((ruling: ScryfallRuling) => this.rulingLineAdapter.toInsert(oracleId, ruling));
+        const allRulingLines = rulings.map((ruling: ScryfallRuling) => this.rulingLineAdapter.toInsert(ruling));
         return trx
-          .insertInto("ruling_line")
+          .insertInto("oracle_ruling_line")
           .values(allRulingLines)
           .executeTakeFirstOrThrow();
       });

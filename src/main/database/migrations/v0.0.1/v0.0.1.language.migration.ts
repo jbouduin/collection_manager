@@ -1,7 +1,7 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
-import { ColumnDefinitionBuilder, InsertResult, Kysely } from "kysely";
+import { ColumnDefinitionBuilder, InsertResult, Insertable, Kysely } from "kysely";
 
-import { NewLanguage } from "../../schema";
+import { LanguageTable } from "../../schema";
 import { IBaseMigration, CreateTableOptions, createTable } from "../base.migration";
 
 export class V0_0_1_Language_Migration implements IBaseMigration {
@@ -35,7 +35,7 @@ async function createV0_0_1_Language(db: Kysely<any>): Promise<void> {
 }
 
 async function populateV0_0_1_Language(db: Kysely<any>): Promise<Array<InsertResult>> {
-  const values: Array<NewLanguage> = new Array<NewLanguage>();
+  const values = new Array<Insertable<LanguageTable>>();
   values.push({ id: "en", printed_code: "EN", display_text: "English", button_text: "EN" });
   values.push({ id: "es", printed_code: "SP", display_text: "Spanish", button_text: "ES" });
   values.push({ id: "fr", printed_code: "FR", display_text: "French", button_text: "FR" });

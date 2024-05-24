@@ -1,4 +1,4 @@
-import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
+import { ColumnType } from "kysely";
 
 import { MTGLanguage } from "../../../../common/enums";
 import { NonSynchronized } from "../base.types";
@@ -10,7 +10,3 @@ export interface LanguageTable extends NonSynchronized {
   display_text: ColumnType<string, string, never>;
   button_text: ColumnType<string, string, never>;
 }
-
-export type Language = Selectable<LanguageTable>;
-export type NewLanguage = Insertable<LanguageTable>;
-export type UpdateLanguage = Updateable<LanguageTable>;

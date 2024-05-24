@@ -1,5 +1,5 @@
-import {  CardDto } from "../../../../../common/dto";
+import {  DtoCard } from "../../../../../common/dto";
 
 export interface CardsTableState {
-  cards: Array<CardDto>;
+  cards: Array<DtoCard>;
 }

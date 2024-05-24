@@ -1,28 +1,30 @@
 import {
-  CardTable, CardCardMapTable, CardColorMapTable, CardFormatLegalityTable, CardGameTable, CardImageTable, CardKeywordTable, CardMultiverseIdTable,
-  CardSetTable, CatalogItemTable, ColorTable, LanguageTable, RulingTable,
-  SymbologyAlternativeTable, SymbologyColorMapTable, SymbologyTable,
-  RulingLineTable,
-  CardFaceTable,
-  CardFaceImageTable,
-  CardFaceColorMapTable
+  CardTable, CardCardMapTable, CardGameTable, CardMultiverseIdTable,
+  CardfaceTable, CardFaceColorMapTable, CardFaceImageTable,
+  OracleTable, OracleKeywordTable, OracleLegalityTable, OracleRulingTable, OracleRulingLineTable,
+  CardSetTable, CatalogItemTable, ColorTable, LanguageTable,
+  CardSymbolAlternativeTable, CardSymbolColorMapTable, CardSymbolTable,
+
 } from ".";
-import {  } from "./card/card-key-word.table";
 
 
 export interface DatabaseSchema {
   //#region card --------------------------------------------------------------
   card: CardTable;
-  card_card_map: CardCardMapTable;
-  card_color_map: CardColorMapTable;
-  card_format_legality: CardFormatLegalityTable;
-  card_game: CardGameTable;
-  card_image: CardImageTable;
-  card_keyword: CardKeywordTable;
   card_multiverse_id: CardMultiverseIdTable;
+  card_game: CardGameTable;
+  cardface: CardfaceTable;
   cardface_color_map: CardFaceColorMapTable;
   cardface_image: CardFaceImageTable;
-  cardface: CardFaceTable;
+  card_card_map: CardCardMapTable;
+  //#endregion
+
+  //#region oracle-------------------------------------------------------------
+  oracle: OracleTable;
+  oracle_keyword: OracleKeywordTable;
+  oracle_legality: OracleLegalityTable;
+  oracle_ruling: OracleRulingTable;
+  oracle_ruling_line: OracleRulingLineTable;
   //#endregion
 
   //#region master data -------------------------------------------------------
@@ -32,16 +34,10 @@ export interface DatabaseSchema {
   language: LanguageTable;
   //#endregion
 
-  //#region ruling ------------------------------------------------------------
-  ruling: RulingTable;
-  ruling_line: RulingLineTable;
+  //#region Card symbol -------------------------------------------------------
+  card_symbol: CardSymbolTable;
+  card_symbol_alternative: CardSymbolAlternativeTable;
+  card_symbol_color_map: CardSymbolColorMapTable;
   //#endregion
-
-  //#region Symbology ---------------------------------------------------------
-  symbology: SymbologyTable;
-  symbology_alternative: SymbologyAlternativeTable;
-  symbology_color_map: SymbologyColorMapTable;
-  //#endregion
-
 
 }

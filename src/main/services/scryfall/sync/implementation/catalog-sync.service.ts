@@ -1,9 +1,9 @@
-import { Transaction } from "kysely";
+import { Selectable, Transaction } from "kysely";
 import { inject, injectable } from "tsyringe";
 
 import { CatalogType } from "../../../../../common/enums";
 import { CatalogSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
-import { CatalogItem, DatabaseSchema } from "../../../../../main/database/schema";
+import { CatalogItemTable, DatabaseSchema } from "../../../../../main/database/schema";
 import INFRATOKENS, { IDatabaseService } from "../../../../../main/services/infra/interfaces";
 import { runSerial } from "../../../../../main/services/infra/util";
 import ADAPTTOKENS, { ICatalogAdapter } from "../../adapt/interface";
@@ -39,12 +39,15 @@ export class CatalogSyncService extends BaseSyncService<CatalogSyncOptions> impl
 
   //#region ICatalogSyncService methods ---------------------------------------
   public override async sync(options: CatalogSyncOptions, progressCallback: ProgressCallback): Promise<void> {
-    return this.shouldSync(options)
+    return await this.shouldSync(options)
       .then(async (shouldSync: boolean) => {
         if (shouldSync) {
           console.log("Start CatalogSyncService.sync");
           const serialExecutionArray = options.catalogs.map<SyncSingleCatalogParameter>((catalog: CatalogType) => { return { catalogType: catalog, progressCallback: progressCallback }; });
-          await runSerial<SyncSingleCatalogParameter>(serialExecutionArray, this.syncSingleCatalog.bind(this));
+          await runSerial<SyncSingleCatalogParameter>(
+            serialExecutionArray,
+            (param: SyncSingleCatalogParameter) => `Processing catalog '${param.catalogType}'`,
+            this.syncSingleCatalog.bind(this));
         } else {
           console.log("Skip CatalogSyncService.sync");
         }
@@ -121,8 +124,8 @@ export class CatalogSyncService extends BaseSyncService<CatalogSyncOptions> impl
       parameter.progressCallback(`Retrieved ${catalog.total_values} items for catalog '${parameter.catalogType}'`);
     }
     return await this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
-      trx.deleteFrom("catalog_item").where("catalog_item.catalog_name", "=", parameter.catalogType).execute();
-      trx.insertInto("catalog_item")
+      await trx.deleteFrom("catalog_item").where("catalog_item.catalog_name", "=", parameter.catalogType).execute();
+      await trx.insertInto("catalog_item")
         .values(catalog.data.map((item: string) => this.catalogAdapter.toInsert({ catalogType: parameter.catalogType, item: item })))
         .executeTakeFirstOrThrow();
     });
@@ -137,7 +140,7 @@ export class CatalogSyncService extends BaseSyncService<CatalogSyncOptions> impl
         .selectAll()
         .limit(1)
         .executeTakeFirst()
-        .then((existing: CatalogItem) => existing ? false : true);
+        .then((existing: Selectable<CatalogItemTable>) => existing ? false : true);
     }
   }
   //#endregion

@@ -1,9 +1,13 @@
-export function runSerial<T>(taskParameters: Array<T>, task: (t: T) => Promise<void>): Promise<void> {
+export function runSerial<T>(
+  taskParameters: Array<T>,
+  progressMessageBuilder: (t: T) => string,
+  task: (t: T, index: number, total: number) => Promise<void>): Promise<void> {
   let result = Promise.resolve();
+  const total = taskParameters.length;
   taskParameters.forEach((taskParameter: T, idx: number) => {
     result = result.then(async () => {
-      console.log(`executing task ${idx + 1} of ${taskParameters.length}`);
-      await task(taskParameter);
+      console.log(`${progressMessageBuilder(taskParameter)} (${idx + 1}/${total})`);
+      await task(taskParameter, idx, total);
     });
   });
   return result;

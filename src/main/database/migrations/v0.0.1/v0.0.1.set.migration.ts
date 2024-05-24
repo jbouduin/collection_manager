@@ -9,7 +9,7 @@ export class V0_0_1_Set_Migration implements IBaseMigration {
   }
 
   public async up(db: Kysely<any>): Promise<void> {
-    return createV0_0_1_Ruling(db);
+    return createV0_0_1_Set(db);
   }
 
   public async down(db: Kysely<any>): Promise<void> {
@@ -17,7 +17,7 @@ export class V0_0_1_Set_Migration implements IBaseMigration {
   }
 }
 
-async function createV0_0_1_Ruling(db: Kysely<any>): Promise<void> {
+async function createV0_0_1_Set(db: Kysely<any>): Promise<void> {
   const options: CreateTableOptions = {
       isSynced: true,
       tableName: "card_set",

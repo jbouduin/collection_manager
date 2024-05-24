@@ -1,12 +1,12 @@
 import { SectionCard } from "@blueprintjs/core";
 import * as React from "react";
-import { CardDetailPanelProps } from "../card-detail-panel.props";
 
 import { RulingLineDto } from "../../../../../../common/dto";
 import { QueryParam, RulingQueryOptions } from "../../../../../../common/ipc-params";
 import { RulingLine } from "../ruling-line/ruling-line";
+import { CardRulingsProps } from "./card-rulings.props";
 
-export function CardRulings(props: CardDetailPanelProps) {
+export function CardRulings(props: CardRulingsProps) {
 
   const [rulings, setRulings] = React.useState(null as Array<RulingLineDto>);
 
@@ -16,7 +16,7 @@ export function CardRulings(props: CardDetailPanelProps) {
       const rulingQueryParam: QueryParam<RulingQueryOptions> = {
         type: "Ruling",
         options: {
-          cardId: props.card.card.id
+          cardId: props.card.cardId
         }
       };
       window.ipc.query(rulingQueryParam)

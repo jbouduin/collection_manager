@@ -1,6 +1,6 @@
 import SQLite from "better-sqlite3";
 import { existsSync as exists, mkdirSync as mkdir } from "fs";
-import { Kysely, MigrationProvider, MigrationResultSet, Migrator, SqliteDialect } from "kysely";
+import { Kysely, MigrationProvider, MigrationResultSet, Migrator, ParseJSONResultsPlugin, SqliteDialect } from "kysely";
 import path from "path";
 import { singleton } from "tsyringe";
 
@@ -24,7 +24,10 @@ export class DatabaseService implements IDatabaseService {
     const dialect = new SqliteDialect({
       database: new SQLite(path.join(dbDirectory, "magic-db.sqlite"))
     });
-    this._database = new Kysely<DatabaseSchema>({ dialect });
+    this._database = new Kysely<DatabaseSchema>({
+      dialect: dialect,
+      plugins: [new ParseJSONResultsPlugin()]
+    });
     return this;
   }
 

@@ -1,63 +1,57 @@
 import { InsertExpression } from "kysely/dist/cjs/parser/insert-values-parser";
 import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser";
 
-import { v1 as uuidV1 } from "uuid";
-
-import { sql } from "kysely";
 import { DatabaseSchema } from "../../../../database/schema";
 import { ICardfaceAdapter } from "../interface";
-import { ScryfallCardFace } from "../../types";
+import { CardFaceAdapterParameter } from "../interface/param";
 
 export class CardfaceAdapter implements ICardfaceAdapter {
 
-  public toInsert(cardId: string, scryfall: ScryfallCardFace): InsertExpression<DatabaseSchema, "cardface"> {
+  public toInsert(scryfall: CardFaceAdapterParameter): InsertExpression<DatabaseSchema, "cardface"> {
+    // the result will later depend on the layout of the card
     return {
-      id: uuidV1(),
-      artist: scryfall.artist,
-      artist_id: scryfall.artist_id,
-      card_id: cardId,
-      cmc: scryfall.cmc,
-      defense: scryfall.defense,
-      flavor_text: scryfall.flavor_text,
-      illustration_id: scryfall.illustration_id,
-      layout: scryfall.layout,
-      loyalty: scryfall.loyalty,
-      mana_cost: scryfall.mana_cost,
-      name: scryfall.name,
-      oracle_id: scryfall.oracle_id,
-      oracle_text: scryfall.oracle_text,
-      power: scryfall.power,
-      printed_name: scryfall.printed_name,
-      printed_text: scryfall.printed_text,
-      printed_type_line: scryfall.printed_type_line,
-      toughness: scryfall.toughness,
-      type_line: scryfall.type_line,
-      watermark: scryfall.watermark
+      id: scryfall.uuid,
+      card_id: scryfall.scryfallCard.id,
+      face_name: scryfall.faceName,
+      artist: scryfall.scryfallCard.artist,
+      cmc: scryfall.scryfallCard.cmc,
+      defense: scryfall.scryfallCard.defense,
+      flavor_name: scryfall.scryfallCard.flavor_name,
+      flavor_text: scryfall.scryfallCard.flavor_text,
+      frame: scryfall.scryfallCard.frame,
+      illustration_id: scryfall.scryfallCard.illustration_id,
+      layout: scryfall.scryfallCard.layout,
+      loyalty: scryfall.scryfallCard.loyalty,
+      mana_cost: scryfall.scryfallCard.mana_cost,
+      oracle_id: scryfall.scryfallCard.oracle_id,
+      power: scryfall.scryfallCard.power,
+      printed_name: scryfall.scryfallCard.printed_name ?? scryfall.scryfallCard.name, // because scryfall does not return this for "en"
+      printed_text: scryfall.scryfallCard.printed_text ?? scryfall.scryfallCard.oracle_text,
+      printed_type_line: scryfall.scryfallCard.printed_type_line ?? scryfall.scryfallCard.type_line,
+      toughness: scryfall.scryfallCard.toughness,
+      watermark: scryfall.scryfallCard.watermark
     };
   }
 
-  public toUpdate(scryfall: ScryfallCardFace): UpdateObjectExpression<DatabaseSchema, "cardface"> {
+  public toUpdate(scryfall: CardFaceAdapterParameter): UpdateObjectExpression<DatabaseSchema, "cardface"> {
     return {
-      artist: scryfall.artist,
-      artist_id: scryfall.artist_id,
-      cmc: scryfall.cmc,
-      defense: scryfall.defense,
-      flavor_text: scryfall.flavor_text,
-      illustration_id: scryfall.illustration_id,
-      layout: scryfall.layout,
-      loyalty: scryfall.loyalty,
-      mana_cost: scryfall.mana_cost,
-      name: scryfall.name,
-      oracle_id: scryfall.oracle_id,
-      oracle_text: scryfall.oracle_text,
-      power: scryfall.power,
-      printed_name: scryfall.printed_name,
-      printed_text: scryfall.printed_text,
-      printed_type_line: scryfall.printed_type_line,
-      toughness: scryfall.toughness,
-      type_line: scryfall.type_line,
-      watermark: scryfall.watermark,
-      last_synced_at: sql`CURRENT_TIMESTAMP`
+      artist: scryfall.scryfallCard.artist,
+      cmc: scryfall.scryfallCard.cmc,
+      defense: scryfall.scryfallCard.defense,
+      flavor_name: scryfall.scryfallCard.flavor_name,
+      flavor_text: scryfall.scryfallCard.flavor_text,
+      frame: scryfall.scryfallCard.frame,
+      illustration_id: scryfall.scryfallCard.illustration_id,
+      layout: scryfall.scryfallCard.layout,
+      loyalty: scryfall.scryfallCard.loyalty,
+      mana_cost: scryfall.scryfallCard.mana_cost,
+      oracle_id: scryfall.scryfallCard.oracle_id,
+      power: scryfall.scryfallCard.power,
+      printed_name: scryfall.scryfallCard.printed_name ?? scryfall.scryfallCard.name, // because scryfall does not return this for "en"
+      printed_text: scryfall.scryfallCard.printed_text ?? scryfall.scryfallCard.oracle_text,
+      printed_type_line: scryfall.scryfallCard.printed_type_line ?? scryfall.scryfallCard.type_line,
+      toughness: scryfall.scryfallCard.toughness,
+      watermark: scryfall.scryfallCard.watermark
     };
   }
 }

@@ -1,7 +1,11 @@
 import { Props } from "@blueprintjs/core";
-import { CardDto, CardSetDto } from "../../../../../common/dto";
+
+import { DtoCardSet, DtoLanguage } from "../../../../../common/dto";
+import { CardViewmodel } from "../../../view-models/card.view-model";
 
 export interface CardDetailPanelProps extends Props {
-  card?: CardDto;
-  cardSet?: CardSetDto;
+  card?: CardViewmodel;
+  cardSet?: DtoCardSet;
+  cachedSvg: Map<string, string>;
+  languages: Array<DtoLanguage>;
 }

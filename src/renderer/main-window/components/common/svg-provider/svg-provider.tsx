@@ -7,7 +7,7 @@ export function SvgProvider(props: SvgProviderProps) {
   const start = props.svg.indexOf(">");
   const end = props.svg.indexOf("</svg");
   const path = props.svg.substring(start + 1, end);
-  // TODO use viewbox from original svg
+  // TODO use viewbox from original svg or try to fetch the svg as cached-image
   return (
     <span aria-hidden="true" className="bp5-icon bp5-icon-record">
       <svg

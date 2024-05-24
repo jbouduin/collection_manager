@@ -7,7 +7,7 @@ import { createRoot } from "react-dom/client";
 import { Desktop } from "./components/desktop/desktop";
 import { QueryParam } from "../../common/ipc-params";
 import { DesktopProps } from "./components/desktop/desktop.props";
-import { CardSetDto, LanguageDto } from "../../common/dto";
+import { DtoCardSet, DtoLanguage } from "../../common/dto";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
@@ -17,23 +17,23 @@ FocusStyleManager.onlyShowFocusOnTabs();
   // TODO await import("./App.css");
   const container = document.getElementById("root") as HTMLElement;
   const root = createRoot(container);
-  const symbologyQueryParam: QueryParam<null> = {
-    type: "SymbologyCachedSvg",
+  const cardSymbolQueryParam: QueryParam<null> = {
+    type: "CardSymbolCachedSvg",
     options: null
   };
   const desktopProps: DesktopProps = {
-    cardSets: new Array<CardSetDto>(),
+    cardSets: new Array<DtoCardSet>(),
     cachedSvg: new Map<string, string>(),
-    languages: new Array<LanguageDto>()
+    languages: new Array<DtoLanguage>()
   };
-  window.ipc.query(symbologyQueryParam)
+  window.ipc.query(cardSymbolQueryParam)
     .then((cachedSvgs: Map<string, string>) => {
       desktopProps.cachedSvg = cachedSvgs;
     })
-    .then(() => window.ipc.query({ type: "CardSet", options: null }))
-    .then((cardSets: Array<CardSetDto>) => desktopProps.cardSets = cardSets)
-    .then(() => window.ipc.query({ type: "Language", options: null }))
-    .then((languages: Array<LanguageDto>) => desktopProps.languages = languages)
+    .then(async () => await window.ipc.query({ type: "CardSet", options: null }))
+    .then((cardSets: Array<DtoCardSet>) => desktopProps.cardSets = cardSets)
+    .then(async () => await window.ipc.query({ type: "Language", options: null }))
+    .then((languages: Array<DtoLanguage>) => desktopProps.languages = languages)
     .then(() => root.render(
       <BlueprintProvider>
         <Desktop {...desktopProps} />

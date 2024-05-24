@@ -1,10 +1,12 @@
-import { CardSet, Symbology } from "../../../../main/database/schema";
+import { Selectable } from "kysely";
+
+import { CardSetTable, CardSymbolTable } from "../../../../main/database/schema";
 import { CardImageDto } from "../../../../common/dto";
 
 export interface IImageCacheService {
-  cacheCardSymbolSvg(cardSymbol: Symbology): Promise<void>;
-  cacheCardSetSvg(cardSymbol: CardSet): Promise<void>;
+  cacheCardSymbolSvg(cardSymbol: Selectable<CardSymbolTable>): Promise<void>;
+  cacheCardSetSvg(cardSymbol: Selectable<CardSetTable>): Promise<void>;
   getCardImage(card: CardImageDto): Promise<Response>;
-  getCardSymbolSvg(cardSymbol: Symbology): string;
-  getCardSetSvg(cardSet: CardSet): string;
+  getCardSymbolSvg(cardSymbol: Selectable<CardSymbolTable>): string;
+  getCardSetSvg(cardSet: Selectable<CardSetTable>): string;
 }

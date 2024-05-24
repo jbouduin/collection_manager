@@ -66,17 +66,45 @@ body {
   /* overflow: visible; */
 }
 
+.mana-cost-image {
+  margin-right: 3px;
+}
+
 .ruling-line-paragraph {
   /* border-bottom: red; */
   border-bottom-width: thin;
   border-bottom-style: solid;
   padding-bottom: 10px;
 }
+
 .card-image {
   max-height: 50%;
   max-width: 80%;
   display: block;
   margin: auto;
+}
+
+.card-header-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-header-line-1 {
+    display: flex;
+    flex-direction: row;
+}
+
+.card-header-line-2 {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.bp5-section-card.bp5-padded {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
 }
 
 @media (prefers-color-scheme: dark) {

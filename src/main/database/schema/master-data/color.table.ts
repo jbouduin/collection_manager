@@ -1,4 +1,4 @@
-import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
+import { ColumnType } from "kysely";
 
 import { BasicLandType, MTGColor } from "../../../../common/enums";
 import { NonSynchronized } from "../base.types";
@@ -25,10 +25,6 @@ export interface ColorTable extends NonSynchronized {
   /***
    * Mana symbol
   */
-  // TODO could be a reference to symbology , but that will only work if symbology has been loaded
+  // TODO could be a reference to card symbol , but that will only work if card symbols have been loaded
   mana_symbol: ColumnType<string, string, never>
 }
-
-export type Color = Selectable<ColorTable>;
-export type NewColor = Insertable<ColorTable>;
-export type UpdateColor = Updateable<ColorTable>;

@@ -3,7 +3,7 @@ import { container, singleton } from "tsyringe";
 import { RulingLineDto } from "../../../../common/dto";
 import { QueryParam, QueryOptions, RulingQueryOptions } from "../../../../common/ipc-params";
 import { CardQueryOptions } from "../../../../common/ipc-params/query/card-query.options";
-import REPOTOKENS, { ICardRepository, ICardSetRepository, ICatalogRepository, IColorRepository, ILanguageRepository, IRulingRepository, ISymbologyRepository } from "../../repo/interfaces";
+import REPOTOKENS, { ICardRepository, ICardSetRepository, ICatalogRepository, IColorRepository, ILanguageRepository, IRulingRepository, ICardSymbolRepository } from "../../repo/interfaces";
 import SYNCTOKENS, { IRulingSyncService } from "../../scryfall";
 import { IIpcQueryService } from "../interfaces";
 
@@ -26,10 +26,10 @@ export class IpcQueryService implements IIpcQueryService {
         return container.resolve<IColorRepository>(REPOTOKENS.ColorRepository).getAll();
       case "Language":
         return container.resolve<ILanguageRepository>(REPOTOKENS.LanguageRepository).getAll();
-      case "Symbology":
-        return container.resolve<ISymbologyRepository>(REPOTOKENS.SymbologyRepository).getAll();
-      case "SymbologyCachedSvg":
-        return container.resolve<ISymbologyRepository>(REPOTOKENS.SymbologyRepository).getAllWithCachedSvg();
+      case "CardSymbol":
+        return container.resolve<ICardSymbolRepository>(REPOTOKENS.CardSymbolRepository).getAll();
+      case "CardSymbolCachedSvg":
+        return container.resolve<ICardSymbolRepository>(REPOTOKENS.CardSymbolRepository).getCardSymbolSvg();
       case "Ruling":
         return this.handleRuling(params.options as RulingQueryOptions);
     }

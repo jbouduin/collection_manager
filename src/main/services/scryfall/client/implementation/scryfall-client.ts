@@ -53,7 +53,7 @@ export class ScryfallClient implements IScryfallClient {
       .then((fetchResult: Response) => fetchResult.json());
   }
 
-  // FEATURE use emitter in getCards or in getlist
+  // LATER use emitter in getCards or in getlist
   public async getCards(options: CardSyncOptions): Promise<Array<ScryfallCard>> {
     const scryfallOptions: ScryfallSearchOptions = {
       unique: "prints",

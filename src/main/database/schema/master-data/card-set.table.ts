@@ -1,4 +1,4 @@
-import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
+import { ColumnType } from "kysely";
 
 import { CardSetType } from "../../../../common/enums/card-set-type.enum";
 import { SynchronizedWithStringId } from "../base.types";
@@ -99,7 +99,3 @@ export interface CardSetTable extends SynchronizedWithStringId {
    */
   search_uri: ColumnType<string>;
 }
-
-export type CardSet = Selectable<CardSetTable>;
-export type NewCardSet = Insertable<CardSetTable>;
-export type UpdateCardSet = Updateable<CardSetTable>;

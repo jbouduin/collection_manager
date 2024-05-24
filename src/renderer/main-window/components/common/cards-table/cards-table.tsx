@@ -4,9 +4,9 @@ import * as React from "react";
 import { DtoCard, DtoCardSet, DtoLanguage } from "../../../../../common/dto";
 import { CardQueryOptions, QueryParam } from "../../../../../common/ipc-params";
 import { CardViewmodel } from "../../../view-models/card.view-model";
-import { SvgProvider } from "../svg-provider/svg-provider";
 import { CardsTableProps } from "./cards-table.props";
 import { MTGLanguage } from "../../../../../common/enums";
+import { ManaCost } from "../mana-cost/mana-cost";
 
 
 export function CardsTable(props: CardsTableProps) {
@@ -68,22 +68,7 @@ export function CardsTable(props: CardsTableProps) {
   function manaCostRenderer(row: number): React.ReactElement<CellProps> {
     return (
       <Cell>
-        {
-          cards[row].cardManacost
-            .map((manaCost: string, idx: number) => {
-              if (manaCost == "//") {
-                return (<span>&nbsp; &nbsp;//&nbsp;&nbsp;</span>);
-              } else {
-                const cachedSvg = props.cachedSvg.get(manaCost);
-                if (cachedSvg) {
-                  return (<SvgProvider svg={props.cachedSvg.get(manaCost)} key={`manacost_${idx}`} />);
-                } else {
-                  console.log(`no cached svg for "${manaCost}" of ${cards[row].cardName} `);
-                  return;
-                }
-              }
-            })
-        }
+        <ManaCost cachedSvg={props.cachedSvg} manacost={cards[row].cardManacost}/>
       </Cell >
     );
   }

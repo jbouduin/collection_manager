@@ -38,7 +38,7 @@ export function CardDetailPanel(props: CardDetailPanelProps) {
             <CardContent {...props} />
             <SectionCard padded={true} className={props.className}>
               <Tabs animate={true} className={props.className} id="card-detail-tabs" defaultSelectedTabId="rulings" renderActiveTabPanelOnly={true}>
-                <Tab id="rulings" title="Rulings" panel={<CardRulings card={props.card} languages={props.languages}></CardRulings>} />
+                <Tab id="rulings" title="Rulings" panel={<CardRulings card={props.card} ></CardRulings>} />
 
                 <Tab id="other_info" title="Other info" />
               </Tabs>

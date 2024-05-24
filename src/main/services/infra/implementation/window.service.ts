@@ -1,4 +1,4 @@
-import { BrowserWindow } from "electron";
+import { BrowserWindow, app } from "electron";
 import INFRATOKENS, { IConfigurationService, IWindowService } from "../interfaces";
 import { ConfigurationService } from "./configuration.service";
 import { inject, injectable } from "tsyringe";
@@ -59,6 +59,9 @@ export class WindowService implements IWindowService {
       show: false
     });
     mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+    if (!app.isPackaged) {
+      mainWindow.webContents.openDevTools({ mode: "undocked" });
+    }
     return mainWindow;
   }
 

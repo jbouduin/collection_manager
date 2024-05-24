@@ -14,3 +14,7 @@ export const cardfaceTableFields: Array<AnyColumnWithTable<DatabaseSchema, "card
   "cardface.id", "cardface.illustration_id", "cardface.layout", "cardface.loyalty", "cardface.mana_cost", "cardface.oracle_id", "cardface.power", "cardface.printed_name",
   "cardface.printed_text", "cardface.printed_type_line", "cardface.toughness", "cardface.watermark"
 ];
+
+export const cardfaceColorMapTableFields: Array<AnyColumnWithTable<DatabaseSchema, "cardface_color_map">> = [
+  "cardface_color_map.cardface_id", "cardface_color_map.color_id", "cardface_color_map.color_type"
+];

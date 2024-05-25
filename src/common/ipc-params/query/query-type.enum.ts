@@ -5,6 +5,7 @@ enum EQueryType {
   Catalog,
   Color,
   Language,
+  Legality,
   Ruling,
   CardSymbol,
   CardSymbolCachedSvg

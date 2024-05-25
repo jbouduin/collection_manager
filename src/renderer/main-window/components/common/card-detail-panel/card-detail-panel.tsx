@@ -13,6 +13,7 @@ import { CardRulings } from "./card-rulings/card-rulings";
 import { LocalizedCardHeader } from "./localized-card-header/localized-card-header";
 import { OraclePanel } from "./oracle-panel/oracle-panel";
 import { PrintedPanel } from "./printed-panel/printed-panel";
+import { LegalityPanel } from "./legality-panel/legality-panel";
 
 export function CardDetailPanel(props: CardDetailPanelProps) {
 
@@ -51,18 +52,18 @@ export function CardDetailPanel(props: CardDetailPanelProps) {
       }
       <CardImage className={props.className} card={card} />
       {card.isLocalizedCard &&
-          <LocalizedCardHeader card={card} className={props.className}/>
+        <LocalizedCardHeader card={card} className={props.className} />
       }
       <SectionCard padded={true} className={props.className}>
         <Tabs animate={true} className={props.className} id="card-detail-tabs" defaultSelectedTabId="Oracle" renderActiveTabPanelOnly={true}>
-          <Tab id="Oracle" title="Oracle" panel={<OraclePanel className={props.className} card={card} symbolSvgs={props.symbolSvgs}/>} />
+          <Tab id="Oracle" title="Oracle" panel={<OraclePanel className={props.className} card={card} symbolSvgs={props.symbolSvgs} />} />
           <Tab id="Printed" title="Printed" panel={<PrintedPanel className={props.className} card={card} symbolSvgs={props.symbolSvgs} />} />
         </Tabs>
       </SectionCard>
       <SectionCard padded={true} className={props.className}>
         <Tabs animate={true} className={props.className} id="card-detail-tabs" defaultSelectedTabId="Rulings" renderActiveTabPanelOnly={true}>
           <Tab id="Rulings" title="Rulings" panel={<CardRulings card={card} />} />
-          <Tab id="other_info" title="Other info" />
+          <Tab id="Legality" title="Legality" panel={<LegalityPanel oracleId={card.oracleId} />} />
         </Tabs>
       </SectionCard>
     </Section>
@@ -70,7 +71,7 @@ export function CardDetailPanel(props: CardDetailPanelProps) {
   );
   //#endregion
 
-  //#region helper functions --------------------------------------------------
+  //#region Auxiliary functions -----------------------------------------------
   async function loadCard(cardId: string): Promise<void> {
     if (cardId) {
       const cardQueryParam: QueryParam<CardQueryOptions> = {

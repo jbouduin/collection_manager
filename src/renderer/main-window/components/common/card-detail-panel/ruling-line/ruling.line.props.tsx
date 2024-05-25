@@ -1,7 +1,7 @@
 import { Props } from "@blueprintjs/core";
-import { RulingLineDto } from "../../../../../../common/dto";
+import { DtoRulingLine } from "../../../../../../common/dto";
 
 export interface RulingLineProps extends Props {
-  ruling: RulingLineDto,
+  ruling: DtoRulingLine,
   isLast: boolean
 }

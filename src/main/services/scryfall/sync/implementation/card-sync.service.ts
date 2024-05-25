@@ -27,8 +27,6 @@ import { ICardSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
 import { GenericSyncTaskParameter } from "./generic-sync-task.parameter";
 
-
-// NOW some cards are missing (only available in one language or not at all, latter could be a split card
 @injectable()
 export class CardSyncService extends BaseSyncService<CardSyncOptions> implements ICardSyncService {
 

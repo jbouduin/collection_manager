@@ -2,22 +2,24 @@ import { DtoCard, DtoCardLanguage, DtoCardface } from "../../../common/dto";
 import { MTGLanguage } from "../../../common/enums";
 
 export class CardViewmodel {
-  private readonly _cardDto: DtoCard;
+  //#region private readonly fields -------------------------------------------
+  private readonly _dtoCard: DtoCard;
   private readonly _collectorNumberSortValue: string;
   private readonly _cardManaCost: Array<string>;
+  //#endregion
 
-  // FEATURE cards with multiple faces:
+  //#region public getters ----------------------------------------------------
   // non normal layout cards: this field is used for getting the image
   public get cardfaceId(): string {
-    return this._cardDto.cardfaces[0].id;
+    return this._dtoCard.cardfaces[0].id;
   }
 
   public get setId(): string {
-    return this._cardDto.set_id;
+    return this._dtoCard.set_id;
   }
 
   public get isMultipleLanguage(): boolean {
-    return this._cardDto.languages.length > 1;
+    return this._dtoCard.languages.length > 1;
   }
 
   public get cardManacost(): Array<string> {
@@ -25,23 +27,23 @@ export class CardViewmodel {
   }
 
   public get cardName(): string {
-    return this._cardDto.oracle?.oracle_name ?? this._cardDto.name;
+    return this._dtoCard.oracle?.oracle_name ?? this._dtoCard.name;
   }
 
   public get cardPower(): string {
-    return this._cardDto.cardfaces
+    return this._dtoCard.cardfaces
       .map((cardface: DtoCardface) => cardface.power)
       .join(" // ");
   }
 
   public get cardThoughness(): string {
-    return this._cardDto.cardfaces
+    return this._dtoCard.cardfaces
       .map((cardface: DtoCardface) => cardface.toughness)
       .join(" // ");
   }
 
   public get cardtypeLine(): string {
-    return this._cardDto.oracle.type_line;
+    return this._dtoCard.oracle.type_line;
   }
 
   public get collectorNumberSortValue(): string {
@@ -49,66 +51,67 @@ export class CardViewmodel {
   }
 
   public get collectorNumber(): string {
-    return this._cardDto.collector_number;
+    return this._dtoCard.collector_number;
   }
 
   public get rarity(): string {
-    return this._cardDto.rarity;
+    return this._dtoCard.rarity;
   }
 
   public get oracleId(): string {
-    return this._cardDto.oracle_id;
+    return this._dtoCard.oracle_id;
   }
 
   public get cardId(): string {
-    return this._cardDto.id;
+    return this._dtoCard.id;
   }
 
   public get language(): MTGLanguage {
-    return this._cardDto.lang;
+    return this._dtoCard.lang;
   }
   public get oracleText(): string {
-    return this._cardDto.oracle.oracle_text;
+    return this._dtoCard.oracle.oracle_text;
   }
 
   public get flavorText(): string {
-    return this._cardDto.cardfaces[0].flavor_text;
+    return this._dtoCard.cardfaces[0].flavor_text;
   }
 
   public get hasFlavorText(): boolean {
-    return this._cardDto.cardfaces[0].flavor_text?.length > 0;
+    return this._dtoCard.cardfaces[0].flavor_text?.length > 0;
   }
 
   public get languages(): Array<MTGLanguage> {
-    return this._cardDto.languages.map((language: DtoCardLanguage) => language.lang);
+    return this._dtoCard.languages.map((language: DtoCardLanguage) => language.lang);
   }
 
   public get cardLanuages(): Array<DtoCardLanguage> {
-    return this._cardDto.languages;
+    return this._dtoCard.languages;
   }
   public get printedName(): string {
-    return this._cardDto.cardfaces[0].printed_name;
+    return this._dtoCard.cardfaces[0].printed_name;
   }
 
   public get printedText(): string {
-    return this._cardDto.cardfaces[0].printed_text;
+    return this._dtoCard.cardfaces[0].printed_text;
   }
 
   public get printedTypeLine(): string {
-    return this._cardDto.cardfaces[0].printed_type_line;
+    return this._dtoCard.cardfaces[0].printed_type_line;
   }
 
   public get isLocalizedCard(): boolean {
-    return this._cardDto.lang != "en";
+    return this._dtoCard.lang != "en";
   }
+  //#endregion
 
+  //#region Constructor & C° --------------------------------------------------
   public constructor(cardDto: DtoCard) {
-    this._cardDto = cardDto;
+    this._dtoCard = cardDto;
     this._collectorNumberSortValue = isNaN(Number(cardDto.collector_number)) ? cardDto.collector_number : cardDto.collector_number.padStart(4, "0");
     this._cardManaCost = this.calculateCardManaCost(cardDto);
   }
 
-  //#region private methods ---------------------------------------------------
   private calculateCardManaCost(cardDto: DtoCard): Array<string> {
     const result = new Array<string>();
     cardDto.cardfaces.forEach((cardface: DtoCardface, idx: number) => {

@@ -1,7 +1,6 @@
-import { DtoCardSet } from "../../../../common/dto";
-import { CardViewmodel } from "../../view-models/card.view-model";
+import { CardSetViewmodel, CardViewmodel } from "../../viewmodels";
 
 export interface DatabaseViewState {
-  selectedSets?: Array<DtoCardSet>;
+  selectedSets?: Array<CardSetViewmodel>;
   selectedCards?: Array<CardViewmodel>;
 }

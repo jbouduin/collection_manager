@@ -4,7 +4,7 @@ import * as React from "react";
 
 import { DtoCard, DtoCardLanguage } from "../../../../../common/dto";
 import { CardQueryOptions, QueryParam } from "../../../../../common/ipc-params";
-import { CardViewmodel } from "../../../view-models";
+import { CardViewmodel } from "../../../viewmodels";
 import { LanguageButtonBar } from "../language-button-bar/language-button-bar";
 import { CardDetailPanelProps } from "./card-detail-panel.props";
 import { CardHeader } from "./card-header/card-header";
@@ -45,7 +45,7 @@ export function CardDetailPanel(props: CardDetailPanelProps) {
   //#region Main --------------------------------------------------------------
   return (card && props.cardSet ?
     <Section className={props.className}>
-      <CardHeader className={props.className} card={card} cardSetSvg={props.cardSet?.svg} symbolSvgs={props.cachedSvg} />
+      <CardHeader className={props.className} card={card} cardSetSvg={props.cardSet?.cardSetSvg} symbolSvgs={props.cachedSvg} />
       {card.isMultipleLanguage &&
         <LanguageButtonBar className={props.className} cardLanguages={card.cardLanuages} languages={props.languages} currentLanguage={card.language} onButtonClick={onButtonClick} />
       }

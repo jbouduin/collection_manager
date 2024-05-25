@@ -1,7 +1,8 @@
 import { Props } from "@blueprintjs/core";
-import { DtoCardSet } from "../../../../../common/dto";
+
+import { CardSetViewmodel } from "../../../viewmodels";
 
 export interface CardSetTreeProps extends Props {
-  cardSets: Array<DtoCardSet>;
-  onSetsSelected(sets: Array<DtoCardSet>): void;
+  cardSets: Array<CardSetViewmodel>;
+  onSetsSelected(sets: Array<CardSetViewmodel>): void;
 }

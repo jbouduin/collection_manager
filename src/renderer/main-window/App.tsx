@@ -1,13 +1,14 @@
 import "./App.css";
 
-import * as React from "react";
-
 import { BlueprintProvider, FocusStyleManager } from "@blueprintjs/core";
+import * as React from "react";
 import { createRoot } from "react-dom/client";
-import { Desktop } from "./components/desktop/desktop";
-import { QueryParam } from "../../common/ipc-params";
-import { DesktopProps } from "./components/desktop/desktop.props";
+
 import { DtoCardSet, DtoLanguage } from "../../common/dto";
+import { QueryParam } from "../../common/ipc-params";
+import { Desktop } from "./components/desktop/desktop";
+import { DesktopProps } from "./components/desktop/desktop.props";
+import { CardSetViewmodel } from "./viewmodels/card-set.viewmodel";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
@@ -22,7 +23,7 @@ FocusStyleManager.onlyShowFocusOnTabs();
     options: null
   };
   const desktopProps: DesktopProps = {
-    cardSets: new Array<DtoCardSet>(),
+    cardSets: new Array<CardSetViewmodel>(),
     cachedSvg: new Map<string, string>(),
     languages: new Array<DtoLanguage>()
   };
@@ -31,7 +32,7 @@ FocusStyleManager.onlyShowFocusOnTabs();
       desktopProps.cachedSvg = cachedSvgs;
     })
     .then(async () => await window.ipc.query({ type: "CardSet", options: null }))
-    .then((cardSets: Array<DtoCardSet>) => desktopProps.cardSets = cardSets)
+    .then((cardSets: Array<DtoCardSet>) => desktopProps.cardSets = cardSets.map((cardSet: DtoCardSet) => new CardSetViewmodel(cardSet)))
     .then(async () => await window.ipc.query({ type: "Language", options: null }))
     .then((languages: Array<DtoLanguage>) => desktopProps.languages = languages)
     .then(() => root.render(

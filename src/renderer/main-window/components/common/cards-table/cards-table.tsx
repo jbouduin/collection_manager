@@ -1,12 +1,12 @@
 import { Cell, CellProps, CellRenderer, Column, Region, SelectionModes, Table2 } from "@blueprintjs/table";
 import * as React from "react";
 
-import { DtoCard, DtoCardSet, DtoLanguage } from "../../../../../common/dto";
-import { CardQueryOptions, QueryParam } from "../../../../../common/ipc-params";
-import { CardViewmodel } from "../../../view-models/card.view-model";
-import { CardsTableProps } from "./cards-table.props";
+import { DtoCard, DtoLanguage } from "../../../../../common/dto";
 import { MTGLanguage } from "../../../../../common/enums";
+import { CardQueryOptions, QueryParam } from "../../../../../common/ipc-params";
+import { CardSetViewmodel, CardViewmodel } from "../../../viewmodels";
 import { ManaCost } from "../mana-cost/mana-cost";
+import { CardsTableProps } from "./cards-table.props";
 
 
 export function CardsTable(props: CardsTableProps) {
@@ -45,8 +45,8 @@ export function CardsTable(props: CardsTableProps) {
   }
 
   function cardSetNameRenderer(row: number): React.ReactElement<CellProps> {
-    const set = props.selectedSets.filter((s: DtoCardSet) => s.id == cards[row].setId);
-    return (<Cell>{set[0]?.name}</Cell>);
+    const set = props.selectedSets.filter((s: CardSetViewmodel) => s.id == cards[row].setId);
+    return (<Cell>{set[0]?.cardSetName}</Cell>);
   }
 
 
@@ -81,7 +81,7 @@ export function CardsTable(props: CardsTableProps) {
         type: "Card",
         options: {
           cardId: null,
-          setIds: props.selectedSets.map((set: DtoCardSet) => set.id)
+          setIds: props.selectedSets.map((set: CardSetViewmodel) => set.id)
         }
       };
       window.ipc.query(cardQueryParam)

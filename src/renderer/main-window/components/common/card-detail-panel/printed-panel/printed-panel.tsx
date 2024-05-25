@@ -2,11 +2,12 @@ import * as React from "react";
 import classNames from "classnames";
 
 import { PrintedPanelProps } from "./printed-panel.props";
+import { CardText } from "../card-text/card-text";
 
 export function PrintedPanel(props: PrintedPanelProps) {
   return (
     <div>
-      <p >{props.card.printedText}</p>
+      <CardText cardText={props.card.printedText}/>
       {
         props.card.hasFlavorText &&
         <div>

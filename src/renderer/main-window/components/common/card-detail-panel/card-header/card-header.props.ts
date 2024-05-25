@@ -4,5 +4,5 @@ import { CardViewmodel } from "../../../../viewmodels";
 export interface CardHeaderProps extends Props {
   card: CardViewmodel;
   cardSetSvg: string;
-  symbolSvgs: Map<string,string>
+  symbolSvgs: Map<string, string>;
 }

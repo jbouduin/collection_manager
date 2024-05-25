@@ -11,6 +11,7 @@ import { CardDetailPanelProps } from "./card-detail-panel.props";
 import { CardHeader } from "./card-header/card-header";
 import { CardImage } from "./card-image/card-image";
 import { CardRulings } from "./card-rulings/card-rulings";
+import { LocalizedCardHeader } from "./localized-card-header/localized-card-header";
 
 export function CardDetailPanel(props: CardDetailPanelProps) {
 
@@ -47,7 +48,10 @@ export function CardDetailPanel(props: CardDetailPanelProps) {
       {card.isMultipleLanguage &&
         <LanguageButtonBar className={props.className} cardLanguages={card.cardLanuages} languages={props.languages} currentLanguage={card.language} onButtonClick={onButtonClick} />
       }
-      <CardImage className={props.className} card={card}/>
+      <CardImage className={props.className} card={card} />
+      {card.isLocalizedCard &&
+          <LocalizedCardHeader card={card} className={props.className}/>
+      }
       <SectionCard padded={true} className={props.className}>
         <Tabs animate={true} className={props.className} id="card-detail-tabs" defaultSelectedTabId="Oracle" renderActiveTabPanelOnly={true}>
           <Tab id="Oracle" title="Oracle" panel={<Oracle className={props.className} card={card} />} />

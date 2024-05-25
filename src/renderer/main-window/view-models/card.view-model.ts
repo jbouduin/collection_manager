@@ -98,6 +98,10 @@ export class CardViewmodel {
     return this._cardDto.cardfaces[0].printed_type_line;
   }
 
+  public get isLocalizedCard(): boolean {
+    return this._cardDto.lang != "en";
+  }
+
   public constructor(cardDto: DtoCard) {
     this._cardDto = cardDto;
     this._collectorNumberSortValue = isNaN(Number(cardDto.collector_number)) ? cardDto.collector_number : cardDto.collector_number.padStart(4, "0");

@@ -11,6 +11,7 @@ export function LanguageButtonBarButton(props: LanguageButtonBarButtonProps) {
   }
   //#endregion
 
+  //#region Main --------------------------------------------------------------
   return (
     <Tooltip
       {...props}
@@ -18,7 +19,8 @@ export function LanguageButtonBarButton(props: LanguageButtonBarButtonProps) {
       openOnTargetFocus={false}
       placement="bottom"
       usePortal={false}>
-      <Button onClick={onButtonClick}>{props.label}</Button>
+      <Button onClick={onButtonClick} intent={props.isCurrentLanguage ? "primary" : "none"}>{props.label}</Button>
     </Tooltip>
   );
+  //#endregion
 }

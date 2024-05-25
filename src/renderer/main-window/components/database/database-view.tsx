@@ -55,7 +55,7 @@ export function DatabaseView(props: DatabaseViewProps) {
         <Panel defaultSize={20}>
           <CardDetailPanel
             className={props.className}
-            card={state.selectedCards ? state.selectedCards[0] : null}
+            selectedCard={state.selectedCards ? state.selectedCards[0] : null}
             cardSet={calculateSetOfSelectedCard()}
             cachedSvg={props.cachedSvg}
             languages={props.languages}

@@ -1,15 +1,14 @@
 import { ButtonGroup, SectionCard } from "@blueprintjs/core";
 import * as React from "react";
 
-import { DtoLanguage } from "../../../../../common/dto";
-import { MTGLanguage } from "../../../../../common/enums";
+import { DtoCardLanguage, DtoLanguage } from "../../../../../common/dto";
 import { LanguageButtonBarButton } from "./language-button-bar-button";
 import { LanguageButtonBarProps } from "./language-button-bar.props";
 
 export function LanguageButtonBar(props: LanguageButtonBarProps) {
   //#region Event handling ----------------------------------------------------
-  function onAnyButtonClick(language: MTGLanguage): void {
-    console.log("clicked", language);
+  function onAnyButtonClick(language: DtoCardLanguage): void {
+    props.onButtonClick(language);
   }
   //#endregion
 
@@ -18,18 +17,19 @@ export function LanguageButtonBar(props: LanguageButtonBarProps) {
     <SectionCard padded={true} className={props.className}>
       <ButtonGroup className={props.className} minimal={true} >
         {
-          props.cardLanguages.map((language: MTGLanguage) => {
-            const languageDef = props.languages.filter((lng: DtoLanguage) => lng.id == language);
-            const label = languageDef.length > 0 ? languageDef[0].button_text : language;
-            const tooltip = languageDef.length > 0 ? languageDef[0].display_text : language;
+          props.cardLanguages.map((language: DtoCardLanguage) => {
+            const languageDef = props.languages.filter((lng: DtoLanguage) => lng.id == language.lang);
+            const label = languageDef.length > 0 ? languageDef[0].button_text : language.lang;
+            const tooltip = languageDef.length > 0 ? languageDef[0].display_text : language.lang;
             return (
               <LanguageButtonBarButton
                 label={label}
-                tooltip={< span > {tooltip}</span>}
+                isCurrentLanguage={language.lang === props.currentLanguage}
+                tooltip={<span>{tooltip}</span>}
                 language={language}
                 onButtonClick={onAnyButtonClick}
                 className={props.className}
-                key={language}
+                key={language.lang}
               />
             );
           })

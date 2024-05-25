@@ -1,4 +1,4 @@
-import { DtoCard, DtoCardface } from "../../../common/dto";
+import { DtoCard, DtoCardLanguage, DtoCardface } from "../../../common/dto";
 import { MTGLanguage } from "../../../common/enums";
 
 export class CardViewmodel {
@@ -64,6 +64,9 @@ export class CardViewmodel {
     return this._cardDto.id;
   }
 
+  public get language(): MTGLanguage {
+    return this._cardDto.lang;
+  }
   public get oracleText(): string {
     return this._cardDto.oracle.oracle_text;
   }
@@ -77,9 +80,12 @@ export class CardViewmodel {
   }
 
   public get languages(): Array<MTGLanguage> {
-    return this._cardDto.languages.map((language: { lang: MTGLanguage }) => language.lang);
+    return this._cardDto.languages.map((language: DtoCardLanguage) => language.lang);
   }
 
+  public get cardLanuages(): Array<DtoCardLanguage> {
+    return this._cardDto.languages;
+  }
   public get printedName(): string {
     return this._cardDto.cardfaces[0].printed_name;
   }

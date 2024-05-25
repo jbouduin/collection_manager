@@ -4,6 +4,7 @@ import { CardFaceColorMap, CatalogItemTable, ColorTable, LanguageTable, OracleRu
 
 export * from "./select/card-face.dto";
 export * from "./select/card-image.dto";
+export * from "./select/card-language.dto";
 export * from "./select/card-set.dto";
 export * from "./select/card-symbol.dto";
 export * from "./select/card.dto";

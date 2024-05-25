@@ -1,9 +1,11 @@
 import { Props } from "@blueprintjs/core";
 
-import { DtoLanguage } from "../../../../../common/dto";
+import { DtoCardLanguage, DtoLanguage } from "../../../../../common/dto";
 import { MTGLanguage } from "../../../../../common/enums";
 
 export interface LanguageButtonBarProps extends Props {
-  cardLanguages: Array<MTGLanguage>;
+  currentLanguage: MTGLanguage;
+  cardLanguages: Array<DtoCardLanguage>;
   languages: Array<DtoLanguage>;
+  onButtonClick: (languages: DtoCardLanguage) => void;
 }

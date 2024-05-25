@@ -68,12 +68,13 @@ export class CardRepository extends BaseRepository implements ICardRepository {
         ).as("oracle"),
         helpers.jsonArrayFrom(
           eb.selectFrom("card as c2")
-            .select("c2.lang")
+            .select(["c2.lang", "c2.id"])
             .whereRef("c2.set_id", "=", "card.set_id")
             .whereRef("c2.collector_number", "=", "card.collector_number")
         ).as("languages")
       ])
-      .where("card.set_id", "in", options.setIds)
+      .$if(options.setIds?.length > 0, (qb) => qb.where("card.set_id", "in", options.setIds))
+      .$if(options.cardId !== null && options.cardId !== undefined, (qb) => qb.where("card.id", "=", options.cardId))
       // .$call(this.logCompilable)
       .$castTo<DtoCard>()
       .groupBy(["card.set_id", "card.collector_number"])

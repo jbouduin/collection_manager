@@ -6,12 +6,13 @@ import { DtoCard, DtoCardLanguage } from "../../../../../common/dto";
 import { CardQueryOptions, QueryParam } from "../../../../../common/ipc-params";
 import { CardViewmodel } from "../../../view-models";
 import { LanguageButtonBar } from "../language-button-bar/language-button-bar";
-import { Oracle } from "../oracle/oracle";
 import { CardDetailPanelProps } from "./card-detail-panel.props";
 import { CardHeader } from "./card-header/card-header";
 import { CardImage } from "./card-image/card-image";
 import { CardRulings } from "./card-rulings/card-rulings";
 import { LocalizedCardHeader } from "./localized-card-header/localized-card-header";
+import { OraclePanel } from "./oracle-panel/oracle-panel";
+import { PrintedPanel } from "./printed-panel/printed-panel";
 
 export function CardDetailPanel(props: CardDetailPanelProps) {
 
@@ -54,8 +55,8 @@ export function CardDetailPanel(props: CardDetailPanelProps) {
       }
       <SectionCard padded={true} className={props.className}>
         <Tabs animate={true} className={props.className} id="card-detail-tabs" defaultSelectedTabId="Oracle" renderActiveTabPanelOnly={true}>
-          <Tab id="Oracle" title="Oracle" panel={<Oracle className={props.className} card={card} />} />
-          <Tab id="Printed" title="Printed" />
+          <Tab id="Oracle" title="Oracle" panel={<OraclePanel className={props.className} card={card} />} />
+          <Tab id="Printed" title="Printed" panel={<PrintedPanel className={props.className} card={card} />} />
         </Tabs>
       </SectionCard>
       <SectionCard padded={true} className={props.className}>
@@ -66,7 +67,6 @@ export function CardDetailPanel(props: CardDetailPanelProps) {
       </SectionCard>
     </Section>
     : <Section className={props.className} ></Section>
-
   );
   //#endregion
 

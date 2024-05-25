@@ -1,9 +1,7 @@
 import * as React from "react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
-
-import { DtoCardSet } from "../../../../common/dto";
-import { CardViewmodel } from "../../view-models/card.view-model";
+import { CardSetViewmodel, CardViewmodel } from "../../viewmodels";
 import { CardDetailPanel } from "../common/card-detail-panel/card-detail-panel";
 import { CardSetsTree } from "../common/card-sets-tree/card-sets-tree";
 import { CardsTable } from "../common/cards-table/cards-table";
@@ -20,8 +18,8 @@ export function DatabaseView(props: DatabaseViewProps) {
   //#endregion
 
   //#region Event handlers ----------------------------------------------------
-  function onCardSetsSelected(sets: Array<DtoCardSet>): void {
-    console.log("Card set selected in tree", sets.map((s: DtoCardSet) => s.name));
+  function onCardSetsSelected(sets: Array<CardSetViewmodel>): void {
+    console.log("Card set selected in tree", sets.map((s: CardSetViewmodel) => s.cardSetName));
     setState({ selectedSets: sets, selectedCards: state.selectedCards });
   }
 
@@ -31,9 +29,9 @@ export function DatabaseView(props: DatabaseViewProps) {
   }
   //#endregion
 
-  function calculateSetOfSelectedCard(): DtoCardSet {
+  function calculateSetOfSelectedCard(): CardSetViewmodel {
     if (state.selectedCards) {
-      const setOfSelectedCard = props.cardSets.filter((cardSet: DtoCardSet) => cardSet.id = state.selectedCards[0].setId);
+      const setOfSelectedCard = props.cardSets.filter((cardSet: CardSetViewmodel) => cardSet.id == state.selectedCards[0].setId);
       return setOfSelectedCard.length > 0 ? setOfSelectedCard[0] : null;
     }
     else {
@@ -49,15 +47,15 @@ export function DatabaseView(props: DatabaseViewProps) {
         </Panel>
         <PanelResizeHandle />
         <Panel>
-          <CardsTable className={props.className} cachedSvg={props.cachedSvg} selectedSets={state.selectedSets} languages={props.languages} onCardsSelected={onCardSelected}></CardsTable>
+          <CardsTable className={props.className} symbolSvgs={props.symbolSvgs} selectedSets={state.selectedSets} languages={props.languages} onCardsSelected={onCardSelected}></CardsTable>
         </Panel>
         <PanelResizeHandle />
         <Panel defaultSize={20}>
           <CardDetailPanel
             className={props.className}
-            card={state.selectedCards ? state.selectedCards[0] : null}
+            selectedCard={state.selectedCards ? state.selectedCards[0] : null}
             cardSet={calculateSetOfSelectedCard()}
-            cachedSvg={props.cachedSvg}
+            symbolSvgs={props.symbolSvgs}
             languages={props.languages}
           />
           </Panel>

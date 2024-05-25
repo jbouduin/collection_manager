@@ -1,9 +1,10 @@
 import { Props } from "@blueprintjs/core";
-import { DtoCardSet, DtoLanguage } from "../../../../common/dto";
 
-// LATER move these to a store
+import { DtoLanguage } from "../../../../common/dto";
+import { CardSetViewmodel } from "../../viewmodels";
+
 export interface DesktopProps extends Props {
-  cardSets: Array<DtoCardSet>;
-  cachedSvg: Map<string, string>;
+  cardSets: Array<CardSetViewmodel>;
+  symbolSvgs: Map<string, string>;
   languages: Array<DtoLanguage>;
 }

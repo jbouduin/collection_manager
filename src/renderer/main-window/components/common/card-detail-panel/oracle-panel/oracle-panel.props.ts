@@ -2,6 +2,7 @@ import { Props } from "@blueprintjs/core";
 
 import { CardViewmodel } from "../../../../viewmodels";
 
-export interface CardImageProps extends Props {
+export interface OraclePanelProps extends Props {
   card?: CardViewmodel;
+  symbolSvgs: Map<string, string>;
 }

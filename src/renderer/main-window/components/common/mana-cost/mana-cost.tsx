@@ -12,9 +12,9 @@ export function ManaCost(props: ManaCostProps) {
             if (manaCost == "//") {
               return (<span>&nbsp; &nbsp;//&nbsp;&nbsp;</span>);
             } else {
-              const cachedSvg = props.cachedSvg.get(manaCost);
-              if (cachedSvg) {
-                return (<SvgProvider className="mana-cost-image" svg={props.cachedSvg.get(manaCost)} key={`manacost_${idx}`} />);
+              const symbolSvg = props.symbolSvgs.get(manaCost);
+              if (symbolSvg) {
+                return (<SvgProvider className="mana-cost-image" svg={props.symbolSvgs.get(manaCost)} key={`manacost_${idx}`} />);
               } else {
                 console.log(`no cached svg for "${manaCost}"`);
                 return;

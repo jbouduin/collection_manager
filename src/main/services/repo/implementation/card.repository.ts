@@ -2,10 +2,10 @@ import * as fs from "fs";
 import * as helpers from "kysely/helpers/sqlite";
 import { inject, injectable } from "tsyringe";
 
-import { CardImageDto, DtoCard, DtoCardface, OracleDto } from "../../../../common/dto";
+import { CardImageDto, DtoCard, DtoCardface, DtoCardfaceColor, OracleDto } from "../../../../common/dto";
 import { ImageSize } from "../../../../common/enums";
 import { CardQueryOptions } from "../../../../common/ipc-params/query/card-query.options";
-import { cardTableFields, cardfaceTableFields } from "../../../../main/database/schema/card/table-fields.constants";
+import { cardTableFields, cardfaceColorMapTableFields, cardfaceTableFields } from "../../../../main/database/schema/card/table-fields.constants";
 import { oracleTableFields } from "../../../../main/database/schema/oracle/table-field.constants";
 import INFRATOKENS, { IDatabaseService } from "../../infra/interfaces";
 import { ICardRepository } from "../interfaces";
@@ -48,7 +48,15 @@ export class CardRepository extends BaseRepository implements ICardRepository {
         ...cardTableFields,
         helpers.jsonArrayFrom<DtoCardface>(
           eb.selectFrom("cardface")
-            .select(cardfaceTableFields)
+            .select((eb) => [
+              ...cardfaceTableFields,
+              helpers.jsonArrayFrom<DtoCardfaceColor>(
+                eb.selectFrom("cardface_color_map")
+                  .select(cardfaceColorMapTableFields)
+                  .whereRef("cardface_color_map.cardface_id", "=", "cardface.id")
+                  .$castTo<DtoCardfaceColor>()
+              ).as("cardfaceColors")
+            ])
             .whereRef("cardface.card_id", "=", "card.id")
             .$castTo<DtoCardface>()
         ).as("cardfaces"),
@@ -60,34 +68,22 @@ export class CardRepository extends BaseRepository implements ICardRepository {
         ).as("oracle"),
         helpers.jsonArrayFrom(
           eb.selectFrom("card as c2")
-            .select("c2.lang")
+            .select(["c2.lang", "c2.id"])
             .whereRef("c2.set_id", "=", "card.set_id")
             .whereRef("c2.collector_number", "=", "card.collector_number")
         ).as("languages")
       ])
-      .where("card.set_id", "in", options.setIds)
+      .$if(options.setIds?.length > 0, (qb) => qb.where("card.set_id", "in", options.setIds))
+      .$if(options.cardId !== null && options.cardId !== undefined, (qb) => qb.where("card.id", "=", options.cardId))
       // .$call(this.logCompilable)
       .$castTo<DtoCard>()
       .groupBy(["card.set_id", "card.collector_number"])
       .orderBy(["card.set_id", "card.collector_number"])
       .execute()
       .then((qryResult: Array<DtoCard>) => {
-        qryResult.forEach((card: DtoCard) => {
-          card.collectorNumberSortValue = isNaN(Number(card.collector_number)) ? card.collector_number : card.collector_number.padStart(3, "0");
-          card.cardfaces.forEach((cardFace: DtoCardface) => cardFace.manaCostArray = this.convertManaCostToArray(cardFace.mana_cost));
-        });
         fs.writeFileSync("c:/data/new-assistant/json/cardquery.json", JSON.stringify(qryResult, null, 2));
         return qryResult;
       });
-  }
-
-  //#endregion
-
-  //#region private methods ---------------------------------------------------
-  private convertManaCostToArray(manaCost: string): Array<string> {
-    const splittedCellValue = manaCost.split("}");
-    splittedCellValue.pop();
-    return splittedCellValue.map((s: string, i: number) => i < splittedCellValue.length ? s + "}" : s);
   }
   //#endregion
 }

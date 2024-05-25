@@ -1,12 +1,13 @@
 import * as React from "react";
-
-import { OracleProps } from "./oracle.props";
 import classNames from "classnames";
 
-export function Oracle(props: OracleProps) {
+import { PrintedPanelProps } from "./printed-panel.props";
+import { CardText } from "../card-text/card-text";
+
+export function PrintedPanel(props: PrintedPanelProps) {
   return (
     <div>
-      <p >{props.card.oracleText}</p>
+      <CardText cardText={props.card.printedText} symbolSvgs={props.symbolSvgs}/>
       {
         props.card.hasFlavorText &&
         <div>

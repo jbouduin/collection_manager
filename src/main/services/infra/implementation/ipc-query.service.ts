@@ -1,9 +1,9 @@
 import { container, singleton } from "tsyringe";
 
-import { RulingLineDto } from "../../../../common/dto";
-import { QueryParam, QueryOptions, RulingQueryOptions } from "../../../../common/ipc-params";
+import { DtoRulingLine } from "../../../../common/dto";
+import { LegalityQueryOptions, QueryOptions, QueryParam, RulingQueryOptions } from "../../../../common/ipc-params";
 import { CardQueryOptions } from "../../../../common/ipc-params/query/card-query.options";
-import REPOTOKENS, { ICardRepository, ICardSetRepository, ICatalogRepository, IColorRepository, ILanguageRepository, IRulingRepository, ICardSymbolRepository } from "../../repo/interfaces";
+import REPOTOKENS, { ICardRepository, ICardSetRepository, ICardSymbolRepository, ICatalogRepository, IColorRepository, ILanguageRepository, IOracleRepository } from "../../repo/interfaces";
 import SYNCTOKENS, { IRulingSyncService } from "../../scryfall";
 import { IIpcQueryService } from "../interfaces";
 
@@ -17,19 +17,37 @@ export class IpcQueryService implements IIpcQueryService {
     // console.log("start IpcQueryService.handling", params);
     switch (params.type) {
       case "Card":
-        return container.resolve<ICardRepository>(REPOTOKENS.CardRepository).getCards(params.options as CardQueryOptions);
+        return container
+          .resolve<ICardRepository>(REPOTOKENS.CardRepository)
+          .getCards(params.options as CardQueryOptions);
       case "CardSet":
-        return container.resolve<ICardSetRepository>(REPOTOKENS.CardSetRepository).getAll();
+        return container
+          .resolve<ICardSetRepository>(REPOTOKENS.CardSetRepository)
+          .getAll();
       case "Catalog":
-        return container.resolve<ICatalogRepository>(REPOTOKENS.CatalogRepository).getAll("AbilityWords");
+        return container
+          .resolve<ICatalogRepository>(REPOTOKENS.CatalogRepository)
+          .getAll("AbilityWords");
       case "Color":
-        return container.resolve<IColorRepository>(REPOTOKENS.ColorRepository).getAll();
+        return container
+          .resolve<IColorRepository>(REPOTOKENS.ColorRepository)
+          .getAll();
       case "Language":
-        return container.resolve<ILanguageRepository>(REPOTOKENS.LanguageRepository).getAll();
+        return container
+          .resolve<ILanguageRepository>(REPOTOKENS.LanguageRepository)
+          .getAll();
+      case "Legality":
+        return container
+          .resolve<IOracleRepository>(REPOTOKENS.OracleRepository)
+          .getLegalities((params.options as LegalityQueryOptions).oracleId);
       case "CardSymbol":
-        return container.resolve<ICardSymbolRepository>(REPOTOKENS.CardSymbolRepository).getAll();
+        return container
+          .resolve<ICardSymbolRepository>(REPOTOKENS.CardSymbolRepository)
+          .getAll();
       case "CardSymbolCachedSvg":
-        return container.resolve<ICardSymbolRepository>(REPOTOKENS.CardSymbolRepository).getCardSymbolSvg();
+        return container
+          .resolve<ICardSymbolRepository>(REPOTOKENS.CardSymbolRepository)
+          .getCardSymbolSvg();
       case "Ruling":
         return this.handleRuling(params.options as RulingQueryOptions);
     }
@@ -37,18 +55,18 @@ export class IpcQueryService implements IIpcQueryService {
   //#endregion
 
   //#region Private methods ---------------------------------------------------
-  private async handleRuling(options: RulingQueryOptions): Promise<Array<RulingLineDto>> {
-    const rulingRepository = container.resolve<IRulingRepository>(REPOTOKENS.RulingRepository);
-    return rulingRepository.getByCardId(options.cardId)
-      .then((queryResult: Array<RulingLineDto>) => {
+  private async handleRuling(options: RulingQueryOptions): Promise<Array<DtoRulingLine>> {
+    const oracleRepository = container.resolve<IOracleRepository>(REPOTOKENS.OracleRepository);
+    return oracleRepository.getByCardId(options.cardId)
+      .then((queryResult: Array<DtoRulingLine>) => {
         if (queryResult.length == 0) {
           return container.resolve<IRulingSyncService>(SYNCTOKENS.RulingSyncService).sync({source: "user", cardId: options.cardId}, null)
-            .then(() => rulingRepository
+            .then(() => oracleRepository
               .getByCardId(options.cardId)
-              .then((afterSync: Array<RulingLineDto>) => afterSync.filter((line: RulingLineDto) => line.oracle_id !== null))
+              .then((afterSync: Array<DtoRulingLine>) => afterSync.filter((line: DtoRulingLine) => line.oracle_id !== null))
             );
         } else {
-          return queryResult.filter((line: RulingLineDto) => line.oracle_id !== null);
+          return queryResult.filter((line: DtoRulingLine) => line.oracle_id !== null);
         }
       });
   }

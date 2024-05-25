@@ -1,6 +1,6 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import { ColumnDefinitionBuilder, Kysely } from "kysely";
-import { IBaseMigration, CreateTableOptions, createTable } from "../base.migration";
+import { IBaseMigration } from "../base.migration";
 
 export class V0_0_1_Catalog_Migration implements IBaseMigration {
   public get keyName(): string {
@@ -17,22 +17,9 @@ export class V0_0_1_Catalog_Migration implements IBaseMigration {
 }
 
 async function createV0_0_1_CatalogItem(db: Kysely<any>): Promise<void> {
-  const options: CreateTableOptions = {
-    isSynced: true,
-    tableName: "catalog_item",
-    defaultIdPrimaryKey: true
-  };
-
-  await createTable(db, options)
+  await db.schema.createTable("catalog_item")
     .addColumn("catalog_name", "text", (col: ColumnDefinitionBuilder) => col.notNull())
     .addColumn("item", "text", (col: ColumnDefinitionBuilder) => col.notNull().notNull())
-    .execute();
-
-  await db.schema
-    .createIndex("catalog_item_unique_idx")
-    .on("catalog_item")
-    .column("catalog_name")
-    .column("item")
-    .unique()
+    .addPrimaryKeyConstraint("CATALOG_ITEM_PK", ["catalog_name", "item"])
     .execute();
 }

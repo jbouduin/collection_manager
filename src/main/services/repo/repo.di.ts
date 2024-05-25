@@ -5,9 +5,9 @@ import { CardRepository } from "./implementation/card.repository";
 import { CatalogRepository } from "./implementation/catalog.repository";
 import { ColorRepository } from "./implementation/color-repository";
 import { LanguageRepository } from "./implementation/language.repository";
-import { RulingRepository } from "./implementation/ruling.repository";
+import { OracleRepository } from "./implementation/oracle.repository";
 import { CardSymbolRepository } from "./implementation/card-symbol.repository";
-import REPOTOKENS, { ICardRepository, ICardSetRepository, ICatalogRepository, IColorRepository, ILanguageRepository, IRulingRepository, ICardSymbolRepository } from "./interfaces";
+import REPOTOKENS, { ICardRepository, ICardSetRepository, ICatalogRepository, IColorRepository, ILanguageRepository, IOracleRepository, ICardSymbolRepository } from "./interfaces";
 
 
 export class RepositoryDi {
@@ -18,7 +18,7 @@ export class RepositoryDi {
     container.register<ICatalogRepository>(REPOTOKENS.CatalogRepository, { useClass: CatalogRepository });
     container.register<IColorRepository>(REPOTOKENS.ColorRepository, { useClass: ColorRepository });
     container.register<ILanguageRepository>(REPOTOKENS.LanguageRepository, { useClass: LanguageRepository });
-    container.register<IRulingRepository>(REPOTOKENS.RulingRepository, { useClass: RulingRepository });
+    container.register<IOracleRepository>(REPOTOKENS.OracleRepository, { useClass: OracleRepository });
     container.register<ICardSymbolRepository>(REPOTOKENS.CardSymbolRepository, { useClass: CardSymbolRepository });
   }
 }

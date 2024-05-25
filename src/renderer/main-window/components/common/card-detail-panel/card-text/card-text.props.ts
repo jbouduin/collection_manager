@@ -1,6 +1,6 @@
 import { Props } from "@blueprintjs/core";
 
-export interface ManaCostProps extends Props {
-  manacost: Array<string>;
+export interface CardTextProps extends Props {
+  cardText: string;
   symbolSvgs: Map<string, string>;
 }

@@ -45,7 +45,7 @@ export function CardDetailPanel(props: CardDetailPanelProps) {
   //#region Main --------------------------------------------------------------
   return (card && props.cardSet ?
     <Section className={props.className}>
-      <CardHeader className={props.className} card={card} cardSetSvg={props.cardSet?.cardSetSvg} symbolSvgs={props.cachedSvg} />
+      <CardHeader className={props.className} card={card} cardSetSvg={props.cardSet?.cardSetSvg} symbolSvgs={props.symbolSvgs} />
       {card.isMultipleLanguage &&
         <LanguageButtonBar className={props.className} cardLanguages={card.cardLanuages} languages={props.languages} currentLanguage={card.language} onButtonClick={onButtonClick} />
       }
@@ -55,8 +55,8 @@ export function CardDetailPanel(props: CardDetailPanelProps) {
       }
       <SectionCard padded={true} className={props.className}>
         <Tabs animate={true} className={props.className} id="card-detail-tabs" defaultSelectedTabId="Oracle" renderActiveTabPanelOnly={true}>
-          <Tab id="Oracle" title="Oracle" panel={<OraclePanel className={props.className} card={card} />} />
-          <Tab id="Printed" title="Printed" panel={<PrintedPanel className={props.className} card={card} />} />
+          <Tab id="Oracle" title="Oracle" panel={<OraclePanel className={props.className} card={card} symbolSvgs={props.symbolSvgs}/>} />
+          <Tab id="Printed" title="Printed" panel={<PrintedPanel className={props.className} card={card} symbolSvgs={props.symbolSvgs} />} />
         </Tabs>
       </SectionCard>
       <SectionCard padded={true} className={props.className}>

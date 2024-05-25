@@ -9,6 +9,6 @@ export function CardText(props: CardTextProps) {
     <div>
       {props.cardText.replace(/\r\n/g, "\r").replace(/\n/g, "\r").split(/\r/).map((t: string) => <p>{t}</p>)}
     </div>
-  )
+  );
   //#endregion
 }

@@ -7,7 +7,7 @@ import { CardText } from "../card-text/card-text";
 export function PrintedPanel(props: PrintedPanelProps) {
   return (
     <div>
-      <CardText cardText={props.card.printedText}/>
+      <CardText cardText={props.card.printedText} symbolSvgs={props.symbolSvgs}/>
       {
         props.card.hasFlavorText &&
         <div>

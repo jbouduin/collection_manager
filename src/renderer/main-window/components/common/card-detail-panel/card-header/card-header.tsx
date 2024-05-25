@@ -19,7 +19,7 @@ export function CardHeader(props: CardHeaderProps) {
         </div>
         <div className="card-header-line-2">
           <H5 >{props.card.cardtypeLine} </H5>
-          <ManaCost cachedSvg={props.symbolSvgs} manacost={props.card.cardManacost} />
+          <ManaCost symbolSvgs={props.symbolSvgs} manacost={props.card.cardManacost} />
         </div>
       </div>
     </SectionCard>

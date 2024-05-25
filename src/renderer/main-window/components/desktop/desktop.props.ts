@@ -5,6 +5,6 @@ import { CardSetViewmodel } from "../../viewmodels";
 
 export interface DesktopProps extends Props {
   cardSets: Array<CardSetViewmodel>;
-  cachedSvg: Map<string, string>;
+  symbolSvgs: Map<string, string>;
   languages: Array<DtoLanguage>;
 }

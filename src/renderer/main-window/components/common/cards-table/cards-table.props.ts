@@ -5,7 +5,7 @@ import { CardSetViewmodel, CardViewmodel } from "../../../viewmodels";
 
 
 export interface CardsTableProps extends Props {
-  cachedSvg: Map<string, string>;
+  symbolSvgs: Map<string, string>;
   languages: Array<DtoLanguage>;
   selectedSets: Array<CardSetViewmodel>;
   onCardsSelected(cards?: Array<CardViewmodel>): void;

@@ -47,7 +47,7 @@ export function DatabaseView(props: DatabaseViewProps) {
         </Panel>
         <PanelResizeHandle />
         <Panel>
-          <CardsTable className={props.className} cachedSvg={props.cachedSvg} selectedSets={state.selectedSets} languages={props.languages} onCardsSelected={onCardSelected}></CardsTable>
+          <CardsTable className={props.className} symbolSvgs={props.symbolSvgs} selectedSets={state.selectedSets} languages={props.languages} onCardsSelected={onCardSelected}></CardsTable>
         </Panel>
         <PanelResizeHandle />
         <Panel defaultSize={20}>
@@ -55,7 +55,7 @@ export function DatabaseView(props: DatabaseViewProps) {
             className={props.className}
             selectedCard={state.selectedCards ? state.selectedCards[0] : null}
             cardSet={calculateSetOfSelectedCard()}
-            cachedSvg={props.cachedSvg}
+            symbolSvgs={props.symbolSvgs}
             languages={props.languages}
           />
           </Panel>

@@ -5,6 +5,6 @@ import { CardText } from "../card-text/card-text";
 
 export function OraclePanel(props: OraclePanelProps) {
   return (
-    <CardText cardText={props.card.oracleText} />
+    <CardText cardText={props.card.oracleText} symbolSvgs={props.symbolSvgs}/>
   );
 }

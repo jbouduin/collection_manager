@@ -68,7 +68,7 @@ export function CardsTable(props: CardsTableProps) {
   function manaCostRenderer(row: number): React.ReactElement<CellProps> {
     return (
       <Cell>
-        <ManaCost cachedSvg={props.cachedSvg} manacost={cards[row].cardManacost}/>
+        <ManaCost symbolSvgs={props.symbolSvgs} manacost={cards[row].cardManacost}/>
       </Cell >
     );
   }

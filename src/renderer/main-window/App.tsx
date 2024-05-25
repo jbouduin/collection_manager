@@ -24,12 +24,12 @@ FocusStyleManager.onlyShowFocusOnTabs();
   };
   const desktopProps: DesktopProps = {
     cardSets: new Array<CardSetViewmodel>(),
-    cachedSvg: new Map<string, string>(),
+    symbolSvgs: new Map<string, string>(),
     languages: new Array<DtoLanguage>()
   };
   window.ipc.query(cardSymbolQueryParam)
     .then((cachedSvgs: Map<string, string>) => {
-      desktopProps.cachedSvg = cachedSvgs;
+      desktopProps.symbolSvgs = cachedSvgs;
     })
     .then(async () => await window.ipc.query({ type: "CardSet", options: null }))
     .then((cardSets: Array<DtoCardSet>) => desktopProps.cardSets = cardSets.map((cardSet: DtoCardSet) => new CardSetViewmodel(cardSet)))

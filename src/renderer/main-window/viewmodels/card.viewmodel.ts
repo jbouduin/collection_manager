@@ -104,6 +104,14 @@ export class CardViewmodel {
       }
       result.push(...this.convertManaCost(cardface.mana_cost));
     });
+    if (result.length == 1 && result[0] == "//") {
+      result.pop()
+    }
+    // TODO else if (result[0] == "//") 7
+    // {
+    //   result.splice(0, 0, "-")
+    // }
+
     return result;
   }
 
@@ -126,7 +134,7 @@ export class CardViewmodel {
 
   //#region Auxiliary methods -------------------------------------------------
   private joinMultiCardFaceData(data: Array<string | null>): string {
-    if (data.filter((d: string) => d != null && d != undefined).length == 0) {
+    if (data.filter((d: string) => d != null && d != undefined && d != "").length == 0) {
       return "";
     } else {
       return data

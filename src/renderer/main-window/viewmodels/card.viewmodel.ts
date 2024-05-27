@@ -105,7 +105,7 @@ export class CardViewmodel {
       result.push(...this.convertManaCost(cardface.mana_cost));
     });
     if (result.length == 1 && result[0] == "//") {
-      result.pop()
+      result.pop();
     }
     // TODO else if (result[0] == "//") 7
     // {

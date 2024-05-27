@@ -8,7 +8,7 @@ import { CardQueryOptions, QueryParam } from "../../../../../common/ipc-params";
 import { CardViewmodel } from "../../../viewmodels";
 import { LanguageButtonBar } from "../language-button-bar/language-button-bar";
 import { CardHeaderView } from "./card-header-view/card-header-view";
-import { CardImageView } from "./card-image-view/card-image-view";
+import { CardImageViewWrapper } from "./card-image-view/card-image-view-wrapper";
 import { CardRulingsView } from "./card-rulings-view/card-rulings-view";
 import { CardViewState } from "./card-view-state";
 import { CardViewProps } from "./card-view.props";
@@ -87,7 +87,7 @@ export function CardView(props: CardViewProps) {
   function SingleSidedSingleFaceLayout(): React.JSX.Element {
     return (
       <div>
-        <CardImageView
+        <CardImageViewWrapper
           className={props.className}
           cardface={cardViewState.card.getCardface(cardViewState.cardfaceSequence)}
           layout={cardViewState.card.cardLayout}
@@ -121,7 +121,7 @@ export function CardView(props: CardViewProps) {
   function SingleSidedDoubleFaceLayout(): React.JSX.Element {
     return (
       <div>
-        <CardImageView
+        <CardImageViewWrapper
           className={props.className}
           cardface={cardViewState.card.getCardface(cardViewState.cardfaceSequence)}
           layout={cardViewState.card.cardLayout}

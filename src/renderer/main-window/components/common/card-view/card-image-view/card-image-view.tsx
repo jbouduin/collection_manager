@@ -10,9 +10,21 @@ export function CardImageView(props: CardImageViewProps) {
   //#region Main --------------------------------------------------------------
   return (props.cardface ?
     <SectionCard padded={true} className={props.className}>
-      <img
-        className={classNames("card-image", props.layout == "split" ? "rotate-90" : "")}
-        src={`cached-image://${props.cardface.cardId}/?size=normal&sequence=${props.cardface.sequence}`} />
+      {
+        props.onFlipClicked &&
+        <img
+          onClick={props.onFlipClicked }
+          className={classNames("card-image", props.rotationClass)}
+          src={`cached-image://${props.cardface.cardId}/?size=normal&sequence=${props.cardface.sequence}`}
+        />
+      }
+      {
+        !props.onFlipClicked &&
+        <img
+          className={classNames("card-image", props.rotationClass)}
+          src={`cached-image://${props.cardface.cardId}/?size=normal&sequence=${props.cardface.sequence}`}
+        />
+      }
     </SectionCard>
     :
     <div></div>

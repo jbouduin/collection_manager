@@ -1,9 +1,9 @@
 import { Classes } from "@blueprintjs/core";
 import * as React from "react";
 
-import { CollectionView } from "../collection/collection-view";
-import { DatabaseView } from "../database/database-view";
-import { DeckView } from "../deck/deck-view";
+import { CollectionView } from "../views/collection-view/collection-view";
+import { DatabaseView } from "../views/database-view/database-view";
+import { DeckView } from "../views/deck-view/deck-view";
 import { ButtonBar } from "./button-bar";
 import { EDesktopView } from "./desktop-view.enum";
 import { DesktopProps } from "./desktop.props";

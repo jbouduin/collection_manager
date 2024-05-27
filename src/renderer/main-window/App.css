@@ -100,7 +100,11 @@ body {
   justify-content: space-between;
 }
 
-img.split-card{
+img.rotate-90{
+  transform: rotate(90deg);
+}
+
+img.rotate-180 {
   transform: rotate(90deg);
 }
 

@@ -11,7 +11,7 @@ export function CardImageView(props: CardImageViewProps) {
   return (props.cardface ?
     <SectionCard padded={true} className={props.className}>
       <img
-        className={classNames("card-image", props.layout == "split" ? "split-card" : "")}
+        className={classNames("card-image", props.layout == "split" ? "rotate-90" : "")}
         src={`cached-image://${props.cardface.cardId}/?size=normal&sequence=${props.cardface.sequence}`} />
     </SectionCard>
     :

@@ -100,6 +100,10 @@ body {
   justify-content: space-between;
 }
 
+img.split-card{
+  transform: rotate(90deg);
+}
+
 .bp5-section-card.bp5-padded {
   padding-top: 10px;
   padding-bottom: 10px;

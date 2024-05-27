@@ -2,10 +2,10 @@ import * as fs from "fs";
 import * as helpers from "kysely/helpers/sqlite";
 import { inject, injectable } from "tsyringe";
 
-import { CardImageDto, DtoCard, DtoCardface, DtoCardfaceColor, OracleDto } from "../../../../common/dto";
+import { CardImageDto, DtoCard, DtoCardColor, DtoCardface, DtoCardfaceColor, DtoOracle } from "../../../../common/dto";
 import { ImageSize } from "../../../../common/enums";
 import { CardQueryOptions } from "../../../../common/ipc-params/query/card-query.options";
-import { cardTableFields, cardfaceColorMapTableFields, cardfaceTableFields } from "../../../../main/database/schema/card/table-fields.constants";
+import { cardColorMapTableFields, cardTableFields, cardfaceColorMapTableFields, cardfaceTableFields } from "../../../../main/database/schema/card/table-fields.constants";
 import { oracleTableFields } from "../../../../main/database/schema/oracle/table-field.constants";
 import INFRATOKENS, { IDatabaseService } from "../../infra/interfaces";
 import { ICardRepository } from "../interfaces";
@@ -24,6 +24,7 @@ export class CardRepository extends BaseRepository implements ICardRepository {
 
   //#region ICardRepository methods -------------------------------------------
   public async getCardImageData(cardId: string, sequence: number, imageType: ImageSize): Promise<CardImageDto> {
+    console.log("requesting image data for", cardId, sequence, imageType);
     return this.database.selectFrom("cardface_image")
       .innerJoin("card", "card.id", "cardface_image.card_id")
       .innerJoin("card_set", "card_set.id", "card.set_id")
@@ -32,12 +33,14 @@ export class CardRepository extends BaseRepository implements ICardRepository {
         "cardface_image.uri as imageUri",
         "card_set.code as setCode",
         "card.lang as language",
-        "cardface_image.image_type as imageType"
+        "cardface_image.image_type as imageType",
+        "cardface_image.sequence as sequence"
         // LATER sql`${imageType} as imageType`
       ])
       .where("cardface_image.card_id", "=", cardId)
       .where("cardface_image.sequence", "=", sequence)
       .where("cardface_image.image_type", "=", imageType)
+      .$call(this.logCompilable)
       .executeTakeFirst();
   }
 
@@ -61,18 +64,24 @@ export class CardRepository extends BaseRepository implements ICardRepository {
             .whereRef("cardface.card_id", "=", "card.id")
             .$castTo<DtoCardface>()
         ).as("cardfaces"),
-        helpers.jsonObjectFrom<OracleDto>(
+        helpers.jsonArrayFrom<DtoOracle>(
           eb.selectFrom("oracle")
             .select(oracleTableFields)
             .whereRef("oracle.oracle_id", "=", "card.oracle_id")
-            .$castTo<OracleDto>()
+            .$castTo<DtoOracle>()
         ).as("oracle"),
         helpers.jsonArrayFrom(
           eb.selectFrom("card as c2")
             .select(["c2.lang", "c2.id"])
             .whereRef("c2.set_id", "=", "card.set_id")
             .whereRef("c2.collector_number", "=", "card.collector_number")
-        ).as("languages")
+        ).as("languages"),
+        helpers.jsonArrayFrom<DtoCardColor>(
+          eb.selectFrom("card_color_map")
+            .select(cardColorMapTableFields)
+            .whereRef("card_color_map.card_id", "=", "card.id")
+            .$castTo<DtoCardColor>()
+        ).as("cardColors"),
       ])
       .$if(options.setIds?.length > 0, (qb) => qb.where("card.set_id", "in", options.setIds))
       .$if(options.cardId !== null && options.cardId !== undefined, (qb) => qb.where("card.id", "=", options.cardId))

@@ -80,7 +80,7 @@ export class ImageCacheService implements IImageCacheService {
   }
 
   private pathToCachedCardImage(card: CardImageDto): string {
-    const fileName = `${card.collectorNumber.padStart(3, "0")}${path.extname(new URL(card.imageUri).pathname.split("/").pop())}`;
+    const fileName = `${card.collectorNumber.padStart(3, "0")}.${card.sequence}${path.extname(new URL(card.imageUri).pathname.split("/").pop())}`;
     const dirName = path.join(this.configurationService.cacheDirectory, "cards", card.setCode, card.language, card.imageType);
     if (!fs.existsSync(dirName)) {
       fs.mkdirSync(dirName, { recursive: true });

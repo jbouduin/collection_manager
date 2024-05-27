@@ -1,5 +1,5 @@
-import { DtoCard, DtoCardLanguage, DtoCardface } from "../../../common/dto";
-import { MTGLanguage } from "../../../common/enums";
+import { DtoCard, DtoCardLanguage, DtoCardface, DtoOracle } from "../../../common/dto";
+import { CardLayout, MTGLanguage } from "../../../common/enums";
 
 export class CardViewmodel {
   //#region private readonly fields -------------------------------------------
@@ -8,42 +8,25 @@ export class CardViewmodel {
   private readonly _cardManaCost: Array<string>;
   //#endregion
 
-  //#region public getters ----------------------------------------------------
-  // non normal layout cards: this field is used for getting the image
-  public get cardfaceId(): string {
-    return this._dtoCard.cardfaces[0].card_id;
-  }
-
-  public get setId(): string {
-    return this._dtoCard.set_id;
-  }
-
-  public get isMultipleLanguage(): boolean {
-    return this._dtoCard.languages.length > 1;
-  }
-
+  //#region public getters for table ------------------------------------------
   public get cardManacost(): Array<string> {
     return this._cardManaCost;
   }
 
   public get cardName(): string {
-    return this._dtoCard.oracle?.oracle_name ?? this._dtoCard.name;
+    return this.joinMultiCardFaceData(this._dtoCard.oracle.map((oracle: DtoOracle) => oracle.oracle_name));
   }
 
   public get cardPower(): string {
-    return this._dtoCard.cardfaces
-      .map((cardface: DtoCardface) => cardface.power)
-      .join(" // ");
+    return this.joinMultiCardFaceData(this._dtoCard.cardfaces.map((cardface: DtoCardface) => cardface.power));
   }
 
   public get cardThoughness(): string {
-    return this._dtoCard.cardfaces
-      .map((cardface: DtoCardface) => cardface.toughness)
-      .join(" // ");
+    return this.joinMultiCardFaceData(this._dtoCard.cardfaces.map((cardface: DtoCardface) => cardface.toughness));
   }
 
   public get cardtypeLine(): string {
-    return this._dtoCard.oracle?.type_line ?? "ERROR";
+    return this.joinMultiCardFaceData(this._dtoCard.oracle.map((oracle: DtoOracle) => oracle.type_line));
   }
 
   public get collectorNumberSortValue(): string {
@@ -56,6 +39,23 @@ export class CardViewmodel {
 
   public get rarity(): string {
     return this._dtoCard.rarity;
+  }
+  //#endregion
+
+  public get cardLayout(): CardLayout {
+    return this._dtoCard.layout;
+  }
+  // non normal layout cards: this field is used for getting the image
+  public get cardfaceId(): string {
+    return this._dtoCard.cardfaces[0].card_id;
+  }
+
+  public get setId(): string {
+    return this._dtoCard.set_id;
+  }
+
+  public get isMultipleLanguage(): boolean {
+    return this._dtoCard.languages.length > 1;
   }
 
   public get oracleId(): string {
@@ -70,7 +70,7 @@ export class CardViewmodel {
     return this._dtoCard.lang;
   }
   public get oracleText(): string {
-    return this._dtoCard.oracle.oracle_text;
+    return this._dtoCard.oracle[0].oracle_text;
   }
 
   public get flavorText(): string {
@@ -127,6 +127,16 @@ export class CardViewmodel {
     const splittedCellValue = manaCost.split("}");
     splittedCellValue.pop();
     return splittedCellValue.map((s: string, i: number) => i < splittedCellValue.length ? s + "}" : s);
+  }
+
+  private joinMultiCardFaceData(data: Array<string | null>): string {
+    if (data.filter((d: string) => d != null && d != undefined).length == 0) {
+      return "";
+    } else {
+      return data
+        .map((d: string) => d == null || d == undefined ? "-" : d)
+        .join(" // ");
+    }
   }
   //#endregion
 }

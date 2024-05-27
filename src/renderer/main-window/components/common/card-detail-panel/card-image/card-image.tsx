@@ -2,6 +2,7 @@ import { SectionCard } from "@blueprintjs/core";
 import * as React from "react";
 
 import { CardImageProps } from "./card-image.props";
+import classNames from "classnames";
 
 export function CardImage(props: CardImageProps) {
   console.log("cardimage constructor", props.card);
@@ -10,7 +11,7 @@ export function CardImage(props: CardImageProps) {
   //#region Main --------------------------------------------------------------
   return (props.card ?
     <SectionCard padded={true} className={props.className}>
-      <img className="card-image" src={`cached-image://${props.card.cardfaceId}/0?size=normal`} />
+      <img className={classNames("card-image", props.card.cardLayout == "split" ? "split-card" : "")} src={`cached-image://${props.card.cardfaceId}/?size=normal&sequence=0`} />
     </SectionCard>
     :
     <div></div>

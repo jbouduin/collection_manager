@@ -3,22 +3,22 @@ import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser
 
 import { MTGColor } from "../../../../../common/enums";
 import { DatabaseSchema } from "../../../../database/schema";
-import { ICardfaceColorMapAdapter } from "../interface";
-import { CardfaceColorMapAdapterParameter } from "../interface/param";
+import { ICardColorMapAdapter } from "../interface";
+import { CardColorMapAdapterParameter } from "../interface/param";
 
-export class CardfaceColorMapAdapter implements ICardfaceColorMapAdapter{
-  public toInsert(scryfall: CardfaceColorMapAdapterParameter): InsertExpression<DatabaseSchema, "cardface_color_map"> {
+export class CardColorMapAdapter implements ICardColorMapAdapter{
+  public toInsert(scryfall: CardColorMapAdapterParameter): InsertExpression<DatabaseSchema, "card_color_map"> {
     return scryfall.colors.map((color: MTGColor) => {
       return {
         card_id: scryfall.cardId,
-        sequence: scryfall.sequence,
         color_type: scryfall.colorType,
         color_id: color
       };
     });
 
   }
-  public toUpdate(_scryfall: CardfaceColorMapAdapterParameter): UpdateObjectExpression<DatabaseSchema, "cardface_color_map"> {
+
+  public toUpdate(_scryfall: CardColorMapAdapterParameter): UpdateObjectExpression<DatabaseSchema, "card_color_map"> {
     throw new Error("Method not supported.");
   }
 

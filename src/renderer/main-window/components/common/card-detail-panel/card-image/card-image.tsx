@@ -10,7 +10,7 @@ export function CardImage(props: CardImageProps) {
   //#region Main --------------------------------------------------------------
   return (props.card ?
     <SectionCard padded={true} className={props.className}>
-      <img className="card-image" src={`cached-image://${props.card.cardfaceId}?size=normal`} />
+      <img className="card-image" src={`cached-image://${props.card.cardfaceId}/0?size=normal`} />
     </SectionCard>
     :
     <div></div>

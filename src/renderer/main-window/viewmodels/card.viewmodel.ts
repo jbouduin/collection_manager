@@ -11,7 +11,7 @@ export class CardViewmodel {
   //#region public getters ----------------------------------------------------
   // non normal layout cards: this field is used for getting the image
   public get cardfaceId(): string {
-    return this._dtoCard.cardfaces[0].id;
+    return this._dtoCard.cardfaces[0].card_id;
   }
 
   public get setId(): string {
@@ -43,7 +43,7 @@ export class CardViewmodel {
   }
 
   public get cardtypeLine(): string {
-    return this._dtoCard.oracle.type_line;
+    return this._dtoCard.oracle?.type_line ?? "ERROR";
   }
 
   public get collectorNumberSortValue(): string {

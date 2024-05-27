@@ -1,6 +1,8 @@
-import { ScryfallCard } from "../../../types";
+import { ScryfallCard, ScryfallCardface } from "../../../types";
 
 export type OracleAdapterParameter = {
-  faceName: string,
-  scryfallCard: ScryfallCard
+  oracleId: string;
+  scryfallCard?: ScryfallCard;
+  scryfallCardFace?: ScryfallCardface;
+  sequence: number;
 };

@@ -1,7 +1,6 @@
-import { ScryfallCard } from "../../../types";
+import { ScryfallCard, ScryfallCardface } from "../../../types";
 
 export type CardFaceAdapterParameter = {
-  uuid: string,
-  faceName: string,
-  scryfallCard: ScryfallCard
+  scryfallCard: ScryfallCard,
+  scryfallCardfaces?: Array<ScryfallCardface>;
 };

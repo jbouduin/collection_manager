@@ -2,6 +2,7 @@
 import { container } from "tsyringe";
 
 import { CardCardMapAdapter } from "./implementation/card-card-map.adapter";
+import { CardColorMapAdapter } from "./implementation/card-color-map.adapter";
 import { CardGameAdapter } from "./implementation/card-game.adapter";
 import { CardMultiverseIdAdapter } from "./implementation/card-multiverse-id.adapter";
 import { CardSetAdapter } from "./implementation/card-set.adapter";
@@ -19,7 +20,7 @@ import { OracleRulingLineAdapter } from "./implementation/oracle-ruling-line.ada
 import { OracleRulingAdapter } from "./implementation/oracle-ruling.adapter";
 import { OracleAdapter } from "./implementation/oracle.adapter";
 import ADAPTTOKENS, {
-  ICardAdapter, ICardCardMapAdapter, ICardGameAdapter, ICardMultiverseIdAdapter,
+  ICardAdapter, ICardCardMapAdapter, ICardColorMapAdapter, ICardGameAdapter, ICardMultiverseIdAdapter,
   ICardSetAdapter,
   ICardSymbolAdapter, ICardSymbolAlternativeAdapter, ICardSymbolColorMapAdapter,
   ICardfaceAdapter, ICardfaceColorMapAdapter, ICardfaceImageAdapter, ICatalogAdapter,
@@ -37,6 +38,7 @@ export class AdaptDi {
     container.register<ICardMultiverseIdAdapter>(ADAPTTOKENS.CardMultiverseIdAdapter, { useClass: CardMultiverseIdAdapter });
     container.register<ICardSetAdapter>(ADAPTTOKENS.CardSetAdapter, { useClass: CardSetAdapter });
     container.register<ICardAdapter>(ADAPTTOKENS.CardAdapter, { useClass: CardAdapter });
+    container.register<ICardColorMapAdapter>(ADAPTTOKENS.CardColorMapAdapter, { useClass: CardColorMapAdapter });
     container.register<ICardfaceAdapter>(ADAPTTOKENS.CardfaceAdapter, { useClass: CardfaceAdapter });
     container.register<ICardfaceColorMapAdapter>(ADAPTTOKENS.CardfaceColorMapAdapter, { useClass: CardfaceColorMapAdapter });
     container.register<ICardfaceImageAdapter>((ADAPTTOKENS.CardfaceImageAdapter), { useClass: CardfaceImageAdapter });

@@ -23,10 +23,9 @@ export class CardRepository extends BaseRepository implements ICardRepository {
   //#endregion
 
   //#region ICardRepository methods -------------------------------------------
-  public async getCardImageData(cardfaceId: string, imageType: ImageSize): Promise<CardImageDto> {
+  public async getCardImageData(cardId: string, sequence: number, imageType: ImageSize): Promise<CardImageDto> {
     return this.database.selectFrom("cardface_image")
-      .innerJoin("cardface", "cardface.id", "cardface_image.cardface_id")
-      .innerJoin("card", "card.id", "cardface.card_id")
+      .innerJoin("card", "card.id", "cardface_image.card_id")
       .innerJoin("card_set", "card_set.id", "card.set_id")
       .select([
         "card.collector_number as collectorNumber",
@@ -36,7 +35,8 @@ export class CardRepository extends BaseRepository implements ICardRepository {
         "cardface_image.image_type as imageType"
         // LATER sql`${imageType} as imageType`
       ])
-      .where("cardface.id", "=", cardfaceId)
+      .where("cardface_image.card_id", "=", cardId)
+      .where("cardface_image.sequence", "=", sequence)
       .where("cardface_image.image_type", "=", imageType)
       .executeTakeFirst();
   }
@@ -53,7 +53,8 @@ export class CardRepository extends BaseRepository implements ICardRepository {
               helpers.jsonArrayFrom<DtoCardfaceColor>(
                 eb.selectFrom("cardface_color_map")
                   .select(cardfaceColorMapTableFields)
-                  .whereRef("cardface_color_map.cardface_id", "=", "cardface.id")
+                  .whereRef("cardface_color_map.card_id", "=", "cardface.card_id")
+                  .whereRef("cardface_color_map.sequence", "=", "cardface.sequence")
                   .$castTo<DtoCardfaceColor>()
               ).as("cardfaceColors")
             ])

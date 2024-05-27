@@ -6,6 +6,7 @@ import {
   CardSymbolAlternativeTable, CardSymbolColorMapTable, CardSymbolTable,
 
 } from ".";
+import { CardColorMapTable } from "./card/card-color-map.table";
 
 
 export interface DatabaseSchema {
@@ -13,6 +14,7 @@ export interface DatabaseSchema {
   card: CardTable;
   card_multiverse_id: CardMultiverseIdTable;
   card_game: CardGameTable;
+  card_color_map: CardColorMapTable;
   cardface: CardfaceTable;
   cardface_color_map: CardFaceColorMapTable;
   cardface_image: CardFaceImageTable;

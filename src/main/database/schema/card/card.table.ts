@@ -1,6 +1,6 @@
 import { ColumnType } from "kysely";
 
-import { CardBorderColor, CardLayout, CardRarity, MTGLanguage } from "../../../../common/enums";
+import { CardBorderColor, CardFrame, CardLayout, CardRarity, MTGLanguage } from "../../../../common/enums";
 import { SynchronizedWithStringId } from "../base.types";
 
 export interface CardTable extends SynchronizedWithStringId {
@@ -20,6 +20,7 @@ export interface CardTable extends SynchronizedWithStringId {
   digital: ColumnType<boolean, number, number>;
   full_art: ColumnType<boolean, number, number>;
   reprint: ColumnType<boolean, number, number>;
+  frame: ColumnType<CardFrame, string>;
   // LATER store property "finishes" in a table (An array of computer - readable flags that indicate if this card can come in foil, nonfoil, or etched finishes.)
 }
 

@@ -2,9 +2,8 @@ import { ColumnType } from "kysely";
 
 import { MTGColor, MTGColorType } from "../../../../common/enums";
 
-export interface CardFaceColorMapTable {
+export interface CardColorMapTable {
   card_id: ColumnType<string, string, never>;
-  sequence: ColumnType<number, number, never>;
   color_type: ColumnType<MTGColorType, MTGColorType, never>
   color_id: ColumnType<MTGColor, MTGColor, never>;
 }

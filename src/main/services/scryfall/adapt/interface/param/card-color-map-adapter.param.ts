@@ -1,8 +1,7 @@
 import { MTGColor, MTGColorType } from "../../../../../../common/enums";
 
-export type CardfaceColorMapAdapterParameter = {
+export type CardColorMapAdapterParameter = {
   cardId: string,
-  sequence: number,
   colorType: MTGColorType,
   colors: Array<MTGColor>
 };

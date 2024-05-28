@@ -74,32 +74,41 @@ export function CardView(props: CardViewProps) {
   //#endregion
 
   //#region Auxiliary functions -----------------------------------------------
+  // NOW transform
+  // NOW modal_dfc
+  // NOW meld
+  // NOW double_face_token
+  // NOW art_series
+  // NOW reversible
+  // NOW planar (rotate 90) has a different back
   function getViewByLayout(cardLayout: CardLayout) {
     switch (cardLayout) {
-      case "normal":
-      case "leveler":
-      case "saga":
-      case "leveler":
-      case "class":
-      case "case":
-      case "mutate":
-      case "prototype":
-      case "scheme":
-      case "vanguard":
-      case "token":
-      case "emblem":
       case "augment":
+      case "case":
+      case "class":
+      case "emblem":
       case "host":
-        return SingleSidedSingleFaceLayout();
+      case "leveler":
+      case "mutate":
+      case "normal":
+      case "prototype":
+      case "saga":
+      case "scheme":
+      case "token":
+      case "vanguard":
+        return SingleFaceLayout();
       case "split":
       case "flip":
-        return SingleSidedDoubleFaceLayout();
+        // NOW case "adventure"
+        return DoubleFaceLayout();
       case "battle":
         throw new Error("not supported as scryfall does not return result when searching");
+      default:
+        throw new Error("Card layout not supported");
     }
   }
 
-  function SingleSidedSingleFaceLayout(): React.JSX.Element {
+  function SingleFaceLayout(): React.JSX.Element {
     return (
       <div>
         <CardImageViewWrapper
@@ -133,7 +142,7 @@ export function CardView(props: CardViewProps) {
       </div>);
   }
 
-  function SingleSidedDoubleFaceLayout(): React.JSX.Element {
+  function DoubleFaceLayout(): React.JSX.Element {
     return (
       <div>
         <CardImageViewWrapper

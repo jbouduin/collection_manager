@@ -20,6 +20,14 @@ export function CardImageViewWrapper(props: CardImageViewWrapperProps) {
     },
     [rotationClass, props.cardface]
   );
+
+  const onReverseClicked = React.useCallback(
+    () => {
+      console.log("reverse clicked");
+
+    },
+    [rotationClass, props.cardface]
+  )
   //#endregion
 
   //#region effect ------------------------------------------------------------
@@ -33,7 +41,8 @@ export function CardImageViewWrapper(props: CardImageViewWrapperProps) {
   return (
     <CardImageView
       className={props.className}
-      cardface={props.cardface}
+      cardfaceSequence={props.cardface.sequence}
+      cardId={props.cardface.cardId}
       rotationClass={rotationClass}
       onFlipClicked={props.layout == "flip" ? onFlipClicked : null}
     />

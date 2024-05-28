@@ -29,5 +29,7 @@ export function canSynchronize(oracle_id: string):boolean {
     oracle_id == "f85eea8f-5887-4921-a943-d15e0ad1e028" || // case: Case of the Ransacked Lab - Murders at Karlov Manor Promos (PMKM)
     oracle_id == "8c1b3f1b-40d8-4cd5-bedf-92c3c534be84" || // mutate: Cubwarden - Ikoria: Lair of Behemoths Promos (PIKO)
     oracle_id == "792f8235-f23b-4858-bdd4-c7a186b7a470" || // prototype: Arcane Proxy {7} - The Brothers' War Promos (PBRO)
-    oracle_id == "c54101eb-8c10-420d-8172-d5985f348463" // schema: Your Inescapable Doom - DCI Promos (PDCI)
+    oracle_id == "c54101eb-8c10-420d-8172-d5985f348463" || // schema: Your Inescapable Doom - DCI Promos (PDCI)
+    // FEATURE vanguard has "show back on scryfall", but it looks like a normal back"
+    oracle_id == "5ad380b9-18e0-4613-859d-8a378c4dfebd" // vanguard: Mishra - Vanguard Series (PVAN)
 }

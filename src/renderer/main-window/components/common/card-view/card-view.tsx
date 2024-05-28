@@ -85,6 +85,7 @@ export function CardView(props: CardViewProps) {
       case "mutate":
       case "prototype":
       case "scheme":
+      case "vanguard":
         return SingleSidedSingleFaceLayout();
       case "split":
       case "flip":

@@ -18,34 +18,88 @@ export function CardImageViewWrapper(props: CardImageViewWrapperProps) {
         setRotationClass("");
       }
     },
-    [rotationClass, props.cardface]
+    [rotationClass, props.card]
   );
 
   const onReverseClicked = React.useCallback(
     () => {
       console.log("reverse clicked");
-
     },
-    [rotationClass, props.cardface]
-  )
+    [rotationClass, props.card]
+  );
   //#endregion
 
   //#region effect ------------------------------------------------------------
   React.useEffect(
-    () => { setRotationClass(props.layout == "split" ? "rotate-90" : ""); },
-    [props.cardface]
+    () => { setRotationClass(props.card.cardLayout == "split" || props.card.cardLayout == "planar" ? "rotate-90" : ""); },
+    [props.card]
   );
   //#endregion
 
   //#region Main --------------------------------------------------------------
   return (
-    <CardImageView
-      className={props.className}
-      cardfaceSequence={props.cardface.sequence}
-      cardId={props.cardface.cardId}
-      rotationClass={rotationClass}
-      onFlipClicked={props.layout == "flip" ? onFlipClicked : null}
-    />
+    <div>
+      {
+        render()
+      }
+    </div>
   );
+  //#endregion
+
+  //#region Auxiliary methods -------------------------------------------------
+  function render(): React.JSX.Element {
+    switch (props.card.cardLayout) {
+      case "adventure":
+      case "augment":
+      case "battle": // no idea what this looks like
+      case "case":
+      case "class":
+      case "emblem":
+      case "host":
+      case "leveler":
+      case "mutate":
+      case "normal":
+      case "planar":
+      case "prototype":
+      case "saga":
+      case "scheme":
+      case "split":
+      case "token":
+      case "vanguard":
+        return (
+          <CardImageView
+            className={props.className}
+            cardfaceSequence={0}
+            cardId={props.card.cardId}
+            rotationClass={rotationClass}
+          />
+        );
+      case "flip":
+        return (
+          <CardImageView
+            className={props.className}
+            cardfaceSequence={0}
+            cardId={props.card.cardId}
+            rotationClass={rotationClass}
+            onFlipClicked={onFlipClicked}
+          />
+        );
+      case "transform":
+      case "modal_dfc":
+      case "meld":
+      case "double_faced_token":
+      case "art_series":
+      case "double_sided":
+        return (
+          <CardImageView
+            className={props.className}
+            cardfaceSequence={0}
+            cardId={props.card.cardId}
+            rotationClass={rotationClass}
+            onReverseClicked={onReverseClicked}
+          />
+        );
+    }
+  }
   //#endregion
 }

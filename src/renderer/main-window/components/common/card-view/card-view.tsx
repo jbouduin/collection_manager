@@ -80,7 +80,6 @@ export function CardView(props: CardViewProps) {
   // NOW double_face_token
   // NOW art_series
   // NOW reversible
-  // NOW planar (rotate 90) has a different back
   function getViewByLayout(cardLayout: CardLayout) {
     switch (cardLayout) {
       case "augment":
@@ -91,6 +90,7 @@ export function CardView(props: CardViewProps) {
       case "leveler":
       case "mutate":
       case "normal":
+      case "planar":
       case "prototype":
       case "saga":
       case "scheme":
@@ -99,7 +99,7 @@ export function CardView(props: CardViewProps) {
         return SingleFaceLayout();
       case "split":
       case "flip":
-        // NOW case "adventure"
+      case "adventure":
         return DoubleFaceLayout();
       case "battle":
         throw new Error("not supported as scryfall does not return result when searching");
@@ -113,8 +113,7 @@ export function CardView(props: CardViewProps) {
       <div>
         <CardImageViewWrapper
           className={props.className}
-          cardface={cardViewState.card.getCardface(cardViewState.cardfaceSequence)}
-          layout={cardViewState.card.cardLayout}
+          card={cardViewState.card}
         />
         {
           cardViewState.card.isLocalizedCard &&
@@ -147,8 +146,7 @@ export function CardView(props: CardViewProps) {
       <div>
         <CardImageViewWrapper
           className={props.className}
-          cardface={cardViewState.card.getCardface(cardViewState.cardfaceSequence)}
-          layout={cardViewState.card.cardLayout}
+          card={cardViewState.card}
         />
         <SubCardHeaderView
           cardface={cardViewState.card.getCardface(0)}

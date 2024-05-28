@@ -31,5 +31,6 @@ export function canSynchronize(oracle_id: string):boolean {
     oracle_id == "792f8235-f23b-4858-bdd4-c7a186b7a470" || // prototype: Arcane Proxy {7} - The Brothers' War Promos (PBRO)
     oracle_id == "c54101eb-8c10-420d-8172-d5985f348463" || // schema: Your Inescapable Doom - DCI Promos (PDCI)
     // FEATURE vanguard has "show back on scryfall", but it looks like a normal back"
-    oracle_id == "5ad380b9-18e0-4613-859d-8a378c4dfebd" // vanguard: Mishra - Vanguard Series (PVAN)
+    oracle_id == "5ad380b9-18e0-4613-859d-8a378c4dfebd" || // vanguard: Mishra - Vanguard Series (PVAN)
+    oracle_id == "dd4c59c6-a051-4909-ae28-bc0367db2d30" // token: Cragflame - Bloomburrow Tokens (TBLB)
 }

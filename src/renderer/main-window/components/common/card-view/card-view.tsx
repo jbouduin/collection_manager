@@ -81,6 +81,7 @@ export function CardView(props: CardViewProps) {
       case "saga":
       case "leveler":
       case "class":
+      case "case":
         return SingleSidedSingleFaceLayout();
       case "split":
       case "flip":

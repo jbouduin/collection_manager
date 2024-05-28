@@ -1,6 +1,6 @@
 import { CardLayout } from "./enums";
 
-export function isSingleCardFaceLayout(layout: CardLayout):boolean {
+export function isSingleCardFaceLayout(layout: CardLayout): boolean {
   return [
     "normal",
     "leveler",
@@ -19,7 +19,7 @@ export function isSingleCardFaceLayout(layout: CardLayout):boolean {
   ].indexOf(layout) >= 0;
 }
 
-export function canSynchronize(oracle_id: string):boolean {
+export function canSynchronize(oracle_id: string): boolean {
   return oracle_id == "c3df3574-c4da-415f-a56b-807ed8e41d73" || // normal: (one multi lang, one english only) from Breaking news (OTP)
     oracle_id == "1c747fe2-289e-492a-a846-aa77707e2dc3" || // split: multi language from Breaking news (OTP)
     oracle_id == "0664dcc8-fa68-4802-936f-ecd2979ebf3c" || // flip:  (token) from Wilds of Eldraine Tokens (TWOE)
@@ -33,5 +33,7 @@ export function canSynchronize(oracle_id: string):boolean {
     // FEATURE vanguard has "show back on scryfall", but it looks like a normal back"
     oracle_id == "5ad380b9-18e0-4613-859d-8a378c4dfebd" || // vanguard: Mishra - Vanguard Series (PVAN)
     oracle_id == "dd4c59c6-a051-4909-ae28-bc0367db2d30" || // token: Cragflame - Bloomburrow Tokens (TBLB)
-    oracle_id == "b7dc9439-d9bb-435a-8d3b-9e92bfae16ef" // emblem: Domri Rade Emblem - Ravnica Remastered Tokens (TRVR)
+    oracle_id == "b7dc9439-d9bb-435a-8d3b-9e92bfae16ef" || // emblem: Domri Rade Emblem - Ravnica Remastered Tokens (TRVR)
+    oracle_id == "50a6c19d-7ec7-4e19-8ac5-d0ca09a998e5" || // augment: Half-Squirrel, Half- Unsanctioned (UND)
+    oracle_id == "957ba875-b8d4-48e2-bbd7-993694a936f3"  // host: Wild Crocodile - Unsanctioned (UND)
 }

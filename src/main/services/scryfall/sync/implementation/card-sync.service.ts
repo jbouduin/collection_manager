@@ -174,10 +174,13 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
         this.oracleAdapter,
         { oracleId: scryfallCard.oracle_id, sequence: 0, scryfallCard: scryfallCard }
       );
-    } else  {
+    } else {
       console.log(`${scryfallCard.name} ${scryfallCard.lang} - single sync of oracle for split card`);
+      const uniqueOracleIds = scryfallCard.layout != "reversible_card" ?
+        scryfallCard.card_faces :
+        [...new Map(scryfallCard.card_faces.map((cardface: ScryfallCardface) => [cardface.oracle_id, cardface])).values()];
       const taskParameters: Array<GenericSyncTaskParameter<"oracle", OracleAdapterParameter>> =
-        scryfallCard.card_faces.map((cardFace: ScryfallCardface, idx: number) => {
+        uniqueOracleIds.map((cardFace: ScryfallCardface, idx: number) => {
           const oracle_id = scryfallCard.layout == "reversible_card" ? cardFace.oracle_id : scryfallCard.oracle_id;
           return {
             trx: trx,
@@ -234,7 +237,10 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
             }
           });
         } else {
-          scryfallCard.card_faces.forEach((cardface: ScryfallCardface) =>
+          const uniqueOracleIds = scryfallCard.layout != "reversible_card" ?
+            [...new Map(scryfallCard.card_faces.map((cardface: ScryfallCardface) => [cardface.oracle_id, cardface])).values()] :
+            scryfallCard.card_faces;
+          uniqueOracleIds.forEach((cardface: ScryfallCardface) =>
             taskParameters.push({
               trx: trx,
               tableName: "oracle_legality",

@@ -74,7 +74,8 @@ export class CardRepository extends BaseRepository implements ICardRepository {
             .select(["c2.lang", "c2.id"])
             .whereRef("c2.set_id", "=", "card.set_id")
             .whereRef("c2.collector_number", "=", "card.collector_number")
-            .whereRef("c2.layout", "=", "card.layout")
+            .innerJoin("language", "language.id", "c2.lang")
+            .orderBy("language.sequence")
         ).as("languages"),
         helpers.jsonArrayFrom<DtoCardColor>(
           eb.selectFrom("card_color_map")
@@ -87,8 +88,8 @@ export class CardRepository extends BaseRepository implements ICardRepository {
       .$if(options.cardId !== null && options.cardId !== undefined, (qb) => qb.where("card.id", "=", options.cardId))
       // .$call(this.logCompilable)
       .$castTo<DtoCard>()
-      .groupBy(["card.set_id", "card.collector_number", "card.layout"])
-      .orderBy(["card.set_id", "card.collector_number", "card.layout"])
+      .groupBy(["card.set_id", "card.collector_number"])
+      .orderBy(["card.set_id", "card.collector_number"])
       .execute()
       .then((qryResult: Array<DtoCard>) => {
         fs.writeFileSync("c:/data/new-assistant/json/cardquery.json", JSON.stringify(qryResult, null, 2));

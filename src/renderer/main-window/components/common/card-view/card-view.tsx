@@ -74,9 +74,6 @@ export function CardView(props: CardViewProps) {
   //#endregion
 
   //#region Auxiliary functions -----------------------------------------------
-  // NOW double_face_token
-  // NOW art_series
-  // NOW reversible
   function getViewByLayout(cardLayout: CardLayout) {
     switch (cardLayout) {
       case "augment":
@@ -95,10 +92,12 @@ export function CardView(props: CardViewProps) {
       case "token":
       case "vanguard":
         return SingleFaceLayout();
+      case "art_series":
       case "adventure":
       case "double_faced_token":
       case "flip":
       case "modal_dfc":
+      case "reversible_card":
       case "split":
       case "transform":
         return DoubleFaceLayout();

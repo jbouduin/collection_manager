@@ -46,6 +46,8 @@ export function canSynchronize(oracle_id: string): boolean {
     oracle_id == "43230d70-4d60-4ceb-bb45-fbc043280652" || // meld: Titania, Gaea Incarnate (meld of the previous two) - The Brothers' War Promos (PBRO)
     oracle_id == "3720f635-c0c3-4698-aed5-653444f1ab2b" || // double_face_token: Urza's Blueprints (minigame) - the brothers' war minigames
     oracle_id == "c03f3ed5-963e-4fbf-9614-b7f21653e544" || // double_face_token: gremlin - League Tokens 2017 (L17)
-    oracle_id == "dd3bf75e-9ef0-4ded-9b65-1a60a78a6253" // double_face_token: Incubator // Pyrexian - March of the Machine Tokens (TMOM)
-    ;
+    oracle_id == "dd3bf75e-9ef0-4ded-9b65-1a60a78a6253" || // double_face_token: Incubator // Pyrexian - March of the Machine Tokens (TMOM)
+    oracle_id == "aa454a53-859c-4d54-b3e1-3764f67c00ff" || // art_series: (vertical) Sorin the Mirthless - Crimson Vow Art Series (AVOW)
+    oracle_id == "8e261397-f2d8-4929-8533-42ec8a411d52" || // art_series: (horizontal) Ancestor's Embrace - Crimson Vow Art Series (AVOW)
+    oracle_id == "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6"; // reversible: Forest//Forest - Jurassic World Collection (REX) - these are exaclty the cards that have the oracle ids on face level
 }

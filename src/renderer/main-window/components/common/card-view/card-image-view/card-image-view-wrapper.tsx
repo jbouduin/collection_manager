@@ -97,8 +97,8 @@ export function CardImageViewWrapper(props: CardImageViewWrapperProps) {
       case "transform":
       case "modal_dfc":
       case "double_faced_token":
-      case "art_series":
-      case "double_sided":
+      case "reversible_card":
+      case "art_series": // TODO art series have revers and flip
         return (
           <CardImageView
             className={props.className}
@@ -108,6 +108,17 @@ export function CardImageViewWrapper(props: CardImageViewWrapperProps) {
             onReverseClicked={onReverseClicked}
           />
         );
+      // case "art_series":
+      //   return (
+      //     <CardImageView
+      //       className={props.className}
+      //       cardfaceSequence={cardfaceSequence}
+      //       cardId={props.card.cardId}
+      //       rotationClass={rotationClass}
+      //       onReverseClicked={onReverseClicked}
+      //       onFlipClicked={onFlipClicked}
+      //     />
+      //   );
     }
   }
   //#endregion

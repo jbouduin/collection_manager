@@ -99,7 +99,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
     let cnt = 0;
     return Promise
       .all(cards
-        .filter((card: ScryfallCard) => canSynchronize(card.oracle_id))  // NOW remove filter once all layouts are supported
+        .filter((card: ScryfallCard) => canSynchronize(card.oracle_id) || canSynchronize(card.card_faces?.at(0).oracle_id))  // NOW remove filter once all layouts are supported
         .map((card: ScryfallCard) => this.syncSingleCard(card, ++cnt, total, progressCallback))
       )
       .then(() => Promise.resolve());
@@ -178,12 +178,13 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
       console.log(`${scryfallCard.name} ${scryfallCard.lang} - single sync of oracle for split card`);
       const taskParameters: Array<GenericSyncTaskParameter<"oracle", OracleAdapterParameter>> =
         scryfallCard.card_faces.map((cardFace: ScryfallCardface, idx: number) => {
+          const oracle_id = scryfallCard.layout == "reversible_card" ? cardFace.oracle_id : scryfallCard.oracle_id;
           return {
             trx: trx,
             tableName: "oracle",
             adapter: this.oracleAdapter,
-            filter: (eb) => eb("oracle.oracle_id", "=", scryfallCard.oracle_id).and("oracle.face_sequence", "=", idx),
-            scryfall: { oracleId: scryfallCard.oracle_id, sequence: idx, scryfallCardFace: cardFace }
+            filter: (eb) => eb("oracle.oracle_id", "=", oracle_id).and("oracle.face_sequence", "=", idx),
+            scryfall: { oracleId: oracle_id, sequence: idx, scryfallCardFace: cardFace }
           };
         });
 
@@ -198,7 +199,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
   }
 
   private async syncOracleKeywords(trx: Transaction<DatabaseSchema>, scryfallCard: ScryfallCard): Promise<Array<DeleteResult> | InsertResult> {
-    if (scryfallCard.keywords?.length > 0) {
+    if (scryfallCard.keywords?.length > 0 && scryfallCard.oracle_id) { // TODO cover reversible_card here also
       console.log(`${scryfallCard.name} ${scryfallCard.lang} - delete and recreate oracle_keyword`);
       return await this.genericDeleteAndRecreate(
         trx,
@@ -219,19 +220,35 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
   private async syncOracleLegalities(trx: Transaction<DatabaseSchema>, scryfallCard: ScryfallCard): Promise<void | Array<DeleteResult>> {
     if (scryfallCard.legalities) {
       const taskParameters = new Array<GenericSyncTaskParameter<"oracle_legality", OracleLegalityAdapterParameter>>();
-      Object.keys(scryfallCard.legalities).forEach((key: string) =>
-        taskParameters.push({
-          trx: trx,
-          tableName: "oracle_legality",
-          filter: (eb) => eb("oracle_legality.oracle_id", "=", scryfallCard.oracle_id).and("oracle_legality.format", "=", key as GameFormat),
-          adapter: this.oracleLegalityAdapter,
-          scryfall: {
-            oracle_id: scryfallCard.oracle_id,
-            gameFormat: key as GameFormat,
-            legality: scryfallCard.legalities[key as keyof ScryfallLegalities]
-          }
-        })
-      );
+      Object.keys(scryfallCard.legalities).forEach((key: string) => {
+        if (scryfallCard.layout != "reversible_card") {
+          taskParameters.push({
+            trx: trx,
+            tableName: "oracle_legality",
+            filter: (eb) => eb("oracle_legality.oracle_id", "=", scryfallCard.oracle_id).and("oracle_legality.format", "=", key as GameFormat),
+            adapter: this.oracleLegalityAdapter,
+            scryfall: {
+              oracle_id: scryfallCard.oracle_id,
+              gameFormat: key as GameFormat,
+              legality: scryfallCard.legalities[key as keyof ScryfallLegalities]
+            }
+          });
+        } else {
+          scryfallCard.card_faces.forEach((cardface: ScryfallCardface) =>
+            taskParameters.push({
+              trx: trx,
+              tableName: "oracle_legality",
+              filter: (eb) => eb("oracle_legality.oracle_id", "=", cardface.oracle_id).and("oracle_legality.format", "=", key as GameFormat),
+              adapter: this.oracleLegalityAdapter,
+              scryfall: {
+                oracle_id: cardface.oracle_id,
+                gameFormat: key as GameFormat,
+                legality: scryfallCard.legalities[key as keyof ScryfallLegalities]
+              }
+            })
+          );
+        }
+      });
 
       return await runSerial<GenericSyncTaskParameter<"oracle_legality", OracleLegalityAdapterParameter>>(
         taskParameters,

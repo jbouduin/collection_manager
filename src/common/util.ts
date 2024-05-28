@@ -26,6 +26,7 @@ export function canSynchronize(oracle_id: string):boolean {
     oracle_id == "322e3bc1-2dfa-4d5f-848f-a82d9ce02a67" || // saga (WOE)
     oracle_id == "d369a02b-c282-454a-9f89-480f4f5d838c" || // leveler: "Lord of Shatterskull Pass  Rise of Eldrazi Promos (PROE)
     oracle_id == "6dccf583-1045-4058-86cc-ebbcc8de080e" || // class: Artificer Class - Commander Legends: Battle for Baldur's Gate (CLB)
-    oracle_id == "f85eea8f-5887-4921-a943-d15e0ad1e028"|| // case: Case of the Ransacked Lab - Murders at Karlov Manor Promos (PMKM)
-    oracle_id == "8c1b3f1b-40d8-4cd5-bedf-92c3c534be84" // mutate: Cubwarden - Ikoria: Lair of Behemoths Promos (PIKO)
+    oracle_id == "f85eea8f-5887-4921-a943-d15e0ad1e028" || // case: Case of the Ransacked Lab - Murders at Karlov Manor Promos (PMKM)
+    oracle_id == "8c1b3f1b-40d8-4cd5-bedf-92c3c534be84" || // mutate: Cubwarden - Ikoria: Lair of Behemoths Promos (PIKO)
+    oracle_id == "792f8235-f23b-4858-bdd4-c7a186b7a470" // prototype: Arcane Proxy {7} - The Brothers' War Promos (PBRO)
 }

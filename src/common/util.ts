@@ -7,6 +7,7 @@ export function isSingleCardFaceLayout(layout: CardLayout): boolean {
     "class",
     "case",
     "saga",
+    "meld",
     "mutate",
     "prototype",
     "planar",
@@ -38,6 +39,10 @@ export function canSynchronize(oracle_id: string): boolean {
     oracle_id == "957ba875-b8d4-48e2-bbd7-993694a936f3" || // host: Wild Crocodile - Unsanctioned (UND)
     oracle_id == "eac8af5d-3deb-409b-8519-e9a8c3bbd856" || // adventure: Albiorix, Goose Tyrant - Alchemy: Outlaws of Thunder Junction (YOTJ)
     oracle_id == "6dc67a65-31bf-4535-9e02-8f6d6ecefde5" || // planar: Chaotic Aether  - Planechase Anthology Planes (OPCA)
-    oracle_id == "a4b37d16-95b3-4143-a0b2-ad9f2aba91f8" // transform: Welcome to . . . - Jurassic World Collection (REX)
+    oracle_id == "a4b37d16-95b3-4143-a0b2-ad9f2aba91f8" || // transform: Welcome to . . . - Jurassic World Collection (REX)
+    oracle_id == "144119bc-7fd1-45c5-9e29-f742e7c255ac" || // modal_dfc: Clearwater Pathway - Zendikar Rising Promos (PZNR)
+    oracle_id == "42bccda5-1754-4619-b94f-7a72f934a718" || // meld: Titania, Voice of Gaea (melds with Argoth, Sanctum of Nature) - The Brothers' War Promos (PBRO)
+    oracle_id == "62648946-1708-48f4-ba40-c057563ab11b" || // meld: Argoth, Sanctum of Nature (melds with Titania, Voice of Gaea) - The Brothers' War Promos (PBRO)
+    oracle_id == "43230d70-4d60-4ceb-bb45-fbc043280652" // meld: Titania, Gaea Incarnate (meld of the previous two) - The Brothers' War Promos (PBRO)
     ;
 }

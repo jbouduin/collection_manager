@@ -74,9 +74,6 @@ export function CardView(props: CardViewProps) {
   //#endregion
 
   //#region Auxiliary functions -----------------------------------------------
-  // NOW transform
-  // NOW modal_dfc
-  // NOW meld
   // NOW double_face_token
   // NOW art_series
   // NOW reversible
@@ -88,6 +85,7 @@ export function CardView(props: CardViewProps) {
       case "emblem":
       case "host":
       case "leveler":
+      case "meld":
       case "mutate":
       case "normal":
       case "planar":
@@ -99,6 +97,7 @@ export function CardView(props: CardViewProps) {
         return SingleFaceLayout();
       case "adventure":
       case "flip":
+      case "modal_dfc":
       case "split":
       case "transform":
         return DoubleFaceLayout();

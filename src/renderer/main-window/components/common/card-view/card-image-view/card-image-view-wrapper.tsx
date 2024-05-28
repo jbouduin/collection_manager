@@ -66,6 +66,7 @@ export function CardImageViewWrapper(props: CardImageViewWrapperProps) {
       case "emblem":
       case "host":
       case "leveler":
+      case "meld": // can have a back
       case "mutate":
       case "normal":
       case "planar":
@@ -95,7 +96,6 @@ export function CardImageViewWrapper(props: CardImageViewWrapperProps) {
         );
       case "transform":
       case "modal_dfc":
-      case "meld":
       case "double_faced_token":
       case "art_series":
       case "double_sided":

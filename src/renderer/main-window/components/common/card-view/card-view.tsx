@@ -84,10 +84,13 @@ export function CardView(props: CardViewProps) {
       case "case":
       case "mutate":
       case "prototype":
+      case "scheme":
         return SingleSidedSingleFaceLayout();
       case "split":
       case "flip":
         return SingleSidedDoubleFaceLayout();
+      case "battle":
+        throw new Error("not supported as scryfall does not return result when searching");
     }
   }
 

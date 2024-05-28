@@ -24,7 +24,6 @@ export class CardRepository extends BaseRepository implements ICardRepository {
 
   //#region ICardRepository methods -------------------------------------------
   public async getCardImageData(cardId: string, sequence: number, imageType: ImageSize): Promise<CardImageDto> {
-    console.log("requesting image data for", cardId, sequence, imageType);
     return this.database.selectFrom("cardface_image")
       .innerJoin("card", "card.id", "cardface_image.card_id")
       .innerJoin("card_set", "card_set.id", "card.set_id")
@@ -40,7 +39,7 @@ export class CardRepository extends BaseRepository implements ICardRepository {
       .where("cardface_image.card_id", "=", cardId)
       .where("cardface_image.sequence", "=", sequence)
       .where("cardface_image.image_type", "=", imageType)
-      .$call(this.logCompilable)
+      // .$call(this.logCompilable)
       .executeTakeFirst();
   }
 

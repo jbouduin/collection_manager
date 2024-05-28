@@ -3,6 +3,7 @@ import { CardImageViewWrapperProps } from "./card-image-view-wrapper.props";
 import { CardImageView } from "./card-image-view";
 
 export function CardImageViewWrapper(props: CardImageViewWrapperProps) {
+
   //#region State -------------------------------------------------------------
   const [rotationClass, setRotationClass] = React.useState<string>("");
   //#endregion

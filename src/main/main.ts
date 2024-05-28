@@ -59,7 +59,6 @@ app.whenReady().then(async () => {
   ServicesDI.register();
   protocol.handle("cached-image", async (request: Request) => {
     const url = new URL(request.url);
-    console.log(url);
     return container.resolve<ICardRepository>(REPOTOKENS.CardRepository)
       .getCardImageData(url.hostname, Number.parseInt(url.searchParams.get("sequence")), url.searchParams.get("size") as ImageSize)
       .then((data: CardImageDto) => {

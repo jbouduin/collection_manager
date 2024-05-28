@@ -77,6 +77,7 @@ export function CardView(props: CardViewProps) {
   function getViewByLayout(cardLayout: CardLayout) {
     switch (cardLayout) {
       case "normal":
+      case "leveler":
       case "saga":
         return SingleSidedSingleFaceLayout();
       case "split":

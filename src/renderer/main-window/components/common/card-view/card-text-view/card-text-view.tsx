@@ -5,21 +5,30 @@ import { SvgProvider } from "../../svg-provider/svg-provider";
 
 
 export function CardTextView(props: CardTextViewProps) {
+  console.log("Cardtextview", props.cardText)
   //#region Main --------------------------------------------------------------
   return (
     <div>
       {
-        props.cardText
-          .replace(/\r\n/g, "\r")
-          .replace(/\n/g, "\r")
-          .split(/\r/)
-          .map((paragraph: string) => <p>{splitParagraph(paragraph)}</p>)
+        render()
       }
     </div>
   );
   //#endregion
 
-  //#region Helper functions --------------------------------------------------
+  //#region Auxiliary methods -------------------------------------------------
+  function render(): Array<React.JSX.Element | string> {
+    if (props.cardText?.length > 0) {
+      return props.cardText
+        .replace(/\r\n/g, "\r")
+        .replace(/\n/g, "\r")
+        .split(/\r/)
+        .map((paragraph: string) => <p>{splitParagraph(paragraph)}</p>)
+    } else {
+      return null;
+    }
+  }
+
   function splitParagraph(paragraph: string): Array<React.JSX.Element | string> {
     const matches = paragraph.match(/{[^}]*}|[^{}]+/gmi);
 

@@ -43,6 +43,9 @@ export function canSynchronize(oracle_id: string): boolean {
     oracle_id == "144119bc-7fd1-45c5-9e29-f742e7c255ac" || // modal_dfc: Clearwater Pathway - Zendikar Rising Promos (PZNR)
     oracle_id == "42bccda5-1754-4619-b94f-7a72f934a718" || // meld: Titania, Voice of Gaea (melds with Argoth, Sanctum of Nature) - The Brothers' War Promos (PBRO)
     oracle_id == "62648946-1708-48f4-ba40-c057563ab11b" || // meld: Argoth, Sanctum of Nature (melds with Titania, Voice of Gaea) - The Brothers' War Promos (PBRO)
-    oracle_id == "43230d70-4d60-4ceb-bb45-fbc043280652" // meld: Titania, Gaea Incarnate (meld of the previous two) - The Brothers' War Promos (PBRO)
+    oracle_id == "43230d70-4d60-4ceb-bb45-fbc043280652" || // meld: Titania, Gaea Incarnate (meld of the previous two) - The Brothers' War Promos (PBRO)
+    oracle_id == "3720f635-c0c3-4698-aed5-653444f1ab2b" || // double_face_token: Urza's Blueprints (minigame) - the brothers' war minigames
+    oracle_id == "c03f3ed5-963e-4fbf-9614-b7f21653e544" || // double_face_token: gremlin - League Tokens 2017 (L17)
+    oracle_id == "dd3bf75e-9ef0-4ded-9b65-1a60a78a6253" // double_face_token: Incubator // Pyrexian - March of the Machine Tokens (TMOM)
     ;
 }

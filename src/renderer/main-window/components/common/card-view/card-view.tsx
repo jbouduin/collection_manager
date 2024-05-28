@@ -96,6 +96,7 @@ export function CardView(props: CardViewProps) {
       case "vanguard":
         return SingleFaceLayout();
       case "adventure":
+      case "double_faced_token":
       case "flip":
       case "modal_dfc":
       case "split":

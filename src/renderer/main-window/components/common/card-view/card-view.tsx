@@ -97,9 +97,10 @@ export function CardView(props: CardViewProps) {
       case "token":
       case "vanguard":
         return SingleFaceLayout();
-      case "split":
-      case "flip":
       case "adventure":
+      case "flip":
+      case "split":
+      case "transform":
         return DoubleFaceLayout();
       case "battle":
         throw new Error("not supported as scryfall does not return result when searching");

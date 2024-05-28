@@ -15,7 +15,7 @@ export interface CardTable extends SynchronizedWithStringId {
   scryfall_uri: ColumnType<string>;
   booster: ColumnType<boolean, number, number>;
   border: ColumnType<CardBorderColor>;
-  card_back_id: ColumnType<string>;
+  card_back_id: ColumnType<string, string | undefined>;
   content_warning: ColumnType<boolean, number, number>;
   digital: ColumnType<boolean, number, number>;
   full_art: ColumnType<boolean, number, number>;

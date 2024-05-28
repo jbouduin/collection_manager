@@ -6,6 +6,7 @@ export function CardImageViewWrapper(props: CardImageViewWrapperProps) {
 
   //#region State -------------------------------------------------------------
   const [rotationClass, setRotationClass] = React.useState<string>("");
+  const [cardfaceSequence, setCardfaceSequence] = React.useState<number>(0);
   //#endregion
 
   //#region Event handling ----------------------------------------------------
@@ -24,14 +25,22 @@ export function CardImageViewWrapper(props: CardImageViewWrapperProps) {
   const onReverseClicked = React.useCallback(
     () => {
       console.log("reverse clicked");
+      if (cardfaceSequence == 0) {
+        setCardfaceSequence(1);
+      } else {
+        setCardfaceSequence(0);
+      }
     },
-    [rotationClass, props.card]
+    [cardfaceSequence, props.card]
   );
   //#endregion
 
   //#region effect ------------------------------------------------------------
   React.useEffect(
-    () => { setRotationClass(props.card.cardLayout == "split" || props.card.cardLayout == "planar" ? "rotate-90" : ""); },
+    () => {
+      setRotationClass(props.card.cardLayout == "split" || props.card.cardLayout == "planar" ? "rotate-90" : "");
+      setCardfaceSequence(0);
+    },
     [props.card]
   );
   //#endregion
@@ -93,7 +102,7 @@ export function CardImageViewWrapper(props: CardImageViewWrapperProps) {
         return (
           <CardImageView
             className={props.className}
-            cardfaceSequence={0}
+            cardfaceSequence={cardfaceSequence}
             cardId={props.card.cardId}
             rotationClass={rotationClass}
             onReverseClicked={onReverseClicked}

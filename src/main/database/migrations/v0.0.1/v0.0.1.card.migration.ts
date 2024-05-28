@@ -49,7 +49,7 @@ async function createV0_0_1_Card(db: Kysely<any>): Promise<void> {
     .addColumn("scryfall_uri", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
     .addColumn("booster", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
     .addColumn("border", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
-    .addColumn("card_back_id", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
+    .addColumn("card_back_id", "text")
     .addColumn("content_warning", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
     .addColumn("digital", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
     .addColumn("full_art", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())

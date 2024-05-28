@@ -30,13 +30,14 @@ export function canSynchronize(oracle_id: string): boolean {
     oracle_id == "8c1b3f1b-40d8-4cd5-bedf-92c3c534be84" || // mutate: Cubwarden - Ikoria: Lair of Behemoths Promos (PIKO)
     oracle_id == "792f8235-f23b-4858-bdd4-c7a186b7a470" || // prototype: Arcane Proxy {7} - The Brothers' War Promos (PBRO)
     oracle_id == "c54101eb-8c10-420d-8172-d5985f348463" || // schema: Your Inescapable Doom - DCI Promos (PDCI)
-    // FEATURE vanguard has "show back on scryfall", but it looks like a normal back"
+    // FEATURE "Show back" vanguard has "show back on scryfall", but it looks like a normal back"
     oracle_id == "5ad380b9-18e0-4613-859d-8a378c4dfebd" || // vanguard: Mishra - Vanguard Series (PVAN)
     oracle_id == "dd4c59c6-a051-4909-ae28-bc0367db2d30" || // token: Cragflame - Bloomburrow Tokens (TBLB)
     oracle_id == "b7dc9439-d9bb-435a-8d3b-9e92bfae16ef" || // emblem: Domri Rade Emblem - Ravnica Remastered Tokens (TRVR)
     oracle_id == "50a6c19d-7ec7-4e19-8ac5-d0ca09a998e5" || // augment: Half-Squirrel, Half- Unsanctioned (UND)
     oracle_id == "957ba875-b8d4-48e2-bbd7-993694a936f3" || // host: Wild Crocodile - Unsanctioned (UND)
     oracle_id == "eac8af5d-3deb-409b-8519-e9a8c3bbd856" || // adventure: Albiorix, Goose Tyrant - Alchemy: Outlaws of Thunder Junction (YOTJ)
-    oracle_id == "6dc67a65-31bf-4535-9e02-8f6d6ecefde5" // planar: Chaotic Aether  - Planechase Anthology Planes (OPCA)
+    oracle_id == "6dc67a65-31bf-4535-9e02-8f6d6ecefde5" || // planar: Chaotic Aether  - Planechase Anthology Planes (OPCA)
+    oracle_id == "a4b37d16-95b3-4143-a0b2-ad9f2aba91f8" // transform: Welcome to . . . - Jurassic World Collection (REX)
     ;
 }

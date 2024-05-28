@@ -174,7 +174,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
         this.oracleAdapter,
         { oracleId: scryfallCard.oracle_id, sequence: 0, scryfallCard: scryfallCard }
       );
-    } else if (scryfallCard.layout == "split" || scryfallCard.layout == "flip" || scryfallCard.layout == "adventure") {
+    } else  {
       console.log(`${scryfallCard.name} ${scryfallCard.lang} - single sync of oracle for split card`);
       const taskParameters: Array<GenericSyncTaskParameter<"oracle", OracleAdapterParameter>> =
         scryfallCard.card_faces.map((cardFace: ScryfallCardface, idx: number) => {
@@ -194,8 +194,6 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
         async (param: GenericSyncTaskParameter<"oracle", OracleAdapterParameter>, index: number, total: number) =>
           super.serialGenericSingleSync(param, index, total)
       );
-    } else {
-      return Promise.resolve();
     }
   }
 
@@ -334,18 +332,18 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
           const taskParameters = new Array<GenericSyncTaskParameter<"cardface_color_map", CardfaceColorMapAdapterParameter>>();
           scryfallCard.card_faces.forEach((cardFace: ScryfallCardface, idx: number) => {
             if (cardFace.colors?.length > 0) {
-              taskParameters.push(this.createCardFaceColorMapTaskParameter(trx, scryfallCard.id, idx, "card", scryfallCard.colors));
+              taskParameters.push(this.createCardFaceColorMapTaskParameter(trx, scryfallCard.id, idx, "card", cardFace.colors));
             }
 
             if (cardFace.color_indicator?.length > 0) {
-              taskParameters.push(this.createCardFaceColorMapTaskParameter(trx, scryfallCard.id, 0, "indicator", scryfallCard.color_identity));
+              taskParameters.push(this.createCardFaceColorMapTaskParameter(trx, scryfallCard.id, 0, "indicator", cardFace.color_indicator));
             }
           });
 
           return await runSerial<GenericSyncTaskParameter<"cardface_color_map", CardfaceColorMapAdapterParameter>>(
             taskParameters,
             (param: GenericSyncTaskParameter<"cardface_color_map", CardfaceColorMapAdapterParameter>) =>
-              `${scryfallCard.name} ${scryfallCard.lang} - cardface color map - ${param.scryfall.colorType} = ${param.scryfall.colors.join(", ")}`,
+              `${scryfallCard.name} ${scryfallCard.lang} - cardface color map - ${param.scryfall.colorType}}`,
             async (param: GenericSyncTaskParameter<"cardface_color_map", CardfaceColorMapAdapterParameter>, index: number, total: number) =>
               this.serialGenericDeleteAndRecreate(param, index, total)
           );

@@ -5,7 +5,6 @@ import { SvgProvider } from "../../svg-provider/svg-provider";
 
 
 export function CardTextView(props: CardTextViewProps) {
-  console.log("Cardtextview", props.cardText)
   //#region Main --------------------------------------------------------------
   return (
     <div>
@@ -23,7 +22,7 @@ export function CardTextView(props: CardTextViewProps) {
         .replace(/\r\n/g, "\r")
         .replace(/\n/g, "\r")
         .split(/\r/)
-        .map((paragraph: string) => <p>{splitParagraph(paragraph)}</p>)
+        .map((paragraph: string) => <p>{splitParagraph(paragraph)}</p>);
     } else {
       return null;
     }

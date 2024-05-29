@@ -29,15 +29,6 @@ export function DatabaseView(props: DatabaseViewProps) {
   }
   //#endregion
 
-  function calculateSetOfSelectedCard(): CardSetViewmodel {
-    if (state.selectedCards) {
-      const setOfSelectedCard = props.cardSets.filter((cardSet: CardSetViewmodel) => cardSet.id == state.selectedCards[0].setId);
-      return setOfSelectedCard.length > 0 ? setOfSelectedCard[0] : null;
-    }
-    else {
-      return null;
-    }
-  }
   //#region Main --------------------------------------------------------------
   return (
     <div>
@@ -53,7 +44,7 @@ export function DatabaseView(props: DatabaseViewProps) {
         <Panel defaultSize={20}>
           <CardView
             className={props.className}
-            selectedCard={state.selectedCards ? state.selectedCards[0] : null}
+            cardId={state.selectedCards ? calculateCardToDisplay() : null}
             cardSet={calculateSetOfSelectedCard()}
             symbolSvgs={props.symbolSvgs}
             languages={props.languages}
@@ -62,5 +53,21 @@ export function DatabaseView(props: DatabaseViewProps) {
       </PanelGroup>
     </div >
   );
+  //#endregion
+
+  //#region Auxiliary methods -------------------------------------------------
+  function calculateSetOfSelectedCard(): CardSetViewmodel {
+    if (state.selectedCards) {
+      const setOfSelectedCard = props.cardSets.filter((cardSet: CardSetViewmodel) => cardSet.id == state.selectedCards[0].setId);
+      return setOfSelectedCard.length > 0 ? setOfSelectedCard[0] : null;
+    }
+    else {
+      return null;
+    }
+  }
+
+  function calculateCardToDisplay(): string {
+    return state.selectedCards[0].otherCardLanguages.at(0).id;
+  }
   //#endregion
 }

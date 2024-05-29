@@ -58,7 +58,13 @@ export class CardRepository extends BaseRepository implements ICardRepository {
                   .whereRef("cardface_color_map.card_id", "=", "cardface.card_id")
                   .whereRef("cardface_color_map.sequence", "=", "cardface.sequence")
                   .$castTo<DtoCardfaceColor>()
-              ).as("cardfaceColors")
+              ).as("cardfaceColors"),
+              helpers.jsonObjectFrom<DtoOracle>(
+                eb.selectFrom("oracle")
+                  .select(oracleTableFields)
+                  .whereRef("oracle.oracle_id", "=", "cardface.oracle_id")
+                  .$castTo<DtoOracle>()
+              ).as("oracle")
             ])
             .whereRef("cardface.card_id", "=", "card.id")
             .$castTo<DtoCardface>()

@@ -1,9 +1,11 @@
 import { DtoCardface } from "../../../common/dto";
+import { OracleViewmodel } from "./oracle-viewmodel";
 
 export class CardfaceViewmodel {
   //#region private readonly fields -------------------------------------------
   private readonly _dtoCardface: DtoCardface;
   private readonly _manaCost: Array<string>;
+  private readonly _oracle: OracleViewmodel;
   //#endregion
 
   //#region Public getters -----------------------------------------------------
@@ -41,12 +43,17 @@ export class CardfaceViewmodel {
   public get cardId(): string {
     return this._dtoCardface.card_id;
   }
+
+  public get oracle(): OracleViewmodel {
+    return this._oracle;
+  }
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
   public constructor(dtoCardface: DtoCardface) {
     this._dtoCardface = dtoCardface;
     this._manaCost = this.convertManaCost(dtoCardface.mana_cost);
+    this._oracle = new OracleViewmodel(dtoCardface.oracle);
   }
 
   private convertManaCost(manaCost: string): Array<string> {

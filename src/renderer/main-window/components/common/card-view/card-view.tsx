@@ -40,10 +40,10 @@ export function CardView(props: CardViewProps) {
 
   //#region Effects -----------------------------------------------------------
   React.useEffect(() => {
-    if (props.selectedCard) {
-      loadCard(props.selectedCard.cardId);
+    if (props.cardId) {
+      loadCard(props.cardId);
     }
-  }, [props.selectedCard]);
+  }, [props.cardId]);
   //#endregion
 
   //#region Main --------------------------------------------------------------
@@ -159,7 +159,13 @@ export function CardView(props: CardViewProps) {
             <Tab
               id="Oracle0"
               title="Oracle"
-              panel={<OracleView className={props.className} oracle={cardViewState.card.getOracle(0)} symbolSvgs={props.symbolSvgs} />}
+              panel={
+                <OracleView
+                  className={props.className}
+                  oracle={cardViewState.card.getOracle(0) ?? cardViewState.card.getCardface(0).oracle}
+                  symbolSvgs={props.symbolSvgs}
+                />
+              }
             />
             <Tab
               id="Printed0"
@@ -179,7 +185,13 @@ export function CardView(props: CardViewProps) {
             <Tab
               id="Oracle1"
               title="Oracle"
-              panel={<OracleView className={props.className} oracle={cardViewState.card.getOracle(1)} symbolSvgs={props.symbolSvgs} />}
+              panel={
+                <OracleView
+                  className={props.className}
+                  oracle={cardViewState.card.getOracle(1) ?? cardViewState.card.getCardface(1).oracle}
+                  symbolSvgs={props.symbolSvgs}
+                />
+              }
             />
             <Tab
               id="Printed1"

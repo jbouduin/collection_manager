@@ -13,7 +13,7 @@ export function SvgProvider(props: SvgProviderProps) {
   const viewbox = document.body.firstElementChild.attributes.getNamedItem("viewBox").value;
   // TODO color="white"  stroke = "white" works in some cases only
   return (
-    <span aria-hidden="true" className="bp5-icon bp5-icon-record">
+    <span aria-hidden="true" className="bp5-icon bp5-icon-record mana-cost-image">
       <svg
         viewBox={viewbox}
         role="img"

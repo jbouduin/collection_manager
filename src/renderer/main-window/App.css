@@ -14,14 +14,6 @@ body {
   overflow: hidden;
 }
 
-.bp5-tree {
-  max-height: 100vh;
-  max-width: fit-content;
-  overflow-x: hidden;
-  overflow-y: scroll;
-  max-width: 100%
-}
-
 .desktop-wrapper {
   padding: 0px;
   display: flex;
@@ -46,25 +38,12 @@ body {
 }
 
 .tree-view-image {
-  filter: invert(100%);
   padding-right: 10px;
 }
 
-/* svg.tree-view-image path {
-  fill: currentColor;
-  stroke: currentColor;
-} */
-
 .image-wrapper {
-  /* display: flex; */
-  /* margin-left: auto; */
-  /* margin-right: auto; */
-  /* display: block; */
   padding: 5%;
   margin: auto;
-  /* height: 100%; */
-  /* width: 100%; */
-  /* overflow: visible; */
 }
 
 .mana-cost-image {
@@ -91,8 +70,8 @@ body {
 }
 
 .card-header-line-1 {
-    display: flex;
-    flex-direction: row;
+  display: flex;
+  flex-direction: row;
 }
 
 .card-header-line-2 {
@@ -101,7 +80,7 @@ body {
   justify-content: space-between;
 }
 
-img.rotate-90{
+img.rotate-90 {
   transform: rotate(90deg);
 }
 
@@ -109,6 +88,12 @@ img.rotate-180 {
   transform: rotate(180deg);
 }
 
+.ruling-divider {
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
+/* TODO  we should not tamper with bp5 classes*/
 .bp5-section-card.bp5-padded {
   padding-top: 10px;
   padding-bottom: 10px;
@@ -116,20 +101,26 @@ img.rotate-180 {
   padding-right: 15px;
 }
 
-@media (prefers-color-scheme: dark) {
+.bp5-tree {
+  max-height: 100vh;
+  max-width: fit-content;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  max-width: 100%
+}
 
-  /* body, */
-  /* .bp5-card, */
+/* @media (prefers-color-scheme: dark) {
+  body,
+  .bp5-card,
   .bp5-navbar,
   .bp5-navbar-group,
   .bp5-navbar-group.bp5-button-text {
-    background: #383e47;;
+    background: #383e47;
     color: white;
   }
 }
 
 @media (prefers-color-scheme: light) {
-
   body,
   .bp5-card,
   .bp5-navbar,
@@ -139,4 +130,4 @@ img.rotate-180 {
     background: #ddd;
     color: black;
   }
-}
+} */

@@ -110,7 +110,7 @@ export class CardViewmodel {
       result.pop();
     }
     else if (result[0] == "//") {
-      result.splice(0, 0, "-")
+      result.splice(0, 0, "-");
     } else if (result[result.length - 1] == "//") {
       result.push("-");
     }

@@ -102,7 +102,7 @@ export function CardsTableView(props: CardsTableViewProps) {
   //#region Main --------------------------------------------------------------
   return (
     <div className="cards-table-wrapper">
-      <Table2 className={props.className} numRows={cards?.length ?? 0} selectionModes={SelectionModes.ROWS_AND_CELLS} onSelection={onSelection} selectedRegionTransform={selectedRegionTransform} >
+      <Table2 numRows={cards?.length ?? 0} selectionModes={SelectionModes.ROWS_AND_CELLS} onSelection={onSelection} selectedRegionTransform={selectedRegionTransform} >
         <Column name="Number" cellRenderer={textCellRenderer((card: CardViewmodel) => card.collectorNumber)} />
         <Column name="Rarity" cellRenderer={textCellRenderer((card: CardViewmodel) => card.rarity)} />
         <Column name="Name" cellRenderer={textCellRenderer((card: CardViewmodel) => card.cardName)} />

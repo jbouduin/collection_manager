@@ -65,7 +65,7 @@ export class ScryfallClient implements IScryfallClient {
       const uri = this.buildCardUri(options, scryfallOptions);
       return this.fetchList<ScryfallCard>(uri, new Array<ScryfallCard>());
     } else if (options.cardIds) {
-      const requestBody: Array<{ id: string }> = options.cardIds.map((id: string) => { return { id: id } });
+      const requestBody: Array<{ id: string }> = options.cardIds.map((id: string) => { return { id: id }; });
       return await this.tryPost(
         `${this.scryfallApiRoot}/${this.scryfallEndpoints.get("collection")}`,
         JSON.stringify({ identifiers: requestBody })
@@ -116,8 +116,8 @@ export class ScryfallClient implements IScryfallClient {
       .then(() => fetch(uri, {
         method: "POST",
         headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          "Accept": "application/json",
+          "Content-Type": "application/json"
         },
         body: body
       }))

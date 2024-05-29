@@ -1,5 +1,4 @@
-import { Classes, ContextMenu, Menu, MenuItem, Tree, TreeNodeInfo } from "@blueprintjs/core";
-import classNames from "classnames";
+import { ContextMenu, Menu, MenuItem, Tree, TreeNodeInfo } from "@blueprintjs/core";
 import * as _ from "lodash";
 import * as React from "react";
 
@@ -62,7 +61,7 @@ export function CardSetsTreeView(props: CardSetTreeViewProps) {
       // LATER multi select:
       // add parameter "e: React.MouseEvent<HTMLElement>" to the callback and...
       // if (!e.shiftKey) {
-        dispatch({ type: "DESELECT_ALL" });
+      dispatch({ type: "DESELECT_ALL" });
       // }
       dispatch({
         payload: { path: nodePath, isSelected: originallySelected == null ? true : !originallySelected },
@@ -98,16 +97,15 @@ export function CardSetsTreeView(props: CardSetTreeViewProps) {
           id: item.id,
           label: (
             <ContextMenu
-              className={classNames("set-tree-item", props.className)}
+              className="set-tree-item"
               content={
-                <Menu className={props.className}>
+                <Menu>
                   <MenuItem
                     text="Synchronize"
-                    className={props.className}
                     onClick={(e) => { e.preventDefault(); synchronizeSet(item.setCode); }}
                   />
                 </Menu>}>
-              <SvgProvider className={classNames("tree-view-image", props.className)} width={26} svg={item.cardSetSvg} />
+              <SvgProvider className="tree-view-image" width={26} svg={item.cardSetSvg} />
               {item.treeItemLabel}
             </ContextMenu>
           ),
@@ -118,9 +116,8 @@ export function CardSetsTreeView(props: CardSetTreeViewProps) {
         };
         return node;
       });
-    }
-  // <img className={props.className} src={`cardset-svg://${item.setCode}`} width={16} height={16} color="#fff" />
-    // <SvgProvider className={classNames("tree-view-image", props.className)} width={26} svg={item.cardSetSvg} />
+  }
+
   function getTreeNodeItemsRecursive(node: TreeNodeInfo<CardSetViewmodel>, items?: Array<CardSetViewmodel>): Array<CardSetViewmodel> {
     const result = items ?? new Array<CardSetViewmodel>();
     result.push(node.nodeData);
@@ -140,13 +137,15 @@ export function CardSetsTreeView(props: CardSetTreeViewProps) {
   //#endregion
 
   //#region Main --------------------------------------------------------------
-  return (<Tree
-    compact={true}
-    contents={nodes}
-    onNodeClick={handleNodeClick}
-    onNodeCollapse={handleNodeCollapse}
-    onNodeExpand={handleNodeExpand}
-    className={classNames(Classes.ELEVATION_0, props.className)}
-  />);
+  return (
+    <Tree
+      compact={true}
+      contents={nodes}
+      onNodeClick={handleNodeClick}
+      onNodeCollapse={handleNodeCollapse}
+      onNodeExpand={handleNodeExpand}
+      className="Classes.ELEVATION_0"
+    />
+  );
   //#endregion
 }

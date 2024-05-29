@@ -11,11 +11,10 @@ export function SvgProvider(props: SvgProviderProps) {
   const parser = new DOMParser();
   const document = parser.parseFromString(props.svg, "text/html");
   const viewbox = document.body.firstElementChild.attributes.getNamedItem("viewBox").value;
-  // TODO use viewbox from original svg or try to fetch the svg as cached-image
+  // TODO color="white"  stroke = "white" works in some cases only
   return (
     <span aria-hidden="true" className="bp5-icon bp5-icon-record">
       <svg
-        className={props.className}
         viewBox={viewbox}
         role="img"
         height={props.height ?? 16}

@@ -78,7 +78,6 @@ export function CardImageViewWrapper(props: CardImageViewWrapperProps) {
       case "vanguard": // FEATURE "Show back" vanguard has "show back on scryfall", but it looks like a normal back"
         return (
           <CardImageView
-            className={props.className}
             cardfaceSequence={0}
             cardId={props.card.cardId}
             rotationClass={rotationClass}
@@ -87,7 +86,6 @@ export function CardImageViewWrapper(props: CardImageViewWrapperProps) {
       case "flip":
         return (
           <CardImageView
-            className={props.className}
             cardfaceSequence={0}
             cardId={props.card.cardId}
             rotationClass={rotationClass}
@@ -101,7 +99,6 @@ export function CardImageViewWrapper(props: CardImageViewWrapperProps) {
       case "art_series": // TODO art series have reverse and need flip as there are horizontal and vertical cards
         return (
           <CardImageView
-            className={props.className}
             cardfaceSequence={cardfaceSequence}
             cardId={props.card.cardId}
             rotationClass={rotationClass}
@@ -111,7 +108,6 @@ export function CardImageViewWrapper(props: CardImageViewWrapperProps) {
       // case "art_series":
       //   return (
       //     <CardImageView
-      //       className={props.className}
       //       cardfaceSequence={cardfaceSequence}
       //       cardId={props.card.cardId}
       //       rotationClass={rotationClass}

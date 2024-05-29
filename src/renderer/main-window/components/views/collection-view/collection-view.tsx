@@ -1,20 +1,21 @@
 import { Button, Card, Props } from "@blueprintjs/core";
 import * as React from "react";
-import { CardSyncOptions, SyncOptions, SyncParam } from "../../../../../common/ipc-params";
 
-export function CollectionView(props: Props) {
+import { CardSyncOptions, SyncParam } from "../../../../../common/ipc-params";
+
+export function CollectionView(_props: Props) {
   //#region event handling ----------------------------------------------------
   const syncbuttonClick = React.useCallback(
     () => {
-      window.ipc.sync(getIds())
+      window.ipc.sync(getIds());
     },
     []
-  )
+  );
   //#endregion
 
   //#region Main --------------------------------------------------------------
   return (
-    <Card className={props.className}>
+    <Card>
       <h1>Collection View</h1>
       <Button onClick={syncbuttonClick}>Sync every possible layout</Button>
     </Card>
@@ -104,8 +105,7 @@ export function CollectionView(props: Props) {
           "6cfbc008-21c8-4345-b5ec-e4e360473aaa"
         ]
       }
-    }
-
+    };
   }
   //#endregion
 }

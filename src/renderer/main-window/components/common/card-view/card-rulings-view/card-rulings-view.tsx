@@ -34,7 +34,7 @@ export function CardRulingsView(props: CardRulingsViewProps) {
     <SectionCard padded={false}>
       {
         rulings.map((ruling: DtoRulingLine, idx: number) =>
-          (<RulingLineView className={props.className} ruling={ruling} key={`ruling_${idx}`} isLast={idx == rulings.length - 1} />)
+          (<RulingLineView ruling={ruling} key={`ruling_${idx}`} isLast={idx == rulings.length - 1} />)
         )
       }
     </SectionCard> :

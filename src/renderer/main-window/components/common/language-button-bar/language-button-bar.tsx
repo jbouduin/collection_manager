@@ -14,8 +14,8 @@ export function LanguageButtonBar(props: LanguageButtonBarProps) {
 
   //#region Main block --------------------------------------------------------
   return (
-    <SectionCard padded={true} className={props.className}>
-      <ButtonGroup className={props.className} minimal={true} >
+    <SectionCard padded={true} >
+      <ButtonGroup minimal={true} >
         {
           props.cardLanguages.map((language: DtoCardLanguage) => {
             const languageDef = props.languages.filter((lng: DtoLanguage) => lng.id == language.lang);
@@ -28,7 +28,6 @@ export function LanguageButtonBar(props: LanguageButtonBarProps) {
                 tooltip={<span>{tooltip}</span>}
                 language={language}
                 onButtonClick={onAnyButtonClick}
-                className={props.className}
                 key={language.lang}
               />
             );

@@ -34,7 +34,7 @@ export function CardTextView(props: CardTextViewProps) {
     return matches.map((match: string) => {
       if (match.startsWith("{") && match.endsWith("}")) {
         const svg = props.symbolSvgs.get(match);
-        return (<SvgProvider className={props.className} svg={svg} />);
+        return (<SvgProvider svg={svg} />);
       } else {
         return match;
       }

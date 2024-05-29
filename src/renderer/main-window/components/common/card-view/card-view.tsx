@@ -43,27 +43,39 @@ export function CardView(props: CardViewProps) {
   //#region Main --------------------------------------------------------------
   return (cardViewState.card && props.cardSet ?
     <Section>
-      <CardHeaderView className={props.className} card={cardViewState.card} cardSetSvg={props.cardSet?.cardSetSvg} symbolSvgs={props.symbolSvgs} />
+      <CardHeaderView
+        card={cardViewState.card}
+        cardSetSvg={props.cardSet?.cardSetSvg}
+        symbolSvgs={props.symbolSvgs}
+      />
       {
         cardViewState.card.isMultipleLanguage &&
         <LanguageButtonBar
-          className={props.className}
           cardLanguages={cardViewState.card.otherCardLanguages}
           languages={props.languages}
           currentLanguage={cardViewState.card.cardLanguage}
-          onButtonClick={onButtonClick} />
+          onButtonClick={onButtonClick}
+        />
       }
       {
         getViewByLayout(cardViewState.card.cardLayout)
       }
-      <SectionCard padded={true} className={props.className}>
-        <Tabs animate={true} className={props.className} id="card-detail-tabs" defaultSelectedTabId="Rulings" renderActiveTabPanelOnly={true}>
-          <Tab id="Rulings" title="Rulings" panel={<CardRulingsView card={cardViewState.card} />} />
-          <Tab id="Legality" title="Legality" panel={<LegalitiesView oracleId={cardViewState.card.oracleId} />} />
+      <SectionCard padded={true} >
+        <Tabs animate={true} id="card-detail-tabs" defaultSelectedTabId="Rulings" renderActiveTabPanelOnly={true}>
+          <Tab
+            id="Rulings"
+            title="Rulings"
+            panel={<CardRulingsView card={cardViewState.card} />}
+          />
+          <Tab
+            id="Legality"
+            title="Legality"
+            panel={<LegalitiesView oracleId={cardViewState.card.oracleId} />}
+          />
         </Tabs>
       </SectionCard>
     </Section>
-    : <Section className={props.className} ></Section>
+    : <Section ></Section>
   );
   //#endregion
 
@@ -102,7 +114,6 @@ export function CardView(props: CardViewProps) {
     }
   }
 
-  // className={props.className}
   function SingleFaceLayout(): React.JSX.Element {
     return (
       <div>
@@ -115,20 +126,19 @@ export function CardView(props: CardViewProps) {
             cardface={cardViewState.card.getCardface(0)}
             symbolSvgs={props.symbolSvgs}
             showManaCost={false}
-            className={props.className}
           />
         }
-        <SectionCard padded={true} className={props.className}>
-          <Tabs animate={true} className={props.className} id="card-detail-tabs" defaultSelectedTabId="Oracle0" renderActiveTabPanelOnly={true}>
+        <SectionCard padded={true}>
+          <Tabs animate={true} id="card-detail-tabs" defaultSelectedTabId="Oracle0" renderActiveTabPanelOnly={true}>
             <Tab
               id="Oracle0"
               title="Oracle"
-              panel={<OracleView className={props.className} oracle={cardViewState.card.getOracle(0)} symbolSvgs={props.symbolSvgs} />}
+              panel={<OracleView oracle={cardViewState.card.getOracle(0)} symbolSvgs={props.symbolSvgs} />}
             />
             <Tab
               id="Printed0"
               title="Printed"
-              panel={<PrintedView className={props.className} cardface={cardViewState.card.getCardface(0)} symbolSvgs={props.symbolSvgs} />}
+              panel={<PrintedView cardface={cardViewState.card.getCardface(0)} symbolSvgs={props.symbolSvgs} />}
             />
           </Tabs>
         </SectionCard>
@@ -139,23 +149,20 @@ export function CardView(props: CardViewProps) {
     return (
       <div>
         <CardImageViewWrapper
-          className={props.className}
           card={cardViewState.card}
         />
         <SubCardHeaderView
           cardface={cardViewState.card.getCardface(0)}
           symbolSvgs={props.symbolSvgs}
           showManaCost={true}
-          className={props.className}
         />
-        <SectionCard padded={true} className={props.className}>
-          <Tabs animate={true} className={props.className} id="card-detail-tabs" defaultSelectedTabId="Oracle0" renderActiveTabPanelOnly={true}>
+        <SectionCard padded={true} >
+          <Tabs animate={true} id="card-detail-tabs" defaultSelectedTabId="Oracle0" renderActiveTabPanelOnly={true}>
             <Tab
               id="Oracle0"
               title="Oracle"
               panel={
                 <OracleView
-                  className={props.className}
                   oracle={cardViewState.card.getOracle(0) ?? cardViewState.card.getCardface(0).oracle}
                   symbolSvgs={props.symbolSvgs}
                 />
@@ -164,7 +171,11 @@ export function CardView(props: CardViewProps) {
             <Tab
               id="Printed0"
               title="Printed"
-              panel={<PrintedView className={props.className} cardface={cardViewState.card.getCardface(0)} symbolSvgs={props.symbolSvgs} />}
+              panel={
+                <PrintedView
+                  cardface={cardViewState.card.getCardface(0)}
+                  symbolSvgs={props.symbolSvgs}
+                />}
             />
           </Tabs>
         </SectionCard>
@@ -172,16 +183,14 @@ export function CardView(props: CardViewProps) {
           cardface={cardViewState.card.getCardface(1)}
           symbolSvgs={props.symbolSvgs}
           showManaCost={true}
-          className={props.className}
         />
-        <SectionCard padded={true} className={props.className}>
-          <Tabs animate={true} className={props.className} id="card-detail-tabs" defaultSelectedTabId="Oracle1" renderActiveTabPanelOnly={true}>
+        <SectionCard padded={true} >
+          <Tabs animate={true}  id="card-detail-tabs" defaultSelectedTabId="Oracle1" renderActiveTabPanelOnly={true}>
             <Tab
               id="Oracle1"
               title="Oracle"
               panel={
                 <OracleView
-                  className={props.className}
                   oracle={cardViewState.card.getOracle(1) ?? cardViewState.card.getCardface(1).oracle}
                   symbolSvgs={props.symbolSvgs}
                 />
@@ -190,11 +199,16 @@ export function CardView(props: CardViewProps) {
             <Tab
               id="Printed1"
               title="Printed"
-              panel={<PrintedView className={props.className} cardface={cardViewState.card.getCardface(1)} symbolSvgs={props.symbolSvgs} />}
+              panel={
+                <PrintedView
+                  cardface={cardViewState.card.getCardface(1)}
+                  symbolSvgs={props.symbolSvgs}
+                />}
             />
           </Tabs>
         </SectionCard>
-      </div>);
+      </div>
+    );
   }
 
   async function loadCard(cardId: string): Promise<void> {

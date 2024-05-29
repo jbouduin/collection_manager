@@ -1,9 +1,9 @@
-import classNames from "classnames";
 import * as React from "react";
 
 import { CardTextView } from "../card-text-view/card-text-view";
 import { PrintedViewProps } from "./printed-view.props";
 
+// NOW replace bp5-divider
 export function PrintedView(props: PrintedViewProps) {
   return (
     <div>
@@ -11,9 +11,9 @@ export function PrintedView(props: PrintedViewProps) {
       {
         props.cardface.hasFlavorText &&
         <div>
-          <p className={classNames(props.className, "bp5-divider")}></p>
+          <p className="bp5-divider"></p>
           <p><i>{props.cardface.flavorText}</i></p>
-          <p className={classNames(props.className, "bp5-divider")}></p>
+          <p className="bp5-divider"></p>
         </div>
       }
     </div>

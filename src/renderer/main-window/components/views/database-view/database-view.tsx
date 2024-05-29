@@ -34,11 +34,16 @@ export function DatabaseView(props: DatabaseViewProps) {
     <div>
       <PanelGroup direction="horizontal">
         <Panel defaultSize={20}>
-          <CardSetsTreeView className={props.className} cardSets={props.cardSets} onSetsSelected={onCardSetsSelected} />
+          <CardSetsTreeView cardSets={props.cardSets} onSetsSelected={onCardSetsSelected} />
         </Panel>
         <PanelResizeHandle />
         <Panel>
-          <CardsTableView className={props.className} symbolSvgs={props.symbolSvgs} selectedSets={state.selectedSets} languages={props.languages} onCardsSelected={onCardSelected}></CardsTableView>
+          <CardsTableView
+            symbolSvgs={props.symbolSvgs}
+            selectedSets={state.selectedSets}
+            languages={props.languages}
+            onCardsSelected={onCardSelected}
+          />
         </Panel>
         <PanelResizeHandle />
         <Panel defaultSize={20}>
@@ -48,7 +53,7 @@ export function DatabaseView(props: DatabaseViewProps) {
             symbolSvgs={props.symbolSvgs}
             languages={props.languages}
           />
-          </Panel>
+        </Panel>
       </PanelGroup>
     </div >
   );

@@ -63,6 +63,7 @@ export function DatabaseView(props: DatabaseViewProps) {
   function calculateSetOfSelectedCard(): CardSetViewmodel {
     if (state.selectedCards) {
       const setOfSelectedCard = props.cardSets.filter((cardSet: CardSetViewmodel) => cardSet.id == state.selectedCards[0].setId);
+      console.log(setOfSelectedCard)
       return setOfSelectedCard.length > 0 ? setOfSelectedCard[0] : null;
     }
     else {

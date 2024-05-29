@@ -11,6 +11,8 @@ export function CardSymbolProvider(props: CardSymbolProviderProps) {
           .map((cardSymbol: string, idx: number) => {
             if (cardSymbol == "//") {
               return (<span>&nbsp; &nbsp;//&nbsp;&nbsp;</span>);
+            } else if (cardSymbol == "-") {
+              return (<span>&nbsp; &nbsp;-&nbsp;&nbsp;</span>);
             } else {
               const symbolSvg = props.symbolSvgs.get(cardSymbol);
               if (symbolSvg) {

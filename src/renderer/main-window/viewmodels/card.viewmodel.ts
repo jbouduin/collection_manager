@@ -18,7 +18,9 @@ export class CardViewmodel {
   }
 
   public get cardName(): string {
-    return this.joinMultiCardFaceData(this._dtoCard.oracle.map((oracle: DtoOracle) => oracle.oracle_name));
+    return this._dtoCard.layout != "reversible_card" ?
+      this.joinMultiCardFaceData(this._dtoCard.oracle.map((oracle: DtoOracle) => oracle.oracle_name)) :
+      this.joinMultiCardFaceData(this._dtoCard.cardfaces.map((cardface: DtoCardface) => cardface.oracle.oracle_name));
   }
 
   public get cardPower(): string {
@@ -107,11 +109,11 @@ export class CardViewmodel {
     if (result.length == 1 && result[0] == "//") {
       result.pop();
     }
-    // TODO else if (result[0] == "//") 7
-    // {
-    //   result.splice(0, 0, "-")
-    // }
-
+    else if (result[0] == "//") {
+      result.splice(0, 0, "-")
+    } else if (result[result.length - 1] == "//") {
+      result.push("-");
+    }
     return result;
   }
 

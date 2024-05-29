@@ -9,4 +9,5 @@ export interface IImageCacheService {
   getCardImage(card: CardImageDto): Promise<Response>;
   getCardSymbolSvg(cardSymbol: Selectable<CardSymbolTable>): string;
   getCardSetSvg(cardSet: Selectable<CardSetTable>): string;
+  fetchCardSetImage(code: string): Promise<Response>;
 }

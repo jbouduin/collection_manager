@@ -67,6 +67,11 @@ app.whenReady().then(async () => {
       });
   });
 
+  protocol.handle("cardset-svg", async (request: Request) => {
+    const url = new URL(request.url);
+    return container.resolve<IImageCacheService>(INFRATOKENS.ImageCacheService).fetchCardSetImage(url.hostname);
+  });
+
   container.resolve<IIpcDispatcherService>(INFRATOKENS.IpcDispatcherService).Initialize();
   container.resolve<IWindowService>(INFRATOKENS.WindowService).boot(bootFunction);
 

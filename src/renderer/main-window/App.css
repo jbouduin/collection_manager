@@ -23,6 +23,7 @@ body {
 }
 
 .desktop-wrapper {
+  padding: 0px;
   display: flex;
   flex-direction: row;
 }
@@ -117,12 +118,12 @@ img.rotate-180 {
 
 @media (prefers-color-scheme: dark) {
 
-  body,
-  .bp5-card,
+  /* body, */
+  /* .bp5-card, */
   .bp5-navbar,
   .bp5-navbar-group,
   .bp5-navbar-group.bp5-button-text {
-    background: #333;
+    background: #383e47;;
     color: white;
   }
 }

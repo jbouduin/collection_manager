@@ -63,6 +63,11 @@ export class ImageCacheService implements IImageCacheService {
   public getCardSymbolSvg(cardSymbol: Selectable<CardSymbolTable>): string {
     return fs.readFileSync(this.pathToCardSymbolSvg(cardSymbol), { encoding: "utf-8" });
   }
+
+  public async fetchCardSetImage(code: string): Promise<Response> {
+    const fileName = path.join(this.configurationService.cacheDirectory, "sets", `${code}.svg`);
+    return net.fetch(fileName);
+  }
   //#endregion
 
   //#region Private methods ---------------------------------------------------

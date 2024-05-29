@@ -42,7 +42,7 @@ export function CardView(props: CardViewProps) {
 
   //#region Main --------------------------------------------------------------
   return (cardViewState.card && props.cardSet ?
-    <Section className={props.className}>
+    <Section>
       <CardHeaderView className={props.className} card={cardViewState.card} cardSetSvg={props.cardSet?.cardSetSvg} symbolSvgs={props.symbolSvgs} />
       {
         cardViewState.card.isMultipleLanguage &&
@@ -102,11 +102,11 @@ export function CardView(props: CardViewProps) {
     }
   }
 
+  // className={props.className}
   function SingleFaceLayout(): React.JSX.Element {
     return (
       <div>
         <CardImageViewWrapper
-          className={props.className}
           card={cardViewState.card}
         />
         {

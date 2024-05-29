@@ -100,8 +100,12 @@ export function CardSetsTreeView(props: CardSetTreeViewProps) {
             <ContextMenu
               className={classNames("set-tree-item", props.className)}
               content={
-                <Menu>
-                  <MenuItem text="Synchronize" onClick={(e) => { e.preventDefault(); synchronizeSet(item.setCode); }} />
+                <Menu className={props.className}>
+                  <MenuItem
+                    text="Synchronize"
+                    className={props.className}
+                    onClick={(e) => { e.preventDefault(); synchronizeSet(item.setCode); }}
+                  />
                 </Menu>}>
               <SvgProvider className={classNames("tree-view-image", props.className)} width={26} svg={item.cardSetSvg} />
               {item.treeItemLabel}
@@ -114,8 +118,9 @@ export function CardSetsTreeView(props: CardSetTreeViewProps) {
         };
         return node;
       });
-  }
-
+    }
+  // <img className={props.className} src={`cardset-svg://${item.setCode}`} width={16} height={16} color="#fff" />
+    // <SvgProvider className={classNames("tree-view-image", props.className)} width={26} svg={item.cardSetSvg} />
   function getTreeNodeItemsRecursive(node: TreeNodeInfo<CardSetViewmodel>, items?: Array<CardSetViewmodel>): Array<CardSetViewmodel> {
     const result = items ?? new Array<CardSetViewmodel>();
     result.push(node.nodeData);

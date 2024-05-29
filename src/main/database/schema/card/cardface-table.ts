@@ -66,3 +66,6 @@ export interface CardfaceTable {
   flavor_name?: ColumnType<string, string | undefined>;
   flavor_text?: ColumnType<string, string | undefined>;
 }
+
+// LATER vanguard: hand_modfier? (This card’s hand modifier, if it is Vanguard card. This value will contain a delta, such as -1.)
+// LATER vanguard: life_modfier? (This card’s life modifier, if it is Vanguard card. This value will contain a delta, such as +2.)

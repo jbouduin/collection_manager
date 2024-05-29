@@ -19,16 +19,10 @@ import { SubCardHeaderView } from "./sub-card-header-view/sub-card-header-view";
 
 export function CardView(props: CardViewProps) {
 
-  // FEATURE: cards with multiple faces:
-  // for reversible cards:
-  //  have two CardImage components and a turn over button
-  //  display the details of the visible face
-  // for non-reversible cards:
-  //  use collapsible panels which display details of a face
+  // TODO use collapsible panels when displaying two faces
 
   //#region State -------------------------------------------------------------
   const [cardViewState, setCardViewState] = React.useState<CardViewState>({ card: null, cardfaceSequence: 0 });
-
   //#endregion
 
   //#region Event handlers ----------------------------------------------------

@@ -4,7 +4,7 @@ import { inject, injectable } from "tsyringe";
 
 import { GameFormat, MTGColor, MTGColorType } from "../../../../../common/enums";
 import { CardSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
-import { canSynchronize, isSingleCardFaceLayout } from "../../../../../common/util";
+import { isSingleCardFaceLayout } from "../../../../../common/util";
 import { DatabaseSchema } from "../../../../../main/database/schema";
 import INFRATOKENS, { IDatabaseService } from "../../../../../main/services/infra/interfaces";
 import { runSerial } from "../../../../../main/services/infra/util";
@@ -98,10 +98,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
     const total = cards.length;
     let cnt = 0;
     return Promise
-      .all(cards
-        .filter((card: ScryfallCard) => canSynchronize(card.oracle_id) || canSynchronize(card.card_faces?.at(0).oracle_id))  // NOW remove filter once all layouts are supported
-        .map((card: ScryfallCard) => this.syncSingleCard(card, ++cnt, total, progressCallback))
-      )
+      .all(cards.map((card: ScryfallCard) => this.syncSingleCard(card, ++cnt, total, progressCallback)))
       .then(() => Promise.resolve());
   }
 

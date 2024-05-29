@@ -7,6 +7,7 @@ import { LegalitiesViewProps } from "./legalities-view.props";
 
 export function LegalitiesView(props: LegalitiesViewProps) {
 
+  // LATER if token, art_serie etc : just display text that this card is not to be used for deck building
   //#region State -------------------------------------------------------------
   const [legalities, setLegalities] = React.useState(new Array<DtoLegality>());
   //#endregion

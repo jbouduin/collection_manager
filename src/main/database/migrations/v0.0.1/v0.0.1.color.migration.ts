@@ -30,7 +30,7 @@ async function createV0_0_1_Color(db: Kysely<any>): Promise<void> {
   return createTable(db, options)
     .addColumn("sequence", "integer", (col: ColumnDefinitionBuilder) => col.notNull().unique())
     .addColumn("display_text", "text", (col: ColumnDefinitionBuilder) => col.notNull())
-    .addColumn("land_type", "text", (col: ColumnDefinitionBuilder) => col.notNull())
+    .addColumn("land_type", "text")
     .addColumn("mana_symbol", "text", (col: ColumnDefinitionBuilder) => col.notNull())
     .execute();
 }
@@ -38,10 +38,11 @@ async function createV0_0_1_Color(db: Kysely<any>): Promise<void> {
 async function populateV0_0_1_Color(db: Kysely<any>): Promise<Array<InsertResult>> {
   const values = new Array<Insertable<ColorTable>>();
   values.push({ id: "W", sequence: 0, display_text: "White", land_type: "Plains", mana_symbol: "{W}" });
-  values.push({ id: "U", sequence: 1, display_text: "Blue", land_type: "Plains", mana_symbol: "{U}" });
-  values.push({ id: "B", sequence: 2, display_text: "Black", land_type: "Plains", mana_symbol: "{B}" });
-  values.push({ id: "R", sequence: 3, display_text: "Red", land_type: "Plains", mana_symbol: "{R}" });
-  values.push({ id: "G", sequence: 4, display_text: "Green", land_type: "Plains", mana_symbol: "{G}" });
+  values.push({ id: "U", sequence: 1, display_text: "Blue", land_type: "Island", mana_symbol: "{U}" });
+  values.push({ id: "B", sequence: 2, display_text: "Black", land_type: "Swamp", mana_symbol: "{B}" });
+  values.push({ id: "R", sequence: 3, display_text: "Red", land_type: "Mountain", mana_symbol: "{R}" });
+  values.push({ id: "G", sequence: 4, display_text: "Green", land_type: "Forest", mana_symbol: "{G}" });
+  values.push({ id: "C", sequence: 5, display_text: "Colorless", mana_symbol: "{C}" });
   return db
     .insertInto("color")
     .values(values)

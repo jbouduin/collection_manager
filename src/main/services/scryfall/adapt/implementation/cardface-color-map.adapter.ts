@@ -10,7 +10,8 @@ export class CardfaceColorMapAdapter implements ICardfaceColorMapAdapter{
   public toInsert(scryfall: CardfaceColorMapAdapterParameter): InsertExpression<DatabaseSchema, "cardface_color_map"> {
     return scryfall.colors.map((color: MTGColor) => {
       return {
-        cardface_id: scryfall.cardfaceId,
+        card_id: scryfall.cardId,
+        sequence: scryfall.sequence,
         color_type: scryfall.colorType,
         color_id: color
       };

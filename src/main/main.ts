@@ -60,7 +60,7 @@ app.whenReady().then(async () => {
   protocol.handle("cached-image", async (request: Request) => {
     const url = new URL(request.url);
     return container.resolve<ICardRepository>(REPOTOKENS.CardRepository)
-      .getCardImageData(url.hostname, url.searchParams.get("size") as ImageSize)
+      .getCardImageData(url.hostname, Number.parseInt(url.searchParams.get("sequence")), url.searchParams.get("size") as ImageSize)
       .then((data: CardImageDto) => {
         const cacheService = container.resolve<IImageCacheService>(INFRATOKENS.ImageCacheService);
         return cacheService.getCardImage(data);

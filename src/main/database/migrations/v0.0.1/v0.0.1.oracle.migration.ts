@@ -58,7 +58,7 @@ async function createV0_0_1_Oracle(db: Kysely<any>): Promise<void> {
     defaultIdPrimaryKey: false,
     primaryKey: [
       { columnName: "oracle_id", dataType: "text", callback: (col: ColumnDefinitionBuilder) => col.notNull() },
-      { columnName: "face_name", dataType: "text", callback: (col: ColumnDefinitionBuilder) => col.notNull() }
+      { columnName: "face_sequence", dataType: "integer", callback: (col: ColumnDefinitionBuilder) => col.notNull() }
     ]
   };
   return createTable(db, options)
@@ -69,7 +69,7 @@ async function createV0_0_1_Oracle(db: Kysely<any>): Promise<void> {
 }
 
 async function createV0_0_1_OracleLegality(db: Kysely<any>): Promise<void> {
-  console.log("oraclelegality");
+  console.log("oracle_legality");
   const options: CreateTableOptions = {
     isSynced: true,
     tableName: "oracle_legality",
@@ -86,7 +86,7 @@ async function createV0_0_1_OracleLegality(db: Kysely<any>): Promise<void> {
 }
 
 async function createV0_0_1_OracleKeyword(db: Kysely<any>): Promise<void> {
-  console.log("oraclekeyword");
+  console.log("oracle_keyword");
   return db.schema.createTable("oracle_keyword")
     .addColumn("oracle_id", "text", (col: ColumnDefinitionBuilder) => col.notNull())
     .addColumn("keyword", "text", (col: ColumnDefinitionBuilder) => col.notNull())

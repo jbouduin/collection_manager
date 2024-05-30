@@ -55,14 +55,24 @@ export class ScryfallClient implements IScryfallClient {
 
   // LATER use emitter in getCards or in getlist
   public async getCards(options: CardSyncOptions): Promise<Array<ScryfallCard>> {
-    const scryfallOptions: ScryfallSearchOptions = {
-      unique: "prints",
-      include_extras: true,
-      include_multilingual: true,
-      include_variations: true
-    };
-    const uri = this.buildCardUri(options, scryfallOptions);
-    return this.fetchList<ScryfallCard>(uri, new Array<ScryfallCard>());
+    if (options.setCode) {
+      const scryfallOptions: ScryfallSearchOptions = {
+        unique: "prints",
+        include_extras: true,
+        include_multilingual: true,
+        include_variations: true
+      };
+      const uri = this.buildCardUri(options, scryfallOptions);
+      return this.fetchList<ScryfallCard>(uri, new Array<ScryfallCard>());
+    } else if (options.cardIds) {
+      const requestBody: Array<{ id: string }> = options.cardIds.map((id: string) => { return { id: id }; });
+      return await this.tryPost(
+        `${this.scryfallApiRoot}/${this.scryfallEndpoints.get("collection")}`,
+        JSON.stringify({ identifiers: requestBody })
+      );
+    } else {
+      return Promise.resolve(new Array<ScryfallCard>());
+    }
   }
 
   public async getCardSets(): Promise<Array<ScryfallCardSet>> {
@@ -74,8 +84,6 @@ export class ScryfallClient implements IScryfallClient {
     const uri = `${this.scryfallApiRoot}/${this.scryfallEndpoints.get("cardSymbol")}`;
     return this.fetchList<ScryfallCardSymbol>(uri, new Array<ScryfallCardSymbol>());
   }
-
-
 
   public async getRulings(cardId: string): Promise<Array<ScryfallRuling>> {
     const uri = `${this.scryfallApiRoot}/${this.scryfallEndpoints.get("ruling").replace(":id", cardId)}`;
@@ -96,6 +104,26 @@ export class ScryfallClient implements IScryfallClient {
       .then((result: Response) => {
         console.log(`retrieved ${uri} -> status: ${result.status}`);
         return result;
+      });
+  }
+
+  private async tryPost(uri: string | URL, body: string): Promise<Array<ScryfallCard>> {
+    const now = Date.now();
+    const sleepTime = this.nextQuery - now;
+    this.nextQuery = now + this.minimumRequestTimeout;
+    return await this
+      .sleep(sleepTime)
+      .then(() => fetch(uri, {
+        method: "POST",
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json"
+        },
+        body: body
+      }))
+      .then(async (response: Response) => {
+        console.log(`retrieved ${uri} -> status: ${response.status}`);
+        return ((await response.json()) as ScryfallList<ScryfallCard>).data;
       });
   }
 
@@ -122,7 +150,7 @@ export class ScryfallClient implements IScryfallClient {
   private buildCardUri(options: CardSyncOptions, scryfallOptions: ScryfallSearchOptions): URL {
     const x = new URL(`${this.scryfallApiRoot}/${this.scryfallEndpoints.get("card")}`);
     x.searchParams.set("include_extras", scryfallOptions.include_extras ? "true" : "false");
-    x.searchParams.set("unique",scryfallOptions.unique);
+    x.searchParams.set("unique", scryfallOptions.unique);
     x.searchParams.set("include_multilingual", scryfallOptions.include_multilingual ? "true" : "false");
     x.searchParams.set("include_variations", scryfallOptions.include_variations ? "true" : "false");
     const query = new Array<string>();

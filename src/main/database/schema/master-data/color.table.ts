@@ -20,8 +20,7 @@ export interface ColorTable extends NonSynchronized {
   /***
    * The land type for this color
    */
-  // TODO this could be a reference to the catalog landtypes ColumnType<CardT, string, never>, but that will only work if catalogs has been loaded
-  land_type: ColumnType<BasicLandType, BasicLandType, never>
+  land_type?: ColumnType<BasicLandType, BasicLandType, never>
   /***
    * Mana symbol
   */

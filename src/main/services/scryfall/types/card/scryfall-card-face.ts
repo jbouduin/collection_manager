@@ -1,7 +1,7 @@
 import { CardLayout, MTGColor } from "../../../../../common/enums";
 import { ScryfallImageUris } from "./scryfall-image-uris";
 
-export interface ScryfallCardFace {
+export interface ScryfallCardface {
 
   /**
    * The colors in this card’s color indicator, if any. A null value for this field indicates the card does not have one.

@@ -1,12 +1,13 @@
-import { Classes } from "@blueprintjs/core";
+import { Card, Classes } from "@blueprintjs/core";
 import * as React from "react";
 
-import { CollectionView } from "../collection/collection-view";
-import { DatabaseView } from "../database/database-view";
-import { DeckView } from "../deck/deck-view";
+import { CollectionView } from "../views/collection-view/collection-view";
+import { DatabaseView } from "../views/database-view/database-view";
+import { DeckView } from "../views/deck-view/deck-view";
 import { ButtonBar } from "./button-bar";
 import { EDesktopView } from "./desktop-view.enum";
 import { DesktopProps } from "./desktop.props";
+import classNames from "classnames";
 
 // import logo from "./logo.png";
 const DARK_THEME = Classes.DARK;
@@ -28,20 +29,23 @@ export function Desktop(props: DesktopProps) {
 
   //#region Main --------------------------------------------------------------
   return (
-    <div className="desktop-wrapper">
-      <ButtonBar className={theme} onSelectButton={onButtonBarButtonClick}></ButtonBar>
+    <Card className={classNames(theme, "desktop-wrapper")}>
+      <ButtonBar onSelectButton={onButtonBarButtonClick}></ButtonBar>
       <div className="main-panel">
-        {(currentView == EDesktopView.Database) &&
-          <DatabaseView {...props} className={theme} />
+        {
+          currentView == EDesktopView.Database &&
+          <DatabaseView {...props}  />
         }
-        {currentView == EDesktopView.Collection &&
-          <CollectionView className={theme} />
+        {
+          currentView == EDesktopView.Collection &&
+          <CollectionView />
         }
-        {currentView == EDesktopView.Deck &&
-          <DeckView className={theme} />
+        {
+          currentView == EDesktopView.Deck &&
+          <DeckView />
         }
       </div>
-    </div>
+    </Card>
   );
   //#endregion
 }

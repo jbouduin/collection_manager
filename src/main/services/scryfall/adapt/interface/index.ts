@@ -5,6 +5,7 @@ import {
   CardfaceColorMapAdapterParameter, CardfaceImageAdapterParameter, CatalogAdapterParam,
   OracleAdapterParameter, OracleKeywordAdapterParameter, OracleLegalityAdapterParameter
 } from "./param";
+import { CardColorMapAdapterParameter } from "./param/card-color-map-adapter.param";
 
 import { ITableAdapter } from "./table.adapter";
 
@@ -16,6 +17,7 @@ export type ICardSymbolAlternativeAdapter = ITableAdapter<"card_symbol_alternati
 export type ICardSymbolColorMapAdapter = ITableAdapter<"card_symbol_color_map", CardSymbolColorMapAdapterParam>;
 
 export type ICardAdapter = ITableAdapter<"card", ScryfallCard>;
+export type ICardColorMapAdapter = ITableAdapter<"card_color_map", CardColorMapAdapterParameter>;
 export type ICardGameAdapter = ITableAdapter<"card_game", CardGameAdapterParameter>;
 export type ICardMultiverseIdAdapter = ITableAdapter<"card_multiverse_id", CardMultiversIdAdapterParameter>;
 export type ICardfaceAdapter = ITableAdapter<"cardface", CardFaceAdapterParameter>;
@@ -38,6 +40,7 @@ const ADAPTTOKENS = Object.freeze({
   CardSymbolColorMapAdapter: "CardSymbolColorMapAdapter",
 
   CardAdapter: "CardAdapter",
+  CardColorMapAdapter: "CardColorMapAdapter",
   CardGameAdapter: "CardGameAdapter",
   CardMultiverseIdAdapter: "CardMultiverseIdAdapter",
   CardfaceAdapter: "CardfaceAdapter",

@@ -4,4 +4,5 @@ export interface SvgProviderProps extends Props {
   svg: string;
   height?: number;
   width?: number;
+  colorClass?: string;
 }

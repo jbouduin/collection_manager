@@ -1,9 +1,8 @@
 import fs from "fs";
 import { DeleteResult, InsertResult, Transaction, UpdateResult } from "kysely";
 import { inject, injectable } from "tsyringe";
-import { v1 as uuidV1 } from "uuid";
 
-import { GameFormat } from "../../../../../common/enums";
+import { GameFormat, MTGColor, MTGColorType } from "../../../../../common/enums";
 import { CardSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
 import { isSingleCardFaceLayout } from "../../../../../common/util";
 import { DatabaseSchema } from "../../../../../main/database/schema";
@@ -12,6 +11,7 @@ import { runSerial } from "../../../../../main/services/infra/util";
 import ADAPTTOKENS, {
   ICardAdapter,
   ICardCardMapAdapter,
+  ICardColorMapAdapter,
   ICardGameAdapter,
   ICardMultiverseIdAdapter, ICardfaceAdapter, ICardfaceColorMapAdapter,
   ICardfaceImageAdapter,
@@ -19,10 +19,11 @@ import ADAPTTOKENS, {
   IOracleKeywordAdapter,
   IOracleLegalityAdapter
 } from "../../adapt/interface";
+import { CardColorMapAdapterParameter, CardFaceAdapterParameter, OracleAdapterParameter } from "../../adapt/interface/param";
 import { CardfaceColorMapAdapterParameter } from "../../adapt/interface/param/cardface-color-map-adapter.param";
 import { OracleLegalityAdapterParameter } from "../../adapt/interface/param/oracle-legality-adapter.param";
 import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
-import { ScryfallCard, ScryfallLegalities } from "../../types";
+import { ScryfallCard, ScryfallCardface, ScryfallImageUris, ScryfallLegalities } from "../../types";
 import { ICardSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
 import { GenericSyncTaskParameter } from "./generic-sync-task.parameter";
@@ -33,6 +34,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
   //#region Private readonly fields -------------------------------------------
   private readonly scryfallclient: IScryfallClient;
   private readonly cardAdapter: ICardAdapter;
+  private readonly cardColorMapAdapter: ICardColorMapAdapter;
   private readonly cardCardMapAdapter: ICardCardMapAdapter;
   private readonly cardGameAdapter: ICardGameAdapter;
   private readonly cardMultiverseIdAdapter: ICardMultiverseIdAdapter;
@@ -49,6 +51,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
     @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
     @inject(CLIENTTOKENS.ScryfallClient) scryfallclient: IScryfallClient,
     @inject(ADAPTTOKENS.CardAdapter) cardAdapter: ICardAdapter,
+    @inject(ADAPTTOKENS.CardColorMapAdapter) cardColorMapAdapter: ICardColorMapAdapter,
     @inject(ADAPTTOKENS.CardCardMapAdapter) cardCardMapAdapter: ICardCardMapAdapter,
     @inject(ADAPTTOKENS.CardGameAdapter) cardGameAdapter: ICardGameAdapter,
     @inject(ADAPTTOKENS.CardMultiverseIdAdapter) cardMultiverseIdAdapter: ICardMultiverseIdAdapter,
@@ -61,6 +64,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
     super(databaseService);
     this.scryfallclient = scryfallclient;
     this.cardAdapter = cardAdapter;
+    this.cardColorMapAdapter = cardColorMapAdapter;
     this.cardCardMapAdapter = cardCardMapAdapter;
     this.cardGameAdapter = cardGameAdapter;
     this.cardMultiverseIdAdapter = cardMultiverseIdAdapter;
@@ -82,7 +86,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
     // TODO: check if all required master data is available
     const cards = this.scryfallclient.getCards(options);
     return cards.then((cardArray: Array<ScryfallCard>) => {
-        fs.writeFileSync("c:/data/new-assistant/json/cards_" + options.setCode + ".json", JSON.stringify(cardArray, null, 2));
+      fs.writeFileSync("c:/data/new-assistant/json/cards_" + options.setCode + ".json", JSON.stringify(cardArray, null, 2));
       console.log("Found %d cards", cardArray.length);
       return this.processSync(cardArray, progressCallback);
     });
@@ -94,10 +98,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
     const total = cards.length;
     let cnt = 0;
     return Promise
-      .all(cards
-        .filter((card:ScryfallCard) => isSingleCardFaceLayout(card.layout))
-        .map((card: ScryfallCard) => this.syncSingleCard(card, ++cnt, total, progressCallback))
-      )
+      .all(cards.map((card: ScryfallCard) => this.syncSingleCard(card, ++cnt, total, progressCallback)))
       .then(() => Promise.resolve());
   }
 
@@ -117,12 +118,13 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
       );
 
       return await insertOrUpdate
+        .then(async () => await this.syncCardColorMap(trx, card))
         .then(async () => await this.syncCardCardMap(trx, card))
         .then(async () => await this.syncOracle(trx, card))
         .then(async () => await this.syncOracleKeywords(trx, card))
         .then(async () => await this.syncOracleLegalities(trx, card))
         .then(async () => await this.syncCardGames(trx, card))
-        .then(async () => await this.syncMultiversIds(trx, card))
+        .then(async () => await this.syncMultiverseIds(trx, card))
         .then(async () => await this.syncCardFaces(trx, card));
     }).then(
       () => console.log(`${card.name} ${card.lang} = card synced =====================================`),
@@ -133,75 +135,136 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
     );
   }
 
+  private async syncCardColorMap(trx: Transaction<DatabaseSchema>, scryfallCard: ScryfallCard): Promise<void> {
+    const taskParameters = new Array<GenericSyncTaskParameter<"card_color_map", CardColorMapAdapterParameter>>();
+    if (scryfallCard.colors?.length > 0) {
+      taskParameters.push(this.createCardColorMapTaskParameter(trx, scryfallCard.id, "card", scryfallCard.colors));
+    }
+
+    if (scryfallCard.color_identity?.length > 0) {
+      taskParameters.push(this.createCardColorMapTaskParameter(trx, scryfallCard.id, "identity", scryfallCard.color_identity));
+    }
+
+    if (scryfallCard.color_indicator?.length > 0) {
+      taskParameters.push(this.createCardColorMapTaskParameter(trx, scryfallCard.id, "indicator", scryfallCard.color_identity));
+    }
+
+    if (scryfallCard.produced_mana?.length > 0) {
+      taskParameters.push(this.createCardColorMapTaskParameter(trx, scryfallCard.id, "produced_mana", scryfallCard.produced_mana));
+    }
+    return await runSerial<GenericSyncTaskParameter<"card_color_map", CardColorMapAdapterParameter>>(
+      taskParameters,
+      (param: GenericSyncTaskParameter<"card_color_map", CardColorMapAdapterParameter>) =>
+        `${scryfallCard.name} ${scryfallCard.lang} - card color map - ${param.scryfall.colorType} = ${param.scryfall.colors.join(", ")}`,
+      async (param: GenericSyncTaskParameter<"card_color_map", CardColorMapAdapterParameter>, index: number, total: number) =>
+        this.serialGenericDeleteAndRecreate(param, index, total)
+    );
+  }
+
   private async syncOracle(trx: Transaction<DatabaseSchema>, scryfallCard: ScryfallCard): Promise<InsertResult | UpdateResult | void> {
     if (isSingleCardFaceLayout(scryfallCard.layout)) {
       console.log(`${scryfallCard.name} ${scryfallCard.lang} - single sync of oracle`);
       return await this.genericSingleSync(
         trx,
         "oracle",
-        (eb) => eb("oracle.oracle_id", "=", scryfallCard.oracle_id).and("oracle.face_name", "=", scryfallCard.name),
+        (eb) => eb("oracle.oracle_id", "=", scryfallCard.oracle_id).and("oracle.face_sequence", "=", 0),
         this.oracleAdapter,
-        { faceName: scryfallCard.name, scryfallCard: scryfallCard }
+        { oracleId: scryfallCard.oracle_id, sequence: 0, scryfallCard: scryfallCard }
       );
     } else {
-      return Promise.resolve();
+      console.log(`${scryfallCard.name} ${scryfallCard.lang} - single sync of oracle for split card`);
+      const uniqueOracleIds = scryfallCard.layout != "reversible_card" ?
+        scryfallCard.card_faces :
+        [...new Map(scryfallCard.card_faces.map((cardface: ScryfallCardface) => [cardface.oracle_id, cardface])).values()];
+      const taskParameters: Array<GenericSyncTaskParameter<"oracle", OracleAdapterParameter>> =
+        uniqueOracleIds.map((cardFace: ScryfallCardface, idx: number) => {
+          const oracle_id = scryfallCard.layout == "reversible_card" ? cardFace.oracle_id : scryfallCard.oracle_id;
+          return {
+            trx: trx,
+            tableName: "oracle",
+            adapter: this.oracleAdapter,
+            filter: (eb) => eb("oracle.oracle_id", "=", oracle_id).and("oracle.face_sequence", "=", idx),
+            scryfall: { oracleId: oracle_id, sequence: idx, scryfallCardFace: cardFace }
+          };
+        });
+
+      return await runSerial<GenericSyncTaskParameter<"oracle", OracleAdapterParameter>>(
+        taskParameters,
+        (param: GenericSyncTaskParameter<"oracle", OracleAdapterParameter>) =>
+          `${scryfallCard.name} ${scryfallCard.lang} - oracle - ${param.scryfall.oracleId} = ${param.scryfall.scryfallCardFace.name}`,
+        async (param: GenericSyncTaskParameter<"oracle", OracleAdapterParameter>, index: number, total: number) =>
+          super.serialGenericSingleSync(param, index, total)
+      );
     }
   }
 
-  private async syncOracleKeywords(trx: Transaction<DatabaseSchema>, scryfallCard: ScryfallCard): Promise<Array<DeleteResult> | InsertResult | void> {
-    if (scryfallCard.keywords?.length > 0) {
-      if (isSingleCardFaceLayout(scryfallCard.layout)) {
-        console.log(`${scryfallCard.name} ${scryfallCard.lang} - delete and recreate oracle_keyword`);
-        return await this.genericDeleteAndRecreate(
-          trx,
-          "oracle_keyword",
-          (eb) => eb("oracle_keyword.oracle_id", "=", scryfallCard.oracle_id),
-          this.oracleKeywordAdapter,
-          { oracle_id: scryfallCard.oracle_id, keywords: scryfallCard.keywords }
-        );
-      } else {
-        console.log(`${scryfallCard.name} ${scryfallCard.lang} - delete oracle_keyword`);
-        return await trx
-          .deleteFrom("oracle_keyword")
-          .where("oracle_keyword.oracle_id", "=", scryfallCard.oracle_id)
-          .execute();
-      }
+  private async syncOracleKeywords(trx: Transaction<DatabaseSchema>, scryfallCard: ScryfallCard): Promise<Array<DeleteResult> | InsertResult> {
+    if (scryfallCard.keywords?.length > 0 && scryfallCard.oracle_id) { // TODO cover reversible_card here also
+      console.log(`${scryfallCard.name} ${scryfallCard.lang} - delete and recreate oracle_keyword`);
+      return await this.genericDeleteAndRecreate(
+        trx,
+        "oracle_keyword",
+        (eb) => eb("oracle_keyword.oracle_id", "=", scryfallCard.oracle_id),
+        this.oracleKeywordAdapter,
+        { oracle_id: scryfallCard.oracle_id, keywords: scryfallCard.keywords }
+      );
     } else {
-      console.log(`${scryfallCard.name} ${scryfallCard.lang} - skip oracle_keyword`);
-      return Promise.resolve();
+      console.log(`${scryfallCard.name} ${scryfallCard.lang} - delete oracle_keyword`);
+      return await trx
+        .deleteFrom("oracle_keyword")
+        .where("oracle_keyword.oracle_id", "=", scryfallCard.oracle_id)
+        .execute();
     }
   }
 
-  private async syncOracleLegalities(trx: Transaction<DatabaseSchema>, scryfallCard: ScryfallCard): Promise<void> {
+  private async syncOracleLegalities(trx: Transaction<DatabaseSchema>, scryfallCard: ScryfallCard): Promise<void | Array<DeleteResult>> {
     if (scryfallCard.legalities) {
       const taskParameters = new Array<GenericSyncTaskParameter<"oracle_legality", OracleLegalityAdapterParameter>>();
-      Object.keys(scryfallCard.legalities).forEach((key: string) =>
-        taskParameters.push({
-          trx: trx,
-          tableName: "oracle_legality",
-          filter: (eb) => eb("oracle_legality.oracle_id", "=", scryfallCard.oracle_id).and("oracle_legality.format", "=", key as GameFormat),
-          adapter: this.oracleLegalityAdapter,
-          scryfall: {
-            oracle_id: scryfallCard.oracle_id,
-            gameFormat: key as GameFormat,
-            legality: scryfallCard.legalities[key as keyof ScryfallLegalities]
-          }
-        })
-      );
+      Object.keys(scryfallCard.legalities).forEach((key: string) => {
+        if (scryfallCard.layout != "reversible_card") {
+          taskParameters.push({
+            trx: trx,
+            tableName: "oracle_legality",
+            filter: (eb) => eb("oracle_legality.oracle_id", "=", scryfallCard.oracle_id).and("oracle_legality.format", "=", key as GameFormat),
+            adapter: this.oracleLegalityAdapter,
+            scryfall: {
+              oracle_id: scryfallCard.oracle_id,
+              gameFormat: key as GameFormat,
+              legality: scryfallCard.legalities[key as keyof ScryfallLegalities]
+            }
+          });
+        } else {
+          const uniqueOracleIds = scryfallCard.layout != "reversible_card" ?
+            [...new Map(scryfallCard.card_faces.map((cardface: ScryfallCardface) => [cardface.oracle_id, cardface])).values()] :
+            scryfallCard.card_faces;
+          uniqueOracleIds.forEach((cardface: ScryfallCardface) =>
+            taskParameters.push({
+              trx: trx,
+              tableName: "oracle_legality",
+              filter: (eb) => eb("oracle_legality.oracle_id", "=", cardface.oracle_id).and("oracle_legality.format", "=", key as GameFormat),
+              adapter: this.oracleLegalityAdapter,
+              scryfall: {
+                oracle_id: cardface.oracle_id,
+                gameFormat: key as GameFormat,
+                legality: scryfallCard.legalities[key as keyof ScryfallLegalities]
+              }
+            })
+          );
+        }
+      });
 
-      if (isSingleCardFaceLayout(scryfallCard.layout)) {
-        return await runSerial<GenericSyncTaskParameter<"oracle_legality", OracleLegalityAdapterParameter>>(
-          taskParameters,
-          (param: GenericSyncTaskParameter<"oracle_legality", OracleLegalityAdapterParameter>) =>
-            `${scryfallCard.name} ${scryfallCard.lang} - oracle legality - ${param.scryfall.gameFormat} = ${param.scryfall.legality}`,
-          async (param: GenericSyncTaskParameter<"oracle_legality", OracleLegalityAdapterParameter>, index: number, total: number) =>
-            super.serialGenericSingleSync(param, index, total)
-        );
-      } else {
-        return Promise.resolve();
-      }
+      return await runSerial<GenericSyncTaskParameter<"oracle_legality", OracleLegalityAdapterParameter>>(
+        taskParameters,
+        (param: GenericSyncTaskParameter<"oracle_legality", OracleLegalityAdapterParameter>) =>
+          `${scryfallCard.name} ${scryfallCard.lang} - oracle legality - ${param.scryfall.gameFormat} = ${param.scryfall.legality}`,
+        async (param: GenericSyncTaskParameter<"oracle_legality", OracleLegalityAdapterParameter>, index: number, total: number) =>
+          super.serialGenericSingleSync(param, index, total)
+      );
     } else {
-      return Promise.resolve();
+      return await this.database
+        .deleteFrom("oracle_legality")
+        .where("oracle_legality.oracle_id", "=", scryfallCard.oracle_id)
+        .execute();
     }
   }
 
@@ -225,7 +288,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
     }
   }
 
-  private async syncMultiversIds(trx: Transaction<DatabaseSchema>, scryfallCard: ScryfallCard): Promise<Array<DeleteResult> | InsertResult> {
+  private async syncMultiverseIds(trx: Transaction<DatabaseSchema>, scryfallCard: ScryfallCard): Promise<Array<DeleteResult> | InsertResult> {
     if (scryfallCard.multiverse_ids?.length > 0) {
       return await this
         .genericDeleteAndRecreate(
@@ -245,81 +308,106 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
 
   private async syncCardFaces(trx: Transaction<DatabaseSchema>, scryfallCard: ScryfallCard): Promise<void> {
     // if layout is normal: scrfall does not return cardfaces, so we save the whole card a single cardface
+    let cardfaceAdapterParameter: CardFaceAdapterParameter;
+
     if (isSingleCardFaceLayout(scryfallCard.layout)) {
-      const cardfaceUuid = uuidV1();
-      await this
-        .genericDeleteAndRecreate(
+      cardfaceAdapterParameter = {
+        scryfallCard: scryfallCard
+      };
+    } else {
+      cardfaceAdapterParameter = {
+        scryfallCard: scryfallCard,
+        scryfallCardfaces: scryfallCard.card_faces
+      };
+    }
+    await this
+      .genericDeleteAndRecreate(
+        trx,
+        "cardface",
+        (eb) => eb("cardface.card_id", "=", scryfallCard.id),
+        this.cardfaceAdapter,
+        cardfaceAdapterParameter
+      )
+      .then(async () => {
+        console.log(`${scryfallCard.name} ${scryfallCard.lang} - delete and recreate cardface_images`);
+        const cardfaceImagesMap = new Map<number, ScryfallImageUris>();
+        if (isSingleCardFaceLayout(scryfallCard.layout) || scryfallCard.layout == "split" || scryfallCard.layout == "flip" || scryfallCard.layout == "adventure") {
+          cardfaceImagesMap.set(0, scryfallCard.image_uris);
+        }
+        else {
+          scryfallCard.card_faces.forEach((cardface: ScryfallCardface, idx: number) =>
+            cardfaceImagesMap.set(idx, cardface.image_uris)
+          );
+        }
+        return await this.genericDeleteAndRecreate(
           trx,
-          "cardface",
-          (eb) => eb("cardface.card_id", "=", scryfallCard.id),
-          this.cardfaceAdapter,
-          { uuid: cardfaceUuid, faceName: scryfallCard.name, scryfallCard: scryfallCard }
-        )
-        .then(async () => {
+          "cardface_image",
+          (eb) => eb("cardface_image.card_id", "=", scryfallCard.id), // TODO not required because of cascaded delete
+          this.cardfaceImageAdapter,
+          { cardId: scryfallCard.id, images: cardfaceImagesMap }
+        );
+      })
+      .then(async () => {
+        if (!isSingleCardFaceLayout(scryfallCard.layout)) {
           const taskParameters = new Array<GenericSyncTaskParameter<"cardface_color_map", CardfaceColorMapAdapterParameter>>();
+          scryfallCard.card_faces.forEach((cardFace: ScryfallCardface, idx: number) => {
+            if (cardFace.colors?.length > 0) {
+              taskParameters.push(this.createCardFaceColorMapTaskParameter(trx, scryfallCard.id, idx, "card", cardFace.colors));
+            }
 
-          if (scryfallCard.colors?.length > 0) {
-            taskParameters.push({
-              trx: trx,
-              tableName: "cardface_color_map",
-              filter: (eb) => eb("cardface_color_map.cardface_id", "=", cardfaceUuid), // TODO useless as cascaded delete should have removed old stuff
-              adapter: this.cardfaceColorMapAdapter,
-              scryfall: { cardfaceId: cardfaceUuid, colorType: "card", colors: scryfallCard.colors }
-            });
-          }
+            if (cardFace.color_indicator?.length > 0) {
+              taskParameters.push(this.createCardFaceColorMapTaskParameter(trx, scryfallCard.id, 0, "indicator", cardFace.color_indicator));
+            }
+          });
 
-          if (scryfallCard.color_identity?.length > 0) {
-            taskParameters.push({
-              trx: trx,
-              tableName: "cardface_color_map",
-              filter: (eb) => eb("cardface_color_map.cardface_id", "=", cardfaceUuid),
-              adapter: this.cardfaceColorMapAdapter,
-              scryfall: { cardfaceId: cardfaceUuid, colorType: "identity", colors: scryfallCard.color_identity }
-            });
-          }
-
-          if (scryfallCard.color_indicator?.length > 0) {
-            taskParameters.push({
-              trx: trx,
-              tableName: "cardface_color_map",
-              filter: (eb) => eb("cardface_color_map.cardface_id", "=", cardfaceUuid),
-              adapter: this.cardfaceColorMapAdapter,
-              scryfall: { cardfaceId: cardfaceUuid, colorType: "indicator", colors: scryfallCard.color_indicator }
-            });
-          }
-
-          if (scryfallCard.produced_mana?.length > 0) {
-            taskParameters.push({
-              trx: trx,
-              tableName: "cardface_color_map",
-              filter: (eb) => eb("cardface_color_map.cardface_id", "=", cardfaceUuid),
-              adapter: this.cardfaceColorMapAdapter,
-              scryfall: { cardfaceId: cardfaceUuid, colorType: "produced_mana", colors: scryfallCard.produced_mana }
-            });
-          }
-
-          await runSerial<GenericSyncTaskParameter<"cardface_color_map", CardfaceColorMapAdapterParameter>>(
+          return await runSerial<GenericSyncTaskParameter<"cardface_color_map", CardfaceColorMapAdapterParameter>>(
             taskParameters,
             (param: GenericSyncTaskParameter<"cardface_color_map", CardfaceColorMapAdapterParameter>) =>
-              `${scryfallCard.name} ${scryfallCard.lang} - cardface color map - ${param.scryfall.colorType} = ${param.scryfall.colors.join(", ")}`,
+              `${scryfallCard.name} ${scryfallCard.lang} - cardface color map - ${param.scryfall.colorType}}`,
             async (param: GenericSyncTaskParameter<"cardface_color_map", CardfaceColorMapAdapterParameter>, index: number, total: number) =>
               this.serialGenericDeleteAndRecreate(param, index, total)
-          ).then(async () => {
-            console.log(`${scryfallCard.name} ${scryfallCard.lang} - delete and recreate cardface_image`);
-            await this.genericDeleteAndRecreate(
-              trx,
-              "cardface_image",
-              (eb) => eb("cardface_image.cardface_id", "=", cardfaceUuid), // TODO not required because of cascaded delete
-              this.cardfaceImageAdapter,
-              { cardfaceId: cardfaceUuid, scryfallCard: scryfallCard }
-            );
-          });
-        });
-    }
+          );
+        }
+        else {
+          return Promise.resolve();
+        }
+      });
+    // }
+  }
+
+  private createCardFaceColorMapTaskParameter(
+    trx: Transaction<DatabaseSchema>,
+    cardId: string,
+    sequence: number,
+    colorType: MTGColorType,
+    colors: Array<MTGColor>): GenericSyncTaskParameter<"cardface_color_map", CardfaceColorMapAdapterParameter> {
+    return {
+      trx: trx,
+      tableName: "cardface_color_map",
+      filter: (eb) => eb("cardface_color_map.card_id", "=", cardId)
+        .and("cardface_color_map.sequence", "=", sequence)
+        .and("cardface_color_map.color_type", "=", colorType), // TODO useless as cascaded delete should have removed old stuff
+      adapter: this.cardfaceColorMapAdapter,
+      scryfall: { cardId: cardId, sequence: sequence, colorType: colorType, colors: colors }
+    };
+  }
+
+  private createCardColorMapTaskParameter(
+    trx: Transaction<DatabaseSchema>,
+    cardId: string,
+    colorType: MTGColorType,
+    colors: Array<MTGColor>): GenericSyncTaskParameter<"card_color_map", CardColorMapAdapterParameter> {
+    return {
+      trx: trx,
+      tableName: "card_color_map",
+      filter: (eb) => eb("card_color_map.card_id", "=", cardId)
+        .and("card_color_map.color_type", "=", colorType), // TODO useless as cascaded delete should have removed old stuff
+      adapter: this.cardColorMapAdapter,
+      scryfall: { cardId: cardId, colorType: colorType, colors: colors }
+    };
   }
 
   private async syncCardCardMap(trx: Transaction<DatabaseSchema>, scryfallCard: ScryfallCard): Promise<Array<DeleteResult> | InsertResult> {
-
     if (scryfallCard.all_parts?.length > 0) {
       console.log(`${scryfallCard.name} ${scryfallCard.lang} - delete and recreate card_card_map`);
       return await this

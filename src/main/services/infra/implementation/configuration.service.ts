@@ -46,6 +46,7 @@ export class ConfigurationService implements IConfigurationService {
     result.set("cardSymbol", "symbology");
     result.set("catalog", "catalog");
     result.set("ruling", "cards/:id/rulings");
+    result.set("collection", "cards/collection");
     return result;
   }
 

@@ -22,7 +22,7 @@ enum ECardLayout {
   augment,
   host,
   art_series,
-  double_sided,
+  reversible_card,
 }
 
 export type CardLayout = keyof typeof ECardLayout;

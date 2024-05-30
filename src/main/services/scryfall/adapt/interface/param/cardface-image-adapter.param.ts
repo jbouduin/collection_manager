@@ -1,6 +1,6 @@
-import { ScryfallCard } from "../../../types";
+import { ScryfallImageUris } from "../../../types";
 
 export type CardfaceImageAdapterParameter = {
-  cardfaceId: string,
-  scryfallCard: ScryfallCard
+  cardId: string;
+  images: Map<number, ScryfallImageUris>;
 };

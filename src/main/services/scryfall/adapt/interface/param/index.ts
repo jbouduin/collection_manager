@@ -1,6 +1,7 @@
 export * from "./card-card-map-adapter.param";
 export * from "./card-face-adapter.param";
 export * from "./card-game-adapter.param";
+export * from "./card-color-map-adapter.param";
 export * from "./card-multiverse-id-adapter.param";
 export * from "./card-symbol-alternative-adapter.param";
 export * from "./card-symbol-color-map-adapter.param";

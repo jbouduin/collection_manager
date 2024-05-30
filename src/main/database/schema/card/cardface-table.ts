@@ -1,11 +1,12 @@
 import { ColumnType } from "kysely";
 
-import { CardFrame, CardLayout } from "../../../../common/enums";
+import { CardLayout } from "../../../../common/enums";
 
 export interface CardfaceTable {
 
-  id: ColumnType<string, string, never>;
+
   card_id: ColumnType<string, string, never>;
+  sequence: ColumnType<number, number, never>;
   // put (oracle card name here in case of single face card
   // otherwise put face name
   face_name: ColumnType<string, string, never>;
@@ -58,11 +59,13 @@ export interface CardfaceTable {
    * The watermark on this particulary card face, if any.
    */
   watermark?: ColumnType<string, string | undefined>;
-  // frame is here due to Fourth Edition Foreign Black Border
-  frame: ColumnType<CardFrame, string>;
+
   printed_name?: ColumnType<string, string | undefined>;
   printed_text?: ColumnType<string, string | undefined>;
   printed_type_line: ColumnType<string, string | undefined>;
   flavor_name?: ColumnType<string, string | undefined>;
   flavor_text?: ColumnType<string, string | undefined>;
 }
+
+// LATER vanguard: hand_modfier? (This card’s hand modifier, if it is Vanguard card. This value will contain a delta, such as -1.)
+// LATER vanguard: life_modfier? (This card’s life modifier, if it is Vanguard card. This value will contain a delta, such as +2.)

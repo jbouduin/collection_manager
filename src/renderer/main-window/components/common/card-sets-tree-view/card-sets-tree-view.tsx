@@ -105,7 +105,7 @@ export function CardSetsTreeView(props: CardSetTreeViewProps) {
                     onClick={(e) => { e.preventDefault(); synchronizeSet(item.setCode); }}
                   />
                 </Menu>}>
-              <SvgProvider className="tree-view-image" width={26} svg={item.cardSetSvg} />
+              <SvgProvider className="tree-view-image" width={26} svg={item.cardSetSvg} colorClass="" />
               {item.treeItemLabel}
             </ContextMenu>
           ),

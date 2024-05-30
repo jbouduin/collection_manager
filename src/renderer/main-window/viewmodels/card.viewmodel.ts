@@ -1,5 +1,5 @@
 import { DtoCard, DtoCardLanguage, DtoCardface, DtoOracle } from "../../../common/dto";
-import { CardLayout, MTGLanguage } from "../../../common/enums";
+import { CardLayout, CardRarity, MTGLanguage } from "../../../common/enums";
 import { CardfaceViewmodel } from "./cardface.viewmodel";
 import { OracleViewmodel } from "./oracle-viewmodel";
 
@@ -43,7 +43,7 @@ export class CardViewmodel {
     return this._dtoCard.collector_number;
   }
 
-  public get rarity(): string {
+  public get rarity(): CardRarity {
     return this._dtoCard.rarity;
   }
 

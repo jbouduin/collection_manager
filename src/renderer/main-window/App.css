@@ -93,6 +93,18 @@ img.rotate-180 {
   margin-right: 0px;
 }
 
+.rarity-rare {
+  color: gold;
+}
+
+.rarity-uncommon {
+  color: silver
+}
+
+.rarity-mythic {
+  color: darkorange;
+}
+
 /* TODO  we should not tamper with bp5 classes*/
 .bp5-section-card.bp5-padded {
   padding-top: 10px;

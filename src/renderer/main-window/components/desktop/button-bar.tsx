@@ -5,6 +5,7 @@ import { ButtonBarButton } from "./button-bar-button";
 import { ButtonBarProps } from "./button-bar.props";
 import { EDesktopView } from "./desktop-view.enum";
 
+// TODO active view white, inactive views in grey (or whatever the theme prescribes)
 export function ButtonBar(props: ButtonBarProps) {
   //#region Event handling ----------------------------------------------------
   function onAnyButtonClick(desktopView: EDesktopView): void {
@@ -18,19 +19,20 @@ export function ButtonBar(props: ButtonBarProps) {
       <ButtonGroup minimal={true} vertical={true}>
         <ButtonBarButton
           desktopView={EDesktopView.Database}
-          iconName="database"
+          assetPath="assets/img/mtg.svg"
           tooltip={<span>Magic the Gathering Database</span>}
           onButtonClick={onAnyButtonClick}
         />
         <ButtonBarButton
           desktopView={EDesktopView.Collection}
-          iconName="box"
+          assetPath="assets/img/collection.svg"
           tooltip={<span>Collections</span>}
           onButtonClick={onAnyButtonClick}
         />
         <ButtonBarButton
           desktopView={EDesktopView.Deck}
-          iconName="box"
+          className={props.className}
+          assetPath="assets/img/deck.svg"
           tooltip={<span>Decks</span>}
           onButtonClick={onAnyButtonClick}
         />

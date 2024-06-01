@@ -48,6 +48,10 @@ export class ImageCacheService implements IImageCacheService {
       .catch((reason) => console.log(`failed ${cardSet.name}`, reason));
   }
 
+  public async getAsset(path: string): Promise<string> {
+    return Promise.resolve(fs.readFileSync(path, { encoding: "utf-8" }));
+  }
+
   public async getCardImage(card: CardImageDto): Promise<Response> {
     const cachePath = this.pathToCachedCardImage(card);
     if (fs.existsSync(cachePath)) {

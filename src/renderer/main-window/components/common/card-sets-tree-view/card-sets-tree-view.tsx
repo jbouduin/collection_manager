@@ -77,14 +77,19 @@ export function CardSetsTreeView(props: CardSetTreeViewProps) {
       payload: { path: nodePath, isExpanded: false },
       type: "SET_IS_EXPANDED",
     });
-  }, []);
+  },
+    []
+  );
 
-  const handleNodeExpand = React.useCallback((_node: TreeNodeInfo, nodePath: NodePath) => {
-    dispatch({
-      payload: { path: nodePath, isExpanded: true },
-      type: "SET_IS_EXPANDED",
-    });
-  }, []);
+  const handleNodeExpand = React.useCallback(
+    (_node: TreeNodeInfo, nodePath: NodePath) => {
+      dispatch({
+        payload: { path: nodePath, isExpanded: true },
+        type: "SET_IS_EXPANDED",
+      });
+    },
+    []
+  );
   //#endregion
 
   //#region Private methods ---------------------------------------------------
@@ -105,7 +110,7 @@ export function CardSetsTreeView(props: CardSetTreeViewProps) {
                     onClick={(e) => { e.preventDefault(); synchronizeSet(item.setCode); }}
                   />
                 </Menu>}>
-              <SvgProvider className="tree-view-image" width={26} svg={item.cardSetSvg} colorClass="" />
+              <SvgProvider className="tree-view-image" width={26} svg={item.cardSetSvg} />
               {item.treeItemLabel}
             </ContextMenu>
           ),

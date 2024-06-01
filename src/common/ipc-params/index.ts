@@ -1,5 +1,6 @@
 export * from "./darkmode.option";
 export * from "./ipc-channel.enum";
+export * from "./query/asset-query.options";
 export * from "./query/card-query.options";
 export * from "./query/legality-query.options";
 export * from "./query/query-type.enum";

@@ -24,6 +24,11 @@ body {
   float: inline-start;
 }
 
+.button-bar-image {
+  width: 30px;
+  height: 30px;
+}
+
 .main-panel {
   flex: 1;
 }
@@ -120,6 +125,7 @@ img.rotate-180 {
   overflow-y: scroll;
   max-width: 100%
 }
+
 
 /* @media (prefers-color-scheme: dark) {
   body,

@@ -14,7 +14,7 @@ export function SvgProvider(props: SvgProviderProps) {
   const viewbox = document.body.firstElementChild.attributes.getNamedItem("viewBox").value;
 
   return (
-    <span aria-hidden="true" className={classNames("bp5-icon","bp5-icon-record", "mana-cost-image", props.colorClass)} >
+    <span aria-hidden="true" className={classNames("mana-cost-image", props.className)} >
       <svg
         viewBox={viewbox}
         role="img"

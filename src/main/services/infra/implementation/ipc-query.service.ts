@@ -1,11 +1,11 @@
 import { container, singleton } from "tsyringe";
 
 import { DtoRulingLine } from "../../../../common/dto";
-import { LegalityQueryOptions, QueryOptions, QueryParam, RulingQueryOptions } from "../../../../common/ipc-params";
+import { AssetQueryOptions, LegalityQueryOptions, QueryOptions, QueryParam, RulingQueryOptions } from "../../../../common/ipc-params";
 import { CardQueryOptions } from "../../../../common/ipc-params/query/card-query.options";
 import REPOTOKENS, { ICardRepository, ICardSetRepository, ICardSymbolRepository, ICatalogRepository, IColorRepository, ILanguageRepository, IOracleRepository } from "../../repo/interfaces";
 import SYNCTOKENS, { IRulingSyncService } from "../../scryfall";
-import { IIpcQueryService } from "../interfaces";
+import INFRATOKENS, { IImageCacheService, IIpcQueryService } from "../interfaces";
 
 
 @singleton()
@@ -16,6 +16,10 @@ export class IpcQueryService implements IIpcQueryService {
   public async handle(params: QueryParam<QueryOptions>): Promise<any> {
     // console.log("start IpcQueryService.handling", params);
     switch (params.type) {
+      case "Asset":
+        return container
+          .resolve<IImageCacheService>(INFRATOKENS.ImageCacheService)
+          .getAsset((params.options as AssetQueryOptions).path);
       case "Card":
         return container
           .resolve<ICardRepository>(REPOTOKENS.CardRepository)

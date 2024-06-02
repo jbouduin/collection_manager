@@ -59,6 +59,7 @@
   },
   "dependencies": {
     "@blueprintjs/core": "^5.10.2",
+    "@blueprintjs/select": "^5.1.5",
     "@blueprintjs/table": "^5.1.4",
     "@iconify/tools": "^4.0.4",
     "@types/better-sqlite3": "^7.6.10",

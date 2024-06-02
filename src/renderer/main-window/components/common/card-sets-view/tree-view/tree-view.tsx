@@ -2,10 +2,10 @@ import { ContextMenu, Menu, MenuItem, Tree, TreeNodeInfo } from "@blueprintjs/co
 import * as _ from "lodash";
 import * as React from "react";
 
-import { CardSyncOptions, SyncParam } from "../../../../../common/ipc-params";
-import { CardSetViewmodel } from "../../../viewmodels";
-import { SvgProvider } from "../svg-provider/svg-provider";
-import { CardSetTreeViewProps } from "./card-sets-tree-view.props";
+import { CardSyncOptions, SyncParam } from "../../../../../../common/ipc-params";
+import { CardSetViewmodel } from "../../../../viewmodels";
+import { SvgProvider } from "../../svg-provider/svg-provider";
+import { TreeViewProps } from "./tree-view.props";
 
 type NodePath = Array<number>;
 
@@ -45,8 +45,8 @@ function treeExampleReducer(state: Array<TreeNodeInfo>, action: TreeAction) {
   }
 }
 
-export function CardSetsTreeView(props: CardSetTreeViewProps) {
-  console.log("in cardsetstree function");
+export function TreeView(props: TreeViewProps) {
+  console.log("in treeview function", props.textFilter);
 
   //#region State -------------------------------------------------------------
   const [nodes, dispatch] = React.useReducer(treeExampleReducer, buildTree(props.cardSets, null));
@@ -90,6 +90,7 @@ export function CardSetsTreeView(props: CardSetTreeViewProps) {
     },
     []
   );
+
   //#endregion
 
   //#region Private methods ---------------------------------------------------

@@ -1,7 +1,7 @@
-import { DtoCard, DtoCardLanguage, DtoCardface, DtoOracle } from "../../../common/dto";
-import { CardLayout, CardRarity, MTGLanguage } from "../../../common/enums";
+import { DtoCard, DtoCardLanguage, DtoCardface, DtoOracle } from "../../../../common/dto";
+import { CardLayout, CardRarity, MTGLanguage } from "../../../../common/enums";
+import { OracleViewmodel } from "../oracle/oracle-viewmodel";
 import { CardfaceViewmodel } from "./cardface.viewmodel";
-import { OracleViewmodel } from "./oracle-viewmodel";
 
 export class CardViewmodel {
   //#region private readonly fields -------------------------------------------

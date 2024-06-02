@@ -2,8 +2,8 @@ import * as React from "react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
 import { CardSetViewmodel, CardViewmodel } from "../../../viewmodels";
+import { CardSetsView } from "../../common/card-sets-view/card-sets-view";
 import { CardView } from "../../common/card-view/card-view";
-import { CardSetsTreeView } from "../../common/card-sets-tree-view/card-sets-tree-view";
 import { CardsTableView } from "../../common/cards-table-view/cards-table-view";
 import { DatabaseViewProps } from "./database-view.props";
 import { DatabaseViewState } from "./database-view.state";
@@ -34,7 +34,7 @@ export function DatabaseView(props: DatabaseViewProps) {
     <div>
       <PanelGroup direction="horizontal">
         <Panel defaultSize={20}>
-          <CardSetsTreeView cardSets={props.cardSets} onSetsSelected={onCardSetsSelected} />
+          <CardSetsView cardSets={props.cardSets} onSetsSelected={onCardSetsSelected} />
         </Panel>
         <PanelResizeHandle />
         <Panel>

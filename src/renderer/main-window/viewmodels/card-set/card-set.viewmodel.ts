@@ -1,4 +1,4 @@
-import { DtoCardSet } from "../../../common/dto";
+import { DtoCardSet } from "../../../../common/dto";
 
 export class CardSetViewmodel {
   //#region private readonly fields -------------------------------------------

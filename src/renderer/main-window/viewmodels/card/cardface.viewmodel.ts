@@ -1,5 +1,5 @@
-import { DtoCardface } from "../../../common/dto";
-import { OracleViewmodel } from "./oracle-viewmodel";
+import { DtoCardface } from "../../../../common/dto";
+import { OracleViewmodel } from "../oracle/oracle-viewmodel";
 
 export class CardfaceViewmodel {
   //#region private readonly fields -------------------------------------------

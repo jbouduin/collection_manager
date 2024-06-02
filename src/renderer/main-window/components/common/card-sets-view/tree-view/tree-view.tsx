@@ -106,39 +106,43 @@ export function TreeView(props: TreeViewProps) {
   );
   //#endregion
 
-  //#region Private methods ---------------------------------------------------
+  //#region Auxiliary build tree methods --------------------------------------
   function applyFilterProps(items: Array<CardSetViewmodel>): Array<CardSetViewmodel> {
     const result = items.filter((cardSet: CardSetViewmodel) =>
       (props.textFilter ? (cardSet.cardSetName.toUpperCase().indexOf(props.textFilter.toUpperCase()) >= 0) : true) &&
       props.cardSetTypeFilter.get(cardSet.cardSetType) == true
     );
-    let parents = result
-      .filter((cardSet: CardSetViewmodel) => cardSet.parentSetCode != null)
-      .map((cardSet: CardSetViewmodel) => items.find((parent: CardSetViewmodel) => parent.setCode == cardSet.parentSetCode));
-    let uniqueParents = [
-      ...new Map(parents.map((parent: CardSetViewmodel) => [parent["setCode"], parent])).values()
-    ];
-    while (uniqueParents.length > 0) {
-      result.push(...uniqueParents);
-      parents = parents
+    if (props.cardSetGroupBy == "parent") {
+      let parents = result
         .filter((cardSet: CardSetViewmodel) => cardSet.parentSetCode != null)
         .map((cardSet: CardSetViewmodel) => items.find((parent: CardSetViewmodel) => parent.setCode == cardSet.parentSetCode));
-      uniqueParents = [
+      let uniqueParents = [
         ...new Map(parents.map((parent: CardSetViewmodel) => [parent["setCode"], parent])).values()
       ];
+      while (uniqueParents.length > 0) {
+        result.push(...uniqueParents);
+        parents = parents
+          .filter((cardSet: CardSetViewmodel) => cardSet.parentSetCode != null)
+          .map((cardSet: CardSetViewmodel) => items.find((parent: CardSetViewmodel) => parent.setCode == cardSet.parentSetCode));
+        uniqueParents = [
+          ...new Map(parents.map((parent: CardSetViewmodel) => [parent["setCode"], parent])).values()
+        ];
+      }
+      const uniqueResult = [
+        ...new Map(result.map((r: CardSetViewmodel) =>
+          [r["setCode"], r])).values()
+      ];
+      console.log(`after-filter: # of items = ${uniqueResult.length}`);
+      return uniqueResult;
+    } else {
+      return result;
     }
-    const uniqueResult = [
-      ...new Map(result.map((r: CardSetViewmodel) =>
-        [r["setCode"], r])).values()
-    ];
-    console.log(`after-filter: # of items = ${uniqueResult.length}`);
-    return uniqueResult;
   }
 
   function buildTree(cardSets: Array<CardSetViewmodel>): Array<TreeNodeInfo<CardSetViewmodel | string>> {
     switch (props.cardSetGroupBy) {
       case "parent":
-        return buildTreeByParent(cardSets, null);
+        return buildTreeByParent(cardSets);
       case "block":
         return buildTreeByBlockOrType(cardSets, (cardSet: CardSetViewmodel) => cardSet.block);
       case "none":
@@ -148,12 +152,16 @@ export function TreeView(props: TreeViewProps) {
     }
   }
 
-  function buildTreeByParent(cardSets: Array<CardSetViewmodel>, id: string | null): Array<TreeNodeInfo<CardSetViewmodel>> {
+  function buildTreeByParent(cardSets: Array<CardSetViewmodel>): Array<TreeNodeInfo<CardSetViewmodel>> {
+    return buildTreeByParentRecursive(cardSets, null);
+  }
+
+  function buildTreeByParentRecursive(cardSets: Array<CardSetViewmodel>, id: string | null): Array<TreeNodeInfo<CardSetViewmodel>> {
     return cardSets
       .filter((item: CardSetViewmodel) => item.parentSetCode === id)
       .sort(sortViewmodelfunction)
       .map((cardSet: CardSetViewmodel) => {
-        const childNodes: Array<TreeNodeInfo<CardSetViewmodel>> = buildTreeByParent(cardSets, cardSet.setCode);
+        const childNodes: Array<TreeNodeInfo<CardSetViewmodel>> = buildTreeByParentRecursive(cardSets, cardSet.setCode);
         const node = mapViewModelToTreeItem(cardSet);
         node.childNodes = childNodes.length > 0 ? childNodes : null;
         return node;
@@ -222,7 +230,9 @@ export function TreeView(props: TreeViewProps) {
     };
     return node;
   }
+  //#endregion
 
+  //#region Other auxiliary methods -------------------------------------------
   function getTreeNodeItemsRecursive(node: TreeNodeInfo<CardSetViewmodel>, items?: Array<CardSetViewmodel>): Array<CardSetViewmodel> {
     const result = items ?? new Array<CardSetViewmodel>();
     result.push(node.nodeData);

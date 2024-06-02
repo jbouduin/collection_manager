@@ -44,6 +44,7 @@ export class CardSetViewmodel {
     return this._dtoCardSet.block;
   }
   //#endregion
+
   //#region public getters ----------------------------------------------------
   public constructor(dtoCardSet: DtoCardSet) {
     this._dtoCardSet = dtoCardSet;

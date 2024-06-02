@@ -8,7 +8,7 @@ import { HeaderViewProps } from "./header-view-props";
 type PopoverKey = "card-set-group-by-menu" | "card-set-sort-menu" | "card-set-type-filter-menu";
 
 export function HeaderView(props: HeaderViewProps) {
-  console.log("Headerviewc function");
+  console.log("Headerview function");
 
   //#region State -------------------------------------------------------------
   const [textFilterValue, setTextFilterValue] = React.useState<string>(null);
@@ -41,8 +41,11 @@ export function HeaderView(props: HeaderViewProps) {
   //#region Effects -----------------------------------------------------------
   React.useEffect(
     () => {
-      const timeOutId = setTimeout(() => props.onTextFilterChanged(textFilterValue), 500);
-      return () => clearTimeout(timeOutId);
+      // null is the initial value and should not trigger anything
+      if (textFilterValue != null) {
+        const timeOutId = setTimeout(() => props.onTextFilterChanged(textFilterValue), 500);
+        return () => clearTimeout(timeOutId);
+      }
     },
     [textFilterValue]
   );

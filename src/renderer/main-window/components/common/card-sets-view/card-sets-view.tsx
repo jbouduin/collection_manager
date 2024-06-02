@@ -8,12 +8,10 @@ import { HeaderView } from "./header-view/header-view";
 import { TreeView } from "./tree-view/tree-view";
 
 export function CardSetsView(props: CardSetsViewProps) {
+  console.log("in cardsetsview function");
 
   //#region State -------------------------------------------------------------
-  const [textFilterValue, setTextFilterValue] = React.useState<string>(null);
-  const [cardSetSort, setCardSetSort] = React.useState<CardSetSort>("releaseDateDescending");
-  const [cardSetGroupBy, setCardSetGroupBy] = React.useState<CardSetGroupBy>("parent");
-  const initialCardSetTypeFilter: Map<CardSetType, boolean> = new Map<CardSetType, boolean>([
+  const initial: Map<CardSetType, boolean> = new Map<CardSetType, boolean>([
     ["core", true],
     ["expansion", true],
     ["token", true],
@@ -38,12 +36,16 @@ export function CardSetsView(props: CardSetsViewProps) {
     ["memorabilia", false],
     ["minigame", false]
   ]);
-  const [cardSetTypeFilter, setCardSetTypFilter] = React.useState<Map<CardSetType, boolean>>(initialCardSetTypeFilter);
+  console.log(initial);
+  const [textFilterValue, setTextFilterValue] = React.useState<string>(() => { console.log("passing textFilterValue initiation"); return null; });
+  const [cardSetSort, setCardSetSort] = React.useState<CardSetSort>(() => { console.log("passing cardSetSort initiation"); return "releaseDateDescending"; });
+  const [cardSetGroupBy, setCardSetGroupBy] = React.useState<CardSetGroupBy>(() => { console.log("passing cardSetGroupBy initiation"); return "parent"; });
+  const [cardSetTypeFilter, setCardSetTypeFilter] = React.useState<Map<CardSetType, boolean>>(() => { console.log("passing cardSetTypeFilter initiation"); return initial; });
   //#endregion
 
   //#region event handling ----------------------------------------------------
   const onTextFilterChanged = React.useCallback(
-    (textFilterValue: string) => setTextFilterValue(textFilterValue),
+    (textFilterValue: string) => { console.log("onTextFilterChanged", cardSetTypeFilter); setTextFilterValue(textFilterValue); },
     []
   );
 
@@ -59,9 +61,11 @@ export function CardSetsView(props: CardSetsViewProps) {
 
   const onCardSetTypeFilterChanged = React.useCallback(
     (cardSetType: CardSetType) => {
-      const newCardSetTypeFilter = clone(cardSetTypeFilter);
-      newCardSetTypeFilter.set(cardSetType, !cardSetTypeFilter.get(cardSetType));
-      setCardSetTypFilter(newCardSetTypeFilter);
+      setCardSetTypeFilter((oldfilter: Map<CardSetType, boolean>) => {
+        const newCardSetTypeFilter = clone(oldfilter);
+        newCardSetTypeFilter.set(cardSetType, !newCardSetTypeFilter.get(cardSetType));
+        return newCardSetTypeFilter;
+      });
     },
     []
   );
@@ -77,8 +81,16 @@ export function CardSetsView(props: CardSetsViewProps) {
         onCardSetSortChanged={onCardSetSortChanged}
         onCardSetGroupByChanged={onCardSetGroupByChanged}
         onCardSetTypeFilterChanged={onCardSetTypeFilterChanged}
-        onTextFilterChanged={onTextFilterChanged}></HeaderView>
-      <TreeView cardSets={props.cardSets} onSetsSelected={props.onSetsSelected} textFilter={textFilterValue}></TreeView>
+        onTextFilterChanged={onTextFilterChanged}
+      />
+      <TreeView
+        cardSets={props.cardSets}
+        onSetsSelected={props.onSetsSelected}
+        textFilter={textFilterValue}
+        cardSetGroupBy={cardSetGroupBy}
+        cardSetSort={cardSetSort}
+        cardSetTypeFilter={cardSetTypeFilter}
+      />
     </div>
   );
   //#endregion

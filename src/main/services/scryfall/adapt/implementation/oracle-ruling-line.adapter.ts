@@ -11,7 +11,7 @@ export class OracleRulingLineAdapter implements IOracleRulingLineAdapter {
       oracle_id: scryfall.oracle_id,
       source: scryfall.source,
       comments: scryfall.comment,
-      published_at: `${scryfall.published_at} 00:00:00` // TODO these times are probably GMT -08:00:00
+      published_at: `${scryfall.published_at} 00:00:00` // TODO date and datetime issues: these times are probably GMT -08:00:00
     };
   }
 

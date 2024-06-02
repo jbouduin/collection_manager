@@ -1,4 +1,5 @@
-import { DtoCardSet } from "../../../common/dto";
+import { CardSetType } from "../../../../common/enums";
+import { DtoCardSet } from "../../../../common/dto";
 
 export class CardSetViewmodel {
   //#region private readonly fields -------------------------------------------
@@ -29,7 +30,21 @@ export class CardSetViewmodel {
   public get cardSetSvg(): string {
     return this._dtoCardSet.svg;
   }
+
+  public get cardSetType(): CardSetType {
+    return this._dtoCardSet.set_type;
+  }
+
+  public get releaseDateString(): string {
+    // TODO date and datetime issues
+    return new Date(this._dtoCardSet.released_at).toISOString();
+  }
+
+  public get block(): string {
+    return this._dtoCardSet.block;
+  }
   //#endregion
+
   //#region public getters ----------------------------------------------------
   public constructor(dtoCardSet: DtoCardSet) {
     this._dtoCardSet = dtoCardSet;

@@ -1,4 +1,4 @@
-import { DtoOracle } from "../../../common/dto";
+import { DtoOracle } from "../../../../common/dto";
 
 export class OracleViewmodel {
   //#region private readonly fields -------------------------------------------

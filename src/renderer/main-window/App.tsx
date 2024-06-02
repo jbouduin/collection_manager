@@ -8,7 +8,7 @@ import { DtoCardSet, DtoLanguage } from "../../common/dto";
 import { QueryParam } from "../../common/ipc-params";
 import { Desktop } from "./components/desktop/desktop";
 import { DesktopProps } from "./components/desktop/desktop.props";
-import { CardSetViewmodel } from "./viewmodels/card-set.viewmodel";
+import { CardSetViewmodel } from "./viewmodels/card-set/card-set.viewmodel";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 

@@ -18,9 +18,9 @@ export function LanguageButtonBar(props: LanguageButtonBarProps) {
       <ButtonGroup minimal={true} >
         {
           props.cardLanguages.map((language: DtoCardLanguage) => {
-            const languageDef = props.languages.filter((lng: DtoLanguage) => lng.id == language.lang);
-            const label = languageDef.length > 0 ? languageDef[0].button_text : language.lang;
-            const tooltip = languageDef.length > 0 ? languageDef[0].display_text : language.lang;
+            const languageDef = props.languages.find((lng: DtoLanguage) => lng.id == language.lang);
+            const label = languageDef ? languageDef.button_text : language.lang;
+            const tooltip = languageDef ? languageDef.display_text : language.lang;
             return (
               <LanguageButtonBarButton
                 label={label}

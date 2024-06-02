@@ -85,7 +85,8 @@ export class CardRepository extends BaseRepository implements ICardRepository {
         ).as("languages"),
         helpers.jsonArrayFrom<DtoCardColor>(
           eb.selectFrom("card_color_map")
-            .select(cardColorMapTableFields)
+          .innerJoin("color", "color.id", "card_color_map.color_id")
+            .select([...cardColorMapTableFields, "color.mana_symbol"])
             .whereRef("card_color_map.card_id", "=", "card.id")
             .$castTo<DtoCardColor>()
         ).as("cardColors"),

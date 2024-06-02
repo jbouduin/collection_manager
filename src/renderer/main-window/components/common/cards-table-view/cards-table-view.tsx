@@ -45,8 +45,8 @@ export function CardsTableView(props: CardsTableViewProps) {
   }
 
   function cardSetNameRenderer(row: number): React.ReactElement<CellProps> {
-    const set = props.selectedSets.filter((s: CardSetViewmodel) => s.id == cards[row].setId);
-    return (<Cell>{set[0]?.cardSetName}</Cell>);
+    const set = props.selectedSets.find((s: CardSetViewmodel) => s.id == cards[row].setId);
+    return (<Cell>{set?.cardSetName}</Cell>);
   }
 
 
@@ -56,8 +56,8 @@ export function CardsTableView(props: CardsTableViewProps) {
         {
           cards[row].languages
             .map((language: MTGLanguage) => {
-              const languageDef = props.languages.filter((lng: DtoLanguage) => lng.id == language);
-              return languageDef.length > 0 ? languageDef[0].button_text : language;
+              const languageDef = props.languages.find((lng: DtoLanguage) => lng.id == language);
+              return languageDef ? languageDef.button_text : language;
             })
             .join(", ")
         }
@@ -65,10 +65,10 @@ export function CardsTableView(props: CardsTableViewProps) {
     );
   }
 
-  function manaCostRenderer(row: number): React.ReactElement<CellProps> {
-    return (
+  function symbolRenderer(valueCallBack: (card: CardViewmodel) => Array<string>): CellRenderer {
+    return (row: number) => (
       <Cell>
-        <CardSymbolProvider symbolSvgs={props.symbolSvgs} cardSymbols={cards[row].cardManacost}/>
+        <CardSymbolProvider symbolSvgs={props.symbolSvgs} cardSymbols={valueCallBack(cards[row])}/>
       </Cell >
     );
   }
@@ -102,15 +102,16 @@ export function CardsTableView(props: CardsTableViewProps) {
   //#region Main --------------------------------------------------------------
   return (
     <div className="cards-table-wrapper">
-      <Table2 numRows={cards?.length ?? 0} selectionModes={SelectionModes.ROWS_AND_CELLS} onSelection={onSelection} selectedRegionTransform={selectedRegionTransform} >
+      <Table2 numRows={cards?.length ?? 0} selectionModes={SelectionModes.ROWS_AND_CELLS} onSelection={onSelection} selectedRegionTransform={selectedRegionTransform}>
         <Column name="Number" cellRenderer={textCellRenderer((card: CardViewmodel) => card.collectorNumber)} />
         <Column name="Rarity" cellRenderer={textCellRenderer((card: CardViewmodel) => card.rarity)} />
         <Column name="Name" cellRenderer={textCellRenderer((card: CardViewmodel) => card.cardName)} />
         <Column name="Type" cellRenderer={textCellRenderer((card: CardViewmodel) => card.cardtypeLine)} />
-        <Column name="Mana cost" cellRenderer={manaCostRenderer} />
+        <Column name="Mana cost" cellRenderer={symbolRenderer((card: CardViewmodel)=> card.cardManacost)} />
         <Column name="Set" cellRenderer={cardSetNameRenderer} />
         <Column name="Power" cellRenderer={textCellRenderer((card: CardViewmodel) => card.cardPower)} />
         <Column name="Thoughness" cellRenderer={textCellRenderer((card: CardViewmodel) => card.cardThoughness)} />
+        <Column name="CI" cellRenderer={symbolRenderer((card: CardViewmodel) => card.colorIdentity)} />
         <Column name="Languages" cellRenderer={languageRenderer} />
       </Table2>
     </div>

@@ -13,7 +13,7 @@ export function CardHeaderView(props: CardHeaderViewProps) {
     <SectionCard padded={true}>
       <div className="card-header-wrapper">
         <div className="card-header-line-1">
-          <SvgProvider svg={props.cardSetSvg} height={25} width={25} colorClass={getRarityColorClassname(props.card.rarity)}/>
+          <SvgProvider svg={props.cardSetSvg} height={25} width={25} className={getRarityColorClassname(props.card.rarity)}/>
           <H3>{props.card.cardName}</H3>
         </div>
         <div className="card-header-line-2">

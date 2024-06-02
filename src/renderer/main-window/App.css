@@ -1,7 +1,7 @@
 @import "normalize.css";
 @import "@blueprintjs/core/lib/css/blueprint.css";
 @import "@blueprintjs/table/lib/css/table.css";
-
+@import "@blueprintjs/select/lib/css/blueprint-select.css";
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
     Arial, sans-serif;
@@ -22,6 +22,11 @@ body {
 
 .button-bar {
   float: inline-start;
+}
+
+.button-bar-image {
+  width: 30px;
+  height: 30px;
 }
 
 .main-panel {
@@ -120,6 +125,7 @@ img.rotate-180 {
   overflow-y: scroll;
   max-width: 100%
 }
+
 
 /* @media (prefers-color-scheme: dark) {
   body,

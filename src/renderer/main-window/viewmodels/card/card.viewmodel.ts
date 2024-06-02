@@ -1,4 +1,4 @@
-import { DtoCard, DtoCardLanguage, DtoCardface, DtoOracle } from "../../../../common/dto";
+import { DtoCard, DtoCardColor, DtoCardLanguage, DtoCardface, DtoOracle } from "../../../../common/dto";
 import { CardLayout, CardRarity, MTGLanguage } from "../../../../common/enums";
 import { OracleViewmodel } from "../oracle/oracle-viewmodel";
 import { CardfaceViewmodel } from "./cardface.viewmodel";
@@ -50,6 +50,12 @@ export class CardViewmodel {
   public get languages(): Array<MTGLanguage> {
     return this._dtoCard.languages.map((language: DtoCardLanguage) => language.lang);
   }
+
+  public get colorIdentity(): Array<string> {
+    return this._dtoCard.cardColors
+      .filter((cardColor: DtoCardColor) => cardColor.color_type == "identity")
+      .map((cardColor: DtoCardColor) => cardColor.mana_symbol);
+  }
   //#endregion
 
   public get cardLayout(): CardLayout {
@@ -86,10 +92,10 @@ export class CardViewmodel {
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
-  public constructor(cardDto: DtoCard) {
-    this._dtoCard = cardDto;
-    this._collectorNumberSortValue = isNaN(Number(cardDto.collector_number)) ? cardDto.collector_number : cardDto.collector_number.padStart(4, "0");
-    this._cardManaCost = this.calculateCardManaCost(cardDto);
+  public constructor(dtoCard: DtoCard) {
+    this._dtoCard = dtoCard;
+    this._collectorNumberSortValue = isNaN(Number(dtoCard.collector_number)) ? dtoCard.collector_number : dtoCard.collector_number.padStart(4, "0");
+    this._cardManaCost = this.calculateCardManaCost(dtoCard);
     this.cardFaces = new Map<number, CardfaceViewmodel>();
     this._dtoCard.cardfaces.sort((a: DtoCardface, b: DtoCardface) => a.sequence - b.sequence);
     this._dtoCard.cardfaces.forEach((cardface: DtoCardface) => this.cardFaces.set(cardface.sequence, new CardfaceViewmodel(cardface)));
@@ -98,9 +104,9 @@ export class CardViewmodel {
     this._dtoCard.oracle.forEach((oracle: DtoOracle) => this.oracles.set(oracle.face_sequence, new OracleViewmodel(oracle)));
   }
 
-  private calculateCardManaCost(cardDto: DtoCard): Array<string> {
+  private calculateCardManaCost(dtoCard: DtoCard): Array<string> {
     const result = new Array<string>();
-    cardDto.cardfaces.forEach((cardface: DtoCardface, idx: number) => {
+    dtoCard.cardfaces.forEach((cardface: DtoCardface, idx: number) => {
       if (idx > 0) {
         result.push("//");
       }

@@ -53,11 +53,12 @@ export function HeaderView(props: HeaderViewProps) {
 
   //#region Main --------------------------------------------------------------
   return (
-    <ButtonGroup minimal={true} >
+    <ButtonGroup minimal={true} fill={true}>
       <InputGroup
         leftIcon="filter"
         onChange={handleTextFilterChanged}
         placeholder="Text Filter..."
+        fill={true}
       />
       {
         buildPopover("card-set-group-by-menu", "diagram-tree")
@@ -85,7 +86,7 @@ export function HeaderView(props: HeaderViewProps) {
         }
         content={buildMenu(key)}
         openOnTargetFocus={false}
-        placement="auto-end"
+        placement="bottom-end"
         usePortal={false}>
         <Button icon={icon} />
       </Popover>
@@ -100,7 +101,6 @@ export function HeaderView(props: HeaderViewProps) {
         return buildSortMenu();
       case "card-set-type-filter-menu":
         return buildTypeFilterMenu();
-
       default:
         break;
     }

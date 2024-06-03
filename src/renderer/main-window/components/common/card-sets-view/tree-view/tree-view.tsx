@@ -1,4 +1,4 @@
-import { ContextMenu, Menu, MenuItem, Tree, TreeNodeInfo } from "@blueprintjs/core";
+import { Button, Classes, ContextMenu, Dialog, Menu, MenuItem, Tree, TreeNodeInfo } from "@blueprintjs/core";
 import * as _ from "lodash";
 import * as React from "react";
 
@@ -6,6 +6,8 @@ import { CardSyncOptions, SyncParam } from "../../../../../../common/ipc-params"
 import { CardSetViewmodel } from "../../../../viewmodels";
 import { SvgProvider } from "../../svg-provider/svg-provider";
 import { TreeViewProps } from "./tree-view.props";
+import classNames from "classnames";
+import { CardSetDialog } from "../card-set-dialog/card-set-dialog";
 
 type NodePath = Array<number>;
 
@@ -53,6 +55,9 @@ export function TreeView(props: TreeViewProps) {
 
   //#region State -------------------------------------------------------------
   const [nodes, dispatch] = React.useReducer(treeExampleReducer, undefined);
+  // NOW combine next two into one state object
+  const [dialogIsOpen, setDialogIsOpen] = React.useState(false);
+  const [cardSet, setCardSet] = React.useState<CardSetViewmodel>(undefined);
   //#endregion
 
   //#region event handlers ----------------------------------------------------
@@ -219,6 +224,10 @@ export function TreeView(props: TreeViewProps) {
                 text="Synchronize"
                 onClick={(e) => { e.preventDefault(); synchronizeSet(cardSet.setCode); }}
               />
+              <MenuItem
+                text="Properties"
+                onClick={(e) => { e.preventDefault(); setCardSet(cardSet); setDialogIsOpen(true); }}
+              />
             </Menu>}>
           <SvgProvider key={cardSet.setCode} className="tree-view-image" width={26} svg={cardSet.cardSetSvg} />
           {cardSet.treeItemLabel}
@@ -251,16 +260,24 @@ export function TreeView(props: TreeViewProps) {
   }
   //#endregion
 
+  const handleClose = React.useCallback(() => setDialogIsOpen(false), []);
   //#region Main --------------------------------------------------------------
   return (
-    <Tree
-      compact={true}
-      contents={nodes}
-      onNodeClick={handleNodeClick}
-      onNodeCollapse={handleNodeCollapse}
-      onNodeExpand={handleNodeExpand}
-      className="Classes.ELEVATION_0"
-    />
+    <>
+      <Tree
+        compact={true}
+        contents={nodes}
+        onNodeClick={handleNodeClick}
+        onNodeCollapse={handleNodeCollapse}
+        onNodeExpand={handleNodeExpand}
+        className="Classes.ELEVATION_0"
+      />
+      <CardSetDialog
+        isOpen={dialogIsOpen}
+        onClose={handleClose}
+        cardSet={cardSet}
+      />
+    </>
   );
   //#endregion
 }

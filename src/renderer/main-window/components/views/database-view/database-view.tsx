@@ -34,7 +34,7 @@ export function DatabaseView(props: DatabaseViewProps) {
     <div>
       <PanelGroup direction="horizontal">
         <Panel defaultSize={20}>
-          <CardSetsView cardSets={props.cardSets} onSetsSelected={onCardSetsSelected} />
+          <CardSetsView cardSets={props.cardSets} languages={props.languages} onSetsSelected={onCardSetsSelected} />
         </Panel>
         <PanelResizeHandle />
         <Panel>

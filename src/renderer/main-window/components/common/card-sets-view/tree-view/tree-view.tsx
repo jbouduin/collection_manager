@@ -275,6 +275,7 @@ export function TreeView(props: TreeViewProps) {
         isOpen={dialogIsOpen}
         onClose={handleClose}
         cardSetId={cardSet?.id}
+        languages={props.languages}
         cardSetSvg={cardSet?.cardSetSvg}
       />
     </>

@@ -1,5 +1,5 @@
 import { CardSetType, CardSetTypeDisplayValue } from "../../../../common/enums";
-import { DtoCardSetDetails, DtoCardSetLanguage } from "../../../../common/dto";
+import { DtoCardSetDetails, DtoCardSetLanguage, DtoLanguage } from "../../../../common/dto";
 
 
 export class CardSetDetailsViewmodel {
@@ -18,10 +18,6 @@ export class CardSetDetailsViewmodel {
 
   public get cardSetType(): string {
     return CardSetTypeDisplayValue.get(this._dtoCardSet.set_type);
-  }
-
-  public get languagesOfSet(): string {
-    return this._dtoCardSet.languages.map((language: DtoCardSetLanguage) => language.lang).join(",");
   }
 
   public get lastFullSynchronization(): string {
@@ -86,9 +82,18 @@ export class CardSetDetailsViewmodel {
   }
   //#endregion
 
-  //#region Constructor & C° ----------------------------------------
+  //#region Constructor & C° --------------------------------------------------
   public constructor(dtoCardSetDetails: DtoCardSetDetails) {
     this._dtoCardSet = dtoCardSetDetails;
+  }
+  //#endregion
+
+  //#region Public methods ----------------------------------------------------
+  public getLanguagesOfSet(languages: Array<DtoLanguage>): string {
+    return this._dtoCardSet.languages
+      .map((language: DtoCardSetLanguage) =>
+        languages.find((dtoLanguage: DtoLanguage) => dtoLanguage.id == language.lang).button_text)
+      .join(", ");
   }
   //#endregion
 }

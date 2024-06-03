@@ -85,6 +85,7 @@ export function CardSetsView(props: CardSetsViewProps) {
       />
       <TreeView
         cardSets={props.cardSets}
+        languages={props.languages}
         onSetsSelected={props.onSetsSelected}
         textFilter={textFilterValue}
         cardSetGroupBy={cardSetGroupBy}

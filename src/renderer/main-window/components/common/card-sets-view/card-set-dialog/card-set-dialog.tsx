@@ -4,7 +4,7 @@ import * as React from "react";
 import { CardSetDialogProps } from "./card-set-dialog.props";
 import { SvgProvider } from "../../svg-provider/svg-provider";
 import { CardSetDetailsQueryOptions, QueryParam } from "../../../../../../common/ipc-params";
-import { DtoCardSetDetails, DtoCardSetLanguage } from "../../../../../../common/dto";
+import { DtoCardSetDetails, DtoCardSetLanguage, DtoLanguage } from "../../../../../../common/dto";
 import { CardSetDetailsViewmodel } from "../../../../viewmodels/card-set/card-set-details.viewmodel";
 
 export function CardSetDialog(props: CardSetDialogProps) {
@@ -118,7 +118,7 @@ export function CardSetDialog(props: CardSetDialogProps) {
       table.push((<tr><td colSpan={2}>More details are available after a full synchronization of the set</td></tr>));
     } else {
       table.push((<tr><td>Number of unique cards (by name):</td><td>{cardSetDetails.numberOfUniqueCards}</td></tr>));
-      table.push((<tr><td>{cardSetDetails.isMultiLanguage ? "Languages:" : "Language"}</td><td>{cardSetDetails.languagesOfSet}</td></tr>));
+      table.push((<tr><td>{cardSetDetails.isMultiLanguage ? "Languages:" : "Language"}</td><td>{cardSetDetails.getLanguagesOfSet(props.languages)}</td></tr>));
     }
 
     return table;
@@ -187,9 +187,13 @@ export function CardSetDialog(props: CardSetDialogProps) {
   }
 
   function renderLanguagePropertiesTableLines(): Array<React.JSX.Element> {
-    // NOW display full language string
     return cardSetDetails.languagesWithNumberOfCards.map((cardSetDetailsLanguage: DtoCardSetLanguage) => {
-      return (<tr><td>{cardSetDetailsLanguage.lang}:</td><td>{`${cardSetDetailsLanguage.number_of_cards} cards`}</td></tr>);
+      return (
+        <tr>
+          <td>{props.languages.find((language: DtoLanguage) => language.id == cardSetDetailsLanguage.lang).display_text}:</td>
+          <td>{`${cardSetDetailsLanguage.number_of_cards} cards`}</td>
+        </tr>
+      );
     });
   }
   //#endregion

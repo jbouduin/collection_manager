@@ -90,6 +90,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
       console.log("Found %d cards", cardArray.length);
       return this.processSync(cardArray, progressCallback);
     });
+    // NOW then set set.last_full_synchronized
   }
   //#endregion
 

@@ -6,6 +6,7 @@ export * from "./query/legality-query.options";
 export * from "./query/query-type.enum";
 export * from "./query/query.param";
 export * from "./query/ruling-query.options";
+export * from "./query/card-set-detail-query.options";
 export * from "./sync/card-set-sync.options";
 export * from "./sync/card-symbol-sync.options";
 export * from "./sync/card-sync.options";

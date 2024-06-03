@@ -1,13 +1,12 @@
-import { Button, Classes, ContextMenu, Dialog, Menu, MenuItem, Tree, TreeNodeInfo } from "@blueprintjs/core";
+import { ContextMenu, Menu, MenuItem, Tree, TreeNodeInfo } from "@blueprintjs/core";
 import * as _ from "lodash";
 import * as React from "react";
 
 import { CardSyncOptions, SyncParam } from "../../../../../../common/ipc-params";
 import { CardSetViewmodel } from "../../../../viewmodels";
 import { SvgProvider } from "../../svg-provider/svg-provider";
-import { TreeViewProps } from "./tree-view.props";
-import classNames from "classnames";
 import { CardSetDialog } from "../card-set-dialog/card-set-dialog";
+import { TreeViewProps } from "./tree-view.props";
 
 type NodePath = Array<number>;
 
@@ -206,9 +205,9 @@ export function TreeView(props: TreeViewProps) {
       case "alphabeticallyDescending":
         return - a.cardSetName.localeCompare(b.cardSetName);
       case "releaseDateAscending":
-        return a.releaseDateString.localeCompare(b.releaseDateString);
+        return a.releaseDateIsoString.localeCompare(b.releaseDateIsoString);
       case "releaseDateDescending":
-        return - a.releaseDateString.localeCompare(b.releaseDateString);
+        return - a.releaseDateIsoString.localeCompare(b.releaseDateIsoString);
     }
   }
 
@@ -275,7 +274,8 @@ export function TreeView(props: TreeViewProps) {
       <CardSetDialog
         isOpen={dialogIsOpen}
         onClose={handleClose}
-        cardSet={cardSet}
+        cardSetId={cardSet?.id}
+        cardSetSvg={cardSet?.cardSetSvg}
       />
     </>
   );

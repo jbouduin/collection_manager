@@ -7,6 +7,7 @@ export class CardSetViewmodel {
   //#endregion
 
   //#region public getters ----------------------------------------------------
+  // NOW cleanup properties that are not required
   public get id(): string {
     return this._dtoCardSet.id;
   }
@@ -35,14 +36,24 @@ export class CardSetViewmodel {
     return this._dtoCardSet.set_type;
   }
 
-  public get releaseDateString(): string {
+  public get releaseDateIsoString(): string {
     // TODO date and datetime issues
     return new Date(this._dtoCardSet.released_at).toISOString();
   }
 
+  public get releaseDate(): Date {
+    // TODO date and datetime issues
+    return new Date(this._dtoCardSet.released_at);
+  }
   public get block(): string {
     return this._dtoCardSet.block;
   }
+
+  public get scryFallUri(): string {
+    return this._dtoCardSet.scryfall_uri;
+  }
+
+
   //#endregion
 
   //#region public getters ----------------------------------------------------

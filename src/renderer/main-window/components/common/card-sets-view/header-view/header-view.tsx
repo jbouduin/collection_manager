@@ -129,6 +129,7 @@ export function HeaderView(props: HeaderViewProps) {
     );
   }
 
+  // NOW build a fucntion to display set type
   function buildTypeFilterMenu(): React.JSX.Element {
     return (
       <Menu small={true}>

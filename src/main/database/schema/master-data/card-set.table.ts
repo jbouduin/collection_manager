@@ -98,4 +98,6 @@ export interface CardSetTable extends SynchronizedWithStringId {
    * A Scryfall API URI that you can request to begin paginating over the cards in this set.
    */
   search_uri: ColumnType<string>;
+
+  last_full_synchronization: ColumnType<Date, string | undefined>;
 }

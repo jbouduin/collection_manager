@@ -33,6 +33,7 @@ export function LegalitiesView(props: LegalitiesViewProps) {
   //#endregion
 
   //#region Main --------------------------------------------------------------
+  // NOW check usage of HTML Table
   return (
     <table className="bp5-html-table .bp5-compact">
       <tbody>

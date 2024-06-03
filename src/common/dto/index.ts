@@ -3,13 +3,15 @@ import { Selectable } from "kysely";
 import { CardFaceColorMapTable, CatalogItemTable, ColorTable, LanguageTable, OracleLegalityTable, OracleRulingLineTable, OracleTable } from "../../main/database/schema";
 
 
+export * from "./select/card-color.dto";
 export * from "./select/card-face.dto";
 export * from "./select/card-image.dto";
 export * from "./select/card-language.dto";
+export * from "./select/card-set-details.dto";
 export * from "./select/card-set.dto";
+export * from "./select/card-set-language.dto";
 export * from "./select/card-symbol.dto";
 export * from "./select/card.dto";
-export * from "./select/card-color.dto";
 
 export type CatalogItemDto = Selectable<CatalogItemTable>;
 export type ColorDto = Selectable<ColorTable>;

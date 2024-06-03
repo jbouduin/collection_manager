@@ -1,4 +1,4 @@
-import { Intent, Tag } from "@blueprintjs/core";
+import { HTMLTable, Intent, Tag } from "@blueprintjs/core";
 import * as React from "react";
 
 import { LegalityQueryOptions, QueryParam } from "../../../../../../common/ipc-params";
@@ -33,15 +33,14 @@ export function LegalitiesView(props: LegalitiesViewProps) {
   //#endregion
 
   //#region Main --------------------------------------------------------------
-  // NOW check usage of HTML Table
   return (
-    <table className="bp5-html-table .bp5-compact">
+    <HTMLTable compact={true} bordered={false}>
       <tbody>
         {
           getTable()
         }
       </tbody>
-    </table >
+    </HTMLTable >
   );
   //#endregion
 

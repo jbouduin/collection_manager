@@ -7,6 +7,7 @@ import { CardSetViewmodel } from "../../../../viewmodels";
 import { SvgProvider } from "../../svg-provider/svg-provider";
 import { CardSetDialog } from "../card-set-dialog/card-set-dialog";
 import { TreeViewProps } from "./tree-view.props";
+import { DialogState } from "./dialog.state";
 
 type NodePath = Array<number>;
 
@@ -53,10 +54,12 @@ export function TreeView(props: TreeViewProps) {
   console.log("in treeview function", props.textFilter);
 
   //#region State -------------------------------------------------------------
+  const initialDialogState: DialogState = {
+    dialogIsOpen: false,
+    cardSet: null
+  };
   const [nodes, dispatch] = React.useReducer(treeExampleReducer, undefined);
-  // NOW combine next two into one state object
-  const [dialogIsOpen, setDialogIsOpen] = React.useState(false);
-  const [cardSet, setCardSet] = React.useState<CardSetViewmodel>(undefined);
+  const [dialogState, setDialogState] = React.useState<DialogState>(initialDialogState);
   //#endregion
 
   //#region event handlers ----------------------------------------------------
@@ -225,7 +228,7 @@ export function TreeView(props: TreeViewProps) {
               />
               <MenuItem
                 text="Properties"
-                onClick={(e) => { e.preventDefault(); setCardSet(cardSet); setDialogIsOpen(true); }}
+                onClick={(e) => { e.preventDefault(); setDialogState({dialogIsOpen: true, cardSet: cardSet}); }}
               />
             </Menu>}>
           <SvgProvider key={cardSet.setCode} className="tree-view-image" width={26} svg={cardSet.cardSetSvg} />
@@ -259,7 +262,7 @@ export function TreeView(props: TreeViewProps) {
   }
   //#endregion
 
-  const handleClose = React.useCallback(() => setDialogIsOpen(false), []);
+  const handleClose = React.useCallback(() => setDialogState(initialDialogState), []);
   //#region Main --------------------------------------------------------------
   return (
     <>
@@ -272,11 +275,11 @@ export function TreeView(props: TreeViewProps) {
         className="Classes.ELEVATION_0"
       />
       <CardSetDialog
-        isOpen={dialogIsOpen}
+        isOpen={dialogState.dialogIsOpen}
         onClose={handleClose}
-        cardSetId={cardSet?.id}
+        cardSetId={dialogState.cardSet?.id}
         languages={props.languages}
-        cardSetSvg={cardSet?.cardSetSvg}
+        cardSetSvg={dialogState.cardSet?.cardSetSvg}
       />
     </>
   );

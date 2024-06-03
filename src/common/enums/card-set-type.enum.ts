@@ -71,3 +71,30 @@ enum ECardSetType {
 }
 
 export type CardSetType = keyof typeof ECardSetType;
+
+// Remark: doing it this way, in case we want to support multiple languages
+export const CardSetTypeDisplayValue = new Map<CardSetType, string>([
+  ["vanguard", "Vanguard"],
+  ["token", "Token"],
+  ["funny", "Funny"],
+  ["commander", "Commander"],
+  ["alchemy", "Alchemy"],
+  ["core", "Core Set"],
+  ["expansion", "Expansion"],
+  ["masters", "Masters"],
+  ["masterpiece", "Masterpiece"],
+  ["arsenal", "Arsenal"],
+  ["from_the_vault", "From the vault"],
+  ["spellbook", "Spellbook"],
+  ["premium_deck", "Premium deck"],
+  ["duel_deck", "Duel deck"],
+  ["draft_innovation", "Draft innovation"],
+  ["treasure_chest", "Treasure chest"],
+  ["planechase", "Planechase"],
+  ["archenemy", "Archenemy"],
+  ["starter", "Starter"],
+  ["box", "Box"],
+  ["promo", "Promo"],
+  ["memorabilia", "Memorabilia"],
+  ["minigame", "Minigame"]
+]);

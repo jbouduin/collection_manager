@@ -1,4 +1,4 @@
-import { CardSetType } from "../../../../common/enums";
+import { CardSetType, CardSetTypeDisplayValue } from "../../../../common/enums";
 import { DtoCardSetDetails, DtoCardSetLanguage } from "../../../../common/dto";
 
 
@@ -16,8 +16,8 @@ export class CardSetDetailsViewmodel {
     return this._dtoCardSet.name;
   }
 
-  public get cardSetType(): CardSetType {
-    return this._dtoCardSet.set_type;
+  public get cardSetType(): string {
+    return CardSetTypeDisplayValue.get(this._dtoCardSet.set_type);
   }
 
   public get languagesOfSet(): string {

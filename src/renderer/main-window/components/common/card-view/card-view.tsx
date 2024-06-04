@@ -41,11 +41,10 @@ export function CardView(props: CardViewProps) {
   //#endregion
 
   //#region Main --------------------------------------------------------------
-  return (cardViewState.card && props.cardSet ?
+  return (cardViewState.card ?
     <Section>
       <CardHeaderView
         card={cardViewState.card}
-        cardSetSvg={props.cardSet?.cardSetSvg}
       />
       {
         cardViewState.card.isMultipleLanguage &&
@@ -56,7 +55,7 @@ export function CardView(props: CardViewProps) {
         />
       }
       {
-        getViewByLayout(cardViewState.card.cardLayout)
+        renderViewByLayout(cardViewState.card.cardLayout)
       }
       <SectionCard className="card-view-section-card" >
         <Tabs animate={true} id="card-detail-tabs" defaultSelectedTabId="Rulings" renderActiveTabPanelOnly={true}>
@@ -77,8 +76,8 @@ export function CardView(props: CardViewProps) {
   );
   //#endregion
 
-  //#region Auxiliary functions -----------------------------------------------
-  function getViewByLayout(cardLayout: CardLayout) {
+  //#region Auxiliary rendering functions -------------------------------------
+  function renderViewByLayout(cardLayout: CardLayout) {
     switch (cardLayout) {
       case "augment":
       case "case":
@@ -95,7 +94,7 @@ export function CardView(props: CardViewProps) {
       case "scheme":
       case "token":
       case "vanguard":
-        return SingleFaceLayout();
+        return renderSingleFaceLayout();
       case "art_series":
       case "adventure":
       case "double_faced_token":
@@ -104,7 +103,7 @@ export function CardView(props: CardViewProps) {
       case "reversible_card":
       case "split":
       case "transform":
-        return DoubleFaceLayout();
+        return renderDoubleFaceLayout();
       case "battle":
         throw new Error("not supported as scryfall does not return result when searching");
       default:
@@ -112,7 +111,7 @@ export function CardView(props: CardViewProps) {
     }
   }
 
-  function SingleFaceLayout(): React.JSX.Element {
+  function renderSingleFaceLayout(): React.JSX.Element {
     return (
       <div>
         <CardImageViewWrapper
@@ -142,7 +141,7 @@ export function CardView(props: CardViewProps) {
       </div>);
   }
 
-  function DoubleFaceLayout(): React.JSX.Element {
+  function renderDoubleFaceLayout(): React.JSX.Element {
     return (
       <div>
         <CardImageViewWrapper
@@ -193,7 +192,9 @@ export function CardView(props: CardViewProps) {
       </div>
     );
   }
+  //#endregion
 
+  //#region Other Auxiliary methods -------------------------------------------
   async function loadCard(cardId: string): Promise<void> {
     if (cardId) {
       const cardQueryParam: QueryParam<CardQueryOptions> = {

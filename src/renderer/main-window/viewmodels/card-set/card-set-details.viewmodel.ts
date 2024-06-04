@@ -1,4 +1,4 @@
-import { CardSetType, CardSetTypeDisplayValue } from "../../../../common/enums";
+import { CardSetTypeDisplayValue } from "../../../../common/enums";
 import { DtoCardSetDetails, DtoCardSetLanguage, DtoLanguage } from "../../../../common/dto";
 
 

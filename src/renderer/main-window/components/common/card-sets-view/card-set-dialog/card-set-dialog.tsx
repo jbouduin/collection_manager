@@ -6,11 +6,12 @@ import { SvgProvider } from "../../svg-provider/svg-provider";
 import { CardSetDetailsQueryOptions, QueryParam } from "../../../../../../common/ipc-params";
 import { DtoCardSetDetails, DtoCardSetLanguage, DtoLanguage } from "../../../../../../common/dto";
 import { CardSetDetailsViewmodel } from "../../../../viewmodels/card-set/card-set-details.viewmodel";
+import { ThemeContext } from "../../../theme";
+
 
 export function CardSetDialog(props: CardSetDialogProps) {
   console.log("cardsetdialog function");
-  // NOW use a theme provider
-  // NOW use  @blueprintjs/eslint-config
+  // LATER use  @blueprintjs/eslint-config (after updating other outdated packages)
 
   const [cardSetDetails, setCardSetDetails] = React.useState<CardSetDetailsViewmodel>(undefined);
 
@@ -37,21 +38,27 @@ export function CardSetDialog(props: CardSetDialogProps) {
     <>
       {
         cardSetDetails &&
-        <Dialog
-          isOpen={props.isOpen}
-          onClose={props.onClose}
-          shouldReturnFocusOnClose={true}
-          canEscapeKeyClose={true}
-          isCloseButtonShown={true}
-          title={renderTitle()}
-          className={Classes.DARK}>
-          <DialogBody>
-            {
-              renderBody()
-            }
-          </DialogBody>
-          <DialogFooter actions={renderActions()} />
-        </Dialog>
+        <ThemeContext.Consumer>
+          {
+            (theme: string) => (
+              <Dialog
+                isOpen={props.isOpen}
+                onClose={props.onClose}
+                shouldReturnFocusOnClose={true}
+                canEscapeKeyClose={true}
+                isCloseButtonShown={true}
+                title={renderTitle()}
+                className={theme}>
+                <DialogBody>
+                  {
+                    renderBody()
+                  }
+                </DialogBody>
+                <DialogFooter actions={renderActions()} />
+              </Dialog>
+            )
+          }
+        </ThemeContext.Consumer>
       }
     </>
   );

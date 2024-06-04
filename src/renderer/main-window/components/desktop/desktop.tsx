@@ -8,10 +8,10 @@ import { ButtonBar } from "./button-bar";
 import { EDesktopView } from "./desktop-view.enum";
 import { DesktopProps } from "./desktop.props";
 import classNames from "classnames";
+import { DARK_THEME, ThemeContext } from "../theme";
 
 // import logo from "./logo.png";
-const DARK_THEME = Classes.DARK;
-const LIGHT_THEME = "";
+
 
 export function Desktop(props: DesktopProps) {
   console.log("in desktop function");
@@ -29,23 +29,25 @@ export function Desktop(props: DesktopProps) {
 
   //#region Main --------------------------------------------------------------
   return (
-    <Card className={classNames(theme, "desktop-wrapper")}>
-      <ButtonBar onSelectButton={onButtonBarButtonClick}></ButtonBar>
-      <div className="main-panel">
-        {
-          currentView == EDesktopView.Database &&
-          <DatabaseView {...props}  />
-        }
-        {
-          currentView == EDesktopView.Collection &&
-          <CollectionView />
-        }
-        {
-          currentView == EDesktopView.Deck &&
-          <DeckView />
-        }
-      </div>
-    </Card>
+    <ThemeContext.Provider value={DARK_THEME}>
+      <Card className={classNames(theme, "desktop-wrapper")}>
+        <ButtonBar onSelectButton={onButtonBarButtonClick}></ButtonBar>
+        <div className="main-panel">
+          {
+            currentView == EDesktopView.Database &&
+            <DatabaseView {...props} />
+          }
+          {
+            currentView == EDesktopView.Collection &&
+            <CollectionView />
+          }
+          {
+            currentView == EDesktopView.Deck &&
+            <DeckView />
+          }
+        </div>
+      </Card>
+    </ThemeContext.Provider>
   );
   //#endregion
 }

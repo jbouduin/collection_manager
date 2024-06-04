@@ -36,7 +36,6 @@ export class CardSetViewmodel {
   }
 
   public get releaseDateIsoString(): string {
-    // TODO date and datetime issues
     return new Date(this._dtoCardSet.released_at).toISOString();
   }
 

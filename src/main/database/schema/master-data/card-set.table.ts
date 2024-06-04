@@ -67,17 +67,17 @@ export interface CardSetTable extends SynchronizedWithStringId {
   /**
    * True if this set was only released in a video game.
    */
-  digital: ColumnType<boolean, number, number>;
+  is_digital: ColumnType<boolean, number, number>;
 
   /**
    * True if this set contains only foil cards.
    */
-  foil_only: ColumnType<boolean, number, number>;
+  is_foil_only: ColumnType<boolean, number, number>;
 
   /**
    * True if this set contains only nonfoil cards.
    */
-  nonfoil_only: ColumnType<boolean, number, number>;
+  is_nonfoil_only: ColumnType<boolean, number, number>;
 
   /**
    * A link to this set’s permapage on Scryfall’s website.
@@ -99,5 +99,5 @@ export interface CardSetTable extends SynchronizedWithStringId {
    */
   search_uri: ColumnType<string>;
 
-  last_full_synchronization: ColumnType<Date, string | undefined>;
+  last_full_synchronization_at: ColumnType<Date, string | undefined>;
 }

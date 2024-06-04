@@ -127,9 +127,9 @@ export function CardSetDialog(props: CardSetDialogProps) {
     table.push((<tr><td>Name:</td><td>{cardSetDetails.cardSetName}</td></tr>));
     table.push((<tr><td>Type:</td><td>{cardSetDetails.cardSetType}</td></tr>));
     table.push((<tr><td>Block:</td><td>{cardSetDetails.block ?? "-"}</td></tr>));
-    table.push((<tr><td>Release date:</td><td>{cardSetDetails.releaseDate.toLocaleDateString()}</td></tr>));
+    table.push((<tr><td>Release date:</td><td>{cardSetDetails.releaseDateString}</td></tr>));
     table.push((<tr><td>Number of printed cards:</td><td>{cardSetDetails.numberOfPrintedCards}</td></tr>));
-    table.push((<tr><td>Last synchronization:</td><td>{cardSetDetails.lastFullSynchronization}</td></tr>));
+    table.push((<tr><td>Last synchronization:</td><td>{cardSetDetails.lastFullSynchronizationString}</td></tr>));
     if (!cardSetDetails.isFullSynchronized) {
       table.push((<tr><td colSpan={2}>More details are available after a full synchronization of the set</td></tr>));
     } else {

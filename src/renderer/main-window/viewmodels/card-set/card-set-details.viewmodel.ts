@@ -20,10 +20,9 @@ export class CardSetDetailsViewmodel {
     return CardSetTypeDisplayValue.get(this._dtoCardSet.set_type);
   }
 
-  public get lastFullSynchronization(): string {
-    // TODO date and datetime issues
-    return this._dtoCardSet.last_full_synchronization ?
-      new Date(this._dtoCardSet.last_full_synchronization).toLocaleString() :
+  public get lastFullSynchronizationString(): string {
+    return this._dtoCardSet.last_full_synchronization_at ?
+      this._dtoCardSet.last_full_synchronization_at.toLocaleString() :
       "Never";
   }
 
@@ -35,9 +34,8 @@ export class CardSetDetailsViewmodel {
     return this._dtoCardSet.unique_cards;
   }
 
-  public get releaseDate(): Date {
-    // TODO date and datetime issues
-    return new Date(this._dtoCardSet.released_at);
+  public get releaseDateString(): string {
+    return this._dtoCardSet.released_at.toLocaleDateString();
   }
 
   public get scryFallUri(): string {
@@ -50,7 +48,7 @@ export class CardSetDetailsViewmodel {
   }
 
   public get isFullSynchronized(): boolean {
-    return this._dtoCardSet.last_full_synchronization ? true : false;
+    return this._dtoCardSet.last_full_synchronization_at ? true : false;
   }
 
   public get languagesWithNumberOfCards(): Array<DtoCardSetLanguage> {
@@ -58,15 +56,15 @@ export class CardSetDetailsViewmodel {
   }
 
   public get foilOnly(): boolean {
-    return this._dtoCardSet.foil_only == true;
+    return this._dtoCardSet.is_foil_only;
   }
 
   public get nonFoilOnly(): boolean {
-    return this._dtoCardSet.nonfoil_only == true;
+    return this._dtoCardSet.is_nonfoil_only;
   }
 
   public get digital(): boolean {
-    return this._dtoCardSet.digital == true;
+    return this._dtoCardSet.is_digital ;
   }
 
   public get mtgOnlineCode(): string {

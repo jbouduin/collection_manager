@@ -37,13 +37,13 @@ async function createV0_0_1_Set(db: Kysely<any>): Promise<void> {
     .addColumn("parent_set_code", "text")
     .addColumn("card_count", "integer", (col: ColumnDefinitionBuilder) => col.notNull())
     .addColumn("printed_size", "integer")
-    .addColumn("digital", "integer", (col: ColumnDefinitionBuilder) => col.notNull())
-    .addColumn("foil_only", "integer", (col: ColumnDefinitionBuilder) => col.notNull())
-    .addColumn("nonfoil_only", "integer")
+    .addColumn("is_digital", "integer", (col: ColumnDefinitionBuilder) => col.notNull())
+    .addColumn("is_foil_only", "integer", (col: ColumnDefinitionBuilder) => col.notNull())
+    .addColumn("is_nonfoil_only", "integer")
     .addColumn("scryfall_uri", "text", (col: ColumnDefinitionBuilder) => col.notNull())
     .addColumn("uri", "text", (col: ColumnDefinitionBuilder) => col.notNull())
     .addColumn("icon_svg_uri", "text", (col: ColumnDefinitionBuilder) => col.notNull())
     .addColumn("search_uri", "text", (col: ColumnDefinitionBuilder) => col.notNull())
-    .addColumn("last_full_synchronization", "text")
+    .addColumn("last_full_synchronization_at", "text")
     .execute();
 }

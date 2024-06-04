@@ -30,18 +30,18 @@ export interface CardSymbolTable extends Synchronized {
    * True if it is possible to write this symbol “backwards”. For example, the official symbol {U/P} is sometimes written as {P/U} or {P\U} in informal settings.
    * Note that the Scryfall API never writes symbols backwards in other responses. This field is provided for informational purposes.
    */
-  transposable: ColumnType<boolean, number, number>;
+  is_transposable: ColumnType<boolean, number, number>;
 
   /***
    * True if this is a mana symbol.
    */
-  represents_mana: ColumnType<boolean, number, number>;
+  is_represents_mana: ColumnType<boolean, number, number>;
 
   /***
    * True if this symbol appears in a mana cost on any Magic card.
    * For example {20} has this field set to false because {20} only appears in Oracle text, not mana costs.
    */
-  appears_in_mana_costs: ColumnType<boolean, number, number>;
+  is_appears_in_mana_costs: ColumnType<boolean, number, number>;
 
   /***
    * A decimal number representing this symbol’s mana value (also knowns as the converted mana cost).
@@ -53,12 +53,12 @@ export interface CardSymbolTable extends Synchronized {
    * True if the symbol is a hybrid mana symbol.
    * Note that monocolor Phyrexian symbols aren’t considered hybrid.
    */
-  hybrid: ColumnType<boolean, number, number>;
+  is_hybrid: ColumnType<boolean, number, number>;
 
   /***
    * True if the symbol is a Phyrexian mana symbol, i.e. it can be paid with 2 life.
    */
-  phyrexian: ColumnType<boolean, number, number>;
+  is_phyrexian: ColumnType<boolean, number, number>;
 
   /***
    * Converted mana cost ?
@@ -68,5 +68,5 @@ export interface CardSymbolTable extends Synchronized {
   /***
    * True if this symbol is only used on funny cards or Un-cards.
    */
-  funny: ColumnType<boolean, number, number>;
+  is_funny: ColumnType<boolean, number, number>;
 }

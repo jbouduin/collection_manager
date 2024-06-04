@@ -93,7 +93,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
       if (options.setCode) {
         this.database
           .updateTable("card_set")
-          .set({ last_full_synchronization: sql`CURRENT_TIMESTAMP` })
+          .set({ last_full_synchronization_at: sql`CURRENT_TIMESTAMP` })
           .where("card_set.code", "=", options.setCode)
           .executeTakeFirst();
       }

@@ -13,22 +13,22 @@ export interface CardTable extends SynchronizedWithStringId {
   rarity: ColumnType<CardRarity>;
   layout: ColumnType<CardLayout, CardLayout>;
   scryfall_uri: ColumnType<string>;
-  booster: ColumnType<boolean, number, number>;
+  is_booster: ColumnType<boolean, number, number>;
   border: ColumnType<CardBorderColor>;
   card_back_id: ColumnType<string, string | undefined>;
-  content_warning: ColumnType<boolean, number, number>;
-  digital: ColumnType<boolean, number, number>;
-  full_art: ColumnType<boolean, number, number>;
-  reprint: ColumnType<boolean, number, number>;
+  is_content_warning: ColumnType<boolean, number, number>;
+  is_digital: ColumnType<boolean, number, number>;
+  is_full_art: ColumnType<boolean, number, number>;
+  is_reprint: ColumnType<boolean, number, number>;
   frame: ColumnType<CardFrame, string>;
+  is_oversized: ColumnType<boolean, number, number>;
+  is_reserved: ColumnType<boolean, number, number>;
+  is_promo: ColumnType<boolean, number, number>;
 }
 
 // LATER store property "finishes" in a table (An array of computer - readable flags that indicate if this card can come in foil, nonfoil, or etched finishes.)
 // LATER prints_search_uri (A link to where you can begin paginating all re/prints for this card on Scryfall’s API.)
 // LATER store property "frame_effects": Array of This card’s frame effects, if any.Will make some other properties redundant I suppose
-// LATER reserved (True if this card is on the Reserved List.) => whatever that means
-// LATER oversized: ColumnType<boolean, number, number>;
-// LATER promo: ColumnType<boolean, number, number>;
 // LATER store promo_types in a table (An array of strings describing what categories of promo cards this card falls into.)
 // LATER story_spotlight (True if this card is a Story Spotlight.)
 // LATER variation (Whether this card is a variation of another printing.) => redundant ? if variation_of has a value, this one is true

@@ -4,9 +4,9 @@ import { DatabaseSchema } from "../database.schema";
 
 // TODO when creating tests, build a test that checks if all fields are in the array
 export const cardTableFields: Array<AnyColumnWithTable<DatabaseSchema, "card">> = [
-  "card.booster", "card.border", "card.card_back_id", "card.collector_number", "card.content_warning", "card.created_at",
-  "card.digital", "card.frame", "card.full_art", "card.id", "card.lang", "card.last_synced_at", "card.layout", "card.name", "card.oracle_id",
-  "card.rarity", "card.released_at", "card.reprint", "card.scryfall_uri", "card.set_id"
+  "card.is_booster", "card.border", "card.card_back_id", "card.collector_number", "card.is_content_warning", "card.created_at",
+  "card.is_digital", "card.frame", "card.is_full_art", "card.id", "card.lang", "card.last_synced_at", "card.layout", "card.name", "card.oracle_id",
+  "card.rarity", "card.released_at", "card.is_reprint", "card.scryfall_uri", "card.set_id", "card.is_oversized", "card.is_reserved", "card.is_promo"
 ];
 
 export const cardfaceTableFields: Array<AnyColumnWithTable<DatabaseSchema, "cardface">> = [
@@ -24,7 +24,7 @@ export const cardfaceColorMapTableFields: Array<AnyColumnWithTable<DatabaseSchem
 ];
 
 export const cardSetTableFields: Array<AnyColumnWithTable<DatabaseSchema, "card_set">> = [
-  "card_set.arena_code", "card_set.block", "card_set.block_code", "card_set.card_count", "card_set.code", "card_set.created_at", "card_set.digital", "card_set.foil_only", "card_set.icon_svg_uri",
-  "card_set.id", "card_set.last_full_synchronization", "card_set.last_synced_at", "card_set.mtgo_code", "card_set.name", "card_set.nonfoil_only", "card_set.parent_set_code", "card_set.printed_size",
+  "card_set.arena_code", "card_set.block", "card_set.block_code", "card_set.card_count", "card_set.code", "card_set.created_at", "card_set.is_digital", "card_set.is_foil_only", "card_set.icon_svg_uri",
+  "card_set.id", "card_set.last_full_synchronization_at", "card_set.last_synced_at", "card_set.mtgo_code", "card_set.name", "card_set.is_nonfoil_only", "card_set.parent_set_code", "card_set.printed_size",
   "card_set.released_at", "card_set.scryfall_uri", "card_set.search_uri", "card_set.set_type", "card_set.tcgplayer_id", "card_set.uri"
 ];

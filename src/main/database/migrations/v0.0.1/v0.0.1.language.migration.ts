@@ -43,7 +43,7 @@ async function populateV0_0_1_Language(db: Kysely<any>): Promise<Array<InsertRes
   values.push({ id: "de", sequence: 3, printed_code: "DE", display_text: "German", button_text: "DE" });
   values.push({ id: "it", sequence: 4, printed_code: "IT", display_text: "Italian", button_text: "IT" });
   values.push({ id: "pt", sequence: 5, printed_code: "PT", display_text: "Portuguese", button_text: "PT" });
-  values.push({ id: "ja", sequence: 6, printed_code: "JP", display_text: "Japanese", button_text: "JA" });
+  values.push({ id: "ja", sequence: 6, printed_code: "JP", display_text: "Japanese", button_text: "日本語" });
   values.push({ id: "ko", sequence: 7, printed_code: "KR", display_text: "Korean", button_text: "KO" });
   values.push({ id: "ru", sequence: 8, printed_code: "RU", display_text: "Russian", button_text: "RU" });
   values.push({ id: "zhs", sequence: 9, printed_code: "CS", display_text: "Simplified Chinese", button_text: "汉语" });

@@ -90,10 +90,13 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
       console.log("Found %d cards", cardArray.length);
       return this.processSync(cardArray, progressCallback);
     }).then(() => {
-      this.database
-        .updateTable("card_set")
-        .set({ last_full_synchronization: sql`CURRENT_TIMESTAMP` })
-        .executeTakeFirst();
+      if (options.setCode) {
+        this.database
+          .updateTable("card_set")
+          .set({ last_full_synchronization: sql`CURRENT_TIMESTAMP` })
+          .where("card_set.code", "=", options.setCode)
+          .executeTakeFirst();
+      }
     });
   }
   //#endregion

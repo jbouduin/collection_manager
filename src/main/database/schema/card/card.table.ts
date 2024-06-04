@@ -34,7 +34,7 @@ export interface CardTable extends SynchronizedWithStringId {
 // LATER variation (Whether this card is a variation of another printing.) => redundant ? if variation_of has a value, this one is true
 // LATER variation_of? (The printing ID of the printing this card is a variation of.)
 // LATER security_stamp?: (The security stamp on this card, if any.One of oval, triangle, acorn, circle, arena, or heart.)
-// FEATURE store property "attraction_lights" in a table: The lit Unfinity attractions lights array on this card, if any.
-// FEATURE store imagestatus (one of missing, placeholder, lowres, or highres_scan) and allow resync of those who have no high-res
-// FEATURE store "prices" in a table (after implementing collection)
-// FEATURE store "purchase_uris" in a table
+// LATER store property "attraction_lights" in a table: The lit Unfinity attractions lights array on this card, if any.
+// LATER store imagestatus (one of missing, placeholder, lowres, or highres_scan) and allow resync of those who have no high-res
+// LATER store "prices" in a table (probably after implementing collection)
+// LATER store "purchase_uris" in a table

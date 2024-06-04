@@ -5,9 +5,9 @@ import { DtoCard, DtoLanguage } from "../../../../../common/dto";
 import { MTGLanguage } from "../../../../../common/enums";
 import { CardQueryOptions, QueryParam } from "../../../../../common/ipc-params";
 import { CardSetViewmodel, CardViewmodel } from "../../../viewmodels";
+import { LanguagesContext } from "../../context";
 import { CardSymbolProvider } from "../card-symbol-provider/card-symbol-provider";
 import { CardsTableViewProps } from "./cards-table-view.props";
-import { LanguagesContext } from "../../context";
 
 
 export function CardsTableView(props: CardsTableViewProps) {
@@ -69,7 +69,7 @@ export function CardsTableView(props: CardsTableViewProps) {
   function symbolRenderer(valueCallBack: (card: CardViewmodel) => Array<string>): CellRenderer {
     return (row: number) => (
       <Cell>
-        <CardSymbolProvider symbolSvgs={props.symbolSvgs} cardSymbols={valueCallBack(cards[row])} />
+        <CardSymbolProvider cardSymbols={valueCallBack(cards[row])} />
       </Cell >
     );
   }
@@ -103,7 +103,7 @@ export function CardsTableView(props: CardsTableViewProps) {
   //#region Main --------------------------------------------------------------
   return (
     <div className="cards-table-wrapper">
-      <LanguagesContext.Consumer >
+      <LanguagesContext.Consumer>
         {
           (languages: Array<DtoLanguage>) => (
             <Table2 numRows={cards?.length ?? 0} selectionModes={SelectionModes.ROWS_AND_CELLS} onSelection={onSelection} selectedRegionTransform={selectedRegionTransform}>
@@ -117,7 +117,8 @@ export function CardsTableView(props: CardsTableViewProps) {
               <Column name="Thoughness" cellRenderer={textCellRenderer((card: CardViewmodel) => card.cardThoughness)} />
               <Column name="CI" cellRenderer={symbolRenderer((card: CardViewmodel) => card.colorIdentity)} />
               <Column name="Languages" cellRenderer={languageRenderer(languages, (card: CardViewmodel) => card.languages)} />
-            </Table2>)
+            </Table2>
+          )
         }
       </LanguagesContext.Consumer>
     </div>

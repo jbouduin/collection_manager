@@ -66,9 +66,8 @@ export function TreeView(props: TreeViewProps) {
   //#region event handlers ----------------------------------------------------
   const handleNodeClick = React.useCallback(
     (node: TreeNodeInfo<CardSetViewmodel>, nodePath: NodePath) => {
-      // LATER by dispatching twice, we are re-rendering twice
       const originallySelected = node.isSelected;
-      // LATER multi select:
+      // LATER multi select
       // add parameter "e: React.MouseEvent<HTMLElement>" to the callback and...
       // if (!e.shiftKey) {
       dispatch({ type: "DESELECT_ALL" });

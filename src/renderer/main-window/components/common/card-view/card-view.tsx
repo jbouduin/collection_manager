@@ -46,7 +46,6 @@ export function CardView(props: CardViewProps) {
       <CardHeaderView
         card={cardViewState.card}
         cardSetSvg={props.cardSet?.cardSetSvg}
-        symbolSvgs={props.symbolSvgs}
       />
       {
         cardViewState.card.isMultipleLanguage &&
@@ -123,7 +122,6 @@ export function CardView(props: CardViewProps) {
           cardViewState.card.isLocalizedCard &&
           <SubCardHeaderView
             cardface={cardViewState.card.getCardface(0)}
-            symbolSvgs={props.symbolSvgs}
             showManaCost={false}
           />
         }
@@ -132,12 +130,12 @@ export function CardView(props: CardViewProps) {
             <Tab
               id="Oracle0"
               title="Oracle"
-              panel={<OracleView oracle={cardViewState.card.getOracle(0)} symbolSvgs={props.symbolSvgs} />}
+              panel={<OracleView oracle={cardViewState.card.getOracle(0)} />}
             />
             <Tab
               id="Printed0"
               title="Printed"
-              panel={<PrintedView cardface={cardViewState.card.getCardface(0)} symbolSvgs={props.symbolSvgs} />}
+              panel={<PrintedView cardface={cardViewState.card.getCardface(0)} />}
             />
           </Tabs>
         </SectionCard>
@@ -152,7 +150,6 @@ export function CardView(props: CardViewProps) {
         />
         <SubCardHeaderView
           cardface={cardViewState.card.getCardface(0)}
-          symbolSvgs={props.symbolSvgs}
           showManaCost={true}
         />
         <SectionCard className="card-view-section-card" >
@@ -161,48 +158,35 @@ export function CardView(props: CardViewProps) {
               id="Oracle0"
               title="Oracle"
               panel={
-                <OracleView
-                  oracle={cardViewState.card.getOracle(0) ?? cardViewState.card.getCardface(0).oracle}
-                  symbolSvgs={props.symbolSvgs}
-                />
+                <OracleView oracle={cardViewState.card.getOracle(0) ?? cardViewState.card.getCardface(0).oracle} />
               }
             />
             <Tab
               id="Printed0"
               title="Printed"
               panel={
-                <PrintedView
-                  cardface={cardViewState.card.getCardface(0)}
-                  symbolSvgs={props.symbolSvgs}
-                />}
+                <PrintedView cardface={cardViewState.card.getCardface(0)} />}
             />
           </Tabs>
         </SectionCard>
         <SubCardHeaderView
           cardface={cardViewState.card.getCardface(1)}
-          symbolSvgs={props.symbolSvgs}
           showManaCost={true}
         />
         <SectionCard className="card-view-section-card" >
-          <Tabs animate={true}  id="card-detail-tabs" defaultSelectedTabId="Oracle1" renderActiveTabPanelOnly={true}>
+          <Tabs animate={true} id="card-detail-tabs" defaultSelectedTabId="Oracle1" renderActiveTabPanelOnly={true}>
             <Tab
               id="Oracle1"
               title="Oracle"
               panel={
-                <OracleView
-                  oracle={cardViewState.card.getOracle(1) ?? cardViewState.card.getCardface(1).oracle}
-                  symbolSvgs={props.symbolSvgs}
-                />
+                <OracleView oracle={cardViewState.card.getOracle(1) ?? cardViewState.card.getCardface(1).oracle} />
               }
             />
             <Tab
               id="Printed1"
               title="Printed"
               panel={
-                <PrintedView
-                  cardface={cardViewState.card.getCardface(1)}
-                  symbolSvgs={props.symbolSvgs}
-                />}
+                <PrintedView cardface={cardViewState.card.getCardface(1)} />}
             />
           </Tabs>
         </SectionCard>

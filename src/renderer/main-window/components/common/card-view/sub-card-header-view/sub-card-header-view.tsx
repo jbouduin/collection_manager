@@ -18,7 +18,7 @@ export function SubCardHeaderView(props: SubCardHeaderViewProps) {
           <H6 >{props.cardface.printedTypeLine} </H6>
           {
             props.showManaCost &&
-            <CardSymbolProvider symbolSvgs={props.symbolSvgs} cardSymbols={props.cardface.manaCost} />
+            <CardSymbolProvider cardSymbols={props.cardface.manaCost} />
           }
         </div>
       </div>

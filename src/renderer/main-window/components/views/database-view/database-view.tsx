@@ -39,7 +39,6 @@ export function DatabaseView(props: DatabaseViewProps) {
         <PanelResizeHandle />
         <Panel>
           <CardsTableView
-            symbolSvgs={props.symbolSvgs}
             selectedSets={state.selectedSets}
             onCardsSelected={onCardSelected}
           />
@@ -49,7 +48,6 @@ export function DatabaseView(props: DatabaseViewProps) {
           <CardView
             cardId={state.selectedCards ? calculateCardToDisplay() : null}
             cardSet={calculateSetOfSelectedCard()}
-            symbolSvgs={props.symbolSvgs}
           />
         </Panel>
       </PanelGroup>

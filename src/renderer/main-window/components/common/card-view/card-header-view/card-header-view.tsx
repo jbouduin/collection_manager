@@ -18,7 +18,7 @@ export function CardHeaderView(props: CardHeaderViewProps) {
         </div>
         <div className="card-header-line-2">
           <H5>{props.card.cardtypeLine}</H5>
-          <CardSymbolProvider symbolSvgs={props.symbolSvgs} cardSymbols={props.card.cardManacost} />
+          <CardSymbolProvider cardSymbols={props.card.cardManacost} />
         </div>
       </div>
     </SectionCard>

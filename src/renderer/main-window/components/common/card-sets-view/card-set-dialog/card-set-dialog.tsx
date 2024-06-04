@@ -11,10 +11,12 @@ import { CardSetDialogProps } from "./card-set-dialog.props";
 
 export function CardSetDialog(props: CardSetDialogProps) {
   console.log("cardsetdialog function");
-  // LATER use  @blueprintjs/eslint-config (after updating other outdated packages)
 
+  //#region State -------------------------------------------------------------
   const [cardSetDetails, setCardSetDetails] = React.useState<CardSetDetailsViewmodel>(undefined);
+  //#endregion
 
+  //#region Effects -----------------------------------------------------------
   React.useEffect(
     () => {
       if (props.cardSetId) {
@@ -32,6 +34,7 @@ export function CardSetDialog(props: CardSetDialogProps) {
     },
     [props.cardSetId]
   );
+  //#endregion
 
   //#region main --------------------------------------------------------------
   return (
@@ -64,7 +67,7 @@ export function CardSetDialog(props: CardSetDialogProps) {
   );
   // #endregion
 
-  //#region Auxiliare methods -------------------------------------------------
+  //#region Auxiliary rendering methods ---------------------------------------
   function renderTitle(): React.JSX.Element {
     return (
       <>

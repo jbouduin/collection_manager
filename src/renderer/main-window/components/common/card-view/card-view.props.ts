@@ -7,5 +7,4 @@ export interface CardViewProps extends Props {
   cardId: string;
   cardSet?: CardSetViewmodel;
   symbolSvgs: Map<string, string>;
-  languages: Array<DtoLanguage>;
 }

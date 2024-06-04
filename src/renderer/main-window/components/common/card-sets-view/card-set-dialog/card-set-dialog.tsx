@@ -4,7 +4,7 @@ import * as React from "react";
 import { DtoCardSetDetails, DtoCardSetLanguage, DtoLanguage } from "../../../../../../common/dto";
 import { CardSetDetailsQueryOptions, QueryParam } from "../../../../../../common/ipc-params";
 import { CardSetDetailsViewmodel } from "../../../../viewmodels/card-set/card-set-details.viewmodel";
-import { ThemeContext } from "../../../theme";
+import { LanguagesContext, ThemeContext } from "../../../context";
 import { SvgProvider } from "../../svg-provider/svg-provider";
 import { CardSetDialogProps } from "./card-set-dialog.props";
 
@@ -90,30 +90,36 @@ export function CardSetDialog(props: CardSetDialogProps) {
 
   function renderBody(): React.JSX.Element {
     return (
-      <Tabs animate={true} id="set-detail-tabs" defaultSelectedTabId="core-details" renderActiveTabPanelOnly={true}>
-        <Tab id="core-details" panel={renderMainPropertiesTable()} title="Main properties" />
+      <LanguagesContext.Consumer>
         {
-          cardSetDetails.isMultiLanguage &&
-          <Tab id="language-details" panel={renderLanguagePropertiesTable()} title="Languages" />
+          (languages: Array<DtoLanguage>) => (
+            <Tabs animate={true} id="set-detail-tabs" defaultSelectedTabId="core-details" renderActiveTabPanelOnly={true}>
+              <Tab id="core-details" panel={renderMainPropertiesTable(languages)} title="Main properties" />
+              {
+                cardSetDetails.isMultiLanguage &&
+                <Tab id="language-details" panel={renderLanguagePropertiesTable(languages)} title="Languages" />
+              }
+              <Tab id="other-details" panel={renderOtherPropertiesTable()} title="Other" />
+            </Tabs>
+          )
         }
-        <Tab id="other-details" panel={renderOtherPropertiesTable()} title="Other" />
-      </Tabs>
+      </LanguagesContext.Consumer>
     );
   }
 
-  function renderMainPropertiesTable(): React.JSX.Element {
+  function renderMainPropertiesTable(languages: Array<DtoLanguage>): React.JSX.Element {
     return (
       <HTMLTable compact={true} bordered={false} border={0} width="100%">
         <tbody>
           {
-            renderMainPropertiesTableLines()
+            renderMainPropertiesTableLines(languages)
           }
         </tbody>
       </HTMLTable>
     );
   }
 
-  function renderMainPropertiesTableLines(): Array<React.JSX.Element> {
+  function renderMainPropertiesTableLines(languages: Array<DtoLanguage>): Array<React.JSX.Element> {
     const table = new Array<React.JSX.Element>();
     table.push((<tr><td>Name:</td><td>{cardSetDetails.cardSetName}</td></tr>));
     table.push((<tr><td>Type:</td><td>{cardSetDetails.cardSetType}</td></tr>));
@@ -125,7 +131,7 @@ export function CardSetDialog(props: CardSetDialogProps) {
       table.push((<tr><td colSpan={2}>More details are available after a full synchronization of the set</td></tr>));
     } else {
       table.push((<tr><td>Number of unique cards (by name):</td><td>{cardSetDetails.numberOfUniqueCards}</td></tr>));
-      table.push((<tr><td>{cardSetDetails.isMultiLanguage ? "Languages:" : "Language"}</td><td>{cardSetDetails.getLanguagesOfSet(props.languages)}</td></tr>));
+      table.push((<tr><td>{cardSetDetails.isMultiLanguage ? "Languages:" : "Language"}</td><td>{cardSetDetails.getLanguagesOfSet(languages)}</td></tr>));
     }
 
     return table;
@@ -181,23 +187,23 @@ export function CardSetDialog(props: CardSetDialogProps) {
     return table;
   }
 
-  function renderLanguagePropertiesTable(): React.JSX.Element {
+  function renderLanguagePropertiesTable(languages: Array<DtoLanguage>): React.JSX.Element {
     return (
       <HTMLTable compact={true} bordered={false} width="100%">
         <tbody>
           {
-            renderLanguagePropertiesTableLines()
+            renderLanguagePropertiesTableLines(languages)
           }
         </tbody>
       </HTMLTable>
     );
   }
 
-  function renderLanguagePropertiesTableLines(): Array<React.JSX.Element> {
+  function renderLanguagePropertiesTableLines(languages: Array<DtoLanguage>): Array<React.JSX.Element> {
     return cardSetDetails.languagesWithNumberOfCards.map((cardSetDetailsLanguage: DtoCardSetLanguage) => {
       return (
         <tr>
-          <td>{props.languages.find((language: DtoLanguage) => language.id == cardSetDetailsLanguage.lang).display_text}:</td>
+          <td>{languages.find((language: DtoLanguage) => language.id == cardSetDetailsLanguage.lang).display_text}:</td>
           <td>{`${cardSetDetailsLanguage.number_of_cards} cards`}</td>
         </tr>
       );

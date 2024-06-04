@@ -1,3 +1,8 @@
-import { DesktopProps } from "../../desktop/desktop.props";
+import { Props } from "@blueprintjs/core";
 
-export type DatabaseViewProps = DesktopProps;
+import { CardSetViewmodel } from "../../../viewmodels";
+
+export interface DatabaseViewProps extends Props {
+  cardSets: Array<CardSetViewmodel>;
+  symbolSvgs: Map<string, string>;
+}

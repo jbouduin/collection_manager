@@ -52,7 +52,6 @@ export function CardView(props: CardViewProps) {
         cardViewState.card.isMultipleLanguage &&
         <LanguageButtonBar
           cardLanguages={cardViewState.card.otherCardLanguages}
-          languages={props.languages}
           currentLanguage={cardViewState.card.cardLanguage}
           onButtonClick={onButtonClick}
         />

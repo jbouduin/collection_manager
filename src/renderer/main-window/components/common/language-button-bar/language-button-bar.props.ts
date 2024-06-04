@@ -6,6 +6,5 @@ import { MTGLanguage } from "../../../../../common/enums";
 export interface LanguageButtonBarProps extends Props {
   currentLanguage: MTGLanguage;
   cardLanguages: Array<DtoCardLanguage>;
-  languages: Array<DtoLanguage>;
   onButtonClick: (languages: DtoCardLanguage) => void;
 }

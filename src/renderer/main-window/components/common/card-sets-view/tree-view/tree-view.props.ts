@@ -6,7 +6,6 @@ import { DtoLanguage } from "../../../../../../common/dto";
 
 export interface TreeViewProps extends Props {
   cardSets: Array<CardSetViewmodel>;
-  languages: Array<DtoLanguage>;
   textFilter: string;
   cardSetSort: CardSetSort;
   cardSetGroupBy: CardSetGroupBy;

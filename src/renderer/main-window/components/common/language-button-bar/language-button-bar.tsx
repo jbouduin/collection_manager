@@ -14,7 +14,7 @@ export function LanguageButtonBar(props: LanguageButtonBarProps) {
 
   //#region Main block --------------------------------------------------------
   return (
-    <SectionCard padded={true} >
+    <SectionCard className="card-view-section-card" >
       <ButtonGroup minimal={true} >
         {
           props.cardLanguages.map((language: DtoCardLanguage) => {

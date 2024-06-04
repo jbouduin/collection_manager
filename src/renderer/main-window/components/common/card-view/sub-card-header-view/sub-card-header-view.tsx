@@ -9,7 +9,7 @@ export function SubCardHeaderView(props: SubCardHeaderViewProps) {
 
   //#region Main --------------------------------------------------------------
   return (
-    <SectionCard padded={true}>
+    <SectionCard className="card-view-section-card">
       <div className="card-header-wrapper">
         <div className="card-header-line-1">
           <H5>  {props.cardface.printedName} </H5>

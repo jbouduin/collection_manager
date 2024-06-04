@@ -60,7 +60,7 @@ export function CardView(props: CardViewProps) {
       {
         getViewByLayout(cardViewState.card.cardLayout)
       }
-      <SectionCard padded={true} >
+      <SectionCard className="card-view-section-card" >
         <Tabs animate={true} id="card-detail-tabs" defaultSelectedTabId="Rulings" renderActiveTabPanelOnly={true}>
           <Tab
             id="Rulings"
@@ -128,7 +128,7 @@ export function CardView(props: CardViewProps) {
             showManaCost={false}
           />
         }
-        <SectionCard padded={true}>
+        <SectionCard className="card-view-section-card">
           <Tabs animate={true} id="card-detail-tabs" defaultSelectedTabId="Oracle0" renderActiveTabPanelOnly={true}>
             <Tab
               id="Oracle0"
@@ -156,7 +156,7 @@ export function CardView(props: CardViewProps) {
           symbolSvgs={props.symbolSvgs}
           showManaCost={true}
         />
-        <SectionCard padded={true} >
+        <SectionCard className="card-view-section-card" >
           <Tabs animate={true} id="card-detail-tabs" defaultSelectedTabId="Oracle0" renderActiveTabPanelOnly={true}>
             <Tab
               id="Oracle0"
@@ -184,7 +184,7 @@ export function CardView(props: CardViewProps) {
           symbolSvgs={props.symbolSvgs}
           showManaCost={true}
         />
-        <SectionCard padded={true} >
+        <SectionCard className="card-view-section-card" >
           <Tabs animate={true}  id="card-detail-tabs" defaultSelectedTabId="Oracle1" renderActiveTabPanelOnly={true}>
             <Tab
               id="Oracle1"

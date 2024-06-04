@@ -10,7 +10,7 @@ import { CardRarity } from "../../../../../../common/enums";
 export function CardHeaderView(props: CardHeaderViewProps) {
   //#region Main --------------------------------------------------------------
   return (
-    <SectionCard padded={true}>
+    <SectionCard className="card-view-section-card">
       <div className="card-header-wrapper">
         <div className="card-header-line-1">
           <SvgProvider svg={props.cardSetSvg} height={25} width={25} className={getRarityColorClassname(props.card.rarity)}/>

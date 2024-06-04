@@ -9,7 +9,7 @@ export function CardImageView(props: CardImageViewProps) {
   // TODO round the corners, so we do not have the white edges around the card
   //#region Main --------------------------------------------------------------
   return (props.cardId ?
-    <SectionCard padded={true}>
+    <SectionCard className="card-view-section-card">
       {
         render()
       }

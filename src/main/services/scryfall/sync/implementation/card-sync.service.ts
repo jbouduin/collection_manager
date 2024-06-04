@@ -1,5 +1,5 @@
 import fs from "fs";
-import { DeleteResult, InsertResult, Transaction, UpdateResult } from "kysely";
+import { DeleteResult, InsertResult, Transaction, UpdateResult, sql } from "kysely";
 import { inject, injectable } from "tsyringe";
 
 import { GameFormat, MTGColor, MTGColorType } from "../../../../../common/enums";
@@ -89,8 +89,12 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
       fs.writeFileSync("c:/data/new-assistant/json/cards_" + options.setCode + ".json", JSON.stringify(cardArray, null, 2));
       console.log("Found %d cards", cardArray.length);
       return this.processSync(cardArray, progressCallback);
+    }).then(() => {
+      this.database
+        .updateTable("card_set")
+        .set({ last_full_synchronization: sql`CURRENT_TIMESTAMP` })
+        .executeTakeFirst()
     });
-    // NOW then set set.last_full_synchronized
   }
   //#endregion
 

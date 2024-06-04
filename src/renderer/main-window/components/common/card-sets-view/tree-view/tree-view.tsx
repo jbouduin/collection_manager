@@ -1,4 +1,4 @@
-import { ContextMenu, Menu, MenuItem, Tree, TreeNodeInfo } from "@blueprintjs/core";
+import { Classes, ContextMenu, Menu, MenuItem, Tree, TreeNodeInfo } from "@blueprintjs/core";
 import * as _ from "lodash";
 import * as React from "react";
 
@@ -8,6 +8,7 @@ import { SvgProvider } from "../../svg-provider/svg-provider";
 import { CardSetDialog } from "../card-set-dialog/card-set-dialog";
 import { TreeViewProps } from "./tree-view.props";
 import { DialogState } from "./dialog.state";
+import classNames from "classnames";
 
 type NodePath = Array<number>;
 
@@ -99,6 +100,8 @@ export function TreeView(props: TreeViewProps) {
     },
     []
   );
+
+  const handlePropertyDialogClose = React.useCallback(() => setDialogState(initialDialogState), []);
   //#endregion
 
   //#region Effect ------------------------------------------------------------
@@ -262,7 +265,6 @@ export function TreeView(props: TreeViewProps) {
   }
   //#endregion
 
-  const handleClose = React.useCallback(() => setDialogState(initialDialogState), []);
   //#region Main --------------------------------------------------------------
   return (
     <>
@@ -272,11 +274,11 @@ export function TreeView(props: TreeViewProps) {
         onNodeClick={handleNodeClick}
         onNodeCollapse={handleNodeCollapse}
         onNodeExpand={handleNodeExpand}
-        className="Classes.ELEVATION_0"
+        className={classNames(Classes.ELEVATION_0, "card-set-tree")}
       />
       <CardSetDialog
         isOpen={dialogState.dialogIsOpen}
-        onClose={handleClose}
+        onClose={handlePropertyDialogClose}
         cardSetId={dialogState.cardSet?.id}
         languages={props.languages}
         cardSetSvg={dialogState.cardSet?.cardSetSvg}

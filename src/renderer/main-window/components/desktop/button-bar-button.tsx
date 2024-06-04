@@ -41,7 +41,7 @@ export function ButtonBarButton(props: ButtonBarButtonProps) {
           placement="right"
           usePortal={false}>
           <Button onClick={onButtonClick} >
-            <SvgProvider svg={svg} width={35} height={35} />
+            <SvgProvider svg={svg} width={30} height={30} />
           </Button>
         </Tooltip>
       }

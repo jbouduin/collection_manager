@@ -32,6 +32,7 @@ body {
 
 .main-panel {
   flex: 1;
+  overflow: auto;
 }
 
 .cards-table-wrapper {
@@ -118,10 +119,16 @@ img.rotate-180 {
   padding-right: 15px;
 }
 
+.card-set-tree-wrapper {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
 .card-set-tree {
-  max-height: 100vh;
-  max-width: fit-content;
-  overflow-x: hidden;
-  overflow-y: scroll;
+  height: 100vh;
+  /* max-width: fit-content; */
+  overflow-x: auto;
+  overflow-y: auto;
   max-width: 100%
 }

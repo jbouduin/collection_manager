@@ -31,7 +31,7 @@ export function DatabaseView(props: DatabaseViewProps) {
 
   //#region Main --------------------------------------------------------------
   return (
-    <div>
+    <>
       <PanelGroup direction="horizontal">
         <Panel defaultSize={20}>
           <CardSetsView cardSets={props.cardSets} languages={props.languages} onSetsSelected={onCardSetsSelected} />
@@ -55,7 +55,7 @@ export function DatabaseView(props: DatabaseViewProps) {
           />
         </Panel>
       </PanelGroup>
-    </div >
+    </>
   );
   //#endregion
 

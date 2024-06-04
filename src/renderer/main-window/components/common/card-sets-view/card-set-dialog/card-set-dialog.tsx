@@ -1,12 +1,12 @@
-import { AnchorButton, Button, Classes, Dialog, DialogBody, DialogFooter, HTMLTable, Icon, Tab, Tabs } from "@blueprintjs/core";
+import { AnchorButton, Button, Dialog, DialogBody, DialogFooter, HTMLTable, Icon, Tab, Tabs } from "@blueprintjs/core";
 import * as React from "react";
 
-import { CardSetDialogProps } from "./card-set-dialog.props";
-import { SvgProvider } from "../../svg-provider/svg-provider";
-import { CardSetDetailsQueryOptions, QueryParam } from "../../../../../../common/ipc-params";
 import { DtoCardSetDetails, DtoCardSetLanguage, DtoLanguage } from "../../../../../../common/dto";
+import { CardSetDetailsQueryOptions, QueryParam } from "../../../../../../common/ipc-params";
 import { CardSetDetailsViewmodel } from "../../../../viewmodels/card-set/card-set-details.viewmodel";
 import { ThemeContext } from "../../../theme";
+import { SvgProvider } from "../../svg-provider/svg-provider";
+import { CardSetDialogProps } from "./card-set-dialog.props";
 
 
 export function CardSetDialog(props: CardSetDialogProps) {

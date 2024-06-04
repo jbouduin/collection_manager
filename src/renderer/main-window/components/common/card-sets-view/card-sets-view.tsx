@@ -73,7 +73,7 @@ export function CardSetsView(props: CardSetsViewProps) {
 
   //#region Main --------------------------------------------------------------
   return (
-    <div>
+    <div className="card-set-tree-wrapper">
       <HeaderView
         cardSetSort={cardSetSort}
         cardSetGroupBy={cardSetGroupBy}

@@ -83,7 +83,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
     if (progressCallback) {
       progressCallback("Sync cards");
     }
-    // TODO: check if all required master data is available
+    // TODO check if all required master data is available
     const cards = this.scryfallclient.getCards(options);
     return cards.then((cardArray: Array<ScryfallCard>) => {
       fs.writeFileSync("c:/data/new-assistant/json/cards_" + options.setCode + ".json", JSON.stringify(cardArray, null, 2));
@@ -93,7 +93,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
       this.database
         .updateTable("card_set")
         .set({ last_full_synchronization: sql`CURRENT_TIMESTAMP` })
-        .executeTakeFirst()
+        .executeTakeFirst();
     });
   }
   //#endregion

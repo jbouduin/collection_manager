@@ -7,6 +7,7 @@ import { CardSymbolContext } from "../../context";
 export function CardSymbolProvider(props: CardSymbolProviderProps) {
 
   //#region Main --------------------------------------------------------------
+  console.log("in CardHeaderView function");
   return (
     <>
       <CardSymbolContext.Consumer>

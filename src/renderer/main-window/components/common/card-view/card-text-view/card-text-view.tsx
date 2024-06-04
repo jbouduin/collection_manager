@@ -6,6 +6,7 @@ import { CardSymbolContext } from "../../../context";
 
 
 export function CardTextView(props: CardTextViewProps) {
+  console.log("in CardTextView function");
   //#region Main --------------------------------------------------------------
   return (
     <CardSymbolContext.Consumer>

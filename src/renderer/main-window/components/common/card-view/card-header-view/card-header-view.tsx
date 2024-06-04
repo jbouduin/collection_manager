@@ -10,6 +10,7 @@ import { CardSetViewmodel } from "../../../../viewmodels";
 
 
 export function CardHeaderView(props: CardHeaderViewProps) {
+  console.log("in CardHeaderView function");
   //#region Main --------------------------------------------------------------
   return (
     <CardSetContext.Consumer>
@@ -20,7 +21,7 @@ export function CardHeaderView(props: CardHeaderViewProps) {
             <div className="card-header-wrapper">
               <div className="card-header-line-1">
                 <SvgProvider
-                  svg={cardSets.find((cardSet: CardSetViewmodel) => cardSet.id == props.card.cardId)?.cardSetSvg}
+                  svg={cardSets.find((cardSet: CardSetViewmodel) => cardSet.id == props.card.setId)?.cardSetSvg}
                   height={25}
                   width={25}
                   className={getRarityColorClassname(props.card.rarity)}

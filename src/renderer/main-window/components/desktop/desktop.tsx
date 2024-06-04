@@ -1,6 +1,6 @@
-import { Card, Classes } from "@blueprintjs/core";
-import * as React from "react";
+import { Card } from "@blueprintjs/core";
 import classNames from "classnames";
+import * as React from "react";
 
 import { CardSetContext, CardSymbolContext, LanguagesContext, ThemeContext } from "../context";
 import { CollectionView } from "../views/collection-view/collection-view";
@@ -29,11 +29,11 @@ export function Desktop(props: DesktopProps) {
 
   //#region Main --------------------------------------------------------------
   return (
-    <ThemeContext.Provider value={Classes.DARK}>
+    <ThemeContext.Provider value={props.systemTheme}>
       <LanguagesContext.Provider value={props.languages}>
         <CardSymbolContext.Provider value={props.symbolSvgs}>
           <CardSetContext.Provider value={props.cardSets}>
-            <Card className={classNames(Classes.DARK, "desktop-wrapper")}>
+            <Card className={classNames(props.systemTheme, "desktop-wrapper")}>
               <ButtonBar onSelectButton={onButtonBarButtonClick}></ButtonBar>
               <div className="main-panel">
                 {

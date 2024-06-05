@@ -10,7 +10,7 @@ export function scryfallDateToIsoString(scryfall: string): string | null {
         )
         .toISOString();
       } catch (error) {
-
+        return null;
       }
     }
   } else {

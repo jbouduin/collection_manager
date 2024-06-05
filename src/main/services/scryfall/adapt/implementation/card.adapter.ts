@@ -1,10 +1,11 @@
+import { sql } from "kysely";
 import { InsertExpression } from "kysely/dist/cjs/parser/insert-values-parser";
 import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser";
 
-import { sql } from "kysely";
 import { DatabaseSchema } from "../../../../database/schema";
 import { ScryfallCard } from "../../types";
 import { ICardAdapter } from "../interface";
+import { scryfallBooleanToNumber, scryfallDateToIsoString } from "./utils";
 
 export class CardAdapter implements ICardAdapter {
   public toInsert(scryfall: ScryfallCard): InsertExpression<DatabaseSchema, "card"> {
@@ -15,18 +16,21 @@ export class CardAdapter implements ICardAdapter {
       layout: scryfall.layout,
       oracle_id: scryfall.oracle_id,
       scryfall_uri: scryfall.scryfall_uri,
-      booster: scryfall.booster ? 1 : 0,
+      is_booster: scryfallBooleanToNumber(scryfall.booster),
       border: scryfall.border_color,
       card_back_id: scryfall.card_back_id,
       collector_number: scryfall.collector_number,
-      content_warning: scryfall.content_warning ? 1 : 0,
-      digital: scryfall.digital ? 1 : 0,
+      is_content_warning: scryfallBooleanToNumber(scryfall.content_warning),
+      is_digital: scryfallBooleanToNumber(scryfall.digital),
       frame: scryfall.frame,
-      full_art: scryfall.full_art ? 1 : 0,
+      is_full_art: scryfallBooleanToNumber(scryfall.full_art),
       rarity: scryfall.rarity,
-      released_at: scryfall.released_at,
-      reprint: scryfall.reprint ? 1 : 0,
-      set_id: scryfall.set_id
+      released_at: scryfallDateToIsoString( scryfall.released_at),
+      is_reprint: scryfallBooleanToNumber(scryfall.reprint),
+      set_id: scryfall.set_id,
+      is_oversized: scryfallBooleanToNumber(scryfall.oversized),
+      is_reserved: scryfallBooleanToNumber(scryfall.reserved),
+      is_promo: scryfallBooleanToNumber(scryfall.promo)
     };
   }
 
@@ -35,18 +39,21 @@ export class CardAdapter implements ICardAdapter {
       name: scryfall.name,
       oracle_id: scryfall.oracle_id,
       scryfall_uri: scryfall.scryfall_uri,
-      booster: scryfall.booster ? 1 : 0,
+      is_booster: scryfallBooleanToNumber(scryfall.booster),
       border: scryfall.border_color,
       card_back_id: scryfall.card_back_id,
       collector_number: scryfall.collector_number,
-      content_warning: scryfall.content_warning ? 1 : 0,
-      digital: scryfall.digital ? 1 : 0,
+      is_content_warning: scryfallBooleanToNumber(scryfall.content_warning),
+      is_digital: scryfallBooleanToNumber(scryfall.digital),
       frame: scryfall.frame,
-      full_art: scryfall.full_art ? 1 : 0,
+      is_full_art: scryfallBooleanToNumber(scryfall.full_art),
       rarity: scryfall.rarity,
-      released_at: scryfall.released_at,
-      reprint: scryfall.reprint ? 1 : 0,
+      released_at: scryfallDateToIsoString(scryfall.released_at),
+      is_reprint: scryfallBooleanToNumber(scryfall.reprint),
       set_id: scryfall.set_id,
+      is_oversized: scryfallBooleanToNumber(scryfall.oversized),
+      is_reserved: scryfallBooleanToNumber(scryfall.reserved),
+      is_promo: scryfallBooleanToNumber(scryfall.promo),
       last_synced_at: sql`CURRENT_TIMESTAMP`
     };
   }

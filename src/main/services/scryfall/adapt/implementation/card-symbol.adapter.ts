@@ -5,39 +5,40 @@ import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser
 import { DatabaseSchema } from "../../../../database/schema";
 import { ICardSymbolAdapter } from "../interface";
 import { ScryfallCardSymbol } from "../../types";
+import { scryfallBooleanToNumber } from "./utils";
 
 export class CardSymbolAdapter implements ICardSymbolAdapter {
   public toInsert(cardSymbol: ScryfallCardSymbol): InsertExpression<DatabaseSchema, "card_symbol"> {
     return {
       id: cardSymbol.symbol,
-      appears_in_mana_costs: cardSymbol.appears_in_mana_costs ? 1 : 0,
+      is_appears_in_mana_costs: scryfallBooleanToNumber(cardSymbol.appears_in_mana_costs),
       cmc: cardSymbol.mana_value,
       english: cardSymbol.english,
-      funny: cardSymbol.funny ? 1 : 0,
-      hybrid: cardSymbol.hybrid ? 1 : 0,
+      is_funny: scryfallBooleanToNumber(cardSymbol.funny),
+      is_hybrid: scryfallBooleanToNumber(cardSymbol.hybrid),
       loose_variant: cardSymbol.loose_variant,
       mana_value: cardSymbol.mana_value,
-      phyrexian: cardSymbol.phyrexian ? 1 : 0,
-      represents_mana: cardSymbol.represents_mana ? 1 : 0,
+      is_phyrexian: scryfallBooleanToNumber(cardSymbol.phyrexian),
+      is_represents_mana: scryfallBooleanToNumber(cardSymbol.represents_mana),
       svg_uri: cardSymbol.svg_uri,
-      transposable: cardSymbol.transposable ? 1 : 0
+      is_transposable: scryfallBooleanToNumber(cardSymbol.transposable)
     };
   }
 
   public toUpdate(cardSymbol: ScryfallCardSymbol): UpdateObjectExpression<DatabaseSchema, "card_symbol"> {
     return {
-      appears_in_mana_costs: cardSymbol.appears_in_mana_costs ? 1 : 0,
+      is_appears_in_mana_costs: scryfallBooleanToNumber(cardSymbol.appears_in_mana_costs),
       cmc: cardSymbol.mana_value,
       english: cardSymbol.english,
-      funny: cardSymbol.funny ? 1 : 0,
-      hybrid: cardSymbol.hybrid ? 1 : 0,
+      is_funny: scryfallBooleanToNumber(cardSymbol.funny),
+      is_hybrid: scryfallBooleanToNumber(cardSymbol.hybrid),
       last_synced_at: sql`CURRENT_TIMESTAMP`,
       loose_variant: cardSymbol.loose_variant,
       mana_value: cardSymbol.mana_value,
-      phyrexian: cardSymbol.phyrexian ? 1 : 0,
-      represents_mana: cardSymbol.represents_mana ? 1 : 0,
+      is_phyrexian: scryfallBooleanToNumber(cardSymbol.phyrexian),
+      is_represents_mana: scryfallBooleanToNumber(cardSymbol.represents_mana),
       svg_uri: cardSymbol.svg_uri,
-      transposable: cardSymbol.transposable ? 1 : 0
+      is_transposable: scryfallBooleanToNumber(cardSymbol.transposable)
     };
   }
 

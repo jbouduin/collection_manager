@@ -24,6 +24,5 @@ export interface ColorTable extends NonSynchronized {
   /***
    * Mana symbol
   */
-  // TODO could be a reference to card symbol , but that will only work if card symbols have been loaded
   mana_symbol: ColumnType<string, string, never>
 }

@@ -9,7 +9,7 @@ export function SubCardHeaderView(props: SubCardHeaderViewProps) {
 
   //#region Main --------------------------------------------------------------
   return (
-    <SectionCard padded={true}>
+    <SectionCard className="card-view-section-card">
       <div className="card-header-wrapper">
         <div className="card-header-line-1">
           <H5>  {props.cardface.printedName} </H5>
@@ -18,7 +18,7 @@ export function SubCardHeaderView(props: SubCardHeaderViewProps) {
           <H6 >{props.cardface.printedTypeLine} </H6>
           {
             props.showManaCost &&
-            <CardSymbolProvider symbolSvgs={props.symbolSvgs} cardSymbols={props.cardface.manaCost} />
+            <CardSymbolProvider cardSymbols={props.cardface.manaCost} />
           }
         </div>
       </div>

@@ -1,3 +1,4 @@
+import { Props } from "@blueprintjs/core";
 import * as React from "react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
@@ -5,11 +6,10 @@ import { CardSetViewmodel, CardViewmodel } from "../../../viewmodels";
 import { CardSetsView } from "../../common/card-sets-view/card-sets-view";
 import { CardView } from "../../common/card-view/card-view";
 import { CardsTableView } from "../../common/cards-table-view/cards-table-view";
-import { DatabaseViewProps } from "./database-view.props";
 import { DatabaseViewState } from "./database-view.state";
 
 
-export function DatabaseView(props: DatabaseViewProps) {
+export function DatabaseView(_props: Props) {
   console.log("in databaseview function");
 
   //#region State -------------------------------------------------------------
@@ -31,17 +31,15 @@ export function DatabaseView(props: DatabaseViewProps) {
 
   //#region Main --------------------------------------------------------------
   return (
-    <div>
+    <>
       <PanelGroup direction="horizontal">
         <Panel defaultSize={20}>
-          <CardSetsView cardSets={props.cardSets} onSetsSelected={onCardSetsSelected} />
+          <CardSetsView onSetsSelected={onCardSetsSelected} />
         </Panel>
         <PanelResizeHandle />
         <Panel>
           <CardsTableView
-            symbolSvgs={props.symbolSvgs}
             selectedSets={state.selectedSets}
-            languages={props.languages}
             onCardsSelected={onCardSelected}
           />
         </Panel>
@@ -49,27 +47,14 @@ export function DatabaseView(props: DatabaseViewProps) {
         <Panel defaultSize={20}>
           <CardView
             cardId={state.selectedCards ? calculateCardToDisplay() : null}
-            cardSet={calculateSetOfSelectedCard()}
-            symbolSvgs={props.symbolSvgs}
-            languages={props.languages}
           />
         </Panel>
       </PanelGroup>
-    </div >
+    </>
   );
   //#endregion
 
   //#region Auxiliary methods -------------------------------------------------
-  function calculateSetOfSelectedCard(): CardSetViewmodel {
-    if (state.selectedCards) {
-      const setOfSelectedCard = props.cardSets.find((cardSet: CardSetViewmodel) => cardSet.id == state.selectedCards[0].setId);
-      return setOfSelectedCard;
-    }
-    else {
-      return null;
-    }
-  }
-
   function calculateCardToDisplay(): string {
     return state.selectedCards[0].otherCardLanguages.at(0).id;
   }

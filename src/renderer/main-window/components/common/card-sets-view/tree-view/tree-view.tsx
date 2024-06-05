@@ -1,11 +1,14 @@
-import { ContextMenu, Menu, MenuItem, Tree, TreeNodeInfo } from "@blueprintjs/core";
+import { Classes, ContextMenu, Menu, MenuItem, Tree, TreeNodeInfo } from "@blueprintjs/core";
 import * as _ from "lodash";
 import * as React from "react";
 
 import { CardSyncOptions, SyncParam } from "../../../../../../common/ipc-params";
 import { CardSetViewmodel } from "../../../../viewmodels";
 import { SvgProvider } from "../../svg-provider/svg-provider";
+import { CardSetDialog } from "../card-set-dialog/card-set-dialog";
 import { TreeViewProps } from "./tree-view.props";
+import { DialogState } from "./dialog.state";
+import classNames from "classnames";
 
 type NodePath = Array<number>;
 
@@ -52,15 +55,19 @@ export function TreeView(props: TreeViewProps) {
   console.log("in treeview function", props.textFilter);
 
   //#region State -------------------------------------------------------------
+  const initialDialogState: DialogState = {
+    dialogIsOpen: false,
+    cardSet: null
+  };
   const [nodes, dispatch] = React.useReducer(treeExampleReducer, undefined);
+  const [dialogState, setDialogState] = React.useState<DialogState>(initialDialogState);
   //#endregion
 
   //#region event handlers ----------------------------------------------------
   const handleNodeClick = React.useCallback(
     (node: TreeNodeInfo<CardSetViewmodel>, nodePath: NodePath) => {
-      // LATER by dispatching twice, we are re-rendering twice
       const originallySelected = node.isSelected;
-      // LATER multi select:
+      // LATER multi select
       // add parameter "e: React.MouseEvent<HTMLElement>" to the callback and...
       // if (!e.shiftKey) {
       dispatch({ type: "DESELECT_ALL" });
@@ -92,6 +99,8 @@ export function TreeView(props: TreeViewProps) {
     },
     []
   );
+
+  const handlePropertyDialogClose = React.useCallback(() => setDialogState(initialDialogState), []);
   //#endregion
 
   //#region Effect ------------------------------------------------------------
@@ -201,9 +210,9 @@ export function TreeView(props: TreeViewProps) {
       case "alphabeticallyDescending":
         return - a.cardSetName.localeCompare(b.cardSetName);
       case "releaseDateAscending":
-        return a.releaseDateString.localeCompare(b.releaseDateString);
+        return a.releaseDateIsoString.localeCompare(b.releaseDateIsoString);
       case "releaseDateDescending":
-        return - a.releaseDateString.localeCompare(b.releaseDateString);
+        return - a.releaseDateIsoString.localeCompare(b.releaseDateIsoString);
     }
   }
 
@@ -218,6 +227,10 @@ export function TreeView(props: TreeViewProps) {
               <MenuItem
                 text="Synchronize"
                 onClick={(e) => { e.preventDefault(); synchronizeSet(cardSet.setCode); }}
+              />
+              <MenuItem
+                text="Properties"
+                onClick={(e) => { e.preventDefault(); setDialogState({dialogIsOpen: true, cardSet: cardSet}); }}
               />
             </Menu>}>
           <SvgProvider key={cardSet.setCode} className="tree-view-image" width={26} svg={cardSet.cardSetSvg} />
@@ -253,14 +266,22 @@ export function TreeView(props: TreeViewProps) {
 
   //#region Main --------------------------------------------------------------
   return (
-    <Tree
-      compact={true}
-      contents={nodes}
-      onNodeClick={handleNodeClick}
-      onNodeCollapse={handleNodeCollapse}
-      onNodeExpand={handleNodeExpand}
-      className="Classes.ELEVATION_0"
-    />
+    <>
+      <Tree
+        compact={true}
+        contents={nodes}
+        onNodeClick={handleNodeClick}
+        onNodeCollapse={handleNodeCollapse}
+        onNodeExpand={handleNodeExpand}
+        className={classNames(Classes.ELEVATION_0, "card-set-tree")}
+      />
+      <CardSetDialog
+        isOpen={dialogState.dialogIsOpen}
+        onClose={handlePropertyDialogClose}
+        cardSetId={dialogState.cardSet?.id}
+        cardSetSvg={dialogState.cardSet?.cardSetSvg}
+      />
+    </>
   );
   //#endregion
 }

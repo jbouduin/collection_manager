@@ -1,6 +1,6 @@
 import "./App.css";
 
-import { BlueprintProvider, FocusStyleManager } from "@blueprintjs/core";
+import { BlueprintProvider, Classes, FocusStyleManager } from "@blueprintjs/core";
 import * as React from "react";
 import { createRoot } from "react-dom/client";
 
@@ -25,9 +25,12 @@ FocusStyleManager.onlyShowFocusOnTabs();
   const desktopProps: DesktopProps = {
     cardSets: new Array<CardSetViewmodel>(),
     symbolSvgs: new Map<string, string>(),
-    languages: new Array<DtoLanguage>()
+    languages: new Array<DtoLanguage>(),
+    systemTheme: null
   };
-  window.ipc.query(cardSymbolQueryParam)
+  window.ipc.darkmode("system")
+    .then((useDarkColors: boolean) => desktopProps.systemTheme = useDarkColors ?  Classes.DARK : "")
+    .then(async() => window.ipc.query(cardSymbolQueryParam))
     .then((cachedSvgs: Map<string, string>) => {
       desktopProps.symbolSvgs = cachedSvgs;
     })

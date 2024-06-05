@@ -1,4 +1,4 @@
-import { Intent, Tag } from "@blueprintjs/core";
+import { HTMLTable, Intent, Tag } from "@blueprintjs/core";
 import * as React from "react";
 
 import { LegalityQueryOptions, QueryParam } from "../../../../../../common/ipc-params";
@@ -7,7 +7,7 @@ import { LegalitiesViewProps } from "./legalities-view.props";
 
 export function LegalitiesView(props: LegalitiesViewProps) {
 
-  // LATER if token, art_serie etc : just display text that this card is not to be used for deck building
+  // LATER if token, art_serie, futurue release etc : just display text that this card is not to be used for deck building
   //#region State -------------------------------------------------------------
   const [legalities, setLegalities] = React.useState(new Array<DtoLegality>());
   //#endregion
@@ -34,13 +34,13 @@ export function LegalitiesView(props: LegalitiesViewProps) {
 
   //#region Main --------------------------------------------------------------
   return (
-    <table className="bp5-html-table .bp5-compact">
+    <HTMLTable compact={true} bordered={false}>
       <tbody>
         {
           getTable()
         }
       </tbody>
-    </table >
+    </HTMLTable >
   );
   //#endregion
 

@@ -4,6 +4,7 @@ import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser
 import { DatabaseSchema } from "../../../../database/schema";
 import { IOracleRulingLineAdapter } from "../interface";
 import { ScryfallRuling } from "../../types";
+import { scryfallDateToIsoString } from "./utils";
 
 export class OracleRulingLineAdapter implements IOracleRulingLineAdapter {
   public toInsert(scryfall: ScryfallRuling): InsertExpression<DatabaseSchema, "oracle_ruling_line"> {
@@ -11,7 +12,7 @@ export class OracleRulingLineAdapter implements IOracleRulingLineAdapter {
       oracle_id: scryfall.oracle_id,
       source: scryfall.source,
       comments: scryfall.comment,
-      published_at: `${scryfall.published_at} 00:00:00` // TODO date and datetime issues: these times are probably GMT -08:00:00
+      published_at: scryfallDateToIsoString(scryfall.published_at)
     };
   }
 

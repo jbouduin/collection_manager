@@ -5,6 +5,7 @@ import { DtoCard, DtoLanguage } from "../../../../../common/dto";
 import { MTGLanguage } from "../../../../../common/enums";
 import { CardQueryOptions, QueryParam } from "../../../../../common/ipc-params";
 import { CardSetViewmodel, CardViewmodel } from "../../../viewmodels";
+import { LanguagesContext } from "../../context";
 import { CardSymbolProvider } from "../card-symbol-provider/card-symbol-provider";
 import { CardsTableViewProps } from "./cards-table-view.props";
 
@@ -50,13 +51,13 @@ export function CardsTableView(props: CardsTableViewProps) {
   }
 
 
-  function languageRenderer(row: number): React.ReactElement<CellProps> {
-    return (
+  function languageRenderer(languages: Array<DtoLanguage>, valueCallBack: (card: CardViewmodel) => Array<string>): CellRenderer {
+    return (row: number) => (
       <Cell>
         {
-          cards[row].languages
+          valueCallBack(cards[row])
             .map((language: MTGLanguage) => {
-              const languageDef = props.languages.find((lng: DtoLanguage) => lng.id == language);
+              const languageDef = languages.find((lng: DtoLanguage) => lng.id == language);
               return languageDef ? languageDef.button_text : language;
             })
             .join(", ")
@@ -68,7 +69,7 @@ export function CardsTableView(props: CardsTableViewProps) {
   function symbolRenderer(valueCallBack: (card: CardViewmodel) => Array<string>): CellRenderer {
     return (row: number) => (
       <Cell>
-        <CardSymbolProvider symbolSvgs={props.symbolSvgs} cardSymbols={valueCallBack(cards[row])}/>
+        <CardSymbolProvider cardSymbols={valueCallBack(cards[row])} />
       </Cell >
     );
   }
@@ -102,18 +103,24 @@ export function CardsTableView(props: CardsTableViewProps) {
   //#region Main --------------------------------------------------------------
   return (
     <div className="cards-table-wrapper">
-      <Table2 numRows={cards?.length ?? 0} selectionModes={SelectionModes.ROWS_AND_CELLS} onSelection={onSelection} selectedRegionTransform={selectedRegionTransform}>
-        <Column name="Number" cellRenderer={textCellRenderer((card: CardViewmodel) => card.collectorNumber)} />
-        <Column name="Rarity" cellRenderer={textCellRenderer((card: CardViewmodel) => card.rarity)} />
-        <Column name="Name" cellRenderer={textCellRenderer((card: CardViewmodel) => card.cardName)} />
-        <Column name="Type" cellRenderer={textCellRenderer((card: CardViewmodel) => card.cardtypeLine)} />
-        <Column name="Mana cost" cellRenderer={symbolRenderer((card: CardViewmodel)=> card.cardManacost)} />
-        <Column name="Set" cellRenderer={cardSetNameRenderer} />
-        <Column name="Power" cellRenderer={textCellRenderer((card: CardViewmodel) => card.cardPower)} />
-        <Column name="Thoughness" cellRenderer={textCellRenderer((card: CardViewmodel) => card.cardThoughness)} />
-        <Column name="CI" cellRenderer={symbolRenderer((card: CardViewmodel) => card.colorIdentity)} />
-        <Column name="Languages" cellRenderer={languageRenderer} />
-      </Table2>
+      <LanguagesContext.Consumer>
+        {
+          (languages: Array<DtoLanguage>) => (
+            <Table2 numRows={cards?.length ?? 0} selectionModes={SelectionModes.ROWS_AND_CELLS} onSelection={onSelection} selectedRegionTransform={selectedRegionTransform}>
+              <Column name="Number" cellRenderer={textCellRenderer((card: CardViewmodel) => card.collectorNumber)} />
+              <Column name="Rarity" cellRenderer={textCellRenderer((card: CardViewmodel) => card.rarity)} />
+              <Column name="Name" cellRenderer={textCellRenderer((card: CardViewmodel) => card.cardName)} />
+              <Column name="Type" cellRenderer={textCellRenderer((card: CardViewmodel) => card.cardtypeLine)} />
+              <Column name="Mana cost" cellRenderer={symbolRenderer((card: CardViewmodel) => card.cardManacost)} />
+              <Column name="Set" cellRenderer={cardSetNameRenderer} />
+              <Column name="Power" cellRenderer={textCellRenderer((card: CardViewmodel) => card.cardPower)} />
+              <Column name="Thoughness" cellRenderer={textCellRenderer((card: CardViewmodel) => card.cardThoughness)} />
+              <Column name="CI" cellRenderer={symbolRenderer((card: CardViewmodel) => card.colorIdentity)} />
+              <Column name="Languages" cellRenderer={languageRenderer(languages, (card: CardViewmodel) => card.languages)} />
+            </Table2>
+          )
+        }
+      </LanguagesContext.Consumer>
     </div>
   );
   //#endregion

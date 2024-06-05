@@ -6,6 +6,7 @@ import { singleton } from "tsyringe";
 
 import { DatabaseSchema } from "../../../database/schema";
 import { IDatabaseService } from "../interfaces";
+import { SqliteKyselyPlugin } from "./sqlite.kysely.plugin";
 
 @singleton()
 export class DatabaseService implements IDatabaseService {
@@ -26,7 +27,7 @@ export class DatabaseService implements IDatabaseService {
     });
     this._database = new Kysely<DatabaseSchema>({
       dialect: dialect,
-      plugins: [new ParseJSONResultsPlugin()]
+      plugins: [new ParseJSONResultsPlugin(), new SqliteKyselyPlugin()]
     });
     return this;
   }

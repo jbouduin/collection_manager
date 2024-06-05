@@ -1,7 +1,7 @@
 import { container, singleton } from "tsyringe";
 
 import { DtoRulingLine } from "../../../../common/dto";
-import { AssetQueryOptions, LegalityQueryOptions, QueryOptions, QueryParam, RulingQueryOptions } from "../../../../common/ipc-params";
+import { AssetQueryOptions, CardSetDetailsQueryOptions, LegalityQueryOptions, QueryOptions, QueryParam, RulingQueryOptions } from "../../../../common/ipc-params";
 import { CardQueryOptions } from "../../../../common/ipc-params/query/card-query.options";
 import REPOTOKENS, { ICardRepository, ICardSetRepository, ICardSymbolRepository, ICatalogRepository, IColorRepository, ILanguageRepository, IOracleRepository } from "../../repo/interfaces";
 import SYNCTOKENS, { IRulingSyncService } from "../../scryfall";
@@ -28,6 +28,10 @@ export class IpcQueryService implements IIpcQueryService {
         return container
           .resolve<ICardSetRepository>(REPOTOKENS.CardSetRepository)
           .getAll();
+      case "CardSetDetails":
+        return container
+          .resolve<ICardSetRepository>(REPOTOKENS.CardSetRepository)
+          .getDetails((params.options as CardSetDetailsQueryOptions).cardSetId);
       case "Catalog":
         return container
           .resolve<ICatalogRepository>(REPOTOKENS.CatalogRepository)

@@ -7,8 +7,8 @@ import { PrintedViewProps } from "./printed-view.props";
 
 export function PrintedView(props: PrintedViewProps) {
   return (
-    <div>
-      <CardTextView cardText={props.cardface.printedText} symbolSvgs={props.symbolSvgs}/>
+    <>
+      <CardTextView cardText={props.cardface.printedText} />
       {
         props.cardface.hasFlavorText &&
         <div>
@@ -16,6 +16,6 @@ export function PrintedView(props: PrintedViewProps) {
           <p><i>{props.cardface.flavorText}</i></p>
         </div>
       }
-    </div>
+    </>
   );
 }

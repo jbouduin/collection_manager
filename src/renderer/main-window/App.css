@@ -2,6 +2,7 @@
 @import "@blueprintjs/core/lib/css/blueprint.css";
 @import "@blueprintjs/table/lib/css/table.css";
 @import "@blueprintjs/select/lib/css/blueprint-select.css";
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
     Arial, sans-serif;
@@ -31,6 +32,7 @@ body {
 
 .main-panel {
   flex: 1;
+  overflow: auto;
 }
 
 .cards-table-wrapper {
@@ -110,42 +112,23 @@ img.rotate-180 {
   color: darkorange;
 }
 
-/* TODO  we should not tamper with bp5 classes*/
-.bp5-section-card.bp5-padded {
+.card-view-section-card {
   padding-top: 10px;
   padding-bottom: 10px;
   padding-left: 15px;
   padding-right: 15px;
 }
 
-.bp5-tree {
-  max-height: 100vh;
-  max-width: fit-content;
-  overflow-x: hidden;
-  overflow-y: scroll;
+.card-set-tree-wrapper {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-set-tree {
+  height: 100vh;
+  /* max-width: fit-content; */
+  overflow-x: auto;
+  overflow-y: auto;
   max-width: 100%
 }
-
-
-/* @media (prefers-color-scheme: dark) {
-  body,
-  .bp5-card,
-  .bp5-navbar,
-  .bp5-navbar-group,
-  .bp5-navbar-group.bp5-button-text {
-    background: #383e47;
-    color: white;
-  }
-}
-
-@media (prefers-color-scheme: light) {
-  body,
-  .bp5-card,
-  .bp5-navbar,
-  .bp5-navbar-divider,
-  .bp5-navbar-group,
-  .bp5-buttontext {
-    background: #ddd;
-    color: black;
-  }
-} */

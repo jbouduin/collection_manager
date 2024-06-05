@@ -5,7 +5,8 @@ import { ButtonBarButton } from "./button-bar-button";
 import { ButtonBarProps } from "./button-bar.props";
 import { EDesktopView } from "./desktop-view.enum";
 
-// TODO active view white, inactive views in grey (or whatever the theme prescribes)
+// TODO active view white, inactive views mute
+// TODO click on active view collapses the treeview
 export function ButtonBar(props: ButtonBarProps) {
   //#region Event handling ----------------------------------------------------
   function onAnyButtonClick(desktopView: EDesktopView): void {

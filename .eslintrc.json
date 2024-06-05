@@ -33,7 +33,7 @@
     "@typescript-eslint/no-unsafe-assignment": 0,
     "@typescript-eslint/no-unsafe-return": 0,
     "@typescript-eslint/no-unused-vars": [
-      // TODO this has to become error (2)
+      // TODO this has to become error (2) -after implementing first time window
       1,
       {
         "argsIgnorePattern": "^_"

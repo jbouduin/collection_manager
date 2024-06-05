@@ -2,10 +2,11 @@ import { clone } from "lodash";
 import * as React from "react";
 
 import { CardSetType } from "../../../../../common/enums";
-import { CardSetGroupBy, CardSetSort } from "../../../viewmodels";
+import { CardSetGroupBy, CardSetSort, CardSetViewmodel } from "../../../viewmodels";
 import { CardSetsViewProps } from "./card-sets-view.props";
 import { HeaderView } from "./header-view/header-view";
 import { TreeView } from "./tree-view/tree-view";
+import { CardSetContext } from "../../context";
 
 export function CardSetsView(props: CardSetsViewProps) {
   console.log("in cardsetsview function");
@@ -73,7 +74,7 @@ export function CardSetsView(props: CardSetsViewProps) {
 
   //#region Main --------------------------------------------------------------
   return (
-    <div>
+    <div className="card-set-tree-wrapper">
       <HeaderView
         cardSetSort={cardSetSort}
         cardSetGroupBy={cardSetGroupBy}
@@ -83,14 +84,20 @@ export function CardSetsView(props: CardSetsViewProps) {
         onCardSetTypeFilterChanged={onCardSetTypeFilterChanged}
         onTextFilterChanged={onTextFilterChanged}
       />
-      <TreeView
-        cardSets={props.cardSets}
-        onSetsSelected={props.onSetsSelected}
-        textFilter={textFilterValue}
-        cardSetGroupBy={cardSetGroupBy}
-        cardSetSort={cardSetSort}
-        cardSetTypeFilter={cardSetTypeFilter}
-      />
+      <CardSetContext.Consumer>
+        {
+          (cardSets: Array<CardSetViewmodel>) => (
+            <TreeView
+              cardSets={cardSets}
+              onSetsSelected={props.onSetsSelected}
+              textFilter={textFilterValue}
+              cardSetGroupBy={cardSetGroupBy}
+              cardSetSort={cardSetSort}
+              cardSetTypeFilter={cardSetTypeFilter}
+            />
+          )
+        }
+      </CardSetContext.Consumer>
     </div>
   );
   //#endregion

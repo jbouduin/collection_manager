@@ -31,14 +31,14 @@ async function createV0_0_1_CardSymbol(db: Kysely<any>): Promise<void> {
     .addColumn("svg_uri", "text", (col: ColumnDefinitionBuilder) => col.notNull())
     .addColumn("loose_variant", "text")
     .addColumn("english", "text", (col: ColumnDefinitionBuilder) => col.notNull())
-    .addColumn("transposable", "integer", (col: ColumnDefinitionBuilder) => col.notNull())
-    .addColumn("represents_mana", "integer", (col: ColumnDefinitionBuilder) => col.notNull())
-    .addColumn("appears_in_mana_costs", "integer", (col: ColumnDefinitionBuilder) => col.notNull())
+    .addColumn("is_transposable", "integer", (col: ColumnDefinitionBuilder) => col.notNull())
+    .addColumn("is_represents_mana", "integer", (col: ColumnDefinitionBuilder) => col.notNull())
+    .addColumn("is_appears_in_mana_costs", "integer", (col: ColumnDefinitionBuilder) => col.notNull())
     .addColumn("mana_value", "decimal")
-    .addColumn("hybrid", "integer", (col: ColumnDefinitionBuilder) => col.notNull())
-    .addColumn("phyrexian", "integer", (col: ColumnDefinitionBuilder) => col.notNull())
+    .addColumn("is_hybrid", "integer", (col: ColumnDefinitionBuilder) => col.notNull())
+    .addColumn("is_phyrexian", "integer", (col: ColumnDefinitionBuilder) => col.notNull())
     .addColumn("cmc", "decimal")
-    .addColumn("funny", "integer", (col: ColumnDefinitionBuilder) => col.notNull())
+    .addColumn("is_funny", "integer", (col: ColumnDefinitionBuilder) => col.notNull())
     .execute();
 }
 

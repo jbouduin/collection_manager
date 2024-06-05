@@ -7,4 +7,6 @@ export interface DesktopProps extends Props {
   cardSets: Array<CardSetViewmodel>;
   symbolSvgs: Map<string, string>;
   languages: Array<DtoLanguage>;
+  systemTheme: string;
+  // TODO add initial theme depending on host settings or configuration
 }

@@ -9,5 +9,6 @@ export interface TreeViewProps extends Props {
   cardSetSort: CardSetSort;
   cardSetGroupBy: CardSetGroupBy;
   cardSetTypeFilter: Map<CardSetType, boolean>;
+
   onSetsSelected(sets: Array<CardSetViewmodel>): void;
 }

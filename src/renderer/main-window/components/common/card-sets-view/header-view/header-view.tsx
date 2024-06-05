@@ -1,7 +1,7 @@
 import { Button, ButtonGroup, IconName, InputGroup, Menu, MenuDivider, MenuItem, Popover } from "@blueprintjs/core";
 import * as React from "react";
 
-import { CardSetType } from "../../../../../../common/enums";
+import { CardSetType, CardSetTypeDisplayValue } from "../../../../../../common/enums";
 import { CardSetGroupBy, CardSetSort } from "../../../../viewmodels";
 import { HeaderViewProps } from "./header-view-props";
 
@@ -132,34 +132,39 @@ export function HeaderView(props: HeaderViewProps) {
   function buildTypeFilterMenu(): React.JSX.Element {
     return (
       <Menu small={true}>
-        <MenuItem text="Core set" selected={props.cardSetTypeFilter.get("core")} roleStructure="listoption" onClick={() => handleCardSetTypeFilterItemClick("core")} />
-        <MenuItem text="Expansion" selected={props.cardSetTypeFilter.get("expansion")} roleStructure="listoption" onClick={() => handleCardSetTypeFilterItemClick("expansion")} />
-        <MenuItem text="Token" selected={props.cardSetTypeFilter.get("token")} roleStructure="listoption" onClick={() => handleCardSetTypeFilterItemClick("token")} />
-        <MenuItem text="Starter" selected={props.cardSetTypeFilter.get("starter")} roleStructure="listoption" onClick={() => handleCardSetTypeFilterItemClick("starter")} />
-        <MenuItem text="Duel deck" selected={props.cardSetTypeFilter.get("duel_deck")} roleStructure="listoption" onClick={() => handleCardSetTypeFilterItemClick("duel_deck")} />
-        <MenuItem text="Promo" selected={props.cardSetTypeFilter.get("promo")} roleStructure="listoption" onClick={() => handleCardSetTypeFilterItemClick("promo")} />
-        <MenuItem text="Commander" selected={props.cardSetTypeFilter.get("commander")} roleStructure="listoption" onClick={() => handleCardSetTypeFilterItemClick("commander")} />
+        {buildTypeFilterMenuItem("core")}
+        {buildTypeFilterMenuItem("expansion")}
+        {buildTypeFilterMenuItem("token")}
+        {buildTypeFilterMenuItem("starter")}
+        {buildTypeFilterMenuItem("duel_deck")}
+        {buildTypeFilterMenuItem("promo")}
+        {buildTypeFilterMenuItem("commander")}
         <MenuItem text="Others">
-          <MenuItem text="Alchemy" selected={props.cardSetTypeFilter.get("alchemy")} roleStructure="listoption" onClick={() => handleCardSetTypeFilterItemClick("alchemy")} />
-          <MenuItem text="Archenemy" selected={props.cardSetTypeFilter.get("archenemy")} roleStructure="listoption" onClick={() => handleCardSetTypeFilterItemClick("archenemy")} />
-          <MenuItem text="Arsenal" selected={props.cardSetTypeFilter.get("arsenal")} roleStructure="listoption" onClick={() => handleCardSetTypeFilterItemClick("arsenal")} />
-          <MenuItem text="Box" selected={props.cardSetTypeFilter.get("box")} roleStructure="listoption" onClick={() => handleCardSetTypeFilterItemClick("box")} />
-          <MenuItem text="Draft innovation" selected={props.cardSetTypeFilter.get("draft_innovation")} roleStructure="listoption" onClick={() => handleCardSetTypeFilterItemClick("draft_innovation")} />
-          <MenuItem text="From the vault" selected={props.cardSetTypeFilter.get("from_the_vault")} roleStructure="listoption" onClick={() => handleCardSetTypeFilterItemClick("from_the_vault")} />
-          <MenuItem text="Funny" selected={props.cardSetTypeFilter.get("funny")} roleStructure="listoption" onClick={() => handleCardSetTypeFilterItemClick("funny")} />
-          <MenuItem text="Masterpiece" selected={props.cardSetTypeFilter.get("masterpiece")} roleStructure="listoption" onClick={() => handleCardSetTypeFilterItemClick("masterpiece")} />
-          <MenuItem text="Masters" selected={props.cardSetTypeFilter.get("masters")} roleStructure="listoption" onClick={() => handleCardSetTypeFilterItemClick("masters")} />
-          <MenuItem text="Memorabilia" selected={props.cardSetTypeFilter.get("memorabilia")} roleStructure="listoption" onClick={() => handleCardSetTypeFilterItemClick("memorabilia")} />
-          <MenuItem text="Minigame" selected={props.cardSetTypeFilter.get("minigame")} roleStructure="listoption" onClick={() => handleCardSetTypeFilterItemClick("minigame")} />
-          <MenuItem text="Planechase" selected={props.cardSetTypeFilter.get("planechase")} roleStructure="listoption" onClick={() => handleCardSetTypeFilterItemClick("planechase")} />
-          <MenuItem text="Premium deck" selected={props.cardSetTypeFilter.get("premium_deck")} roleStructure="listoption" onClick={() => handleCardSetTypeFilterItemClick("premium_deck")} />
-          <MenuItem text="Spellbook" selected={props.cardSetTypeFilter.get("spellbook")} roleStructure="listoption" onClick={() => handleCardSetTypeFilterItemClick("spellbook")} />
-          <MenuItem text="Treasure chest" selected={props.cardSetTypeFilter.get("treasure_chest")} roleStructure="listoption" onClick={() => handleCardSetTypeFilterItemClick("treasure_chest")} />
-          <MenuItem text="Vanguard" selected={props.cardSetTypeFilter.get("vanguard")} roleStructure="listoption" onClick={() => handleCardSetTypeFilterItemClick("vanguard")} />
+          {buildTypeFilterMenuItem("alchemy")}
+          {buildTypeFilterMenuItem("archenemy")}
+          {buildTypeFilterMenuItem("arsenal")}
+          {buildTypeFilterMenuItem("box")}
+          {buildTypeFilterMenuItem("draft_innovation")}
+          {buildTypeFilterMenuItem("from_the_vault")}
+          {buildTypeFilterMenuItem("funny")}
+          {buildTypeFilterMenuItem("masterpiece")}
+          {buildTypeFilterMenuItem("masters")}
+          {buildTypeFilterMenuItem("memorabilia")}
+          {buildTypeFilterMenuItem("minigame")}
+          {buildTypeFilterMenuItem("planechase")}
+          {buildTypeFilterMenuItem("premium_deck")}
+          {buildTypeFilterMenuItem("spellbook")}
+          {buildTypeFilterMenuItem("treasure_chest")}
+          {buildTypeFilterMenuItem("vanguard")}
         </MenuItem>
       </Menu>
     );
   }
 
+  function buildTypeFilterMenuItem(setType: CardSetType): React.JSX.Element{
+    return(
+      <MenuItem text={CardSetTypeDisplayValue.get(setType)} selected={props.cardSetTypeFilter.get(setType)} roleStructure="listoption" onClick={() => handleCardSetTypeFilterItemClick(setType)} />
+    );
+  }
   //#endregion
 }

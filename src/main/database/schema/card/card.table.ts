@@ -9,7 +9,7 @@ export interface CardTable extends SynchronizedWithStringId {
   oracle_id?: ColumnType<string, string | undefined>;
   set_id: ColumnType<string>;
   collector_number: ColumnType<string, string, string | undefined>;
-  released_at: ColumnType<Date, string, string>; // LATER check if this is always the same as the set release date
+  released_at: ColumnType<Date, string, string>;
   rarity: ColumnType<CardRarity>;
   layout: ColumnType<CardLayout, CardLayout>;
   scryfall_uri: ColumnType<string>;

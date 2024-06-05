@@ -5,10 +5,17 @@ import { CatalogType } from "../../../../common/enums";
 import { ScryfallEndpoint } from "../../scryfall";
 import { IConfigurationService } from "../interfaces";
 import { SyncType } from "../../../../common/ipc-params";
+import { DtoConfiguration } from "../../../../common/dto/configuration/configuration.dto";
+import { DtoScryfallConfiguration } from "../../../../common/dto/configuration/scryfall-configuration.dto";
+
 
 // FEATURE configuration
 // cleanup the getters, they should not call fs methods
 export class ConfigurationService implements IConfigurationService {
+
+  private configFilePath: string;
+  private configuration: DtoConfiguration;
+  private _isFirstUsage: boolean;
 
   public get dataDirectory(): string {
     const result = "C:/data/new-assistant";
@@ -31,8 +38,8 @@ export class ConfigurationService implements IConfigurationService {
     return result;
   }
 
-  public get isNewInstallation(): boolean {
-    return !fs.existsSync(this.dataBaseName);
+  public get isFirstUsage(): boolean {
+    return this._isFirstUsage;
   }
 
   public get scryfallApiRoot(): string {
@@ -40,14 +47,14 @@ export class ConfigurationService implements IConfigurationService {
   }
 
   public get scryfallEndpoints(): Map<ScryfallEndpoint, string> {
-    const result = new Map<ScryfallEndpoint, string>();
-    result.set("card", "cards/search");
-    result.set("cardSet", "sets");
-    result.set("cardSymbol", "symbology");
-    result.set("catalog", "catalog");
-    result.set("ruling", "cards/:id/rulings");
-    result.set("collection", "cards/collection");
-    return result;
+    const endpoints = new Map<ScryfallEndpoint, string>();
+    endpoints.set("card", "cards/search");
+    endpoints.set("cardSet", "sets");
+    endpoints.set("cardSymbol", "symbology");
+    endpoints.set("catalog", "catalog");
+    endpoints.set("ruling", "cards/:id/rulings");
+    endpoints.set("collection", "cards/collection");
+    return endpoints;
   }
 
   public get scryfallCatalogPaths(): Map<CatalogType, string> {
@@ -75,4 +82,81 @@ export class ConfigurationService implements IConfigurationService {
   public get syncAtStartup(): Array<SyncType> {
     return new Array<SyncType>();
   }
+
+  //#region Constructor & C° --------------------------------------------------
+  //#endregion
+
+  //#region IConfiguration methods --------------------------------------------
+  public loadConfiguration(appDirectory: string, homeDirectory: string, useDarkTheme: boolean): void {
+    this.configFilePath = path.join(appDirectory, "config.json");
+    if (fs.existsSync(this.configFilePath)) {
+      this.configuration = JSON.parse(fs.readFileSync(this.configFilePath, "utf-8"));
+      this._isFirstUsage = false;
+    }
+    else {
+      this.configuration = this.createFactoryDefault(appDirectory, homeDirectory, useDarkTheme);
+      this._isFirstUsage = true;
+    }
+  }
+
+  public saveConfiguration(configuration: DtoConfiguration): void {
+    fs.writeFileSync(this.configFilePath, JSON.stringify(configuration, null, 2));
+    this.configuration = configuration;
+  }
+  //#endregion
+
+  //#region Auxiliary factory default methods ---------------------------------
+  private createFactoryDefault(appDirectory: string, homeDirectory: string, useDarkTheme: boolean): DtoConfiguration {
+    const result: DtoConfiguration = {
+      mainConfiguration: {
+        rootDataDirectory: path.join(homeDirectory, "collection-manager"),
+        scryfallConfiguration: this.createScryFallFactoryDefault(),
+        cacheDirectory: path.join(appDirectory, ".cache"),
+        databasePath: path.join(homeDirectory, "collection-manager", "magic-db.sqlite"),
+        syncAtStartup: new Array<SyncType>()
+      },
+      rendererConfiguration: {
+        useDarkTheme: useDarkTheme
+      }
+    }
+    console.log(result);
+    return result;
+  }
+
+  private createScryFallFactoryDefault(): DtoScryfallConfiguration {
+    const catalogPaths = new Map<CatalogType, string>();
+    catalogPaths.set("AbilityWords", "ability-words");
+    catalogPaths.set("ArtifactTypes", "artifact-types");
+    catalogPaths.set("ArtistNames", "artist-names");
+    catalogPaths.set("CardNames", "card-names");
+    catalogPaths.set("CreatureTypes", "creature-types");
+    catalogPaths.set("EnchantmentTypes", "enchantment-types");
+    catalogPaths.set("KeywordAbilities", "keyword-abilities");
+    catalogPaths.set("KeywordActions", "keyword-actions");
+    catalogPaths.set("LandTypes", "land-types");
+    catalogPaths.set("Loyalties", "loyalties");
+    catalogPaths.set("PlaneswalkerTypes", "planeswalker-types");
+    catalogPaths.set("Powers", "powers");
+    catalogPaths.set("SpellTypes", "spell-types");
+    catalogPaths.set("Supertypes", "super-types");
+    catalogPaths.set("Toughnesses", "toughnesses");
+    catalogPaths.set("Watermarks", "watermarks");
+    catalogPaths.set("WordBank", "word-bank");
+
+    const endpoints = new Map<ScryfallEndpoint, string>();
+    endpoints.set("card", "cards/search");
+    endpoints.set("cardSet", "sets");
+    endpoints.set("cardSymbol", "symbology");
+    endpoints.set("catalog", "catalog");
+    endpoints.set("ruling", "cards/:id/rulings");
+    endpoints.set("collection", "cards/collection");
+
+    const result: DtoScryfallConfiguration = {
+      scryfallApiRoot: "https://api.scryfall.com",
+      scryfallEndpoints: endpoints,
+      scryfallCatalogPaths: catalogPaths
+    }
+    return result;
+  }
+  //#endregion
 }

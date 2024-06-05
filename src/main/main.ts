@@ -1,6 +1,7 @@
-import { app, BrowserWindow, protocol, session } from "electron";
+import { app, BrowserWindow, nativeTheme, protocol, session } from "electron";
 import * as fs from "fs";
 import { MigrationProvider } from "kysely";
+import { homedir } from "os";
 import * as path from "path";
 import "reflect-metadata";
 import { container } from "tsyringe";
@@ -10,7 +11,7 @@ import { CardImageDto } from "../common/dto";
 import { ImageSize } from "../common/enums";
 import MIGRATOKENS from "./database/migrations/migration.tokens";
 import { MigrationDi } from "./database/migrations/migrations.di";
-import INFRATOKENS, { IImageCacheService, IWindowService } from "./services/infra/interfaces";
+import INFRATOKENS, { IConfigurationService, IImageCacheService, IWindowService } from "./services/infra/interfaces";
 import { IDatabaseService } from "./services/infra/interfaces/database.service";
 import { IIpcDispatcherService } from "./services/infra/interfaces/ipc-dispatcher.service";
 import REPOTOKENS, { ICardRepository } from "./services/repo/interfaces";
@@ -26,6 +27,7 @@ if (require("electron-squirrel-startup")) {
 }
 
 const bootFunction = async (splashWindow: BrowserWindow) => {
+
   const migrationContainer = MigrationDi.registerMigrations();
   await container.resolve<IDatabaseService>(INFRATOKENS.DatabaseService)
     .connect("c:/data/new-assistant")
@@ -68,7 +70,10 @@ app.whenReady().then(async () => {
   });
 
   container.resolve<IIpcDispatcherService>(INFRATOKENS.IpcDispatcherService).Initialize();
-  container.resolve<IWindowService>(INFRATOKENS.WindowService).boot(bootFunction);
+  const configurationService = container.resolve<IConfigurationService>(INFRATOKENS.ConfigurationService);
+  nativeTheme.themeSource = "system";
+  configurationService.loadConfiguration(app.getAppPath(), homedir(), nativeTheme.shouldUseDarkColors);
+  container.resolve<IWindowService>(INFRATOKENS.WindowService).boot(bootFunction, configurationService);
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {

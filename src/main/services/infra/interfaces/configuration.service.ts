@@ -3,7 +3,7 @@ import { CatalogType } from "../../../../common/enums";
 import { ScryfallEndpoint } from "../../scryfall";
 
 export interface IConfigurationService {
-  readonly isNewInstallation: boolean;
+  readonly isFirstUsage: boolean;
   readonly cacheDirectory: string;
   readonly dataBaseName: string;
   readonly dataDirectory: string;
@@ -11,4 +11,6 @@ export interface IConfigurationService {
   readonly scryfallEndpoints: Map<ScryfallEndpoint, string>;
   readonly scryfallCatalogPaths: Map<CatalogType, string>;
   readonly syncAtStartup: Array<SyncType>;
+
+  loadConfiguration(appDirectory: string, homeDirectory: string, useDarkTheme: boolean): void;
 }

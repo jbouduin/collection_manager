@@ -9,16 +9,17 @@ export class IpcDispatcherService implements IIpcDispatcherService{
 
   //#region IIpcDispatcherService methods -------------------------------------
   /* eslint-disable  @typescript-eslint/no-explicit-any */
-  public Initialize(): void {
-    ipcMain.handle("darkmode", (_event: Electron.IpcMainEvent, ...args: Array<any>) => this.handelDarkMode(args[0]));
+  public Initialize(): IIpcDispatcherService {
+    ipcMain.handle("darkmode", (_event: Electron.IpcMainEvent, ...args: Array<any>) => this.handleDarkMode(args[0]));
     ipcMain.handle("query", (_event: Electron.IpcMainEvent, ...args: Array<any>) => container.resolve<IIpcQueryService>(INFRATOKENS.IpcQueryService).handle(args[0]));
     ipcMain.handle("sync", (_event: Electron.IpcMainEvent, ...args: Array<any>) => container.resolve<IIpcSyncService>(INFRATOKENS.IpcSyncService).handle(args[0]));
+    return this;
   }
   /* eslint-enable  @typescript-eslint/no-explicit-any */
   //#endregion
 
-
-  private handelDarkMode(...args: Array<DarkmodeOption>): boolean {
+  //#region auxiliary methods -------------------------------------------------
+  private handleDarkMode(...args: Array<DarkmodeOption>): boolean {
     const option = args[0] as DarkmodeOption;
     switch (option) {
       case "system":
@@ -33,4 +34,5 @@ export class IpcDispatcherService implements IIpcDispatcherService{
         return nativeTheme.shouldUseDarkColors;
     }
   }
+  //#endregion
 }

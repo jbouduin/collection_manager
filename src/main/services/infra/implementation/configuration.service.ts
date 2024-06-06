@@ -14,8 +14,12 @@ import { DtoScryfallConfiguration } from "../../../../common/dto/configuration/s
 export class ConfigurationService implements IConfigurationService {
 
   private configFilePath: string;
-  private configuration: DtoConfiguration;
+  private _configuration: DtoConfiguration;
   private _isFirstUsage: boolean;
+
+  public get configuration(): DtoConfiguration {
+    return this._configuration;
+  }
 
   public get dataDirectory(): string {
     const result = "C:/data/new-assistant";
@@ -90,18 +94,18 @@ export class ConfigurationService implements IConfigurationService {
   public loadConfiguration(appDirectory: string, homeDirectory: string, useDarkTheme: boolean): void {
     this.configFilePath = path.join(appDirectory, "config.json");
     if (fs.existsSync(this.configFilePath)) {
-      this.configuration = JSON.parse(fs.readFileSync(this.configFilePath, "utf-8"));
+      this._configuration = JSON.parse(fs.readFileSync(this.configFilePath, "utf-8"));
       this._isFirstUsage = false;
     }
     else {
-      this.configuration = this.createFactoryDefault(appDirectory, homeDirectory, useDarkTheme);
+      this._configuration = this.createFactoryDefault(appDirectory, homeDirectory, useDarkTheme);
       this._isFirstUsage = true;
     }
   }
 
   public saveConfiguration(configuration: DtoConfiguration): void {
     fs.writeFileSync(this.configFilePath, JSON.stringify(configuration, null, 2));
-    this.configuration = configuration;
+    this._configuration = configuration;
   }
   //#endregion
 
@@ -112,14 +116,13 @@ export class ConfigurationService implements IConfigurationService {
         rootDataDirectory: path.join(homeDirectory, "collection-manager"),
         scryfallConfiguration: this.createScryFallFactoryDefault(),
         cacheDirectory: path.join(appDirectory, ".cache"),
-        databasePath: path.join(homeDirectory, "collection-manager", "magic-db.sqlite"),
+        databaseName: "magic-db.sqlite",
         syncAtStartup: new Array<SyncType>()
       },
       rendererConfiguration: {
         useDarkTheme: useDarkTheme
       }
-    }
-    console.log(result);
+    };
     return result;
   }
 
@@ -155,7 +158,7 @@ export class ConfigurationService implements IConfigurationService {
       scryfallApiRoot: "https://api.scryfall.com",
       scryfallEndpoints: endpoints,
       scryfallCatalogPaths: catalogPaths
-    }
+    };
     return result;
   }
   //#endregion

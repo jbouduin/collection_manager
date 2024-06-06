@@ -4,7 +4,7 @@ import { DtoScryfallConfiguration } from "./scryfall-configuration.dto";
 export interface DtoMainConfiguration {
   rootDataDirectory: string;
   cacheDirectory: string;
-  databasePath: string;
+  databaseName: string;
   syncAtStartup: Array<SyncType>
   scryfallConfiguration: DtoScryfallConfiguration;
 }

@@ -60,9 +60,9 @@ const config: ForgeConfig = {
             html: "./src/renderer/first-time/first-time.html",
             js: "./src/renderer/first-time/first-time-renderer.ts",
             name: "first_time",
-            // preload: {
-            //   js: "./src/renderer/common/preload.ts",
-            // },
+            preload: {
+              js: "./src/renderer/common/preload.ts",
+            },
           },
           {
             html: "./src/renderer/splash-window/splash-window.html",

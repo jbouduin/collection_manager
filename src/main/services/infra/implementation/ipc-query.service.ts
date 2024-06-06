@@ -5,7 +5,7 @@ import { AssetQueryOptions, CardSetDetailsQueryOptions, LegalityQueryOptions, Qu
 import { CardQueryOptions } from "../../../../common/ipc-params/query/card-query.options";
 import REPOTOKENS, { ICardRepository, ICardSetRepository, ICardSymbolRepository, ICatalogRepository, IColorRepository, ILanguageRepository, IOracleRepository } from "../../repo/interfaces";
 import SYNCTOKENS, { IRulingSyncService } from "../../scryfall";
-import INFRATOKENS, { IImageCacheService, IIpcQueryService } from "../interfaces";
+import INFRATOKENS, { IConfigurationService, IImageCacheService, IIpcQueryService } from "../interfaces";
 
 
 @singleton()
@@ -40,6 +40,10 @@ export class IpcQueryService implements IIpcQueryService {
         return container
           .resolve<IColorRepository>(REPOTOKENS.ColorRepository)
           .getAll();
+      case "Configuration":
+        return container
+          .resolve<IConfigurationService>(INFRATOKENS.ConfigurationService)
+          .configuration;
       case "Language":
         return container
           .resolve<ILanguageRepository>(REPOTOKENS.LanguageRepository)

@@ -8,6 +8,7 @@ import { IConfigurationService, IWindowService } from "../interfaces";
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 declare const FIRST_TIME_WEBPACK_ENTRY: string;
+declare const FIRST_TIME_PRELOAD_WEBPACK_ENTRY: string;
 declare const SPLASH_WINDOW_WEBPACK_ENTRY: string;
 declare const SPLASH_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
@@ -34,6 +35,9 @@ export class WindowService implements IWindowService {
     const createFirstTimeWindow = new BrowserWindow({
       height: 320,
       width: 800,
+      webPreferences: {
+        preload: FIRST_TIME_PRELOAD_WEBPACK_ENTRY,
+      },
       show: true,
       alwaysOnTop: true,
       frame: true
@@ -86,6 +90,7 @@ export class WindowService implements IWindowService {
     splashWindow.on("ready-to-show", () => {
       if (configurationService.isFirstUsage) {
         const firsTimeWindow = this.createFirstTimeWindow();
+        // NOW catch if user canceled without saving configuration
         firsTimeWindow.on("closed", () => splashWindow.show());
       } else {
         splashWindow.show();

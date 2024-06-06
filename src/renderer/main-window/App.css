@@ -22,7 +22,11 @@ body {
 }
 
 .button-bar {
-  float: inline-start;
+  /* float: inline-start; */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100vh;
 }
 
 .button-bar-image {

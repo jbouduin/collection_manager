@@ -277,7 +277,7 @@ export function TreeView(props: TreeViewProps) {
       />
       <CardSetDialog
         isOpen={dialogState.dialogIsOpen}
-        onClose={handlePropertyDialogClose}
+        onDialogClose={handlePropertyDialogClose}
         cardSetId={dialogState.cardSet?.id}
         cardSetSvg={dialogState.cardSet?.cardSetSvg}
       />

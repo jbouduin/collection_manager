@@ -1,8 +1,6 @@
-import { Props } from "@blueprintjs/core";
+import { BaseDialogProps } from "../../dialog-props";
 
-export interface CardSetDialogProps extends Props {
+export interface CardSetDialogProps extends BaseDialogProps {
   cardSetId: string;
   cardSetSvg: string;
-  isOpen: boolean;
-  onClose: () => void;
 }

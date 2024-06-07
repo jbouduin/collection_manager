@@ -46,7 +46,7 @@ export function CardSetDialog(props: CardSetDialogProps) {
             (theme: string) => (
               <Dialog
                 isOpen={props.isOpen}
-                onClose={props.onClose}
+                onClose={props.onDialogClose}
                 shouldReturnFocusOnClose={true}
                 canEscapeKeyClose={true}
                 isCloseButtonShown={true}
@@ -80,7 +80,7 @@ export function CardSetDialog(props: CardSetDialogProps) {
   function renderActions(): React.JSX.Element {
     return (
       <>
-        <Button onClick={props.onClose}>Close</Button>
+        <Button onClick={props.onDialogClose}>Close</Button>
         <AnchorButton
           intent="primary"
           href={cardSetDetails.scryFallUri} text="View on Scryfall"

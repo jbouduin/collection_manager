@@ -5,10 +5,10 @@ import { DtoConfiguration } from "../../../../../common/dto/configuration/config
 import { QueryParam } from "../../../../../common/ipc-params";
 import { ConfigurationWrapper } from "../../../../common/components/configuration/configuration-wrapper/configuration-wrapper";
 import { ConfigurationViewModel } from "../../../../common/viewmodels/configuration/configuration.viewmodel";
+import { BaseDialogProps } from "../../common/dialog-props";
 import { ThemeContext } from "../../context";
-import { SettingsDialogProps } from "./settings-dialog.props";
 
-export function SettingsDialog(props: SettingsDialogProps) {
+export function SettingsDialog(props: BaseDialogProps) {
 
   //#region State -----------------------------------------------------------------------
   const [configuration, setConfiguration] = React.useState<ConfigurationViewModel>(undefined);
@@ -35,7 +35,7 @@ export function SettingsDialog(props: SettingsDialogProps) {
         (theme: string) => (
           <Dialog
             isOpen={props.isOpen}
-            onClose={() => props.settingsDialogClose()}
+            onClose={() => props.onDialogClose()}
             shouldReturnFocusOnClose={true}
             canEscapeKeyClose={true}
             isCloseButtonShown={true}
@@ -44,8 +44,8 @@ export function SettingsDialog(props: SettingsDialogProps) {
           >
             <ConfigurationWrapper
               configuration={configuration}
-              onCancel={() => props.settingsDialogClose()}
-              onSave={() => props.settingsDialogClose()}/>
+              onCancel={() => props.onDialogClose()}
+              onSave={() => props.onDialogClose()}/>
           </Dialog>
         )
       }

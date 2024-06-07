@@ -76,28 +76,31 @@ export function CardsTableView(props: CardsTableViewProps) {
   //#endregion
 
   //#region Effects -----------------------------------------------------------
-  React.useEffect(() => {
-    if (props.selectedSets) {
-      const cardQueryParam: QueryParam<CardQueryOptions> = {
-        type: "Card",
-        options: {
-          cardId: null,
-          setIds: props.selectedSets.map((set: CardSetViewmodel) => set.id)
-        }
-      };
-      window.ipc.query(cardQueryParam)
-        .then((cardResult: Array<DtoCard>) => {
-          console.log(`retrieved ${cardResult.length} cards`);
-          setCards(
-            cardResult
-              .map((card: DtoCard) => new CardViewmodel(card))
-              .sort((a: CardViewmodel, b: CardViewmodel) => a.collectorNumberSortValue.localeCompare(b.collectorNumberSortValue))
-          );
-        });
-    } else {
-      setCards(new Array<CardViewmodel>());
-    }
-  }, [props.selectedSets]);
+  React.useEffect(
+    () => {
+      if (props.selectedSets) {
+        const cardQueryParam: QueryParam<CardQueryOptions> = {
+          type: "Card",
+          options: {
+            cardId: null,
+            setIds: props.selectedSets.map((set: CardSetViewmodel) => set.id)
+          }
+        };
+        window.ipc.query(cardQueryParam)
+          .then((cardResult: Array<DtoCard>) => {
+            console.log(`retrieved ${cardResult.length} cards`);
+            setCards(
+              cardResult
+                .map((card: DtoCard) => new CardViewmodel(card))
+                .sort((a: CardViewmodel, b: CardViewmodel) => a.collectorNumberSortValue.localeCompare(b.collectorNumberSortValue))
+            );
+          });
+      } else {
+        setCards(new Array<CardViewmodel>());
+      }
+    },
+    [props.selectedSets]
+  );
   //#endregion
 
   //#region Main --------------------------------------------------------------

@@ -6,7 +6,7 @@ import { CardSetContext, CardSymbolContext, LanguagesContext, ThemeContext } fro
 import { CollectionView } from "../views/collection-view/collection-view";
 import { DatabaseView } from "../views/database-view/database-view";
 import { DeckView } from "../views/deck-view/deck-view";
-import { ButtonBar } from "./button-bar";
+import { ButtonBar } from "./button-bar/button-bar";
 import { EDesktopView } from "./desktop-view.enum";
 import { DesktopProps } from "./desktop.props";
 
@@ -34,7 +34,7 @@ export function Desktop(props: DesktopProps) {
         <CardSymbolContext.Provider value={props.symbolSvgs}>
           <CardSetContext.Provider value={props.cardSets}>
             <Card className={classNames(props.systemTheme, "desktop-wrapper")}>
-              <ButtonBar onSelectButton={onButtonBarButtonClick}></ButtonBar>
+              <ButtonBar onSelectButton={onButtonBarButtonClick} currentView={currentView}></ButtonBar>
               <div className="main-panel">
                 {
                   currentView == EDesktopView.Database &&

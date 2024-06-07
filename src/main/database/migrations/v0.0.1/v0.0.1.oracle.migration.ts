@@ -2,7 +2,7 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import { ColumnDefinitionBuilder, Kysely } from "kysely";
 
-import { IBaseMigration, CreateTableOptions, createTable } from "../base.migration";
+import { IBaseMigration, CreateTableOptions, createTable } from "../base-migration";
 
 export class V0_0_1_Ruling_Migration implements IBaseMigration {
   public get keyName(): string {

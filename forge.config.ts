@@ -43,7 +43,7 @@ const config: ForgeConfig = {
   plugins: [
     new AutoUnpackNativesPlugin({}),
     new WebpackPlugin({
-      devContentSecurityPolicy: 'default-src \'self\' \'unsafe-inline\' data:; script-src \'self\' \'unsafe-eval\' \'unsafe-inline\' data:; img-src * cached-image: asset:',
+      devContentSecurityPolicy: 'default-src \'self\' \'unsafe-inline\' data:; script-src \'self\' \'unsafe-eval\' \'unsafe-inline\' data:; img-src * data: cached-image: asset:',
       mainConfig,
       renderer: {
         config: rendererConfig,
@@ -60,9 +60,9 @@ const config: ForgeConfig = {
             html: "./src/renderer/first-time/first-time.html",
             js: "./src/renderer/first-time/first-time-renderer.ts",
             name: "first_time",
-            // preload: {
-            //   js: "./src/renderer/common/preload.ts",
-            // },
+            preload: {
+              js: "./src/renderer/common/preload.ts",
+            },
           },
           {
             html: "./src/renderer/splash-window/splash-window.html",

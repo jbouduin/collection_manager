@@ -93,3 +93,4 @@ out/
 
 .temp
 output.txt
+collection-manager.config.json

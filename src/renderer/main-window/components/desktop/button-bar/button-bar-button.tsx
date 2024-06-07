@@ -2,8 +2,8 @@ import { Button, Tooltip } from "@blueprintjs/core";
 import * as React from "react";
 
 import { ButtonBarButtonProps } from "./button-bar-button.props";
-import { AssetQueryOptions, QueryParam } from "../../../../common/ipc-params";
-import { SvgProvider } from "../common/svg-provider/svg-provider";
+import { AssetQueryOptions, QueryParam } from "../../../../../common/ipc-params";
+import { SvgProvider } from "../../common/svg-provider/svg-provider";
 
 
 export function ButtonBarButton(props: ButtonBarButtonProps) {
@@ -40,8 +40,8 @@ export function ButtonBarButton(props: ButtonBarButtonProps) {
           openOnTargetFocus={false}
           placement="right"
           usePortal={false}>
-          <Button onClick={onButtonClick} >
-            <SvgProvider svg={svg} width={30} height={30} />
+          <Button onClick={onButtonClick}>
+            <SvgProvider svg={svg} width={30} height={30}/>
           </Button>
         </Tooltip>
       }

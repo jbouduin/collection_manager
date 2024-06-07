@@ -2,7 +2,7 @@
 import { ColumnDefinitionBuilder, InsertResult, Insertable, Kysely } from "kysely";
 
 import { LanguageTable } from "../../schema";
-import { IBaseMigration, CreateTableOptions, createTable } from "../base.migration";
+import { IBaseMigration, CreateTableOptions, createTable } from "../base-migration";
 
 export class V0_0_1_Language_Migration implements IBaseMigration {
   public get keyName(): string {

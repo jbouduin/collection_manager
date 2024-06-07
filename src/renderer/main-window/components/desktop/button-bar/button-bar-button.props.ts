@@ -1,6 +1,6 @@
 import { Props } from "@blueprintjs/core";
 
-import { EDesktopView } from "./desktop-view.enum";
+import { EDesktopView } from "../desktop-view.enum";
 
 export interface ButtonBarButtonProps extends Props {
   desktopView: EDesktopView;

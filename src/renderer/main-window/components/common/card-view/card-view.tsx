@@ -25,13 +25,6 @@ export function CardView(props: CardViewProps) {
   const [cardViewState, setCardViewState] = React.useState<CardViewState>({ card: null, cardfaceSequence: 0 });
   //#endregion
 
-  //#region Event handlers ----------------------------------------------------
-  const onButtonClick = React.useCallback((language: DtoCardLanguage) => {
-    loadCard(language.id);
-  }, []
-  );
-  //#endregion
-
   //#region Effects -----------------------------------------------------------
   React.useEffect(() => {
     if (props.cardId) {
@@ -51,7 +44,7 @@ export function CardView(props: CardViewProps) {
         <LanguageButtonBar
           cardLanguages={cardViewState.card.otherCardLanguages}
           currentLanguage={cardViewState.card.cardLanguage}
-          onButtonClick={onButtonClick}
+          onButtonClick={(language: DtoCardLanguage) => loadCard(language.id)}
         />
       }
       {

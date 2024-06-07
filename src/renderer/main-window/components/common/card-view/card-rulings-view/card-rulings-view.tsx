@@ -13,20 +13,23 @@ export function CardRulingsView(props: CardRulingsViewProps) {
   //#endregion
 
   //#region Effects -----------------------------------------------------------
-  React.useEffect(() => {
-    if (props.card) {
-      const rulingQueryParam: QueryParam<RulingQueryOptions> = {
-        type: "Ruling",
-        options: {
-          cardId: props.card.cardId
-        }
-      };
-      window.ipc.query(rulingQueryParam)
-        .then((queryResult: Array<DtoRulingLine>) => setRulings(queryResult));
-    } else {
-      setRulings(null);
-    }
-  }, [props.card]);
+  React.useEffect(
+    () => {
+      if (props.card) {
+        const rulingQueryParam: QueryParam<RulingQueryOptions> = {
+          type: "Ruling",
+          options: {
+            cardId: props.card.cardId
+          }
+        };
+        window.ipc.query(rulingQueryParam)
+          .then((queryResult: Array<DtoRulingLine>) => setRulings(queryResult));
+      } else {
+        setRulings(null);
+      }
+    },
+    [props.card]
+  );
   //#endregion
 
   //#region Main --------------------------------------------------------------

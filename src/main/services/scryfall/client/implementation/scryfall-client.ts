@@ -1,37 +1,31 @@
 import { inject, injectable } from "tsyringe";
 
+import { DtoScryfallConfiguration } from "../../../../../common/dto/configuration/scryfall-configuration.dto";
 import { CatalogType } from "../../../../../common/enums";
 import { CardSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
 import INFRATOKENS, { IConfigurationService } from "../../../../../main/services/infra/interfaces";
-import { ScryfallCard, ScryfallCardSet, ScryfallCatalog, ScryfallEndpoint, ScryfallRuling } from "../../types";
+import { ScryfallCard, ScryfallCardSet, ScryfallCatalog, ScryfallRuling } from "../../types";
+import { ScryfallCardSymbol } from "../../types/card-symbol/scryfall-card-symbol";
 import { ScryfallList } from "../../types/scryfall-list";
 import { IScryfallClient, ScryfallSearchOptions } from "../interfaces";
-import { ScryfallCardSymbol } from "../../types/card-symbol/scryfall-card-symbol";
 
 
 @injectable()
 export class ScryfallClient implements IScryfallClient {
 
   //#region private readonly fields -------------------------------------------
-  private readonly scryfallApiRoot: string;
-  private readonly scryfallCatalogPaths: Map<CatalogType, string>;
-  private readonly scryfallEndpoints: Map<ScryfallEndpoint, string>;
+  private readonly scryfallConfiguration: DtoScryfallConfiguration;
   //#endregion
 
   //#region private fields ----------------------------------------------------
-  private minimumRequestTimeout: number;
   private nextQuery: number;
   //#endregion
 
   //#region Construcotr & C^ --------------------------------------------------
   public constructor(
     @inject(INFRATOKENS.ConfigurationService) configurationService: IConfigurationService) {
-    this.scryfallApiRoot = configurationService.scryfallApiRoot;
-    this.scryfallCatalogPaths = configurationService.scryfallCatalogPaths;
-    this.scryfallEndpoints = configurationService.scryfallEndpoints;
-    // the api requests 50-100 ms between calls, let's give it some slack
-    this.minimumRequestTimeout = 60;
-    this.nextQuery = Date.now() + this.minimumRequestTimeout;
+    this.scryfallConfiguration = configurationService.configuration.scryfallConfiguration;
+    this.nextQuery = Date.now() + this.scryfallConfiguration.minimumRequestTimeout;
   }
   //#endregion
 
@@ -47,7 +41,7 @@ export class ScryfallClient implements IScryfallClient {
   }
 
   public async getCatalog(type: CatalogType): Promise<ScryfallCatalog> {
-    const uri = `${this.scryfallApiRoot}/${this.scryfallEndpoints.get("catalog")}/${this.scryfallCatalogPaths.get(type)}`;
+    const uri = `${this.scryfallConfiguration.scryfallApiRoot}/${this.scryfallConfiguration.scryfallEndpoints["catalog"]}/${this.scryfallConfiguration.scryfallCatalogPaths[type]}`;
     return this
       .tryFetch(uri)
       .then((fetchResult: Response) => fetchResult.json());
@@ -67,7 +61,7 @@ export class ScryfallClient implements IScryfallClient {
     } else if (options.cardIds) {
       const requestBody: Array<{ id: string }> = options.cardIds.map((id: string) => { return { id: id }; });
       return await this.tryPost(
-        `${this.scryfallApiRoot}/${this.scryfallEndpoints.get("collection")}`,
+        `${this.scryfallConfiguration.scryfallApiRoot}/${this.scryfallConfiguration.scryfallEndpoints["collection"]}`,
         JSON.stringify({ identifiers: requestBody })
       );
     } else {
@@ -76,28 +70,26 @@ export class ScryfallClient implements IScryfallClient {
   }
 
   public async getCardSets(): Promise<Array<ScryfallCardSet>> {
-    const uri = `${this.scryfallApiRoot}/${this.scryfallEndpoints.get("cardSet")}`;
+    const uri = `${this.scryfallConfiguration.scryfallApiRoot}/${this.scryfallConfiguration.scryfallEndpoints["cardSet"]}`;
     return this.fetchList<ScryfallCardSet>(uri, new Array<ScryfallCardSet>());
   }
 
   public getCardSymbols(): Promise<Array<ScryfallCardSymbol>> {
-    const uri = `${this.scryfallApiRoot}/${this.scryfallEndpoints.get("cardSymbol")}`;
+    const uri = `${this.scryfallConfiguration.scryfallApiRoot}/${this.scryfallConfiguration.scryfallEndpoints["cardSymbol"]}`;
     return this.fetchList<ScryfallCardSymbol>(uri, new Array<ScryfallCardSymbol>());
   }
 
   public async getRulings(cardId: string): Promise<Array<ScryfallRuling>> {
-    const uri = `${this.scryfallApiRoot}/${this.scryfallEndpoints.get("ruling").replace(":id", cardId)}`;
+    const uri = `${this.scryfallConfiguration.scryfallApiRoot}/${this.scryfallConfiguration.scryfallEndpoints["ruling"].replace(":id", cardId)}`;
     return this.fetchList<ScryfallRuling>(uri, new Array<ScryfallRuling>());
   }
-
-
   //#endregion
 
   //#region private methods ---------------------------------------------------
   private async tryFetch(uri: string | URL): Promise<Response> {
     const now = Date.now();
     const sleepTime = this.nextQuery - now;
-    this.nextQuery = now + this.minimumRequestTimeout;
+    this.nextQuery = now + this.scryfallConfiguration.minimumRequestTimeout;
     return await this
       .sleep(sleepTime)
       .then(() => fetch(uri))
@@ -110,7 +102,7 @@ export class ScryfallClient implements IScryfallClient {
   private async tryPost(uri: string | URL, body: string): Promise<Array<ScryfallCard>> {
     const now = Date.now();
     const sleepTime = this.nextQuery - now;
-    this.nextQuery = now + this.minimumRequestTimeout;
+    this.nextQuery = now + this.scryfallConfiguration.minimumRequestTimeout;
     return await this
       .sleep(sleepTime)
       .then(() => fetch(uri, {
@@ -148,16 +140,17 @@ export class ScryfallClient implements IScryfallClient {
   }
 
   private buildCardUri(options: CardSyncOptions, scryfallOptions: ScryfallSearchOptions): URL {
-    const x = new URL(`${this.scryfallApiRoot}/${this.scryfallEndpoints.get("card")}`);
-    x.searchParams.set("include_extras", scryfallOptions.include_extras ? "true" : "false");
-    x.searchParams.set("unique", scryfallOptions.unique);
-    x.searchParams.set("include_multilingual", scryfallOptions.include_multilingual ? "true" : "false");
-    x.searchParams.set("include_variations", scryfallOptions.include_variations ? "true" : "false");
+    const result = new URL(`${this.scryfallConfiguration.scryfallApiRoot}/${this.scryfallConfiguration.scryfallEndpoints["card"]}`);
+    result.searchParams.set("include_extras", scryfallOptions.include_extras ? "true" : "false");
+    result.searchParams.set("unique", scryfallOptions.unique);
+    result.searchParams.set("include_multilingual", scryfallOptions.include_multilingual ? "true" : "false");
+    result.searchParams.set("include_variations", scryfallOptions.include_variations ? "true" : "false");
     const query = new Array<string>();
     query.push(`e=${options.setCode}`);
     query.push("lang=any");
-    x.searchParams.set("q", query.join("+"));
-    return x;
+    result.searchParams.set("q", query.join("+"));
+    return result;
   }
   //#endregion
+
 }

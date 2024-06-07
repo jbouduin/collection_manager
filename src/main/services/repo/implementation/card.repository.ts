@@ -34,7 +34,6 @@ export class CardRepository extends BaseRepository implements ICardRepository {
         "card.lang as language",
         "cardface_image.image_type as imageType",
         "cardface_image.sequence as sequence"
-        // LATER sql`${imageType} as imageType`
       ])
       .where("cardface_image.card_id", "=", cardId)
       .where("cardface_image.sequence", "=", sequence)

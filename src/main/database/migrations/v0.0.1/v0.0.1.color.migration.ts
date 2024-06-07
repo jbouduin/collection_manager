@@ -3,7 +3,7 @@
 import { ColumnDefinitionBuilder, InsertResult, Insertable, Kysely } from "kysely";
 
 import { ColorTable } from "../../schema";
-import { IBaseMigration, CreateTableOptions, createTable } from "../base.migration";
+import { IBaseMigration, CreateTableOptions, createTable } from "../base-migration";
 
 export class V0_0_1_Color_Migration implements IBaseMigration {
   public get keyName(): string {

@@ -1,34 +1,9 @@
-/* eslint-disable  @typescript-eslint/no-explicit-any */
-import { ColumnBuilderCallback, ColumnDefinitionBuilder, CreateTableBuilder, Kysely, sql } from "kysely";
-import { DataTypeExpression } from "kysely/dist/cjs/parser/data-type-parser";
+import { ColumnDefinitionBuilder, CreateTableBuilder, Kysely, sql } from "kysely";
 
-enum EPrimaryKeyDataType {
-  text,
-  integer,
-  composed
-}
+import { CreateTableOptions } from "./create-table.options";
+import { PrimaryKeyColumnDefinition } from "./primary-key-column-definition";
 
-export type PrimaryKeyDataType = keyof typeof EPrimaryKeyDataType;
-
-export interface IBaseMigration {
-  get keyName(): string;
-  up(db: Kysely<any>): Promise<void>;
-  down(db: Kysely<any>): Promise<void>
-}
-
-export interface PrimaryKeyColumnDefinition {
-  columnName: string,
-  dataType: DataTypeExpression,
-  callback?: ColumnBuilderCallback
-}
-
-export interface CreateTableOptions {
-  tableName: string;
-  isSynced: boolean;
-  defaultIdPrimaryKey?: boolean;
-  primaryKey?: Array<PrimaryKeyColumnDefinition>;
-}
-
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
 export function createTable<TB extends string>(db: Kysely<any>, options: CreateTableOptions): CreateTableBuilder<TB> {
   let result = db.schema
     .createTable(options.tableName);

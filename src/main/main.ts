@@ -1,6 +1,6 @@
-import { app, BrowserWindow, protocol, session } from "electron";
+import { app, BrowserWindow, nativeTheme, protocol, session } from "electron";
 import * as fs from "fs";
-import { MigrationProvider } from "kysely";
+import { homedir } from "os";
 import * as path from "path";
 import "reflect-metadata";
 import { container } from "tsyringe";
@@ -8,13 +8,10 @@ import { updateElectronApp } from "update-electron-app";
 
 import { CardImageDto } from "../common/dto";
 import { ImageSize } from "../common/enums";
-import MIGRATOKENS from "./database/migrations/migration.tokens";
-import { MigrationDi } from "./database/migrations/migrations.di";
-import INFRATOKENS, { IImageCacheService, IWindowService } from "./services/infra/interfaces";
-import { IDatabaseService } from "./services/infra/interfaces/database.service";
+import { bootFunction } from "./boot";
+import INFRATOKENS, { IConfigurationService, IImageCacheService, IWindowService } from "./services/infra/interfaces";
 import { IIpcDispatcherService } from "./services/infra/interfaces/ipc-dispatcher.service";
 import REPOTOKENS, { ICardRepository } from "./services/repo/interfaces";
-import SYNCTOKENS, { ICardSetSyncService, ICardSymbolSyncService, ICatalogSyncService } from "./services/scryfall";
 import { ServicesDI } from "./services/services.di";
 
 // check for updates
@@ -24,27 +21,6 @@ updateElectronApp();
 if (require("electron-squirrel-startup")) {
   app.quit();
 }
-
-const bootFunction = async (splashWindow: BrowserWindow) => {
-  const migrationContainer = MigrationDi.registerMigrations();
-  await container.resolve<IDatabaseService>(INFRATOKENS.DatabaseService)
-    .connect("c:/data/new-assistant")
-    .migrateToLatest(migrationContainer.resolve<MigrationProvider>(MIGRATOKENS.NewCustomMigrationProvider))
-    .then(() => migrationContainer.dispose())
-    .then(async () => await container.resolve<ICatalogSyncService>(SYNCTOKENS.CatalogSyncService).sync(
-      { source: "startup", catalogs: ["AbilityWords", "LandTypes", "ArtifactTypes"] },  // TODO make this allCatalogs
-      (label: string) => splashWindow.webContents.send("splash", label))
-    )
-    .then(async () => await container.resolve<ICardSetSyncService>(SYNCTOKENS.CardSetSyncService).sync(
-      { source: "startup", code: null },
-      (label: string) => splashWindow.webContents.send("splash", label))
-    )
-    .then(() => container.resolve<ICardSymbolSyncService>(SYNCTOKENS.CardSymbolSyncService).sync(
-      { source: "startup" },
-      (label: string) => splashWindow.webContents.send("splash", label))
-    )
-    .then(() => splashWindow.webContents.send("splash", "loading main program"));
-};
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -68,7 +44,10 @@ app.whenReady().then(async () => {
   });
 
   container.resolve<IIpcDispatcherService>(INFRATOKENS.IpcDispatcherService).Initialize();
-  container.resolve<IWindowService>(INFRATOKENS.WindowService).boot(bootFunction);
+  const configurationService = container.resolve<IConfigurationService>(INFRATOKENS.ConfigurationService);
+  nativeTheme.themeSource = "system";
+  configurationService.loadConfiguration(app.getAppPath(), homedir(), nativeTheme.shouldUseDarkColors);
+  container.resolve<IWindowService>(INFRATOKENS.WindowService).boot(bootFunction, configurationService);
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {

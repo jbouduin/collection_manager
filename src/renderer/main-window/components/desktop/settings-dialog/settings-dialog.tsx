@@ -14,13 +14,6 @@ export function SettingsDialog(props: SettingsDialogProps) {
   const [configuration, setConfiguration] = React.useState<ConfigurationViewModel>(undefined);
   //#endregion
 
-  //#region Event handling --------------------------------------------------------------
-  const onSettingsClose = React.useCallback(
-    () => props.settingsDialogClose(),
-    []
-  );
-  //#endregion
-
   //#region Effect ----------------------------------------------------------------------
   React.useEffect(
     () => {
@@ -42,7 +35,7 @@ export function SettingsDialog(props: SettingsDialogProps) {
         (theme: string) => (
           <Dialog
             isOpen={props.isOpen}
-            onClose={onSettingsClose}
+            onClose={() => props.settingsDialogClose()}
             shouldReturnFocusOnClose={true}
             canEscapeKeyClose={true}
             isCloseButtonShown={true}
@@ -51,8 +44,8 @@ export function SettingsDialog(props: SettingsDialogProps) {
           >
             <ConfigurationWrapper
               configuration={configuration}
-              onCancel={onSettingsClose}
-              onSave={onSettingsClose}/>
+              onCancel={() => props.settingsDialogClose()}
+              onSave={() => props.settingsDialogClose()}/>
           </Dialog>
         )
       }

@@ -4,20 +4,12 @@ import * as React from "react";
 import { CardSyncOptions, SyncParam } from "../../../../../common/ipc-params";
 
 export function CollectionView(_props: Props) {
-  //#region event handling ----------------------------------------------------
-  const syncbuttonClick = React.useCallback(
-    () => {
-      window.ipc.sync(getIds());
-    },
-    []
-  );
-  //#endregion
 
   //#region Main --------------------------------------------------------------
   return (
     <Card>
       <h1>Collection View</h1>
-      <Button onClick={syncbuttonClick}>Sync every possible layout</Button>
+      <Button onClick={() => window.ipc.sync(getIds())}>Sync every possible layout</Button>
     </Card>
   );
   //#endregion

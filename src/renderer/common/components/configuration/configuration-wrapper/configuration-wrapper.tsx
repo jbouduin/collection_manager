@@ -35,31 +35,22 @@ export function ConfigurationWrapper(props: ConfigurationWrapperProps) {
     },
     []
   );
-
-  const onCancel = React.useCallback(
-    () => props.onCancel(),
-    []
-  );
-
-  const onConfigurationChanged = React.useCallback(
-    (configuration: ConfigurationViewModel) => setConfiguration(cloneDeep( configuration)),
-    []
-  );
   //#endregion
 
   //#region Main --------------------------------------------------------------
   return (
     <>
-      {configuration &&
+      {
+        configuration &&
         <>
           <ConfigurationView
             configuration={configuration}
-            configurationChanged={onConfigurationChanged}
+            configurationChanged={(configuration: ConfigurationViewModel) => setConfiguration(cloneDeep(configuration))}
           />
           <FooterView
             configuration={configuration}
             onSave={onSave}
-            onCancel={onCancel}
+            onCancel={() => props.onCancel()}
           />
         </>
       }

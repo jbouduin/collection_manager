@@ -15,22 +15,7 @@ export function ButtonBar(props: ButtonBarProps) {
   //#endregion
 
   //#region Event handling ----------------------------------------------------
-  const onAnyButtonClick = React.useCallback(
-    (desktopView: EDesktopView) => {
-      props.onSelectButton(desktopView);
-    },
-    []
-  );
-
-  const onSettingsButtonClick = React.useCallback(
-    () => setSettingsDialogState(true),
-    []
-  );
-
-  const onCloseSettingsDialog = React.useCallback(
-    () => setSettingsDialogState(false),
-    []
-  );
+  const onAnyButtonClick = (desktopView: EDesktopView) => props.onSelectButton(desktopView);
   //#endregion
 
   //#region Main --------------------------------------------------------------
@@ -62,11 +47,11 @@ export function ButtonBar(props: ButtonBarProps) {
             desktopView={props.currentView}
             assetPath="assets/img/settings.svg"
             tooltip={<span>Settings</span>}
-            onButtonClick={onSettingsButtonClick}
+            onButtonClick={() => setSettingsDialogState(true)}
           />
         </ButtonGroup>
       </div>
-      <SettingsDialog isOpen={settingsDialogState} settingsDialogClose={onCloseSettingsDialog} />
+      <SettingsDialog isOpen={settingsDialogState} settingsDialogClose={() => setSettingsDialogState(false)} />
     </>
   );
   //#endregion

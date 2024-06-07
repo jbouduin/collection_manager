@@ -6,7 +6,7 @@ import { DtoConfiguration } from "../../../../common/dto/configuration/configura
 export interface IConfigurationService {
   readonly isFirstUsage: boolean;
   readonly cacheDirectory: string;
-  readonly dataBaseName: string;
+  readonly dataBaseFilePath: string;
   readonly dataDirectory: string;
   readonly scryfallApiRoot: string;
   readonly scryfallEndpoints: Map<ScryfallEndpoint, string>;

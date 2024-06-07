@@ -30,7 +30,7 @@ const bootFunction = async (splashWindow: BrowserWindow) => {
 
   const migrationContainer = MigrationDi.registerMigrations();
   await container.resolve<IDatabaseService>(INFRATOKENS.DatabaseService)
-    .connect("c:/data/new-assistant")
+    .connect()
     .migrateToLatest(migrationContainer.resolve<MigrationProvider>(MIGRATOKENS.NewCustomMigrationProvider))
     .then(() => migrationContainer.dispose())
     .then(async () => await container.resolve<ICatalogSyncService>(SYNCTOKENS.CatalogSyncService).sync(

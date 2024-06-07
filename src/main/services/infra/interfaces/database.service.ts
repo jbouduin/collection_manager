@@ -3,6 +3,6 @@ import { DatabaseSchema } from "../../../database/schema";
 
 export interface IDatabaseService {
   readonly database: Kysely<DatabaseSchema>;
-  connect(dataDirectory: string): IDatabaseService;
+  connect(): IDatabaseService;
   migrateToLatest(migrationProvider: MigrationProvider): Promise<IDatabaseService>;
 }

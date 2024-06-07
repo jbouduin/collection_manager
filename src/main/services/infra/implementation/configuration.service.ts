@@ -29,8 +29,11 @@ export class ConfigurationService implements IConfigurationService {
     return result;
   }
 
-  public get dataBaseName(): string {
-    return path.join(this.dataDirectory, "database", "magic-db.sqlite");
+  public get dataBaseFilePath(): string {
+    return path.join(
+      this._configuration.mainConfiguration.rootDataDirectory,
+      this._configuration.mainConfiguration.databaseName
+    );
   }
 
   public get cacheDirectory(): string {

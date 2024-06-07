@@ -1,7 +1,7 @@
 import { Migration, MigrationProvider } from "kysely";
 import { injectAll, injectable } from "tsyringe";
 
-import { IBaseMigration } from "./base.migration";
+import { IBaseMigration } from "./base-migration/base.migration";
 import MIGRATOKENS from "./migration.tokens";
 
 @injectable()

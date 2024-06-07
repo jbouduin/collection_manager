@@ -1,5 +1,5 @@
 import SQLite from "better-sqlite3";
-import { Kysely, MigrationProvider, MigrationResultSet, Migrator, ParseJSONResultsPlugin, SqliteDialect } from "kysely";
+import { Kysely, KyselyPlugin, MigrationProvider, MigrationResultSet, Migrator, ParseJSONResultsPlugin, SqliteDialect } from "kysely";
 import { inject, singleton } from "tsyringe";
 
 import { DatabaseSchema } from "../../../database/schema";
@@ -39,14 +39,26 @@ export class DatabaseService implements IDatabaseService {
     return this;
   }
 
-  public async migrateToLatest(migrationProvider: MigrationProvider): Promise<IDatabaseService> {
+  public async migrateToLatest(plugin: KyselyPlugin, migrationProvider: MigrationProvider): Promise<IDatabaseService> {
+    const dialect = new SqliteDialect({
+      database: new SQLite(this.configurationService.dataBaseFilePath)
+    });
+    const connection = new Kysely<DatabaseSchema>({
+      dialect: dialect,
+      plugins: [plugin]
+    });
     await new Migrator(
       {
-        db: this._database,
+        db: connection,
         provider: migrationProvider
       })
       .migrateToLatest()
-      .then((result: MigrationResultSet) => { console.log("Migration result: ", result); });
+      .then((result: MigrationResultSet) => {
+        console.log("Migration result: ", result);
+        if (result.error) {
+          throw new Error("migration failed");
+        }
+      });
     return Promise.resolve(this);
   }
   //#endregion

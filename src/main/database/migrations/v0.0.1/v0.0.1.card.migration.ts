@@ -1,7 +1,7 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import { ColumnDefinitionBuilder, Kysely } from "kysely";
 
-import { CreateTableOptions, IBaseMigration, createTable } from "../base.migration";
+import { CreateTableOptions, IBaseMigration, createTable } from "../base-migration";
 
 export class V0_0_1_Card_Migration implements IBaseMigration {
   public get keyName(): string {

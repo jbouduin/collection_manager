@@ -1,29 +1,30 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
-import { ColumnDefinitionBuilder, InsertResult, Insertable, Kysely } from "kysely";
+import { ColumnDefinitionBuilder, InsertResult, Kysely } from "kysely";
+import { CreateTableOptions, IBaseMigration } from "../base-migration";
+import { createTable } from "../base-migration/create-table.func";
 
-import { LanguageTable } from "../../schema";
-import { IBaseMigration, CreateTableOptions, createTable } from "../base-migration";
-
-export class V0_0_1_Language_Migration implements IBaseMigration {
+export class V0_0_1_Test_Migration implements IBaseMigration {
   public get keyName(): string {
-    return "0003: v.0.0.1.Language";
+    return "1003: v.0.0.1.Test";
   }
 
   public async up(db: Kysely<any>): Promise<void> {
-    return createV0_0_1_Language(db)
-      .then(() => populateV0_0_1_Language(db))
+    return createV0_0_1_Test(db)
+      .then(() => populateV0_0_1_Test(db))
       .then(() => Promise.resolve());
   }
 
   public async down(db: Kysely<any>): Promise<void> {
-    return db.schema.dropTable("language").execute();
+    return db.schema.dropTable("test").execute();
   }
+
+
 }
 
-async function createV0_0_1_Language(db: Kysely<any>): Promise<void> {
+function createV0_0_1_Test(db: Kysely<any>): Promise < void> {
   const options: CreateTableOptions = {
     isSynced: false,
-    tableName: "language",
+    tableName: "test",
     defaultIdPrimaryKey: true
   };
 
@@ -35,8 +36,8 @@ async function createV0_0_1_Language(db: Kysely<any>): Promise<void> {
     .execute();
 }
 
-async function populateV0_0_1_Language(db: Kysely<any>): Promise<Array<InsertResult>> {
-  const values = new Array<Insertable<LanguageTable>>();
+async function populateV0_0_1_Test(db: Kysely<any>): Promise<Array<InsertResult>> {
+  const values = new Array<any>();
   values.push({ id: "en", sequence: 0, printed_code: "EN", display_text: "English", button_text: "EN" });
   values.push({ id: "es", sequence: 1, printed_code: "SP", display_text: "Spanish", button_text: "ES" });
   values.push({ id: "fr", sequence: 2, printed_code: "FR", display_text: "French", button_text: "FR" });
@@ -55,7 +56,7 @@ async function populateV0_0_1_Language(db: Kysely<any>): Promise<Array<InsertRes
   values.push({ id: "sa", sequence: 15, display_text: "Sanskrit", });
   values.push({ id: "ph", sequence: 16, printed_code: "PH", display_text: "Phyrexian" });
 
-  return db.insertInto("language")
+  return db.insertInto("test")
     .values(values)
     .execute();
 }

@@ -1,6 +1,6 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import { ColumnDefinitionBuilder, Kysely } from "kysely";
-import { IBaseMigration } from "../base.migration";
+import { IBaseMigration } from "../base-migration";
 
 export class V0_0_1_Catalog_Migration implements IBaseMigration {
   public get keyName(): string {

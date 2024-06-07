@@ -1,8 +1,9 @@
-import { Checkbox, FormGroup, Icon, InputGroup, SectionCard } from "@blueprintjs/core";
+import { Checkbox, FormGroup, InputGroup, SectionCard } from "@blueprintjs/core";
 import * as React from "react";
 
 import { SyncType, SyncTypeDisplayValue } from "../../../../../common/ipc-params";
-import { ConfigurationViewProps } from "../configuration-view.props";
+import { handleBooleanChange, handleStringChange } from "../../../../common/utils";
+import { ConfigurationViewProps } from "../configuration-view/configuration-view.props";
 
 export function BasicConfigurationView(props: ConfigurationViewProps) {
 
@@ -14,8 +15,14 @@ export function BasicConfigurationView(props: ConfigurationViewProps) {
           id="root-data-directory"
           inputMode="text"
           value={props.configuration.rootDataDirectory}
-          rightElement={<Icon icon="folder-open" />}
+          // rightElement={<Icon icon="folder-open" />}
           small={true}
+          onChange={
+            handleStringChange((value: string) => {
+              props.configuration.rootDataDirectory = value;
+              props.configurationChanged(props.configuration);
+            })
+          }
         />
       </FormGroup>
       <FormGroup label="Database name" labelInfo="required" labelFor="database-name" key="database-name">
@@ -25,6 +32,12 @@ export function BasicConfigurationView(props: ConfigurationViewProps) {
           value={props.configuration.databaseName}
           placeholder="Enter database name"
           small={true}
+          onChange={
+            handleStringChange((value: string) => {
+              props.configuration.databaseName = value;
+              props.configurationChanged(props.configuration);
+            })
+          }
         />
       </FormGroup>
       <FormGroup label="Cache directory" labelInfo="required" labelFor="cache-directory" key="cache-directory">
@@ -32,8 +45,14 @@ export function BasicConfigurationView(props: ConfigurationViewProps) {
           inputMode="text"
           id="cache-directory"
           value={props.configuration.cacheDirectory}
-          rightElement={<Icon icon="folder-open" />}
+          // rightElement={<Icon icon="folder-open" />}
           small={true}
+          onChange={
+            handleStringChange((value: string) => {
+              props.configuration.cacheDirectory = value;
+              props.configurationChanged(props.configuration);
+            })
+          }
         />
       </FormGroup>
       <FormGroup label="Synchronize at startup" key="sync-at-startup">
@@ -50,8 +69,22 @@ export function BasicConfigurationView(props: ConfigurationViewProps) {
   //#region Auxiliary methods -------------------------------------------------
   function renderStartup(): Array<React.JSX.Element> {
     const result = new Array<React.JSX.Element>();
-    SyncTypeDisplayValue.forEach((value: string, key: SyncType) => {
-      result.push((<Checkbox label={value} checked={props.configuration.getSyncAtStartup(key)} />));
+    SyncTypeDisplayValue.forEach((displayValue: string, key: SyncType) => {
+      result.push(
+        (
+          <Checkbox
+            key={key}
+            label={displayValue}
+            checked={props.configuration.getSyncAtStartup(key)}
+            onChange={
+              handleBooleanChange((value: boolean) => {
+              props.configuration.setSyncAtStartup(key, value);
+              props.configurationChanged(props.configuration);
+              })
+            }
+          />
+        )
+      );
     });
     return result;
   }

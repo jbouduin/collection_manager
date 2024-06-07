@@ -63,7 +63,9 @@ export class WindowService implements IWindowService {
     return mainWindow;
   }
 
-  public async boot(bootFunction: (splashWindow: BrowserWindow) => Promise<void>, configurationService: IConfigurationService): Promise<void> {
+  public async boot(
+    bootFunction: (splashWindow: BrowserWindow) => Promise<void>,
+    configurationService: IConfigurationService): Promise<void> {
     let mainWindow: BrowserWindow;
     const splashWindow = this.createSplashWindow();
 
@@ -91,7 +93,13 @@ export class WindowService implements IWindowService {
       if (configurationService.isFirstUsage) {
         const firsTimeWindow = this.createFirstTimeWindow();
         // NOW catch if user canceled without saving configuration
-        firsTimeWindow.on("closed", () => splashWindow.show());
+        firsTimeWindow.on("closed", () => {
+          if (configurationService.isFirstUsage) {
+            app.quit();
+          } else {
+            splashWindow.show();
+          }
+        });
       } else {
         splashWindow.show();
       }

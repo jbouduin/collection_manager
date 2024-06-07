@@ -13,6 +13,7 @@ export class IpcDispatcherService implements IIpcDispatcherService{
     ipcMain.handle("darkmode", (_event: Electron.IpcMainEvent, ...args: Array<any>) => this.handleDarkMode(args[0]));
     ipcMain.handle("query", (_event: Electron.IpcMainEvent, ...args: Array<any>) => container.resolve<IIpcQueryService>(INFRATOKENS.IpcQueryService).handle(args[0]));
     ipcMain.handle("sync", (_event: Electron.IpcMainEvent, ...args: Array<any>) => container.resolve<IIpcSyncService>(INFRATOKENS.IpcSyncService).handle(args[0]));
+    ipcMain.handle("post", (_event: Electron.IpcMainEvent, ...args: Array<any>) => container.resolve<IIpcSyncService>(INFRATOKENS.IpcPostService).handle(args[0]));
     return this;
   }
   /* eslint-enable  @typescript-eslint/no-explicit-any */

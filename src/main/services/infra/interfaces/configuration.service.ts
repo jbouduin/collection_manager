@@ -15,4 +15,5 @@ export interface IConfigurationService {
 
   readonly configuration: DtoConfiguration;
   loadConfiguration(appDirectory: string, homeDirectory: string, useDarkTheme: boolean): void;
+  saveConfiguration(configuration: DtoConfiguration): boolean;
 }

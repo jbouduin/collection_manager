@@ -92,7 +92,7 @@ export class ConfigurationService implements IConfigurationService {
 
   //#region IConfiguration methods --------------------------------------------
   public loadConfiguration(appDirectory: string, homeDirectory: string, useDarkTheme: boolean): void {
-    this.configFilePath = path.join(appDirectory, "config.json");
+    this.configFilePath = path.join(appDirectory, "collection-manager.config.json");
     if (fs.existsSync(this.configFilePath)) {
       this._configuration = JSON.parse(fs.readFileSync(this.configFilePath, "utf-8"));
       this._isFirstUsage = false;
@@ -103,9 +103,14 @@ export class ConfigurationService implements IConfigurationService {
     }
   }
 
-  public saveConfiguration(configuration: DtoConfiguration): void {
+  public saveConfiguration(configuration: DtoConfiguration): boolean {
+    // LATER Validation
+    this.createDirectoryIfNotExists(configuration.mainConfiguration.rootDataDirectory);
+    this.createDirectoryIfNotExists(configuration.mainConfiguration.cacheDirectory);
     fs.writeFileSync(this.configFilePath, JSON.stringify(configuration, null, 2));
     this._configuration = configuration;
+    this._isFirstUsage = false;
+    return true;
   }
   //#endregion
 
@@ -127,39 +132,50 @@ export class ConfigurationService implements IConfigurationService {
   }
 
   private createScryFallFactoryDefault(): DtoScryfallConfiguration {
-    const catalogPaths = new Map<CatalogType, string>();
-    catalogPaths.set("AbilityWords", "ability-words");
-    catalogPaths.set("ArtifactTypes", "artifact-types");
-    catalogPaths.set("ArtistNames", "artist-names");
-    catalogPaths.set("CardNames", "card-names");
-    catalogPaths.set("CreatureTypes", "creature-types");
-    catalogPaths.set("EnchantmentTypes", "enchantment-types");
-    catalogPaths.set("KeywordAbilities", "keyword-abilities");
-    catalogPaths.set("KeywordActions", "keyword-actions");
-    catalogPaths.set("LandTypes", "land-types");
-    catalogPaths.set("Loyalties", "loyalties");
-    catalogPaths.set("PlaneswalkerTypes", "planeswalker-types");
-    catalogPaths.set("Powers", "powers");
-    catalogPaths.set("SpellTypes", "spell-types");
-    catalogPaths.set("Supertypes", "super-types");
-    catalogPaths.set("Toughnesses", "toughnesses");
-    catalogPaths.set("Watermarks", "watermarks");
-    catalogPaths.set("WordBank", "word-bank");
+    const catalogPaths: Record<CatalogType, string> = {
+      "AbilityWords": "ability-words",
+      "ArtifactTypes": "artifact-types",
+      "ArtistNames": "artist-names",
+      "CardNames": "card-names",
+      "CreatureTypes": "creature-types",
+      "EnchantmentTypes": "enchantment-types",
+      "KeywordAbilities": "keyword-abilities",
+      "KeywordActions": "keyword-actions",
+      "LandTypes": "land-types",
+      "Loyalties": "loyalties",
+      "PlaneswalkerTypes": "planeswalker-types",
+      "Powers": "powers",
+      "SpellTypes": "spell-types",
+      "Supertypes": "super-types",
+      "Toughnesses": "toughnesses",
+      "Watermarks": "watermarks",
+      "WordBank": "word-bank"
+    };
 
-    const endpoints = new Map<ScryfallEndpoint, string>();
-    endpoints.set("card", "cards/search");
-    endpoints.set("cardSet", "sets");
-    endpoints.set("cardSymbol", "symbology");
-    endpoints.set("catalog", "catalog");
-    endpoints.set("ruling", "cards/:id/rulings");
-    endpoints.set("collection", "cards/collection");
+    const endpoints: Record<ScryfallEndpoint, string> = {
+      "card": "cards/search",
+      "cardSet": "sets",
+      "cardSymbol": "symbology",
+      "catalog": "catalog",
+      "ruling": "cards/:id/rulings",
+      "collection": "cards/collection"
+    };
 
     const result: DtoScryfallConfiguration = {
       scryfallApiRoot: "https://api.scryfall.com",
       scryfallEndpoints: endpoints,
       scryfallCatalogPaths: catalogPaths
     };
+    console.log(JSON.stringify(result, null,2));
     return result;
+  }
+  //#endregion
+
+  //#region Auxiliary validation related methods ------------------------------
+  private createDirectoryIfNotExists(directory: string): void {
+    if (!fs.existsSync(directory)) {
+      fs.mkdirSync(directory, { recursive: true });
+    }
   }
   //#endregion
 }

@@ -1,10 +1,9 @@
 import { Dialog } from "@blueprintjs/core";
 import * as React from "react";
-import { ConfigurationView } from "../../../../common/components/configuration/configuration-view";
 
 import { DtoConfiguration } from "../../../../../common/dto/configuration/configuration.dto";
 import { QueryParam } from "../../../../../common/ipc-params";
-import { FooterView } from "../../../../common/components/configuration/footer-view/footer-view";
+import { ConfigurationWrapper } from "../../../../common/components/configuration/configuration-wrapper/configuration-wrapper";
 import { ConfigurationViewModel } from "../../../../common/viewmodels/configuration/configuration.viewmodel";
 import { ThemeContext } from "../../context";
 import { SettingsDialogProps } from "./settings-dialog.props";
@@ -16,13 +15,6 @@ export function SettingsDialog(props: SettingsDialogProps) {
   //#endregion
 
   //#region Event handling --------------------------------------------------------------
-  const onSettingsSave = React.useCallback(
-    () => {
-      console.log("save ");
-    },
-    []
-  );
-
   const onSettingsClose = React.useCallback(
     () => props.settingsDialogClose(),
     []
@@ -57,8 +49,10 @@ export function SettingsDialog(props: SettingsDialogProps) {
             title="Settings"
             className={theme}
           >
-            <ConfigurationView configuration={configuration} />
-            <FooterView onCancel={onSettingsClose} onSave={onSettingsSave} hasChanges={configuration?.hasChanges}></FooterView>
+            <ConfigurationWrapper
+              configuration={configuration}
+              onCancel={onSettingsClose}
+              onSave={onSettingsClose}/>
           </Dialog>
         )
       }

@@ -11,6 +11,7 @@ const INFRATOKENS = Object.freeze({
   DatabaseService: "DatabaseService",
   ImageCacheService: "ImageCacheService",
   IpcDispatcherService: "IpcDispatcherService",
+  IpcPostService: "IpcPostService",
   IpcQueryService: "IpcQueryService",
   IpcSyncService: "IIpcSyncService",
   WindowService: "WindowService"

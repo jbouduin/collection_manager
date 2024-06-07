@@ -67,7 +67,7 @@ export function ButtonBarButton(props: ButtonBarButtonProps) {
         openOnTargetFocus={false}
         placement="right"
         usePortal={false}>
-        <Button onClick={onButtonClick}>
+        <Button>
           <SvgProvider svg={svg} width={30} height={30} />
         </Button>
       </Popover>

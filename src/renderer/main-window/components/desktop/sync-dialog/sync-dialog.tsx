@@ -1,10 +1,10 @@
-import { Dialog, DialogBody, DialogFooter } from "@blueprintjs/core";
+import { Button, Dialog, DialogBody, DialogFooter } from "@blueprintjs/core";
 import * as React from "react";
 
 import { ThemeContext } from "../../context";
-import { BaseDialogProps } from "../../common/dialog-props";
+import { SyncDialogProps } from "./sync-dialog.props";
 
-export function SyncDialog(props: BaseDialogProps) {
+export function SyncDialog(props: SyncDialogProps) {
   //#region Main --------------------------------------------------------------
   return (
     <ThemeContext.Consumer>
@@ -15,16 +15,29 @@ export function SyncDialog(props: BaseDialogProps) {
             onClose={() => props.onDialogClose()}
             shouldReturnFocusOnClose={true}
             canEscapeKeyClose={true}
+            canOutsideClickClose={false}
             isCloseButtonShown={true}
-            title="Settings"
+            title="Synchronize"
             className={theme}
           >
             <DialogBody>Body</DialogBody>
-            <DialogFooter>Footer</DialogFooter>
+            <DialogFooter actions={renderActions()} />
           </Dialog>
         )
       }
     </ThemeContext.Consumer>
   );
+  //#endregion
+
+  //#region Auxiliary render methods ------------------------------------------
+  function renderActions(): React.JSX.Element {
+    return (
+      <>
+        <Button onClick={() => props.onDialogClose()}>Cancel</Button>
+        <Button intent="primary" onClick={() => props.onOkClick()}>OK</Button>
+
+      </>
+    );
+  }
   //#endregion
 }

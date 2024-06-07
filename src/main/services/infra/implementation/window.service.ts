@@ -92,7 +92,6 @@ export class WindowService implements IWindowService {
     splashWindow.on("ready-to-show", () => {
       if (configurationService.isFirstUsage) {
         const firsTimeWindow = this.createFirstTimeWindow();
-        // NOW catch if user canceled without saving configuration
         firsTimeWindow.on("closed", () => {
           if (configurationService.isFirstUsage) {
             app.quit();

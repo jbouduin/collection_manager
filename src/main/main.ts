@@ -34,7 +34,7 @@ const bootFunction = async (splashWindow: BrowserWindow) => {
     .migrateToLatest(migrationContainer.resolve<MigrationProvider>(MIGRATOKENS.NewCustomMigrationProvider))
     .then(() => migrationContainer.dispose())
     .then(async () => await container.resolve<ICatalogSyncService>(SYNCTOKENS.CatalogSyncService).sync(
-      { source: "startup", catalogs: ["AbilityWords", "LandTypes", "ArtifactTypes"] },  // TODO make this allCatalogs
+      { source: "startup", catalogs: ["AbilityWords", "LandTypes", "ArtifactTypes"] },  // LATER make this allCatalogs when we need them to search
       (label: string) => splashWindow.webContents.send("splash", label))
     )
     .then(async () => await container.resolve<ICardSetSyncService>(SYNCTOKENS.CardSetSyncService).sync(

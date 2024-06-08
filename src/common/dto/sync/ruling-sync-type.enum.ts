@@ -1,13 +1,13 @@
-enum ERulingTypeSync {
+enum ERulingSyncType {
   none,
   update,
   all
 }
 
-export type RulingTypeSync = keyof typeof ERulingTypeSync;
+export type RulingSyncType = keyof typeof ERulingSyncType;
 
-export const RulingTypeSyncDisplayValue = new Map<RulingTypeSync, string>([
-  ["none", "Do not sync rulings"],
-  ["update", "Update previously downloaded rulings"],
-  ["all", "Synchronize rulings for all cards"]
+export const RulingSyncTypeDisplayValue = new Map<RulingSyncType, string>([
+  ["none", "Do not synchronize rulings"],
+  ["update", "Resynchronize previously synchronized rulings only"],
+  ["all", "Synchronize rulings for all synchronized cards"]
 ]);

@@ -1,4 +1,5 @@
 enum ECardSyncType {
+  none,
   allCards,
   byCardSet,
   byImageStatus,
@@ -9,9 +10,11 @@ enum ECardSyncType {
 export type CardSyncType = keyof typeof ECardSyncType;
 
 export const CardSyncTypeDisplayValue = new Map<CardSyncType, string>([
-  ["allCards", "All cards which have been synchronized before"],
-  ["byCardSet", "By cardset"], // should not be shown in the front end
-  ["byImageStatus", "With image status"],
+  ["none", "Do not synchronize cards"],
+  ["allCards", "All cards which have previously been synchronized"],
+  // "byCardSet" => not to be shown in the front end
+  ["byImageStatus", "Select by image status"],
   ["byLastSynchronized", "Last synchronized before"],
-  ["selectionOfCards", "Selected cards"] // should not be shown in the front end
+  // "selectionOfCards" => not to be shown in the front end
+  // LATER: bulk
 ]);

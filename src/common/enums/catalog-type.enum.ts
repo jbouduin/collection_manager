@@ -27,7 +27,7 @@ export const CatalogTypeDisplayValue = new Map<CatalogType, string>([
   ["AbilityWords", "Abilities"],
   ["ArtifactTypes", "Artifact types"],
   ["ArtistNames", "Artist names"],
-  ["CardNames", " all nontoken English card names"],
+  ["CardNames", "Nontoken English card names"],
   ["CreatureTypes", "Creature types"],
   ["EnchantmentTypes", "Enchantment types"],
   ["KeywordActions", "Action keywords"],

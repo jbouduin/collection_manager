@@ -137,6 +137,10 @@ img.rotate-180 {
   max-width: 100%
 }
 
+.no-left-padding {
+  padding-left: 0px;
+}
+
 .splash-window {
   width: 900px;
 }

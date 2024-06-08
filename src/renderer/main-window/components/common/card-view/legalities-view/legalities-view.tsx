@@ -34,7 +34,7 @@ export function LegalitiesView(props: LegalitiesViewProps) {
 
   //#region Main --------------------------------------------------------------
   return (
-    <HTMLTable compact={true} bordered={false}>
+    <HTMLTable compact={true} bordered={false} width="100%">
       <tbody>
         {
           getTable()
@@ -51,8 +51,10 @@ export function LegalitiesView(props: LegalitiesViewProps) {
     legalities.forEach((legality: DtoLegality, idx: number) => {
       if (idx % 2 == 0) {
         currentRow = new Array<React.JSX.Element>();
+        currentRow.push(<td style={{ paddingLeft: "0px" }}>{legality.format}</td>);
+      } else {
+        currentRow.push(<td>{legality.format}</td>);
       }
-      currentRow.push(<td>{legality.format}</td>);
       let intent: Intent;
       let label: string;
       switch (legality.legality) {
@@ -76,7 +78,7 @@ export function LegalitiesView(props: LegalitiesViewProps) {
           intent = "none";
           label = legality.legality;
       }
-      currentRow.push(<td><Tag fill={true} intent={intent}>{label}</Tag></td>);
+      currentRow.push(<td style={{ paddingLeft: "0px" }}><Tag fill={true} intent={intent}>{label}</Tag></td>);
       if (idx % 2 == 1) {
         table.push(<tr>{currentRow}</tr>);
       }

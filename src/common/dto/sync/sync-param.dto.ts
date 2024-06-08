@@ -1,7 +1,8 @@
 import { CatalogType, ImageStatus } from "../../enums";
 import { CardSyncType } from "./card-sync-type.enum";
-import { RulingTypeSync } from "./ruling-sync-type.enum";
+import { RulingSyncType } from "./ruling-sync-type.enum";
 import { SyncSource } from "./sync-source.enum";
+import { TimespanUnit } from "./time-span-unit.enum";
 
 export interface DtoSyncParam {
   /**
@@ -20,13 +21,14 @@ export interface DtoSyncParam {
   /**
    * Rulings to sync
    */
-  syncRulings: RulingTypeSync;
+  rulingSyncType: RulingSyncType;
   /**
    * Cards to sync
    */
-  cardSyncTypesToSync: Array<CardSyncType>;
+  cardSyncType: CardSyncType;
   cardSelectionToSync: Array<string>;
-  cardImageTypesToSync: Array<ImageStatus>;
-  syncCardsLastSyncedBefore: Date;
+  cardImageStatusToSync: Array<ImageStatus>;
+  syncCardsSyncedBeforeNumber: number;
+  syncCardsSyncedBeforeUnit: TimespanUnit;
 
 }

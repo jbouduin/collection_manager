@@ -124,19 +124,62 @@ export function CardSetDialog(props: CardSetDialogProps) {
 
   function renderMainPropertiesTableLines(languages: Array<DtoLanguage>): Array<React.JSX.Element> {
     const table = new Array<React.JSX.Element>();
-    table.push((<tr><td>Name:</td><td>{cardSetDetails.cardSetName}</td></tr>));
-    table.push((<tr><td>Type:</td><td>{cardSetDetails.cardSetType}</td></tr>));
-    table.push((<tr><td>Block:</td><td>{cardSetDetails.block ?? "-"}</td></tr>));
-    table.push((<tr><td>Release date:</td><td>{cardSetDetails.releaseDateString}</td></tr>));
-    table.push((<tr><td>Number of printed cards:</td><td>{cardSetDetails.numberOfPrintedCards}</td></tr>));
-    table.push((<tr><td>Last synchronization:</td><td>{cardSetDetails.lastFullSynchronizationString}</td></tr>));
+    table.push((
+      <tr>
+        <td style={{ paddingLeft: "0px" }}>Name:</td>
+        <td style={{ paddingLeft: "0px" }}>{cardSetDetails.cardSetName}</td>
+      </tr>
+    ));
+    table.push((
+      <tr>
+        <td style={{ paddingLeft: "0px" }}>Type:</td>
+        <td style={{ paddingLeft: "0px" }}>{cardSetDetails.cardSetType}</td>
+      </tr>)
+    );
+    table.push((
+      <tr>
+        <td style={{ paddingLeft: "0px" }}>Block:</td>
+        <td style={{ paddingLeft: "0px" }}>{cardSetDetails.block ?? "-"}</td>
+      </tr>
+    ));
+    table.push((
+      <tr>
+        <td style={{ paddingLeft: "0px" }}>Release date:</td>
+        <td style={{ paddingLeft: "0px" }}>{cardSetDetails.releaseDateString}</td>
+      </tr>
+    ));
+    table.push((
+      <tr>
+        <td style={{ paddingLeft: "0px" }}>Number of printed cards:</td>
+        <td style={{ paddingLeft: "0px" }}>{cardSetDetails.numberOfPrintedCards}</td>
+      </tr>
+    ));
+    table.push((
+      <tr>
+      <td style={{ paddingLeft: "0px" }}>Last synchronization:</td>
+        <td style={{ paddingLeft: "0px" }}>{cardSetDetails.lastFullSynchronizationString}</td>
+      </tr>
+    ));
     if (!cardSetDetails.isFullSynchronized) {
-      table.push((<tr><td colSpan={2}>More details are available after a full synchronization of the set</td></tr>));
+      table.push((
+        <tr>
+          <td colSpan={2} style={{ paddingLeft: "0px" }}>More details are available after a full synchronization of the set</td>
+        </tr>
+      ));
     } else {
-      table.push((<tr><td>Number of unique cards (by name):</td><td>{cardSetDetails.numberOfUniqueCards}</td></tr>));
-      table.push((<tr><td>{cardSetDetails.isMultiLanguage ? "Languages:" : "Language"}</td><td>{cardSetDetails.getLanguagesOfSet(languages)}</td></tr>));
+      table.push((
+        <tr>
+          <td style={{ paddingLeft: "0px" }}>Number of unique cards (by name):</td>
+          <td style={{ paddingLeft: "0px" }}>{cardSetDetails.numberOfUniqueCards}</td>
+        </tr>
+      ));
+      table.push((
+        <tr>
+          <td style={{ paddingLeft: "0px" }}>{cardSetDetails.isMultiLanguage ? "Languages:" : "Language"}</td>
+          <td style={{ paddingLeft: "0px" }}>{cardSetDetails.getLanguagesOfSet(languages)}</td>
+        </tr>
+      ));
     }
-
     return table;
   }
 
@@ -157,8 +200,8 @@ export function CardSetDialog(props: CardSetDialogProps) {
     table.push(
       (
         <tr>
-          <td>Foil only set:</td>
-          <td>
+          <td style={{ paddingLeft: "0px" }}>Foil only set:</td>
+          <td style={{ paddingLeft: "0px" }}>
             {cardSetDetails.foilOnly && <Icon icon="tick" intent="success" />}
             {!cardSetDetails.foilOnly && <Icon icon="cross" intent="danger" />}
           </td>
@@ -167,8 +210,8 @@ export function CardSetDialog(props: CardSetDialogProps) {
     table.push(
       (
         <tr>
-          <td>Non-Foil only set:</td>
-          <td>
+          <td style={{ paddingLeft: "0px" }}>Non-Foil only set:</td>
+          <td style={{ paddingLeft: "0px" }}>
             {cardSetDetails.nonFoilOnly && <Icon icon="tick" intent="success" />}
             {!cardSetDetails.nonFoilOnly && <Icon icon="cross" intent="danger" />}
           </td>
@@ -177,16 +220,31 @@ export function CardSetDialog(props: CardSetDialogProps) {
     table.push(
       (
         <tr>
-          <td>Digital:</td>
-          <td>
+          <td style={{ paddingLeft: "0px" }}>Digital:</td>
+          <td style={{ paddingLeft: "0px" }}>
             {cardSetDetails.digital && <Icon icon="tick" intent="success" />}
             {!cardSetDetails.digital && <Icon icon="cross" intent="danger" />}
           </td>
         </tr>
       ));
-    table.push((<tr><td>MTG Online code:</td><td>{cardSetDetails.mtgOnlineCode}</td></tr>));
-    table.push((<tr><td>Arena code:</td><td>{cardSetDetails.arenaCode}</td></tr>));
-    table.push((<tr><td>TCG Player Id:</td><td>{cardSetDetails.tcgPlayerId}</td></tr>));
+    table.push((
+      <tr>
+        <td style={{ paddingLeft: "0px" }}>MTG Online code:</td>
+        <td style={{ paddingLeft: "0px" }}>{cardSetDetails.mtgOnlineCode}</td>
+      </tr>
+    ));
+    table.push((
+      <tr>
+        <td style={{ paddingLeft: "0px" }}>Arena code:</td>
+        <td style={{ paddingLeft: "0px" }}>{cardSetDetails.arenaCode}</td>
+      </tr>
+    ));
+    table.push((
+      <tr>
+        <td style={{ paddingLeft: "0px" }}>TCG Player Id:</td>
+        <td style={{ paddingLeft: "0px" }}>{cardSetDetails.tcgPlayerId}</td>
+      </tr>
+    ));
     return table;
   }
 
@@ -206,8 +264,8 @@ export function CardSetDialog(props: CardSetDialogProps) {
     return cardSetDetails.languagesWithNumberOfCards.map((cardSetDetailsLanguage: DtoCardSetLanguage) => {
       return (
         <tr>
-          <td>{languages.find((language: DtoLanguage) => language.id == cardSetDetailsLanguage.lang).display_text}:</td>
-          <td>{`${cardSetDetailsLanguage.number_of_cards} cards`}</td>
+          <td style={{ paddingLeft: "0px" }}>{languages.find((language: DtoLanguage) => language.id == cardSetDetailsLanguage.lang).display_text}:</td>
+          <td style={{ paddingLeft: "0px" }}>{`${cardSetDetailsLanguage.number_of_cards} cards`}</td>
         </tr>
       );
     });

@@ -3,7 +3,7 @@ import classNames from "classnames";
 import * as React from "react";
 
 import { SplashContent } from "../../../../common/components/splash/splash-contents";
-import { BaseDialogProps } from "../../common/base-dialog-props";
+import { BaseDialogProps } from "../../../../common/components/base-dialog-props";
 import { ThemeContext } from "../../context";
 
 export function SplashScreen(props: BaseDialogProps) {

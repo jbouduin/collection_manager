@@ -1,4 +1,4 @@
-import { BaseDialogProps } from "../../common/base-dialog-props";
+import { BaseDialogProps } from "../../../../common/components/base-dialog-props";
 
 
 export interface SyncDialogProps extends BaseDialogProps {

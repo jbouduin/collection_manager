@@ -35,7 +35,6 @@ export function SyncDialog(props: SyncDialogProps) {
       <>
         <Button onClick={() => props.onDialogClose()}>Cancel</Button>
         <Button intent="primary" onClick={() => props.onOkClick()}>OK</Button>
-
       </>
     );
   }

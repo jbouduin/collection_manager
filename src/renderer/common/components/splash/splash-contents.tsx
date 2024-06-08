@@ -13,6 +13,7 @@ export function SplashContent() {
   //#endregion
 
   //#region Main --------------------------------------------------------------
+  // TODO chech how and when to unsubscribe
   window.ipc.onProgress((status) => {
     console.log("splash", status);
     setState({ label: status });

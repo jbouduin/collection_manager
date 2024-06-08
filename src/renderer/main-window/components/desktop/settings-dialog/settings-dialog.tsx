@@ -5,7 +5,7 @@ import { DtoConfiguration } from "../../../../../common/dto/configuration/config
 import { QueryParam } from "../../../../../common/ipc-params";
 import { ConfigurationWrapper } from "../../../../common/components/configuration/configuration-wrapper/configuration-wrapper";
 import { ConfigurationViewModel } from "../../../../common/viewmodels/configuration/configuration.viewmodel";
-import { BaseDialogProps } from "../../common/base-dialog-props";
+import { BaseDialogProps } from "../../../../common/components/base-dialog-props";
 import { ThemeContext } from "../../context";
 
 export function SettingsDialog(props: BaseDialogProps) {

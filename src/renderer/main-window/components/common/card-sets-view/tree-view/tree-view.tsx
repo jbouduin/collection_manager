@@ -1,14 +1,13 @@
 import { Classes, ContextMenu, Menu, MenuItem, Tree, TreeNodeInfo } from "@blueprintjs/core";
+import classNames from "classnames";
 import * as _ from "lodash";
 import * as React from "react";
 
-import { CardSyncOptions, SyncParam } from "../../../../../../common/ipc-params";
 import { CardSetViewmodel } from "../../../../viewmodels";
 import { SvgProvider } from "../../svg-provider/svg-provider";
 import { CardSetDialog } from "../card-set-dialog/card-set-dialog";
-import { TreeViewProps } from "./tree-view.props";
 import { DialogState } from "./dialog.state";
-import classNames from "classnames";
+import { TreeViewProps } from "./tree-view.props";
 
 type NodePath = Array<number>;
 
@@ -55,6 +54,7 @@ export function TreeView(props: TreeViewProps) {
   console.log("in treeview function", props.textFilter);
 
   //#region State -------------------------------------------------------------
+  // NOW move this dialog up the DOM tree also
   const initialDialogState: DialogState = {
     dialogIsOpen: false,
     cardSet: null
@@ -226,7 +226,7 @@ export function TreeView(props: TreeViewProps) {
             <Menu>
               <MenuItem
                 text="Synchronize"
-                onClick={(e) => { e.preventDefault(); synchronizeSet(cardSet.setCode); }}
+                onClick={(e) => { e.preventDefault();  props.onSynchronizeSet(cardSet.setCode); }}
               />
               <MenuItem
                 text="Properties"
@@ -251,16 +251,6 @@ export function TreeView(props: TreeViewProps) {
     result.push(node.nodeData);
     node.childNodes?.forEach((child: TreeNodeInfo<CardSetViewmodel>) => getTreeNodeItemsRecursive(child, result));
     return result;
-  }
-
-  function synchronizeSet(code: string): void {
-    const params: SyncParam<CardSyncOptions> = {
-      type: "Card",
-      options: { source: "user", setCode: code }
-    };
-    console.log("before");
-    window.ipc.sync(params);
-    console.log("after");
   }
   //#endregion
 

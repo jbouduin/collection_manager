@@ -3,6 +3,7 @@ import classNames from "classnames";
 import { clone } from "lodash";
 import * as React from "react";
 
+import { CardSyncOptions, SyncParam } from "../../../../common/ipc-params";
 import { CardSetContext, CardSymbolContext, LanguagesContext, ThemeContext } from "../context";
 import { CollectionView } from "../views/collection-view/collection-view";
 import { DatabaseView } from "../views/database-view/database-view";
@@ -27,7 +28,7 @@ export function Desktop(props: DesktopProps) {
     settingsDialogOpen: false,
     syncDialogOpen: false,
     splashScreenOpen: false
-  }
+  };
   const [desktopState, setDesktopState] = React.useState < DesktopState>(initialState);
   //#endregion
 
@@ -59,6 +60,20 @@ export function Desktop(props: DesktopProps) {
     }
     setDesktopState(newState);
   }
+
+  function synchronizeSet(code: string): void {
+    const newState = clone(desktopState);
+    newState.splashScreenOpen = true;
+    setDesktopState(newState);
+
+    const params: SyncParam<CardSyncOptions> = {
+      type: "Card",
+      options: { source: "user", setCode: code }
+    };
+    console.log("before");
+    window.ipc.sync(params);
+    console.log("after");
+  }
   //#endregion
 
   //#region Main --------------------------------------------------------------
@@ -76,7 +91,7 @@ export function Desktop(props: DesktopProps) {
               <div className="main-panel">
                 {
                   desktopState.currentView == EDesktopView.Database &&
-                  <DatabaseView {...props} />
+                  <DatabaseView onSynchronizeSet={synchronizeSet} />
                 }
                 {
                   desktopState.currentView == EDesktopView.Collection &&

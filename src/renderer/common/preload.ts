@@ -18,7 +18,7 @@ const ipc = {
   // FEATURE extended progress reporting with two progress bars
   onProgress: (callback: (status: string) => void) => ipcRenderer.on("splash", (_event, value) => callback(value)),
   onEndProgress: (callback: () => void) => ipcRenderer.once("splash-end", () => {
-    ipcRenderer.removeAllListeners("splash")
+    ipcRenderer.removeAllListeners("splash");
     callback();
   })
 };

@@ -90,6 +90,7 @@ export function CardSetsView(props: CardSetsViewProps) {
             <TreeView
               cardSets={cardSets}
               onSetsSelected={props.onSetsSelected}
+              onSynchronizeSet={props.onSynchronizeSet}
               textFilter={textFilterValue}
               cardSetGroupBy={cardSetGroupBy}
               cardSetSort={cardSetSort}

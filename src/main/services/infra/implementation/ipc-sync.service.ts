@@ -23,7 +23,7 @@ export class IpcSyncService implements IIpcSyncService {
         case "CardSet":
           await container.resolve<ICardSetSyncService>(SYNCTOKENS.CardSetSyncService)
             .sync({ source: "user", code: null }, (value: string) => this.windowService.mainWindow.webContents.send("splash", value))
-            .then(() => this.windowService.mainWindow.webContents.send("splash-close"));
+            .then(() => this.windowService.mainWindow.webContents.send("splash-end"));
           break;
         case "Card":
           await container.resolve<ICardSyncService>(SYNCTOKENS.CardSyncService)
@@ -31,7 +31,7 @@ export class IpcSyncService implements IIpcSyncService {
               (params as SyncParam<CardSyncOptions>).options,
               (value: string) => this.windowService.mainWindow.webContents.send("splash", value)
             )
-            .then(() => this.windowService.mainWindow.webContents.send("splash-close"));
+            .then(() => this.windowService.mainWindow.webContents.send("splash-end"));
           break;
         case "Catalog":
           await container.resolve<ICatalogSyncService>(SYNCTOKENS.CatalogSyncService)
@@ -39,7 +39,7 @@ export class IpcSyncService implements IIpcSyncService {
               (params as SyncParam<CatalogSyncOptions>).options,
               (value: string) => this.windowService.mainWindow.webContents.send("splash", value)
             )
-            .then(() => this.windowService.mainWindow.webContents.send("splash-close"));
+            .then(() => this.windowService.mainWindow.webContents.send("splash-end"));
           break;
         case "CardSymbol":
           await container.resolve<ICardSymbolSyncService>(SYNCTOKENS.CardSymbolSyncService)
@@ -47,11 +47,11 @@ export class IpcSyncService implements IIpcSyncService {
               { source: "user" },
               (value: string) => this.windowService.mainWindow.webContents.send("splash", value)
             )
-            .then(() => this.windowService.mainWindow.webContents.send("splash-close"));
+            .then(() => this.windowService.mainWindow.webContents.send("splash-end"));
           break;
       }
     } catch (error) {
-      () => this.windowService.mainWindow.webContents.send("splash-close");
+      () => this.windowService.mainWindow.webContents.send("splash-end");
       throw error;
     }
   }

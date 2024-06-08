@@ -225,7 +225,7 @@ export function TreeView(props: TreeViewProps) {
           content={
             <Menu>
               <MenuItem
-                text="Synchronize"
+                text="Synchronize cards"
                 onClick={(e) => { e.preventDefault();  props.onSynchronizeSet(cardSet.setCode); }}
               />
               <MenuItem

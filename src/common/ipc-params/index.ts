@@ -14,7 +14,6 @@ export * from "./sync/card-symbol-sync.options";
 export * from "./sync/card-sync.options";
 export * from "./sync/catalog-sync.options";
 export * from "./sync/ruling-sync.options";
-export * from "./sync/sync-source.enum";
 export * from "./sync/sync-type.enum";
 export * from "./sync/sync.param";
 

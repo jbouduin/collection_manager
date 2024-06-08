@@ -1,4 +1,4 @@
-import { SyncSource } from "./sync-source.enum";
+import { SyncSource } from "../../dto";
 
 export interface BaseSyncOptions {
   source: SyncSource;

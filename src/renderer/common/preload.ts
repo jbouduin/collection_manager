@@ -16,8 +16,13 @@ const ipc = {
   sync: (param: SyncParam<SyncOptions>) => ipcRenderer.invoke("sync", param),
   post: (param: PostParam<PostData>) => ipcRenderer.invoke("post", param),
   // FEATURE extended progress reporting with two progress bars
-  onProgress: (callback: (status: string) => void) => ipcRenderer.on("splash", (_event, value) => callback(value))
+  onProgress: (callback: (status: string) => void) => ipcRenderer.on("splash", (_event, value) => callback(value)),
+  onEndProgress: (callback: () => void) => ipcRenderer.once("splash-end", () => {
+    ipcRenderer.removeAllListeners("splash")
+    callback();
+  })
 };
+
 
 // expose
 contextBridge.exposeInMainWorld("versions", versions);

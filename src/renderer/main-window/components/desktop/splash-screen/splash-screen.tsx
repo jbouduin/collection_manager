@@ -7,10 +7,13 @@ import { BaseDialogProps } from "../../../../common/components/base-dialog-props
 import { ThemeContext } from "../../context";
 
 export function SplashScreen(props: BaseDialogProps) {
+  window.ipc.onEndProgress(() => {
+    props.onDialogClose();
+  });
+
   return (
     <>
       {
-
         <ThemeContext.Consumer>
           {
             (theme: string) => (
@@ -23,7 +26,7 @@ export function SplashScreen(props: BaseDialogProps) {
                 shouldReturnFocusOnClose={true}
                 onClose={props.onDialogClose}
               >
-                <SplashContent/>
+                <SplashContent />
               </Dialog>
             )
           }

@@ -21,6 +21,6 @@ export class InfraDi {
     container.register<IIpcPostService>(INFRATOKENS.IpcPostService, { useClass: IpcPostService });
     container.register<IIpcQueryService>(INFRATOKENS.IpcQueryService, { useClass: IpcQueryService });
     container.register<IIpcSyncService>(INFRATOKENS.IpcSyncService, { useClass: IpcSyncService });
-    container.register<IWindowService>(INFRATOKENS.WindowService, { useClass: WindowService });
+    container.register<IWindowService>(INFRATOKENS.WindowService, { useClass: WindowService }, { lifecycle: Lifecycle.Singleton });
   }
 }

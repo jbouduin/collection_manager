@@ -1,5 +1,6 @@
 import { Card } from "@blueprintjs/core";
 import classNames from "classnames";
+import { clone } from "lodash";
 import * as React from "react";
 
 import { CardSetContext, CardSymbolContext, LanguagesContext, ThemeContext } from "../context";
@@ -9,6 +10,10 @@ import { DeckView } from "../views/deck-view/deck-view";
 import { ButtonBar } from "./button-bar/button-bar";
 import { EDesktopView } from "./desktop-view.enum";
 import { DesktopProps } from "./desktop.props";
+import { DesktopState } from "./desktop.state";
+import { SettingsDialog } from "./settings-dialog/settings-dialog";
+import { SplashScreen } from "./splash-screen/splash-screen";
+import { SyncDialog } from "./sync-dialog/sync-dialog";
 
 // import logo from "./logo.png";
 
@@ -17,13 +22,42 @@ export function Desktop(props: DesktopProps) {
   console.log("in desktop function");
 
   //#region State -------------------------------------------------------------
-  const [currentView, setCurrentView] = React.useState(EDesktopView.Database);
+  const initialState: DesktopState = {
+    currentView: EDesktopView.Database,
+    settingsDialogOpen: false,
+    syncDialogOpen: false,
+    splashScreenOpen: false
+  }
+  const [desktopState, setDesktopState] = React.useState < DesktopState>(initialState);
   //#endregion
 
   //#region Event handling ----------------------------------------------------
-  function onButtonBarButtonClick(desktopView: EDesktopView): void {
+  function onDesktopViewSelectionClick(desktopView: EDesktopView): void {
     console.log("in desktop buttonbar button click event:", desktopView);
-    setCurrentView(desktopView);
+    const newState = clone(desktopState);
+    newState.currentView = desktopView;
+    setDesktopState(newState);
+  }
+
+  function setSettingsDialogOpen(open: boolean): void {
+    const newState = clone(desktopState);
+    newState.settingsDialogOpen = open;
+    setDesktopState(newState);
+  }
+
+  function setSyncDialogOpen(open: boolean): void {
+    const newState = clone(desktopState);
+    newState.syncDialogOpen = open;
+    setDesktopState(newState);
+  }
+
+  function setSplashScreenOpen(open: boolean): void {
+    const newState = clone(desktopState);
+    newState.splashScreenOpen = open;
+    if (open) {
+      newState.syncDialogOpen = false;
+    }
+    setDesktopState(newState);
   }
   //#endregion
 
@@ -34,22 +68,29 @@ export function Desktop(props: DesktopProps) {
         <CardSymbolContext.Provider value={props.symbolSvgs}>
           <CardSetContext.Provider value={props.cardSets}>
             <Card className={classNames(props.systemTheme, "desktop-wrapper")}>
-              <ButtonBar onSelectButton={onButtonBarButtonClick} currentView={currentView}></ButtonBar>
+              <ButtonBar
+                onDesktopViewSelectionClick={onDesktopViewSelectionClick}
+                onSettingsMenuClick={() => setSettingsDialogOpen(true)}
+                onSyncMenuClick={() => setSyncDialogOpen(true)}
+                currentView={desktopState.currentView}></ButtonBar>
               <div className="main-panel">
                 {
-                  currentView == EDesktopView.Database &&
+                  desktopState.currentView == EDesktopView.Database &&
                   <DatabaseView {...props} />
                 }
                 {
-                  currentView == EDesktopView.Collection &&
+                  desktopState.currentView == EDesktopView.Collection &&
                   <CollectionView />
                 }
                 {
-                  currentView == EDesktopView.Deck &&
+                  desktopState.currentView == EDesktopView.Deck &&
                   <DeckView />
                 }
               </div>
             </Card>
+            <SettingsDialog isOpen={desktopState.settingsDialogOpen} onDialogClose={() => setSettingsDialogOpen(false)} />
+            <SyncDialog isOpen={desktopState.syncDialogOpen} onDialogClose={() => setSyncDialogOpen(false)} onOkClick={() => { setSplashScreenOpen(true); }} />
+            <SplashScreen isOpen={desktopState.splashScreenOpen} onDialogClose={() => setSplashScreenOpen(false)} />
           </CardSetContext.Provider>
         </CardSymbolContext.Provider>
       </LanguagesContext.Provider>

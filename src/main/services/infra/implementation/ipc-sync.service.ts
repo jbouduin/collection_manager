@@ -16,42 +16,43 @@ export class IpcSyncService implements IIpcSyncService {
 
   public async handle(params: SyncParam<SyncOptions>): Promise<void> {
     console.log("start IpcSyncService.handling", params);
-    const splashWindow = this.windowService.createSplashWindow();
-    splashWindow.on("ready-to-show", async () => {
-      splashWindow.show();
-      splashWindow.webContents.send("splash", `Start sync ${params.type}`);
+
+    this.windowService.mainWindow.webContents.send("splash", `Start sync ${params.type}`);
+    try {
       switch (params.type) {
         case "CardSet":
           await container.resolve<ICardSetSyncService>(SYNCTOKENS.CardSetSyncService)
-            .sync({ source: "user", code: null }, (value: string) => splashWindow.webContents.send("splash", value))
-            .then(() => splashWindow.close());
+            .sync({ source: "user", code: null }, (value: string) => this.windowService.mainWindow.webContents.send("splash", value))
+            .then(() => this.windowService.mainWindow.webContents.send("splash-close"));
           break;
         case "Card":
           await container.resolve<ICardSyncService>(SYNCTOKENS.CardSyncService)
             .sync(
               (params as SyncParam<CardSyncOptions>).options,
-              (value: string) => splashWindow.webContents.send("splash", value)
+              (value: string) => this.windowService.mainWindow.webContents.send("splash", value)
             )
-            .then(() => splashWindow.close());
+            .then(() => this.windowService.mainWindow.webContents.send("splash-close"));
           break;
         case "Catalog":
           await container.resolve<ICatalogSyncService>(SYNCTOKENS.CatalogSyncService)
             .sync(
               (params as SyncParam<CatalogSyncOptions>).options,
-              (value: string) => splashWindow.webContents.send("splash", value)
+              (value: string) => this.windowService.mainWindow.webContents.send("splash", value)
             )
-            .then(() => splashWindow.close());
+            .then(() => this.windowService.mainWindow.webContents.send("splash-close"));
           break;
         case "CardSymbol":
           await container.resolve<ICardSymbolSyncService>(SYNCTOKENS.CardSymbolSyncService)
             .sync(
               { source: "user" },
-              (value: string) => splashWindow.webContents.send("splash", value)
+              (value: string) => this.windowService.mainWindow.webContents.send("splash", value)
             )
-            .then(() => splashWindow.close());
+            .then(() => this.windowService.mainWindow.webContents.send("splash-close"));
           break;
       }
-    });
+    } catch (error) {
+      () => this.windowService.mainWindow.webContents.send("splash-close");
+      throw error;
+    }
   }
-
 }

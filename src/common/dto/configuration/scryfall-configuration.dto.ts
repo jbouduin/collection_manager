@@ -7,6 +7,5 @@ export interface DtoScryfallConfiguration {
   readonly scryfallCatalogPaths: Record<CatalogType, string>;
   // the api requests 50-100 ms between calls, let's give it some slack
   readonly minimumRequestTimeout: number;
-  // NOW dump json files retrieved from scryfall
   dumpRetrievedData: boolean;
 }

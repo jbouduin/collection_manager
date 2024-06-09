@@ -121,8 +121,11 @@ export class ConfigurationService implements IConfigurationService {
       scryfallApiRoot: "https://api.scryfall.com",
       scryfallEndpoints: endpoints,
       scryfallCatalogPaths: catalogPaths,
+      // Scryfall api requests 50-100 ms between calls, let's give it some slack
       minimumRequestTimeout: 60,
-      dumpRetrievedData: false
+      dumpRetrievedData: false,
+      // Scryfall api allows up to 75 per collection
+      collectionChunkSize: 50
     };
     console.log(JSON.stringify(result, null,2));
     return result;

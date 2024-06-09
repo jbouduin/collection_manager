@@ -8,6 +8,7 @@ import { ScryfallCard, ScryfallCardSet, ScryfallCatalog, ScryfallRuling } from "
 import { ScryfallCardSymbol } from "../../types/card-symbol/scryfall-card-symbol";
 import { ScryfallList } from "../../types/scryfall-list";
 import { IScryfallClient, ScryfallSearchOptions } from "../interfaces";
+import { runSerial } from "../../../../../main/services/infra/util";
 
 
 @injectable()
@@ -62,12 +63,38 @@ export class ScryfallClient implements IScryfallClient {
   }
 
   public async getCardCollections(cardIds: Array<string>, progressCallback: ProgressCallback): Promise<Array<ScryfallCard>> {
-    // NOW split array
-    progressCallback(`Fetching cards 1 to ${cardIds.length} from Scryfall`);
-    return this.tryPost(
-      `${this.scryfallConfiguration.scryfallApiRoot}/${this.scryfallConfiguration.scryfallEndpoints["collection"]}`,
-      JSON.stringify({ identifiers: cardIds.map((id: string) => { return { id: id }; }) })
+    progressCallback(`Fetching ${cardIds.length} cards from Scryfall`);
+    const result = new Array<ScryfallCard>();
+    // split array
+    const chunks = cardIds.reduce(
+      (resultArray, item, index) => {
+        const chunkIndex = Math.floor(index / this.scryfallConfiguration.collectionChunkSize);
+        if (!resultArray[chunkIndex]) {
+          resultArray[chunkIndex] = []; // start a new chunk
+        }
+        resultArray[chunkIndex].push(item);
+        return resultArray;
+      },
+      []
     );
+
+    await runSerial<Array<string>>(
+      chunks,
+      (param: Array<string>) => `length of chunk: ${param.length}`,
+      async (chunk: Array<string>, index: number, _total: number) => {
+        const first = (this.scryfallConfiguration.collectionChunkSize * index) + 1;
+        const last = first + chunk.length - 1;
+        const message = `Fetching cards ${first} - ${last} of ${cardIds.length} from Scryfall`;
+        progressCallback(message);
+        console.log(message);
+        const fetched = await this.tryPost(
+          `${this.scryfallConfiguration.scryfallApiRoot}/${this.scryfallConfiguration.scryfallEndpoints["collection"]}`,
+          JSON.stringify({ identifiers: chunk.map((id: string) => { return { id: id }; }) })
+        );
+        result.push(...fetched);
+      }
+    );
+    return result;
 
 
   }
@@ -107,6 +134,7 @@ export class ScryfallClient implements IScryfallClient {
     const now = Date.now();
     const sleepTime = this.nextQuery - now;
     this.nextQuery = now + this.scryfallConfiguration.minimumRequestTimeout;
+    console.log(body);
     return await this
       .sleep(sleepTime)
       .then(() => fetch(uri, {

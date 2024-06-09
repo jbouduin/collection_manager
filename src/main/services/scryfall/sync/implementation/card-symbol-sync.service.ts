@@ -10,6 +10,7 @@ import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
 import { ScryfallCardSymbol } from "../../types/card-symbol/scryfall-card-symbol";
 import { ICardSymbolSyncService } from "../interface/card-symbol-sync.service";
 import { BaseSyncService } from "./base-sync.service";
+import { DtoSyncParam } from "../../../../../common/dto";
 
 
 @injectable()
@@ -44,6 +45,10 @@ export class CardSymbolSyncService extends BaseSyncService<CardSymbolSyncOptions
   //#endregion
 
   //#region ICardSymbolSyncService methods ------------------------------------
+  public override async newSync(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void> {
+    throw new Error("not implemented");
+  }
+
   public override async sync(options: CardSymbolSyncOptions, progressCallback: ProgressCallback): Promise<void> {
     return await this.shouldSync(options)
       .then(async (shouldSync: boolean) => {

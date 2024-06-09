@@ -69,7 +69,8 @@ export class ScryfallClient implements IScryfallClient {
     }
   }
 
-  public async getCardSets(): Promise<Array<ScryfallCardSet>> {
+  public async getCardSets(progressCallback: ProgressCallback): Promise<Array<ScryfallCardSet>> {
+    progressCallback("Fetching card set data from Scryfall");
     const uri = `${this.scryfallConfiguration.scryfallApiRoot}/${this.scryfallConfiguration.scryfallEndpoints["cardSet"]}`;
     return this.fetchList<ScryfallCardSet>(uri, new Array<ScryfallCardSet>());
   }

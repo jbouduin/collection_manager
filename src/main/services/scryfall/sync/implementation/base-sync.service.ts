@@ -7,6 +7,7 @@ import { IBaseSyncService } from "../interface/base-sync.service";
 import { ExtractTableAlias } from "kysely/dist/cjs/parser/table-parser";
 import { ITableAdapter } from "../../adapt/interface/table.adapter";
 import { GenericSyncTaskParameter } from "./generic-sync-task.parameter";
+import { DtoSyncParam } from "../../../../../common/dto";
 
 // @injectable()
 export abstract class BaseSyncService<O extends SyncOptions> implements IBaseSyncService<O> {
@@ -28,6 +29,7 @@ export abstract class BaseSyncService<O extends SyncOptions> implements IBaseSyn
 
   //#region IBaseSyncService abstract methods ---------------------------------
   public abstract sync(params: O, progressCallback: ProgressCallback): Promise<void>;
+  public abstract newSync(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void>;
   //#endregion
 
   protected logCompilable<T extends Compilable>(compilable: T): T {

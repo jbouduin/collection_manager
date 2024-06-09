@@ -66,7 +66,7 @@ export function SyncDialog(props: SyncDialogProps) {
     return (
       <>
         <Button onClick={() => props.onDialogClose()}>Cancel</Button>
-        <Button intent="primary" onClick={() => props.onOkClick()}>OK</Button>
+        <Button intent="primary" onClick={() => props.onOkClick(syncParam.dto)}>OK</Button>
       </>
     );
   }

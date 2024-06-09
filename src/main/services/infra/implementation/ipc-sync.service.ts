@@ -1,9 +1,20 @@
 import { container, inject, singleton } from "tsyringe";
 
-import { CardSyncOptions, CatalogSyncOptions, SyncOptions, SyncParam } from "../../../../common/ipc-params";
+import { DtoSyncParam } from "../../../../common/dto";
+import { CardSyncOptions, CatalogSyncOptions, ProgressCallback, SyncOptions, SyncParam } from "../../../../common/ipc-params";
 import SYNCTOKENS, { ICardSetSyncService, ICardSymbolSyncService, ICardSyncService, ICatalogSyncService } from "../../scryfall";
+import { IUntypedBaseSyncService } from "../../scryfall/sync/interface/base-sync.service";
 import INFRATOKENS, { IIpcSyncService, IWindowService } from "../interfaces";
+import { runSerial } from "../util";
+import { BrowserWindow } from "electron";
 
+
+export interface taskParam {
+  displayName: string;
+  serviceToken: string;
+  syncParam: DtoSyncParam;
+  browserWindow: BrowserWindow;
+}
 
 @singleton()
 export class IpcSyncService implements IIpcSyncService {
@@ -12,6 +23,72 @@ export class IpcSyncService implements IIpcSyncService {
 
   public constructor(@inject(INFRATOKENS.WindowService) windowService: IWindowService) {
     this.windowService = windowService;
+  }
+
+  public async newHandle(syncParam: DtoSyncParam, browserWindow: BrowserWindow): Promise<void> {
+    console.log("start new IpcSyncService.handling", syncParam);
+
+    const taskParams = new Array<taskParam>();
+    if (syncParam.cardSyncType != "none") {
+      taskParams.push({
+        displayName: "Cards",
+        serviceToken: SYNCTOKENS.CardSyncService,
+        syncParam: syncParam,
+        browserWindow: browserWindow
+      });
+    }
+    if (syncParam.rulingSyncType != "none") {
+      taskParams.push({
+        displayName: "Rulings",
+        serviceToken: SYNCTOKENS.RulingSyncService,
+        syncParam: syncParam,
+        browserWindow: browserWindow
+      });
+    }
+    if (syncParam.syncCardSymbols) {
+      taskParams.push({
+        displayName: "CardSymbol",
+        serviceToken: SYNCTOKENS.CardSymbolSyncService,
+        syncParam: syncParam,
+        browserWindow: browserWindow
+      });
+    }
+    if (syncParam.syncCardSets) {
+      taskParams.push({
+        displayName: "CardSets",
+        serviceToken: SYNCTOKENS.CardSetSyncService,
+        syncParam: syncParam,
+        browserWindow: browserWindow
+      });
+    }
+    if (syncParam.catalogTypesToSync.length > 0) {
+      taskParams.push({
+        displayName: "Catalog",
+        serviceToken: SYNCTOKENS.CatalogSyncService,
+        syncParam: syncParam,
+        browserWindow: browserWindow
+      });
+    }
+
+    browserWindow.webContents.send("splash", "Start synchronization");
+    try {
+      return await runSerial<taskParam>(
+        taskParams,
+        (taskParam: taskParam) => `Serial task: ${taskParam.displayName}`,
+        this.handleTask.bind(this));
+    } catch (error) {
+      console.log(error);
+    } finally {
+      browserWindow.webContents.send("splash-end");
+    }
+  }
+
+  private async handleTask(taskParam: taskParam, _index: number, _total: number): Promise<void> {
+    const synchronizer = container.resolve<IUntypedBaseSyncService>(taskParam.serviceToken);
+    return synchronizer.newSync(
+      taskParam.syncParam,
+      (value: string) => taskParam.browserWindow.webContents.send("splash", value)
+    );
   }
 
   public async handle(params: SyncParam<SyncOptions>): Promise<void> {

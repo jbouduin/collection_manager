@@ -10,6 +10,7 @@ import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
 import { ScryfallCardSet } from "../../types";
 import { ICardSetSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
+import { DtoSyncParam, SyncSource } from "../../../../../common/dto";
 
 @injectable()
 export class CardSetSyncService extends BaseSyncService<CardSetSyncOptions> implements ICardSetSyncService {
@@ -37,15 +38,46 @@ export class CardSetSyncService extends BaseSyncService<CardSetSyncOptions> impl
   //#endregion
 
   //#region ICardSetSyncService methods ---------------------------------------
-  public override async sync(options: CardSetSyncOptions, progressCallback: ProgressCallback): Promise<void> {
-    return await this.shouldSync(options)
+  public override async newSync(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void> {
+    return await this.shouldSync(syncParam.syncRequestSource)
       .then(async (shouldSync: boolean) => {
         if (shouldSync) {
           console.log("start CardSetSyncService.sync");
           if (progressCallback) {
             progressCallback("Synchronizing Card sets");
           }
-          return await this.scryfallclient.getCardSets()
+          return await this.scryfallclient.getCardSets(progressCallback)
+            .then(async (sets: Array<ScryfallCardSet>) => this.processSync(sets))
+            .then(async () => await this.database.selectFrom("card_set").selectAll().execute())
+            .then(async (cardSets: Array<Selectable<CardSetTable>>) => {
+              let result = Promise.resolve();
+              console.log((`retrieved ${cardSets.length} saved card sets`));
+              progressCallback(`retrieved ${cardSets.length} saved card sets`);
+              cardSets.forEach(async (cardset: Selectable<CardSetTable>) => {
+                result = result.then(async () => {
+                  progressCallback(`Caching image for '${cardset.name}'`);
+                  await this.imageCacheService.cacheCardSetSvg(cardset);
+                });
+                await result;
+              });
+              return result;
+            });
+        } else {
+          console.log("skip CardSetSyncService.sync");
+          return Promise.resolve();
+        }
+      });
+  }
+
+  public override async sync(options: CardSetSyncOptions, progressCallback: ProgressCallback): Promise<void> {
+    return await this.shouldSync(options.source)
+      .then(async (shouldSync: boolean) => {
+        if (shouldSync) {
+          console.log("start CardSetSyncService.sync");
+          if (progressCallback) {
+            progressCallback("Synchronizing Card sets");
+          }
+          return await this.scryfallclient.getCardSets(progressCallback)
             .then(async (sets: Array<ScryfallCardSet>) => this.processSync(sets))
             .then(async () => await this.database.selectFrom("card_set").selectAll().execute())
             .then(async (cardSets: Array<Selectable<CardSetTable>>) => {
@@ -83,8 +115,8 @@ export class CardSetSyncService extends BaseSyncService<CardSetSyncOptions> impl
     });
   }
 
-  private async shouldSync(options: CardSetSyncOptions): Promise<boolean> {
-    if (options.source == "user" || this.configurationService.syncAtStartup.indexOf("CardSet") >= 0) {
+  private async shouldSync(source: SyncSource): Promise<boolean> {
+    if (source == "user" || this.configurationService.syncAtStartup.indexOf("CardSet") >= 0) {
       return await Promise.resolve(true);
     } else {
       return await this.database

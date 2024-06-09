@@ -27,6 +27,7 @@ import { ScryfallCard, ScryfallCardface, ScryfallImageUris, ScryfallLegalities }
 import { ICardSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
 import { GenericSyncTaskParameter } from "./generic-sync-task.parameter";
+import { DtoSyncParam } from "../../../../../common/dto";
 
 @injectable()
 export class CardSyncService extends BaseSyncService<CardSyncOptions> implements ICardSyncService {
@@ -78,6 +79,10 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
   //#endregion
 
   //#region ICardSyncService methods ------------------------------------------
+  public override async newSync(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void> {
+    throw new Error("not implemented");
+  }
+
   public override async sync(options: CardSyncOptions, progressCallback: ProgressCallback): Promise<void> {
     console.log("start CardSyncService.sync");
     if (progressCallback) {

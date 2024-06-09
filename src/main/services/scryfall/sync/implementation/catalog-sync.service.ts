@@ -11,6 +11,7 @@ import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
 import { ScryfallCatalog } from "../../types";
 import { ICatalogSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
+import { DtoSyncParam } from "../../../../../common/dto";
 
 type SyncSingleCatalogParameter = {
   catalogType: CatalogType,
@@ -38,6 +39,10 @@ export class CatalogSyncService extends BaseSyncService<CatalogSyncOptions> impl
   //#endregion
 
   //#region ICatalogSyncService methods ---------------------------------------
+  public override async newSync(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void> {
+    throw new Error("not implemented");
+  }
+
   public override async sync(options: CatalogSyncOptions, progressCallback: ProgressCallback): Promise<void> {
     return await this.shouldSync(options)
       .then(async (shouldSync: boolean) => {

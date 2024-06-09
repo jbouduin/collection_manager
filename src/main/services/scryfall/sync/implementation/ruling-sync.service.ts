@@ -9,7 +9,7 @@ import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
 import { ScryfallRuling } from "../../types";
 import { IRulingSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
-
+import { DtoSyncParam } from "../../../../../common/dto";
 
 @injectable()
 export class RulingSyncService extends BaseSyncService<RulingSyncOptions> implements IRulingSyncService {
@@ -30,6 +30,10 @@ export class RulingSyncService extends BaseSyncService<RulingSyncOptions> implem
     this.scryfallclient = scryfallclient;
     this.rulingLineAdapter = rulingLineAdapter;
     this.rulingAdapter = rulingAdapter;
+  }
+
+  public override async newSync(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void> {
+    throw new Error("Not implemented");
   }
 
   public override async sync(options: RulingSyncOptions, progressCallback: ProgressCallback): Promise<void> {

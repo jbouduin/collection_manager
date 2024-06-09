@@ -15,6 +15,7 @@ import { DesktopState } from "./desktop.state";
 import { SettingsDialog } from "./settings-dialog/settings-dialog";
 import { SplashScreen } from "./splash-screen/splash-screen";
 import { SyncDialog } from "./sync-dialog/sync-dialog";
+import { DtoSyncParam } from "../../../../common/dto";
 
 // import logo from "./logo.png";
 
@@ -74,6 +75,11 @@ export function Desktop(props: DesktopProps) {
     window.ipc.sync(params);
     console.log("after");
   }
+
+  function startSync(syncParam: DtoSyncParam): void {
+    setSplashScreenOpen(true);
+    window.ipc.newSync(syncParam);
+  }
   //#endregion
 
   //#region Main --------------------------------------------------------------
@@ -104,7 +110,7 @@ export function Desktop(props: DesktopProps) {
               </div>
             </Card>
             <SettingsDialog isOpen={desktopState.settingsDialogOpen} onDialogClose={() => setSettingsDialogOpen(false)} />
-            <SyncDialog isOpen={desktopState.syncDialogOpen} onDialogClose={() => setSyncDialogOpen(false)} onOkClick={() => { setSplashScreenOpen(true); }} />
+            <SyncDialog isOpen={desktopState.syncDialogOpen} onDialogClose={() => setSyncDialogOpen(false)} onOkClick={startSync} />
             <SplashScreen isOpen={desktopState.splashScreenOpen} onDialogClose={() => setSplashScreenOpen(false)} />
           </CardSetContext.Provider>
         </CardSymbolContext.Provider>

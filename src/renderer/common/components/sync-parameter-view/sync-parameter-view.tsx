@@ -87,7 +87,7 @@ export function SyncParameterView(props: SyncParameterViewProps) {
         />
       </FormGroup>
 
-      <Divider className="ruling-divider" />
+      <Divider className="ruling-divider" key="divider" />
 
       <H4>Master data</H4>
       {/* <FormGroup label="Master data" key="master-data"> */}
@@ -116,7 +116,7 @@ export function SyncParameterView(props: SyncParameterViewProps) {
       />
 
 
-      <HTMLTable compact={true} bordered={false} width="100%">
+      <HTMLTable compact={true} bordered={false} width="100%" key="catalogs">
         <thead>
           <tr><td colSpan={3} style={{ paddingLeft: "0px" }}>Catalogs</td></tr>
         </thead>
@@ -126,17 +126,6 @@ export function SyncParameterView(props: SyncParameterViewProps) {
           }
         </tbody>
       </HTMLTable >
-      {/* <FormGroup label="Catalogs" key="catalogs">
-        <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
-          {
-            renderCatalogs()
-          }
-      </div>
-      </FormGroup> */}
-
-
-
-
     </SectionCard>
   );
   //#endregion
@@ -152,7 +141,7 @@ export function SyncParameterView(props: SyncParameterViewProps) {
       }
       currentRow.push(
         (
-          <td style={{paddingLeft: "0px"}}>
+          <td style={{paddingLeft: "0px"}} key={`cell-${key}`}>
 
             <Checkbox
               key={key}
@@ -171,7 +160,7 @@ export function SyncParameterView(props: SyncParameterViewProps) {
       if (idx % 3 == 1) {
         table.push(
           (
-            <tr>
+            <tr key={`row-${idx}`}>
               {currentRow}
             </tr>
           )
@@ -179,7 +168,6 @@ export function SyncParameterView(props: SyncParameterViewProps) {
       }
       idx = idx + 1;
     });
-    console.log(table);
     return table;
   }
 

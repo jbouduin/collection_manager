@@ -1,6 +1,7 @@
 import { KyselyPlugin, PluginTransformQueryArgs, PluginTransformResultArgs, QueryResult, RootOperationNode, UnknownRow } from "kysely";
 import { ProgressCallback } from "../../../common/ipc-params";
 
+// NOW check solution proposed by kysely team
 export class MigrationKyselyPlugin implements KyselyPlugin {
 
   //#region private fields ----------------------------------------------------
@@ -23,7 +24,7 @@ export class MigrationKyselyPlugin implements KyselyPlugin {
         this.progressCallback(`drop table ${args.node.table.table.identifier.name}`);
         break;
     }
-    // LATER ider kinds
+    // LATER otherer kinds
     return args.node;
   }
 
@@ -31,6 +32,4 @@ export class MigrationKyselyPlugin implements KyselyPlugin {
     return args.result;
   }
   //#endregion
-
-
 }

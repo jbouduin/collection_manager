@@ -34,7 +34,10 @@ export function DatabaseView(props: DatabaseViewProps) {
     <>
       <PanelGroup direction="horizontal">
         <Panel defaultSize={20}>
-          <CardSetsView onSetsSelected={onCardSetsSelected} onSynchronizeSet={props.onSynchronizeSet} />
+          <CardSetsView
+            onSetsSelected={onCardSetsSelected}
+            onSynchronizeSet={props.onSynchronizeSet}
+            onCardSetDialog={props.onCardSetDialog}/>
         </Panel>
         <PanelResizeHandle />
         <Panel>

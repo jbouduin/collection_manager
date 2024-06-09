@@ -5,8 +5,6 @@ import * as React from "react";
 
 import { CardSetViewmodel } from "../../../../viewmodels";
 import { SvgProvider } from "../../svg-provider/svg-provider";
-import { CardSetDialog } from "../card-set-dialog/card-set-dialog";
-import { DialogState } from "./dialog.state";
 import { TreeViewProps } from "./tree-view.props";
 
 type NodePath = Array<number>;
@@ -54,13 +52,8 @@ export function TreeView(props: TreeViewProps) {
   console.log("in treeview function", props.textFilter);
 
   //#region State -------------------------------------------------------------
-  // NOW move this dialog up the DOM tree also
-  const initialDialogState: DialogState = {
-    dialogIsOpen: false,
-    cardSet: null
-  };
   const [nodes, dispatch] = React.useReducer(treeExampleReducer, undefined);
-  const [dialogState, setDialogState] = React.useState<DialogState>(initialDialogState);
+
   //#endregion
 
   //#region event handlers ----------------------------------------------------
@@ -99,8 +92,6 @@ export function TreeView(props: TreeViewProps) {
     },
     []
   );
-
-  const handlePropertyDialogClose = React.useCallback(() => setDialogState(initialDialogState), []);
   //#endregion
 
   //#region Effect ------------------------------------------------------------
@@ -230,7 +221,7 @@ export function TreeView(props: TreeViewProps) {
               />
               <MenuItem
                 text="Properties"
-                onClick={(e) => { e.preventDefault(); setDialogState({dialogIsOpen: true, cardSet: cardSet}); }}
+                onClick={(e) => { e.preventDefault(); props.onCardSetDialog(cardSet); }}
               />
             </Menu>}>
           <SvgProvider key={cardSet.setCode} className="tree-view-image" width={26} svg={cardSet.cardSetSvg} />
@@ -264,12 +255,6 @@ export function TreeView(props: TreeViewProps) {
         onNodeCollapse={handleNodeCollapse}
         onNodeExpand={handleNodeExpand}
         className={classNames(Classes.ELEVATION_0, "card-set-tree")}
-      />
-      <CardSetDialog
-        isOpen={dialogState.dialogIsOpen}
-        onDialogClose={handlePropertyDialogClose}
-        cardSetId={dialogState.cardSet?.id}
-        cardSetSvg={dialogState.cardSet?.cardSetSvg}
       />
     </>
   );

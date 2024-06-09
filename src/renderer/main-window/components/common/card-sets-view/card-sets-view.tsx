@@ -91,6 +91,7 @@ export function CardSetsView(props: CardSetsViewProps) {
               cardSets={cardSets}
               onSetsSelected={props.onSetsSelected}
               onSynchronizeSet={props.onSynchronizeSet}
+              onCardSetDialog={props.onCardSetDialog}
               textFilter={textFilterValue}
               cardSetGroupBy={cardSetGroupBy}
               cardSetSort={cardSetSort}

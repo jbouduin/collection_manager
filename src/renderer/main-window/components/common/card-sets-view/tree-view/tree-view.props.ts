@@ -12,4 +12,5 @@ export interface TreeViewProps extends Props {
 
   onSynchronizeSet: (setCode: string) => void;
   onSetsSelected: (sets: Array<CardSetViewmodel>) => void;
+  onCardSetDialog: (cardSet: CardSetViewmodel) => void;
 }

@@ -15,6 +15,8 @@ import { DesktopState } from "./desktop.state";
 import { SettingsDialog } from "./settings-dialog/settings-dialog";
 import { SplashScreen } from "./splash-screen/splash-screen";
 import { SyncDialog } from "./sync-dialog/sync-dialog";
+import { CardSetDialog } from "./card-set-dialog/card-set-dialog";
+import { CardSetViewmodel } from "../../viewmodels";
 
 // import logo from "./logo.png";
 
@@ -27,9 +29,11 @@ export function Desktop(props: DesktopProps) {
     currentView: EDesktopView.Database,
     settingsDialogOpen: false,
     syncDialogOpen: false,
-    splashScreenOpen: false
+    splashScreenOpen: false,
+    cardSetDialogOpen: false,
+    cardSet: null
   };
-  const [desktopState, setDesktopState] = React.useState < DesktopState>(initialState);
+  const [desktopState, setDesktopState] = React.useState<DesktopState>(initialState);
   //#endregion
 
   //#region Event handling ----------------------------------------------------
@@ -58,6 +62,13 @@ export function Desktop(props: DesktopProps) {
     if (open) {
       newState.syncDialogOpen = false;
     }
+    setDesktopState(newState);
+  }
+
+  function setCardSetDialogOpen(open: boolean, cardSet?: CardSetViewmodel): void {
+    const newState = clone(desktopState);
+    newState.cardSetDialogOpen = open;
+    newState.cardSet = cardSet;
     setDesktopState(newState);
   }
 
@@ -124,7 +135,7 @@ export function Desktop(props: DesktopProps) {
               <div className="main-panel">
                 {
                   desktopState.currentView == EDesktopView.Database &&
-                  <DatabaseView onSynchronizeSet={synchronizeSet} />
+                  <DatabaseView onSynchronizeSet={synchronizeSet} onCardSetDialog={(cardSet: CardSetViewmodel) => setCardSetDialogOpen(true, cardSet)}/>
                 }
                 {
                   desktopState.currentView == EDesktopView.Collection &&
@@ -139,6 +150,7 @@ export function Desktop(props: DesktopProps) {
             <SettingsDialog isOpen={desktopState.settingsDialogOpen} onDialogClose={() => setSettingsDialogOpen(false)} />
             <SyncDialog isOpen={desktopState.syncDialogOpen} onDialogClose={() => setSyncDialogOpen(false)} onOkClick={startSync} />
             <SplashScreen isOpen={desktopState.splashScreenOpen} onDialogClose={() => setSplashScreenOpen(false)} />
+            <CardSetDialog isOpen={desktopState.cardSetDialogOpen} onDialogClose={() => setCardSetDialogOpen(false)} cardSetId={desktopState.cardSet?.id} cardSetSvg={desktopState.cardSet?.cardSetSvg} />
           </CardSetContext.Provider>
         </CardSymbolContext.Provider>
       </LanguagesContext.Provider>

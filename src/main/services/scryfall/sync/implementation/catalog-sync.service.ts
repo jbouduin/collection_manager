@@ -11,7 +11,7 @@ import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
 import { ScryfallCatalog } from "../../types";
 import { ICatalogSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
-import { DtoSyncParam } from "../../../../../common/dto";
+import { DtoSyncParam, SyncSource } from "../../../../../common/dto";
 
 type SyncSingleCatalogParameter = {
   catalogType: CatalogType,
@@ -40,11 +40,23 @@ export class CatalogSyncService extends BaseSyncService<CatalogSyncOptions> impl
 
   //#region ICatalogSyncService methods ---------------------------------------
   public override async newSync(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void> {
-    throw new Error("not implemented");
+    return await this.shouldSync(syncParam.syncRequestSource)
+      .then(async (shouldSync: boolean) => {
+        if (shouldSync) {
+          console.log("Start CatalogSyncService.sync");
+          const serialExecutionArray = syncParam.catalogTypesToSync.map<SyncSingleCatalogParameter>((catalog: CatalogType) => { return { catalogType: catalog, progressCallback: progressCallback }; });
+          await runSerial<SyncSingleCatalogParameter>(
+            serialExecutionArray,
+            (param: SyncSingleCatalogParameter) => `Processing catalog '${param.catalogType}'`,
+            this.syncSingleCatalog.bind(this));
+        } else {
+          console.log("Skip CatalogSyncService.sync");
+        }
+      });
   }
 
   public override async sync(options: CatalogSyncOptions, progressCallback: ProgressCallback): Promise<void> {
-    return await this.shouldSync(options)
+    return await this.shouldSync(options.source)
       .then(async (shouldSync: boolean) => {
         if (shouldSync) {
           console.log("Start CatalogSyncService.sync");
@@ -69,55 +81,55 @@ export class CatalogSyncService extends BaseSyncService<CatalogSyncOptions> impl
     let catalog: Promise<ScryfallCatalog>;
     switch (parameter.catalogType) {
       case "AbilityWords":
-        catalog = this.scryfallclient.getCatalog("AbilityWords");
+        catalog = this.scryfallclient.getCatalog("AbilityWords", parameter.progressCallback);
         break;
       case "ArtifactTypes":
-        catalog = this.scryfallclient.getCatalog("ArtifactTypes");
+        catalog = this.scryfallclient.getCatalog("ArtifactTypes", parameter.progressCallback);
         break;
       case "ArtistNames":
-        catalog = this.scryfallclient.getCatalog("ArtistNames");
+        catalog = this.scryfallclient.getCatalog("ArtistNames", parameter.progressCallback);
         break;
       case "CardNames":
-        catalog = this.scryfallclient.getCatalog("CardNames");
+        catalog = this.scryfallclient.getCatalog("CardNames", parameter.progressCallback);
         break;
       case "CreatureTypes":
-        catalog = this.scryfallclient.getCatalog("CreatureTypes");
+        catalog = this.scryfallclient.getCatalog("CreatureTypes", parameter.progressCallback);
         break;
       case "EnchantmentTypes":
-        catalog = this.scryfallclient.getCatalog("EnchantmentTypes");
+        catalog = this.scryfallclient.getCatalog("EnchantmentTypes", parameter.progressCallback);
         break;
       case "KeywordAbilities":
-        catalog = this.scryfallclient.getCatalog("KeywordAbilities");
+        catalog = this.scryfallclient.getCatalog("KeywordAbilities", parameter.progressCallback);
         break;
       case "KeywordActions":
-        catalog = this.scryfallclient.getCatalog("KeywordActions");
+        catalog = this.scryfallclient.getCatalog("KeywordActions", parameter.progressCallback);
         break;
       case "LandTypes":
-        catalog = this.scryfallclient.getCatalog("LandTypes");
+        catalog = this.scryfallclient.getCatalog("LandTypes", parameter.progressCallback);
         break;
       case "Loyalties":
-        catalog = this.scryfallclient.getCatalog("Loyalties");
+        catalog = this.scryfallclient.getCatalog("Loyalties", parameter.progressCallback);
         break;
       case "PlaneswalkerTypes":
-        catalog = this.scryfallclient.getCatalog("PlaneswalkerTypes");
+        catalog = this.scryfallclient.getCatalog("PlaneswalkerTypes", parameter.progressCallback);
         break;
       case "Powers":
-        catalog = this.scryfallclient.getCatalog("Powers");
+        catalog = this.scryfallclient.getCatalog("Powers", parameter.progressCallback);
         break;
       case "SpellTypes":
-        catalog = this.scryfallclient.getCatalog("SpellTypes");
+        catalog = this.scryfallclient.getCatalog("SpellTypes", parameter.progressCallback);
         break;
       case "Supertypes":
-        catalog = this.scryfallclient.getCatalog("Supertypes");
+        catalog = this.scryfallclient.getCatalog("Supertypes", parameter.progressCallback);
         break;
       case "Toughnesses":
-        catalog = this.scryfallclient.getCatalog("Toughnesses");
+        catalog = this.scryfallclient.getCatalog("Toughnesses", parameter.progressCallback);
         break;
       case "Watermarks":
-        catalog = this.scryfallclient.getCatalog("Watermarks");
+        catalog = this.scryfallclient.getCatalog("Watermarks", parameter.progressCallback);
         break;
       case "WordBank":
-        catalog = this.scryfallclient.getCatalog("WordBank");
+        catalog = this.scryfallclient.getCatalog("WordBank", parameter.progressCallback);
         break;
     }
     return catalog.then((fetched: ScryfallCatalog) => this.processSync(parameter, fetched));
@@ -126,7 +138,7 @@ export class CatalogSyncService extends BaseSyncService<CatalogSyncOptions> impl
   private async processSync(parameter: SyncSingleCatalogParameter, catalog: ScryfallCatalog): Promise<void> {
     console.log(`Retrieved ${catalog.total_values} items for catalog '${parameter.catalogType}'`);
     if (parameter.progressCallback) {
-      parameter.progressCallback(`Retrieved ${catalog.total_values} items for catalog '${parameter.catalogType}'`);
+      parameter.progressCallback(`Saving ${catalog.total_values} items for catalog '${parameter.catalogType}'`);
     }
     return await this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
       await trx.deleteFrom("catalog_item").where("catalog_item.catalog_name", "=", parameter.catalogType).execute();
@@ -136,8 +148,8 @@ export class CatalogSyncService extends BaseSyncService<CatalogSyncOptions> impl
     });
   }
 
-  private async shouldSync(options: CatalogSyncOptions): Promise<boolean> {
-    if (options.source == "user") {
+  private async shouldSync(source: SyncSource): Promise<boolean> {
+    if (source == "user") {
       return Promise.resolve(true);
     } else {
       return await this.database

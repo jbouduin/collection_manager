@@ -10,6 +10,6 @@ export interface IScryfallClient {
   getCards(options: CardSyncOptions): Promise<Array<ScryfallCard>>
   getCardSets(progressCallback: ProgressCallback): Promise<Array<ScryfallCardSet>>;
   getCardSymbols(progressCallback: ProgressCallback): Promise<Array<ScryfallCardSymbol>>;
-  getCatalog(type: CatalogType): Promise<ScryfallCatalog>;
+  getCatalog(type: CatalogType, progressCallback: ProgressCallback): Promise<ScryfallCatalog>;
   getRulings(cardId: string): Promise<Array<ScryfallRuling>>;
 }

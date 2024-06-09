@@ -40,7 +40,8 @@ export class ScryfallClient implements IScryfallClient {
       .then((response: Response) => response.body);
   }
 
-  public async getCatalog(type: CatalogType): Promise<ScryfallCatalog> {
+  public async getCatalog(type: CatalogType, progressCallback?: ProgressCallback): Promise<ScryfallCatalog> {
+    progressCallback(`Fetching catalog '${type}' from Scryfall`);
     const uri = `${this.scryfallConfiguration.scryfallApiRoot}/${this.scryfallConfiguration.scryfallEndpoints["catalog"]}/${this.scryfallConfiguration.scryfallCatalogPaths[type]}`;
     return this
       .tryFetch(uri)

@@ -3,7 +3,7 @@ import { inject, injectable } from "tsyringe";
 
 import { ProgressCallback, RulingSyncOptions } from "../../../../../common/ipc-params";
 import { CardTable, DatabaseSchema } from "../../../../database/schema";
-import INFRATOKENS, { IDatabaseService } from "../../../infra/interfaces";
+import INFRATOKENS, { IConfigurationService, IDatabaseService } from "../../../infra/interfaces";
 import ADAPTTOKENS, { IOracleRulingAdapter, IOracleRulingLineAdapter } from "../../adapt/interface";
 import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
 import { ScryfallRuling } from "../../types";
@@ -16,7 +16,6 @@ import { runSerial } from "../../../../../main/services/infra/util";
 export class RulingSyncService extends BaseSyncService<RulingSyncOptions> implements IRulingSyncService {
 
   //#region private readonly fields -------------------------------------------
-  private readonly scryfallclient: IScryfallClient;
   private readonly rulingLineAdapter: IOracleRulingLineAdapter;
   private readonly rulingAdapter: IOracleRulingAdapter;
   //#endregion
@@ -24,11 +23,11 @@ export class RulingSyncService extends BaseSyncService<RulingSyncOptions> implem
   //#region Constructor & C° --------------------------------------------------
   public constructor(
     @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
+    @inject(INFRATOKENS.ConfigurationService) configurationService: IConfigurationService,
     @inject(CLIENTTOKENS.ScryfallClient) scryfallclient: IScryfallClient,
     @inject(ADAPTTOKENS.OracleRulingLineAdapter) rulingLineAdapter: IOracleRulingLineAdapter,
     @inject(ADAPTTOKENS.OracleRulingAdapter) rulingAdapter: IOracleRulingAdapter) {
-    super(databaseService);
-    this.scryfallclient = scryfallclient;
+    super(databaseService, configurationService, scryfallclient);
     this.rulingLineAdapter = rulingLineAdapter;
     this.rulingAdapter = rulingAdapter;
   }
@@ -51,7 +50,10 @@ export class RulingSyncService extends BaseSyncService<RulingSyncOptions> implem
       async (card: Selectable<CardTable>, index: number, total: number) => {
         progressCallback(`Processing ruling for oracle id ${card.oracle_id} (${index}/${total})`);
         return this.scryfallclient.getRulings(card.id)
-          .then((scryFall: Array<ScryfallRuling>) => this.processSync(card.id, scryFall));
+          .then((scryFall: Array<ScryfallRuling>) => {
+            this.dumpScryFallData(`ruling-${card.oracle_id}.json`, scryFall);
+            this.processSync(card.id, scryFall);
+          });
       }
     );
   }

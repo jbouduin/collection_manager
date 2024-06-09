@@ -1,12 +1,10 @@
-import * as fs from "fs";
-import * as path from "path";
-
 import { DeleteResult, InsertResult, Transaction, UpdateResult, sql } from "kysely";
 import { inject, injectable } from "tsyringe";
 
+import { DtoSyncParam, IdSelectResult } from "../../../../../common/dto";
 import { GameFormat, MTGColor, MTGColorType } from "../../../../../common/enums";
 import { CardSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
-import { formatTimeStampedFileName, isSingleCardFaceLayout } from "../../../../../common/util";
+import { isSingleCardFaceLayout } from "../../../../../common/util";
 import { DatabaseSchema } from "../../../../../main/database/schema";
 import INFRATOKENS, { IConfigurationService, IDatabaseService } from "../../../../../main/services/infra/interfaces";
 import { runSerial } from "../../../../../main/services/infra/util";
@@ -29,14 +27,11 @@ import { ScryfallCard, ScryfallCardface, ScryfallImageUris, ScryfallLegalities }
 import { ICardSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
 import { GenericSyncTaskParameter } from "./generic-sync-task.parameter";
-import { DtoSyncParam, IdSelectResult } from "../../../../../common/dto";
 
 @injectable()
 export class CardSyncService extends BaseSyncService<CardSyncOptions> implements ICardSyncService {
 
   //#region Private readonly fields -------------------------------------------
-  private readonly configurationService: IConfigurationService;
-  private readonly scryfallclient: IScryfallClient;
   private readonly cardAdapter: ICardAdapter;
   private readonly cardColorMapAdapter: ICardColorMapAdapter;
   private readonly cardCardMapAdapter: ICardCardMapAdapter;
@@ -66,9 +61,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
     @inject(ADAPTTOKENS.OracleAdapter) oracleAdapter: IOracleAdapter,
     @inject(ADAPTTOKENS.OracleKeywordAdapter) oracleKeywordAdapter: IOracleKeywordAdapter,
     @inject(ADAPTTOKENS.OracleLegalityAdapter) oracleLegalityAdapter: IOracleLegalityAdapter) {
-    super(databaseService);
-    this.configurationService = configurationService;
-    this.scryfallclient = scryfallclient;
+    super(databaseService, configurationService, scryfallclient);
     this.cardAdapter = cardAdapter;
     this.cardColorMapAdapter = cardColorMapAdapter;
     this.cardCardMapAdapter = cardCardMapAdapter;
@@ -111,25 +104,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
         break;
     }
     return cards.then((cardArray: Array<ScryfallCard>) => {
-      if (this.configurationService.configuration.scryfallConfiguration.dumpRetrievedData) {
-        const targetDir = path.join(this.configurationService.cacheDirectory, "json");
-        if (!fs.existsSync(targetDir)) {
-          fs.mkdirSync(targetDir, { recursive: true });
-        }
-        const targetPath = path.join(targetDir, formatTimeStampedFileName("cards.json"));
-        fs.writeFileSync(
-          targetPath,
-          JSON.stringify(
-            {
-              selection: syncParam,
-              cards: cardArray
-            },
-            null,
-            2
-          )
-        );
-      }
-      console.log("Found %d cards", cardArray.length);
+      this.dumpScryFallData("cards.json", cardArray);
       return this.processSync(cardArray, progressCallback);
     }).then(() => {
       if (syncParam.cardSyncType == "byCardSet") {
@@ -142,26 +117,9 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
     });
   }
 
-  public override async sync(options: CardSyncOptions, progressCallback: ProgressCallback): Promise<void> {
-    console.log("start CardSyncService.sync");
-    if (progressCallback) {
-      progressCallback("Sync cards");
-    }
-    // TODO check if all required master data is available
-    const cards = this.scryfallclient.getCardsForCardSet(options.setCode, progressCallback);
-    return cards.then((cardArray: Array<ScryfallCard>) => {
-      fs.writeFileSync("c:/data/new-assistant/json/cards_" + options.setCode + ".json", JSON.stringify(cardArray, null, 2));
-      console.log("Found %d cards", cardArray.length);
-      return this.processSync(cardArray, progressCallback);
-    }).then(() => {
-      if (options.setCode) {
-        this.database
-          .updateTable("card_set")
-          .set({ last_full_synchronization_at: sql`CURRENT_TIMESTAMP` })
-          .where("card_set.code", "=", options.setCode)
-          .executeTakeFirst();
-      }
-    });
+  public override async sync(_options: CardSyncOptions, _progressCallback: ProgressCallback): Promise<void> {
+    throw new Error("not implemented");
+
   }
   //#endregion
 

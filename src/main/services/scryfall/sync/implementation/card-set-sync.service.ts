@@ -16,8 +16,6 @@ import { DtoSyncParam, SyncSource } from "../../../../../common/dto";
 export class CardSetSyncService extends BaseSyncService<CardSetSyncOptions> implements ICardSetSyncService {
 
   //#region private readonly fields -------------------------------------------
-  private readonly scryfallclient: IScryfallClient;
-  private readonly configurationService: IConfigurationService;
   private readonly cardSetAdapter: ICardSetAdapter;
   private readonly imageCacheService: IImageCacheService;
   //#endregion
@@ -25,13 +23,11 @@ export class CardSetSyncService extends BaseSyncService<CardSetSyncOptions> impl
   //#region Constructor -------------------------------------------------------
   public constructor(
     @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
-    @inject(CLIENTTOKENS.ScryfallClient) scryfallclient: IScryfallClient,
     @inject(INFRATOKENS.ConfigurationService) configurationService: IConfigurationService,
+    @inject(CLIENTTOKENS.ScryfallClient) scryfallclient: IScryfallClient,
     @inject(ADAPTTOKENS.CardSetAdapter) cardSetAdapter: ICardSetAdapter,
     @inject(INFRATOKENS.ImageCacheService) imageCacheService: IImageCacheService) {
-    super(databaseService);
-    this.scryfallclient = scryfallclient;
-    this.configurationService = configurationService;
+    super(databaseService, configurationService, scryfallclient);
     this.cardSetAdapter = cardSetAdapter;
     this.imageCacheService = imageCacheService;
   }
@@ -47,7 +43,10 @@ export class CardSetSyncService extends BaseSyncService<CardSetSyncOptions> impl
             progressCallback("Synchronizing Card sets");
           }
           return await this.scryfallclient.getCardSets(progressCallback)
-            .then(async (sets: Array<ScryfallCardSet>) => this.processSync(sets))
+            .then(async (sets: Array<ScryfallCardSet>) => {
+              this.dumpScryFallData("card-sets.json", sets);
+              this.processSync(sets);
+            })
             .then(async () => await this.database.selectFrom("card_set").selectAll().execute())
             .then(async (cardSets: Array<Selectable<CardSetTable>>) => {
               let result = Promise.resolve();

@@ -1,18 +1,27 @@
 import { Compilable, ExpressionOrFactory, InsertResult, Kysely, SqlBool, Transaction, UpdateResult } from "kysely";
-// import { injectable } from "tsyringe";
+import * as path from "path";
+import * as fs from "fs";
+
 import { ProgressCallback, SyncOptions } from "../../../../../common/ipc-params";
 import { DatabaseSchema } from "../../../../database/schema";
-import { IDatabaseService } from "../../../infra/interfaces";
+import { IConfigurationService, IDatabaseService } from "../../../infra/interfaces";
 import { IBaseSyncService } from "../interface/base-sync.service";
 import { ExtractTableAlias } from "kysely/dist/cjs/parser/table-parser";
 import { ITableAdapter } from "../../adapt/interface/table.adapter";
 import { GenericSyncTaskParameter } from "./generic-sync-task.parameter";
 import { DtoSyncParam } from "../../../../../common/dto";
+import { IScryfallClient } from "../../client/interfaces";
+import { formatTimeStampedFileName } from "../../../../../common/util";
 
 // @injectable()
 export abstract class BaseSyncService<O extends SyncOptions> implements IBaseSyncService<O> {
   //#region private readonly fields -------------------------------------------
   private readonly databaseService: IDatabaseService;
+  //#endregion
+
+  //#region protected readonly fields -----------------------------------------
+  protected readonly configurationService: IConfigurationService;
+  protected readonly scryfallclient: IScryfallClient;
   //#endregion
 
   //#region protected properties ----------------------------------------------
@@ -22,8 +31,13 @@ export abstract class BaseSyncService<O extends SyncOptions> implements IBaseSyn
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
-  public constructor(databaseService: IDatabaseService) {
+  public constructor(
+    databaseService: IDatabaseService,
+    configurationService: IConfigurationService,
+    scryfallclient: IScryfallClient) {
     this.databaseService = databaseService;
+    this.configurationService = configurationService;
+    this.scryfallclient = scryfallclient;
   }
   //#endregion
 
@@ -35,6 +49,17 @@ export abstract class BaseSyncService<O extends SyncOptions> implements IBaseSyn
   protected logCompilable<T extends Compilable>(compilable: T): T {
     console.log(compilable.compile());
     return compilable;
+  }
+
+  protected dumpScryFallData(unstampedFileName: string, data: unknown) {
+    if (this.configurationService.configuration.scryfallConfiguration.dumpRetrievedData) {
+      const targetDir = path.join(this.configurationService.cacheDirectory, "json");
+      if (!fs.existsSync(targetDir)) {
+        fs.mkdirSync(targetDir, { recursive: true });
+      }
+      const targetPath = path.join(targetDir, formatTimeStampedFileName(unstampedFileName));
+      fs.writeFileSync(targetPath, JSON.stringify(data, null, 2));
+    }
   }
 
   protected async genericSingleSync<TB extends keyof DatabaseSchema, S>(

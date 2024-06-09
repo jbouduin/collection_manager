@@ -4,7 +4,7 @@ import { inject, injectable } from "tsyringe";
 import { CatalogType } from "../../../../../common/enums";
 import { CatalogSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
 import { CatalogItemTable, DatabaseSchema } from "../../../../../main/database/schema";
-import INFRATOKENS, { IDatabaseService } from "../../../../../main/services/infra/interfaces";
+import INFRATOKENS, { IConfigurationService, IDatabaseService } from "../../../../../main/services/infra/interfaces";
 import { runSerial } from "../../../../../main/services/infra/util";
 import ADAPTTOKENS, { ICatalogAdapter } from "../../adapt/interface";
 import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
@@ -22,18 +22,16 @@ type SyncSingleCatalogParameter = {
 export class CatalogSyncService extends BaseSyncService<CatalogSyncOptions> implements ICatalogSyncService {
 
   //#region private readonly fields -------------------------------------------
-  private readonly scryfallclient: IScryfallClient;
   private readonly catalogAdapter: ICatalogAdapter;
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
   public constructor(
     @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
+    @inject(INFRATOKENS.ConfigurationService) configurationService: IConfigurationService,
     @inject(CLIENTTOKENS.ScryfallClient) scryfallclient: IScryfallClient,
     @inject(ADAPTTOKENS.CatalogAdapter) catalogAdapter: ICatalogAdapter) {
-    super(databaseService);
-    this.scryfallclient = scryfallclient;
-
+    super(databaseService, configurationService, scryfallclient);
     this.catalogAdapter = catalogAdapter;
   }
   //#endregion
@@ -131,7 +129,10 @@ export class CatalogSyncService extends BaseSyncService<CatalogSyncOptions> impl
         catalog = this.scryfallclient.getCatalog("WordBank", parameter.progressCallback);
         break;
     }
-    return catalog.then((fetched: ScryfallCatalog) => this.processSync(parameter, fetched));
+    return catalog.then((fetched: ScryfallCatalog) => {
+      this.dumpScryFallData(`catalog-${parameter}.json`, fetched);
+      this.processSync(parameter, fetched);
+    });
   }
 
   private async processSync(parameter: SyncSingleCatalogParameter, catalog: ScryfallCatalog): Promise<void> {

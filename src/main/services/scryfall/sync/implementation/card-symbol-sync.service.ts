@@ -17,8 +17,6 @@ import { DtoSyncParam, SyncSource } from "../../../../../common/dto";
 export class CardSymbolSyncService extends BaseSyncService<CardSymbolSyncOptions> implements ICardSymbolSyncService {
 
   //#region private readonly fields -------------------------------------------
-  private readonly scryfallclient: IScryfallClient;
-  private readonly configurationService: IConfigurationService;
   private readonly imageCacheService: IImageCacheService;
   private readonly cardSymbolAdapter: ICardSymbolAdapter;
   private readonly cardSymbolAlternativeAdapter: ICardSymbolAlternativeAdapter;
@@ -28,15 +26,13 @@ export class CardSymbolSyncService extends BaseSyncService<CardSymbolSyncOptions
   //#region Constructor & C° --------------------------------------------------
   public constructor(
     @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
-    @inject(CLIENTTOKENS.ScryfallClient) scryfallclient: IScryfallClient,
     @inject(INFRATOKENS.ConfigurationService) configurationService: IConfigurationService,
     @inject(INFRATOKENS.ImageCacheService) imageCacheService: IImageCacheService,
+    @inject(CLIENTTOKENS.ScryfallClient) scryfallclient: IScryfallClient,
     @inject(ADAPTTOKENS.CardSymbolAdapter) cardSymbolAdapter: ICardSymbolAdapter,
     @inject(ADAPTTOKENS.CardSymbolAlternativeAdapter) cardSymbolAlternativeAdapter: ICardSymbolAlternativeAdapter,
     @inject(ADAPTTOKENS.CardSymbolColorMapAdapter) cardSymbolColorMapAdapter: ICardSymbolColorMapAdapter) {
-    super(databaseService);
-    this.scryfallclient = scryfallclient;
-    this.configurationService = configurationService;
+    super(databaseService, configurationService, scryfallclient);
     this.imageCacheService = imageCacheService;
     this.cardSymbolAdapter = cardSymbolAdapter;
     this.cardSymbolAlternativeAdapter = cardSymbolAlternativeAdapter;
@@ -54,7 +50,10 @@ export class CardSymbolSyncService extends BaseSyncService<CardSymbolSyncOptions
             progressCallback("Synchronizing card symbols");
           }
           return await this.scryfallclient.getCardSymbols(progressCallback)
-            .then(async (all: Array<ScryfallCardSymbol>) => this.processSync(all))
+            .then(async (all: Array<ScryfallCardSymbol>) => {
+              this.dumpScryFallData("card-symbols.json", all);
+              this.processSync(all);
+            })
             .then(async () => await this.database.selectFrom("card_symbol").selectAll().execute())
             .then(async (allCardSymbols: Array<Selectable<CardSymbolTable>>) => {
               console.log((`Saved ${allCardSymbols.length} card symbols`));

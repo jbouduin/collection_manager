@@ -6,4 +6,9 @@ export interface DtoMainConfiguration {
   databaseName: string;
   // NOW replace by dtoSyncparam
   syncAtStartup: Array<SyncType>
+  // FEATURE additional settings
+  // boolean: retrieve rulings when retrieving a card
+  // boolean: retrieve image when retrieving a card
+
+
 }

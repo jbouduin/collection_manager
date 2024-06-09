@@ -5,6 +5,7 @@ enum ECardSyncType {
   byImageStatus,
   byLastSynchronized,
   selectionOfCards,
+  // FEATURE: bulk
 }
 
 export type CardSyncType = keyof typeof ECardSyncType;
@@ -16,5 +17,4 @@ export const CardSyncTypeDisplayValue = new Map<CardSyncType, string>([
   ["byImageStatus", "Select by image status"],
   ["byLastSynchronized", "Last synchronized before"],
   // "selectionOfCards" => not to be shown in the front end
-  // LATER: bulk
 ]);

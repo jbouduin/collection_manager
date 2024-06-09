@@ -15,7 +15,7 @@ import { DtoSyncParam, SyncSource } from "../../../../../common/dto";
 
 type SyncSingleCatalogParameter = {
   catalogType: CatalogType,
-  progressCallback?: ProgressCallback
+  progressCallback: ProgressCallback
 };
 
 @injectable()
@@ -75,9 +75,8 @@ export class CatalogSyncService extends BaseSyncService<CatalogSyncOptions> impl
   //#region Private methods ---------------------------------------------------
   private async syncSingleCatalog(parameter: SyncSingleCatalogParameter): Promise<void> {
     console.log("  -> start CatalogSyncService.syncSingleCatalog", parameter.catalogType);
-    if (parameter.progressCallback) {
-      parameter.progressCallback(`Synchronizing catalog '${parameter.catalogType}'`);
-    }
+    parameter.progressCallback(`Synchronizing catalog '${parameter.catalogType}'`);
+
     let catalog: Promise<ScryfallCatalog>;
     switch (parameter.catalogType) {
       case "AbilityWords":

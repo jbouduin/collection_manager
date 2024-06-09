@@ -10,6 +10,7 @@ import { ScryfallRuling } from "../../types";
 import { IRulingSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
 import { DtoSyncParam } from "../../../../../common/dto";
+import { runSerial } from "../../../../../main/services/infra/util";
 
 @injectable()
 export class RulingSyncService extends BaseSyncService<RulingSyncOptions> implements IRulingSyncService {
@@ -33,7 +34,26 @@ export class RulingSyncService extends BaseSyncService<RulingSyncOptions> implem
   }
 
   public override async newSync(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void> {
-    throw new Error("Not implemented");
+    // this will not return reversible_card of type land, as they do not have an oracle id
+    progressCallback("Synchronizing rulings");
+    const cards = await this.database.selectFrom("card")
+      .$if(syncParam.rulingSyncType == "update", (eb) => eb.innerJoin("oracle_ruling", "oracle_ruling.oracle_id", "card.oracle_id"))
+      .$if(syncParam.rulingSyncType == "selectionOfCards", (eb) => eb.where("card.id", "in", syncParam.cardSelectionToSync))
+      .selectAll("card")
+      .where("card.oracle_id", "is not", null)
+      .groupBy("card.oracle_id")
+      // .$call(this.logCompilable)
+      .execute();
+    // .then((result) => console.log(`${result.length} cards to be updated`));
+    return runSerial<Selectable<CardTable>>(
+      cards,
+      (param: Selectable<CardTable>) => `Processing ruling for oracle id ${param.oracle_id}`,
+      async (card: Selectable<CardTable>, index: number, total: number) => {
+        progressCallback(`Processing ruling for oracle id ${card.oracle_id} (${index}/${total})`);
+        return this.scryfallclient.getRulings(card.id)
+          .then((scryFall: Array<ScryfallRuling>) => this.processSync(card.id, scryFall));
+      }
+    );
   }
 
   public override async sync(options: RulingSyncOptions, progressCallback: ProgressCallback): Promise<void> {

@@ -1,4 +1,3 @@
-import { sql } from "kysely";
 import { InsertExpression } from "kysely/dist/cjs/parser/insert-values-parser";
 import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser";
 
@@ -11,7 +10,10 @@ export class CardSetAdapter implements ICardSetAdapter {
 
   //#region ICardSetAdapter ---------------------------------------------------
   public toInsert(scryfall: ScryfallCardSet): InsertExpression<DatabaseSchema, "card_set"> {
+    const now = new Date().toISOString();
     return {
+      created_at: now,
+      last_synced_at: now,
       arena_code: scryfall.arena_code,
       block: scryfall.block,
       block_code: scryfall.block_code,
@@ -56,7 +58,7 @@ export class CardSetAdapter implements ICardSetAdapter {
       set_type: scryfall.set_type,
       tcgplayer_id: scryfall.tcgplayer_id,
       uri: scryfall.uri,
-      last_synced_at: sql`CURRENT_TIMESTAMP`,
+      last_synced_at: new Date().toISOString(),
       // last_full_synchronization_at => we do not overwrite this column
     };
   }

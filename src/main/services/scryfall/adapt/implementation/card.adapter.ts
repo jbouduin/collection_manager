@@ -1,4 +1,3 @@
-import { sql } from "kysely";
 import { InsertExpression } from "kysely/dist/cjs/parser/insert-values-parser";
 import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser";
 
@@ -9,7 +8,10 @@ import { scryfallBooleanToNumber, scryfallDateToIsoString } from "./utils";
 
 export class CardAdapter implements ICardAdapter {
   public toInsert(scryfall: ScryfallCard): InsertExpression<DatabaseSchema, "card"> {
+    const now = new Date().toISOString();
     return {
+      created_at: now,
+      last_synced_at: now,
       id: scryfall.id,
       name: scryfall.name,
       lang: scryfall.lang,
@@ -54,7 +56,7 @@ export class CardAdapter implements ICardAdapter {
       is_oversized: scryfallBooleanToNumber(scryfall.oversized),
       is_reserved: scryfallBooleanToNumber(scryfall.reserved),
       is_promo: scryfallBooleanToNumber(scryfall.promo),
-      last_synced_at: sql`CURRENT_TIMESTAMP`
+      last_synced_at: new Date().toISOString()
     };
   }
 }

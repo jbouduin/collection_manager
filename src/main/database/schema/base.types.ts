@@ -4,7 +4,7 @@ type TCreated = {
   /***
      * Timestamp of creation
      */
-  created_at: ColumnType<Date, never, never>;
+  created_at: ColumnType<Date, string, never>;
 };
 
 type TModified = {

@@ -17,7 +17,11 @@ const ipc = {
   newSync: (param: DtoSyncParam) => ipcRenderer.invoke("new-sync", param),
   post: (param: PostParam<PostData>) => ipcRenderer.invoke("post", param),
   // FEATURE extended progress reporting with two progress bars
-  onProgress: (callback: (status: string) => void) => ipcRenderer.on("splash", (_event, value) => callback(value)),
+  onProgress: (callback: (status: string) => void) => {
+    // to avoid memory leaks and as only the splash screen is listening to it
+    ipcRenderer.removeAllListeners("splash");
+    ipcRenderer.on("splash", (_event, value) => callback(value));
+  },
   onEndProgress: (callback: () => void) => ipcRenderer.once("splash-end", () => {
     ipcRenderer.removeAllListeners("splash");
     callback();

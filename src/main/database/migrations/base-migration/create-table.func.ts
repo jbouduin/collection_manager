@@ -1,4 +1,4 @@
-import { ColumnDefinitionBuilder, CreateTableBuilder, Kysely, sql } from "kysely";
+import { ColumnDefinitionBuilder, CreateTableBuilder, Kysely } from "kysely";
 
 import { CreateTableOptions } from "./create-table.options";
 import { PrimaryKeyColumnDefinition } from "./primary-key-column-definition";
@@ -15,11 +15,11 @@ export function createTable<TB extends string>(db: Kysely<any>, options: CreateT
     result = result.addPrimaryKeyConstraint(options.tableName.toUpperCase() + "_PK", options.primaryKey.map((pk: PrimaryKeyColumnDefinition) => pk.columnName) as Array<never>);
   }
 
-  result = result.addColumn("created_at", "text", (col: ColumnDefinitionBuilder) => col.defaultTo(sql`CURRENT_TIMESTAMP`).notNull());
+  result = result.addColumn("created_at", "text", (col: ColumnDefinitionBuilder) => col.notNull());
   if (options.isSynced) {
-    result = result.addColumn("last_synced_at", "text", (col: ColumnDefinitionBuilder) => col.defaultTo(sql`CURRENT_TIMESTAMP`).notNull());
+    result = result.addColumn("last_synced_at", "text", (col: ColumnDefinitionBuilder) => col.notNull());
   } else {
-    result = result.addColumn("modified_at", "text", (col: ColumnDefinitionBuilder) => col.defaultTo(sql`CURRENT_TIMESTAMP`).notNull());
+    result = result.addColumn("modified_at", "text", (col: ColumnDefinitionBuilder) => col.notNull());
   }
 
   return result;

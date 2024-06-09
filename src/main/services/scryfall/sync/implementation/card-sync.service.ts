@@ -1,7 +1,8 @@
 import { DeleteResult, InsertResult, Transaction, UpdateResult, sql } from "kysely";
 import { inject, injectable } from "tsyringe";
 
-import { DtoSyncParam, IdSelectResult } from "../../../../../common/dto";
+
+import { DtoSyncParam, IdSelectResult, TimespanUnit } from "../../../../../common/dto";
 import { GameFormat, MTGColor, MTGColorType } from "../../../../../common/enums";
 import { CardSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
 import { isSingleCardFaceLayout } from "../../../../../common/util";
@@ -93,12 +94,30 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
           );
         break;
       case "byImageStatus":
-        throw new Error("not implemented");
+        // NOW implement fields and sync
+        cards = Promise.resolve(new Array<ScryfallCard>());
+        break;
       case "byCardSet":
         cards = this.scryfallclient.getCardsForCardSet(syncParam.cardSetCodeToSyncCardsFor, progressCallback);
         break;
       case "byLastSynchronized":
-        throw new Error("not implemented");
+        cards = this.database
+          .selectFrom("card")
+          .select("card.id")
+          .where("card.last_synced_at", "<", sql.lit(this.convertLastSyncParameters(syncParam.syncCardsSyncedBeforeNumber, syncParam.syncCardsSyncedBeforeUnit)))
+          .$call(this.logCompilable)
+          .execute()
+          .then((results: Array<IdSelectResult>) => {
+            if (results.length > 0) {
+              return this.scryfallclient.getCardCollections(
+                results.map((result: IdSelectResult) => result.id),
+                progressCallback
+              );
+            } else {
+              return new Array<ScryfallCard>();
+            }
+          });
+        break;
       case "collection":
         cards = this.scryfallclient.getCardCollections(syncParam.cardSelectionToSync, progressCallback);
         break;
@@ -110,7 +129,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
       if (syncParam.cardSyncType == "byCardSet") {
         this.database
           .updateTable("card_set")
-          .set({ last_full_synchronization_at: sql`CURRENT_TIMESTAMP` })
+          .set({ last_full_synchronization_at: new Date().toISOString() })
           .where("card_set.code", "=", syncParam.cardSetCodeToSyncCardsFor)
           .executeTakeFirst();
       }
@@ -123,7 +142,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
   }
   //#endregion
 
-  //#region private sync methods ----------------------------------------------
+  //#region Auxiliary sync methods --------------------------------------------
   private async processSync(cards: Array<ScryfallCard>, progressCallback?: ProgressCallback): Promise<void> {
     const total = cards.length;
     let cnt = 0;
@@ -458,5 +477,25 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
   }
   //#endregion
 
-
+  //#region Other auxiliary methods -------------------------------------------
+  private convertLastSyncParameters(value: number, unit: TimespanUnit): Date {
+    // this is very rudimentary...
+    let date: number;
+    switch (unit) {
+      case "day":
+        date = Date.now() - (24 * 60 * 60 * 1000);
+        break;
+      case "week":
+        date = Date.now() - (7 * 24 * 60 * 60 * 1000);
+        break;
+      case "month":
+        date = Date.now() - (30 * 24 * 60 * 60 * 1000);
+        break;
+      case "year":
+        date = Date.now() - (365 * 24 * 60 * 60 * 1000);
+        break;
+    }
+    return new Date(date); //.toISOString();
+  }
+  //#endregion
 }

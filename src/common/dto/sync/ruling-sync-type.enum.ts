@@ -3,6 +3,7 @@ enum ERulingSyncType {
   update,
   all,
   selectionOfCards
+  // TODO byLastSynchronized
 }
 
 export type RulingSyncType = keyof typeof ERulingSyncType;

@@ -99,5 +99,5 @@ export interface CardSetTable extends SynchronizedWithStringId {
    */
   search_uri: ColumnType<string>;
 
-  last_full_synchronization_at: ColumnType<Date, string | undefined>;
+  last_full_synchronization_at: ColumnType<Date, string | undefined, string | undefined>;
 }

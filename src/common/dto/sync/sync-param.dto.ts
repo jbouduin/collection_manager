@@ -30,5 +30,5 @@ export interface DtoSyncParam {
   cardImageStatusToSync: Array<ImageStatus>;
   syncCardsSyncedBeforeNumber: number;
   syncCardsSyncedBeforeUnit: TimespanUnit;
-
+  cardSetCodeToSyncCardsFor: string;
 }

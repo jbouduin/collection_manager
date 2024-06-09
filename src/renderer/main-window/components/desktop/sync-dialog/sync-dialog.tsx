@@ -19,7 +19,8 @@ export function SyncDialog(props: SyncDialogProps) {
     cardSelectionToSync: [],
     cardImageStatusToSync: [],
     syncCardsSyncedBeforeNumber: 1,
-    syncCardsSyncedBeforeUnit: "month"
+    syncCardsSyncedBeforeUnit: "month",
+    cardSetCodeToSyncCardsFor: undefined
   });
   const [syncParam, setSyncParam] = React.useState<SyncParamViewmodel>(initialState);
   //#endregion

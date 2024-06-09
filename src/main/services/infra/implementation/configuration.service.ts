@@ -121,7 +121,8 @@ export class ConfigurationService implements IConfigurationService {
       scryfallApiRoot: "https://api.scryfall.com",
       scryfallEndpoints: endpoints,
       scryfallCatalogPaths: catalogPaths,
-      minimumRequestTimeout: 60
+      minimumRequestTimeout: 60,
+      dumpRetrievedData: false
     };
     console.log(JSON.stringify(result, null,2));
     return result;

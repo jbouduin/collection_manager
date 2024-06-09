@@ -1,12 +1,14 @@
-import fs from "fs";
+import * as fs from "fs";
+import * as path from "path";
+
 import { DeleteResult, InsertResult, Transaction, UpdateResult, sql } from "kysely";
 import { inject, injectable } from "tsyringe";
 
 import { GameFormat, MTGColor, MTGColorType } from "../../../../../common/enums";
 import { CardSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
-import { isSingleCardFaceLayout } from "../../../../../common/util";
+import { formatTimeStampedFileName, isSingleCardFaceLayout } from "../../../../../common/util";
 import { DatabaseSchema } from "../../../../../main/database/schema";
-import INFRATOKENS, { IDatabaseService } from "../../../../../main/services/infra/interfaces";
+import INFRATOKENS, { IConfigurationService, IDatabaseService } from "../../../../../main/services/infra/interfaces";
 import { runSerial } from "../../../../../main/services/infra/util";
 import ADAPTTOKENS, {
   ICardAdapter,
@@ -27,12 +29,13 @@ import { ScryfallCard, ScryfallCardface, ScryfallImageUris, ScryfallLegalities }
 import { ICardSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
 import { GenericSyncTaskParameter } from "./generic-sync-task.parameter";
-import { DtoSyncParam } from "../../../../../common/dto";
+import { DtoSyncParam, IdSelectResult } from "../../../../../common/dto";
 
 @injectable()
 export class CardSyncService extends BaseSyncService<CardSyncOptions> implements ICardSyncService {
 
   //#region Private readonly fields -------------------------------------------
+  private readonly configurationService: IConfigurationService;
   private readonly scryfallclient: IScryfallClient;
   private readonly cardAdapter: ICardAdapter;
   private readonly cardColorMapAdapter: ICardColorMapAdapter;
@@ -50,6 +53,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
   //#region Constructor & C° --------------------------------------------------
   public constructor(
     @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
+    @inject(INFRATOKENS.ConfigurationService) configurationService: IConfigurationService,
     @inject(CLIENTTOKENS.ScryfallClient) scryfallclient: IScryfallClient,
     @inject(ADAPTTOKENS.CardAdapter) cardAdapter: ICardAdapter,
     @inject(ADAPTTOKENS.CardColorMapAdapter) cardColorMapAdapter: ICardColorMapAdapter,
@@ -63,6 +67,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
     @inject(ADAPTTOKENS.OracleKeywordAdapter) oracleKeywordAdapter: IOracleKeywordAdapter,
     @inject(ADAPTTOKENS.OracleLegalityAdapter) oracleLegalityAdapter: IOracleLegalityAdapter) {
     super(databaseService);
+    this.configurationService = configurationService;
     this.scryfallclient = scryfallclient;
     this.cardAdapter = cardAdapter;
     this.cardColorMapAdapter = cardColorMapAdapter;
@@ -80,7 +85,61 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
 
   //#region ICardSyncService methods ------------------------------------------
   public override async newSync(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void> {
-    throw new Error("not implemented");
+    let cards: Promise<Array<ScryfallCard>>;
+    switch (syncParam.cardSyncType) {
+      case "allCards":
+        cards = this.database
+          .selectFrom("card")
+          .select("card.id")
+          .execute()
+          .then((results: Array<IdSelectResult>) =>
+            this.scryfallclient.getCardCollections(
+              results.map((result: IdSelectResult) => result.id),
+              progressCallback
+            )
+          );
+        break;
+      case "byImageStatus":
+        throw new Error("not implemented");
+      case "byCardSet":
+        cards = this.scryfallclient.getCardsForCardSet(syncParam.cardSetCodeToSyncCardsFor, progressCallback);
+        break;
+      case "byLastSynchronized":
+        throw new Error("not implemented");
+      case "collection":
+        cards = this.scryfallclient.getCardCollections(syncParam.cardSelectionToSync, progressCallback);
+        break;
+    }
+    return cards.then((cardArray: Array<ScryfallCard>) => {
+      if (this.configurationService.configuration.scryfallConfiguration.dumpRetrievedData) {
+        const targetDir = path.join(this.configurationService.cacheDirectory, "json");
+        if (!fs.existsSync(targetDir)) {
+          fs.mkdirSync(targetDir, { recursive: true });
+        }
+        const targetPath = path.join(targetDir, formatTimeStampedFileName("cards.json"));
+        fs.writeFileSync(
+          targetPath,
+          JSON.stringify(
+            {
+              selection: syncParam,
+              cards: cardArray
+            },
+            null,
+            2
+          )
+        );
+      }
+      console.log("Found %d cards", cardArray.length);
+      return this.processSync(cardArray, progressCallback);
+    }).then(() => {
+      if (syncParam.cardSyncType == "byCardSet") {
+        this.database
+          .updateTable("card_set")
+          .set({ last_full_synchronization_at: sql`CURRENT_TIMESTAMP` })
+          .where("card_set.code", "=", syncParam.cardSetCodeToSyncCardsFor)
+          .executeTakeFirst();
+      }
+    });
   }
 
   public override async sync(options: CardSyncOptions, progressCallback: ProgressCallback): Promise<void> {
@@ -89,7 +148,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
       progressCallback("Sync cards");
     }
     // TODO check if all required master data is available
-    const cards = this.scryfallclient.getCards(options);
+    const cards = this.scryfallclient.getCardsForCardSet(options.setCode, progressCallback);
     return cards.then((cardArray: Array<ScryfallCard>) => {
       fs.writeFileSync("c:/data/new-assistant/json/cards_" + options.setCode + ".json", JSON.stringify(cardArray, null, 2));
       console.log("Found %d cards", cardArray.length);
@@ -440,4 +499,6 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
     }
   }
   //#endregion
+
+
 }

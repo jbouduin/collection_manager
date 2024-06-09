@@ -9,3 +9,5 @@ export type DtoRulingLine = Selectable<OracleRulingLineTable>;
 export type DtoOracle = Selectable<OracleTable>;
 export type DtoCardfaceColor = Selectable<CardFaceColorMapTable>;
 export type DtoLegality = Selectable<OracleLegalityTable>;
+
+export type IdSelectResult = { id: string };

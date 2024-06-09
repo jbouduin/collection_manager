@@ -3,7 +3,7 @@ import classNames from "classnames";
 import { clone } from "lodash";
 import * as React from "react";
 
-import { CardSyncOptions, SyncParam } from "../../../../common/ipc-params";
+import { DtoSyncParam } from "../../../../common/dto";
 import { CardSetContext, CardSymbolContext, LanguagesContext, ThemeContext } from "../context";
 import { CollectionView } from "../views/collection-view/collection-view";
 import { DatabaseView } from "../views/database-view/database-view";
@@ -15,7 +15,6 @@ import { DesktopState } from "./desktop.state";
 import { SettingsDialog } from "./settings-dialog/settings-dialog";
 import { SplashScreen } from "./splash-screen/splash-screen";
 import { SyncDialog } from "./sync-dialog/sync-dialog";
-import { DtoSyncParam } from "../../../../common/dto";
 
 // import logo from "./logo.png";
 
@@ -67,13 +66,41 @@ export function Desktop(props: DesktopProps) {
     newState.splashScreenOpen = true;
     setDesktopState(newState);
 
-    const params: SyncParam<CardSyncOptions> = {
-      type: "Card",
-      options: { source: "user", setCode: code }
+    const params: DtoSyncParam = {
+      syncRequestSource: "user",
+      catalogTypesToSync: [],
+      syncCardSymbols: false,
+      syncCardSets: false,
+      rulingSyncType: "none",
+      cardSyncType: "byCardSet",
+      cardSelectionToSync: [],
+      cardImageStatusToSync: [],
+      syncCardsSyncedBeforeNumber: undefined,
+      syncCardsSyncedBeforeUnit: undefined,
+      cardSetCodeToSyncCardsFor: code
     };
-    console.log("before");
-    window.ipc.sync(params);
-    console.log("after");
+    window.ipc.newSync(params);
+  }
+
+  function synchronizeCollection(ids: Array<string>): void {
+    const newState = clone(desktopState);
+    newState.splashScreenOpen = true;
+    setDesktopState(newState);
+
+    const params: DtoSyncParam = {
+      syncRequestSource: "user",
+      catalogTypesToSync: [],
+      syncCardSymbols: false,
+      syncCardSets: false,
+      rulingSyncType: "none",
+      cardSyncType: "collection",
+      cardSelectionToSync: ids,
+      cardImageStatusToSync: [],
+      syncCardsSyncedBeforeNumber: undefined,
+      syncCardsSyncedBeforeUnit: undefined,
+      cardSetCodeToSyncCardsFor: undefined
+    };
+    window.ipc.newSync(params);
   }
 
   function startSync(syncParam: DtoSyncParam): void {
@@ -101,7 +128,7 @@ export function Desktop(props: DesktopProps) {
                 }
                 {
                   desktopState.currentView == EDesktopView.Collection &&
-                  <CollectionView />
+                  <CollectionView onSynchronizeCollection={synchronizeCollection} />
                 }
                 {
                   desktopState.currentView == EDesktopView.Deck &&

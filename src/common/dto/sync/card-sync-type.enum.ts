@@ -4,7 +4,7 @@ enum ECardSyncType {
   byCardSet,
   byImageStatus,
   byLastSynchronized,
-  selectionOfCards,
+  collection,
   // FEATURE: bulk
 }
 

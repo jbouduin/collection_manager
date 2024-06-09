@@ -9,6 +9,7 @@ import { CardImageDto } from "../../../../common/dto";
 import { CardSetTable, CardSymbolTable } from "../../../../main/database/schema";
 import SCRYTOKENS, { IScryfallClient } from "../../scryfall/client/interfaces";
 import INFRATOKENS, { IConfigurationService, IImageCacheService } from "../interfaces";
+import { ProgressCallback } from "../../../../common/ipc-params";
 
 
 @injectable()
@@ -29,7 +30,9 @@ export class ImageCacheService implements IImageCacheService {
   //#endregion
 
   //#region IImageCacheService methods ----------------------------------------
-  public async cacheCardSymbolSvg(cardSymbol: Selectable<CardSymbolTable>): Promise<void> {
+  public async cacheCardSymbolSvg(cardSymbol: Selectable<CardSymbolTable>, progressCallback: ProgressCallback): Promise<void> {
+    console.log(`  -> start cache svg for symbol '${cardSymbol.english}'`);
+    progressCallback(`Caching image for '${cardSymbol.english}'`);
     return this.apiClient.fetchSvg(cardSymbol.svg_uri)
       .then((arrayBuffer: ArrayBuffer) => {
         const buffer = Buffer.from(arrayBuffer);
@@ -37,8 +40,9 @@ export class ImageCacheService implements IImageCacheService {
       });
   }
 
-  public async cacheCardSetSvg(cardSet: Selectable<CardSetTable>): Promise<void> {
-    console.log(`  -> start cache svg for '${cardSet.name}'`);
+  public async cacheCardSetSvg(cardSet: Selectable<CardSetTable>, progressCallback: ProgressCallback): Promise<void> {
+    console.log(`  -> start cache svg for cardset '${cardSet.name}'`);
+    progressCallback(`Caching image for '${cardSet.name}'`);
     await this.apiClient.fetchSvg(cardSet.icon_svg_uri)
       .then((arrayBuffer: ArrayBuffer) => {
         const enc = new TextDecoder("utf-8");

@@ -51,13 +51,9 @@ export class CardSetSyncService extends BaseSyncService<CardSetSyncOptions> impl
             .then(async () => await this.database.selectFrom("card_set").selectAll().execute())
             .then(async (cardSets: Array<Selectable<CardSetTable>>) => {
               let result = Promise.resolve();
-              console.log((`retrieved ${cardSets.length} saved card sets`));
-              progressCallback(`retrieved ${cardSets.length} saved card sets`);
+              console.log((`Saved ${cardSets.length} card sets`));
               cardSets.forEach(async (cardset: Selectable<CardSetTable>) => {
-                result = result.then(async () => {
-                  progressCallback(`Caching image for '${cardset.name}'`);
-                  await this.imageCacheService.cacheCardSetSvg(cardset);
-                });
+                result = result.then(async () => await this.imageCacheService.cacheCardSetSvg(cardset, progressCallback));
                 await result;
               });
               return result;
@@ -84,7 +80,7 @@ export class CardSetSyncService extends BaseSyncService<CardSetSyncOptions> impl
               let result = Promise.resolve();
               console.log((`retrieved ${cardSets.length} saved card sets`));
               cardSets.forEach(async (cardset: Selectable<CardSetTable>) => {
-                result = result.then(async () => await this.imageCacheService.cacheCardSetSvg(cardset));
+                result = result.then(async () => await this.imageCacheService.cacheCardSetSvg(cardset, progressCallback));
                 await result;
               });
               return result;
@@ -104,14 +100,14 @@ export class CardSetSyncService extends BaseSyncService<CardSetSyncOptions> impl
         cardSets,
         (scryfallCardSet: ScryfallCardSet) => `Processing '${scryfallCardSet.name}'`,
         async (scryfallCardSet: ScryfallCardSet, _idx: number, _total: number) => {
-        await this.genericSingleSync(
-          trx,
-          "card_set",
-          (eb) => eb("card_set.id", "=", scryfallCardSet.id),
-          this.cardSetAdapter,
-          scryfallCardSet
-        );
-      });
+          await this.genericSingleSync(
+            trx,
+            "card_set",
+            (eb) => eb("card_set.id", "=", scryfallCardSet.id),
+            this.cardSetAdapter,
+            scryfallCardSet
+          );
+        });
     });
   }
 

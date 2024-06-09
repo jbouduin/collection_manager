@@ -1,7 +1,7 @@
 import { container, inject, singleton } from "tsyringe";
 
 import { DtoSyncParam } from "../../../../common/dto";
-import { CardSyncOptions, CatalogSyncOptions, ProgressCallback, SyncOptions, SyncParam } from "../../../../common/ipc-params";
+import { CardSyncOptions, CatalogSyncOptions, SyncOptions, SyncParam } from "../../../../common/ipc-params";
 import SYNCTOKENS, { ICardSetSyncService, ICardSymbolSyncService, ICardSyncService, ICatalogSyncService } from "../../scryfall";
 import { IUntypedBaseSyncService } from "../../scryfall/sync/interface/base-sync.service";
 import INFRATOKENS, { IIpcSyncService, IWindowService } from "../interfaces";

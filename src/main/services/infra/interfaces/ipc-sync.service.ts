@@ -1,7 +1,7 @@
 import { BrowserWindow } from "electron";
 
 import { DtoSyncParam } from "../../../../common/dto";
-import { ProgressCallback, SyncOptions, SyncParam } from "../../../../common/ipc-params";
+import { SyncOptions, SyncParam } from "../../../../common/ipc-params";
 
 
 export interface IIpcSyncService {

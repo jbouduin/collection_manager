@@ -9,7 +9,7 @@ export interface IScryfallClient {
   fetchImage(uri: string): Promise<ReadableStream<Uint8Array>>;
   getCards(options: CardSyncOptions): Promise<Array<ScryfallCard>>
   getCardSets(progressCallback: ProgressCallback): Promise<Array<ScryfallCardSet>>;
-  getCardSymbols(): Promise<Array<ScryfallCardSymbol>>;
+  getCardSymbols(progressCallback: ProgressCallback): Promise<Array<ScryfallCardSymbol>>;
   getCatalog(type: CatalogType): Promise<ScryfallCatalog>;
   getRulings(cardId: string): Promise<Array<ScryfallRuling>>;
 }

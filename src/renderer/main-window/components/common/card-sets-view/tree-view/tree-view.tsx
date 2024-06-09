@@ -207,6 +207,8 @@ export function TreeView(props: TreeViewProps) {
     }
   }
 
+  // TODO this creates as much virtual targets as there are sets in the tree
+  // check how to put Contextmenu on tree itself and pass set under cursor to the methods
   function mapViewModelToTreeItem(cardSet: CardSetViewmodel): TreeNodeInfo<CardSetViewmodel> {
     const node: TreeNodeInfo<CardSetViewmodel> = {
       id: cardSet.id,

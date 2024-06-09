@@ -5,7 +5,7 @@ enum ECardSyncType {
   byImageStatus,
   byLastSynchronized,
   collection,
-  // FEATURE: bulk
+  // FEATURE  bulk
 }
 
 export type CardSyncType = keyof typeof ECardSyncType;

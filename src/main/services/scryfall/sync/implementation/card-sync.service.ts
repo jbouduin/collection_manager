@@ -3,7 +3,7 @@ import { inject, injectable } from "tsyringe";
 
 
 import { DtoSyncParam, IdSelectResult, TimespanUnit } from "../../../../../common/dto";
-import { GameFormat, MTGColor, MTGColorType } from "../../../../../common/enums";
+import { GameFormat, ImageStatus, MTGColor, MTGColorType } from "../../../../../common/enums";
 import { CardSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
 import { isSingleCardFaceLayout } from "../../../../../common/util";
 import { DatabaseSchema } from "../../../../../main/database/schema";
@@ -28,6 +28,12 @@ import { ScryfallCard, ScryfallCardface, ScryfallImageUris, ScryfallLegalities }
 import { ICardSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
 import { GenericSyncTaskParameter } from "./generic-sync-task.parameter";
+
+type IdAndStatusSelectResult = IdSelectResult & { image_status: ImageStatus };
+type PreSyncSelectResult = {
+  scryfallCards: Array<ScryfallCard>
+  cardIdsWithStatus: Array<IdAndStatusSelectResult>
+};
 
 @injectable()
 export class CardSyncService extends BaseSyncService<CardSyncOptions> implements ICardSyncService {
@@ -79,75 +85,83 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
 
   //#region ICardSyncService methods ------------------------------------------
   public override async newSync(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void> {
-    let cards: Promise<Array<ScryfallCard>>;
-    switch (syncParam.cardSyncType) {
-      case "allCards":
-        cards = this.database
-          .selectFrom("card")
-          .select("card.id")
-          .execute()
-          .then((results: Array<IdSelectResult>) =>
-            this.scryfallclient.getCardCollections(
-              results.map((result: IdSelectResult) => result.id),
-              progressCallback
-            )
-          );
-        break;
-      case "byImageStatus":
-        cards = this.database
-          .selectFrom("card")
-          .select("card.id")
-          .where("card.image_status", "in", syncParam.cardImageStatusToSync)
-          .execute()
-          .then((results: Array<IdSelectResult>) =>
-            this.scryfallclient.getCardCollections(
-              results.map((result: IdSelectResult) => result.id),
-              progressCallback
-            )
-          );
-        break;
-      case "byCardSet":
-        cards = this.scryfallclient.getCardsForCardSet(syncParam.cardSetCodeToSyncCardsFor, progressCallback);
-        break;
-      case "byLastSynchronized":
-        cards = this.database
-          .selectFrom("card")
-          .select("card.id")
-          .where("card.last_synced_at", "<", sql.lit(this.convertLastSyncParameters(syncParam.syncCardsSyncedBeforeNumber, syncParam.syncCardsSyncedBeforeUnit)))
-          .$call(this.logCompilable)
-          .execute()
-          .then((results: Array<IdSelectResult>) => {
-            if (results.length > 0) {
-              return this.scryfallclient.getCardCollections(
-                results.map((result: IdSelectResult) => result.id),
-                progressCallback
-              );
-            } else {
-              return new Array<ScryfallCard>();
-            }
-          });
-        break;
-      case "collection":
-        cards = this.scryfallclient.getCardCollections(syncParam.cardSelectionToSync, progressCallback);
-        break;
-    }
-    return cards.then((cardArray: Array<ScryfallCard>) => {
-      this.dumpScryFallData("cards.json", cardArray);
-      return this.processSync(cardArray, progressCallback);
-    }).then(() => {
-      if (syncParam.cardSyncType == "byCardSet") {
-        this.database
-          .updateTable("card_set")
-          .set({ last_full_synchronization_at: new Date().toISOString() })
-          .where("card_set.code", "=", syncParam.cardSetCodeToSyncCardsFor)
-          .executeTakeFirst();
-      }
-    });
+    return this.GetSyncData(syncParam, progressCallback)
+      .then(async (presync: PreSyncSelectResult) => {
+        this.dumpScryFallData("cards.json", presync.scryfallCards);
+        return this.processSync(presync.scryfallCards, progressCallback)
+          .then(async () => this.processChangedImages(presync.cardIdsWithStatus));
+      }).then(() => {
+        if (syncParam.cardSyncType == "byCardSet") {
+          this.database
+            .updateTable("card_set")
+            .set({ last_full_synchronization_at: new Date().toISOString() })
+            .where("card_set.code", "=", syncParam.cardSetCodeToSyncCardsFor)
+            .executeTakeFirst();
+        }
+      });
   }
 
   public override async sync(_options: CardSyncOptions, _progressCallback: ProgressCallback): Promise<void> {
     throw new Error("not implemented");
 
+  }
+  //#endregion
+
+  //#region Presync auxiliary methods -----------------------------------------
+  private async GetSyncData(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<PreSyncSelectResult> {
+    let presyncResult: Promise<PreSyncSelectResult>;
+    if (syncParam.cardSyncType == "byCardSet") {
+      presyncResult = this.database.selectFrom("card")
+        .select(["card.id", "card.image_status"])
+        .innerJoin("card_set", "card_set.id", "card.set_id")
+        .where("card_set.code", "=", syncParam.cardSetCodeToSyncCardsFor)
+        .execute().then(async (results: Array<IdAndStatusSelectResult>) => {
+          const scryfallCards = await this.scryfallclient.getCardsForCardSet(
+            syncParam.cardSetCodeToSyncCardsFor,
+            progressCallback
+          );
+          return {
+            scryfallCards: scryfallCards,
+            cardIdsWithStatus: results
+          };
+        });
+    } else {
+      presyncResult = this.database
+        .selectFrom("card")
+        .select("card.id")
+        .$if(
+          syncParam.cardSyncType == "byLastSynchronized",
+          (eb) => eb.where("card.last_synced_at", "<", sql.lit(this.convertLastSyncParameters(syncParam.syncCardsSyncedBeforeNumber, syncParam.syncCardsSyncedBeforeUnit)))
+        )
+        .$if(
+          syncParam.cardSyncType == "byImageStatus",
+          (eb) => eb.where("card.image_status", "in", syncParam.cardImageStatusToSync)
+        )
+        .$if(
+          syncParam.cardSyncType == "collection",
+          (eb) => eb.where("card.id", "in", syncParam.cardSelectionToSync)
+        )
+        .$call(this.logCompilable)
+        .execute()
+        .then(async (results: Array<IdAndStatusSelectResult>) => {
+          if (results.length > 0) {
+            const scryfallCards = await this.scryfallclient.getCardCollections(
+              results.map((result: IdSelectResult) => result.id),
+              progressCallback
+            );
+            return {
+              scryfallCards: scryfallCards,
+              cardIdsWithStatus: results
+            };
+          } else {
+            return {
+              scryfallCards: new Array<ScryfallCard>(),
+              cardIdsWithStatus: results
+            };
+          }
+        });
+    }
+    return presyncResult;
   }
   //#endregion
 
@@ -483,6 +497,13 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
         .where("card_card_map.card_id", "=", scryfallCard.id)
         .execute();
     }
+  }
+  //#endregion
+
+  //#region Post sync auxiliary methods ---------------------------------------
+  private async processChangedImages(previousImageStatuses: Array<IdAndStatusSelectResult>): Promise<void> {
+    // NOW implement
+    return Promise.resolve();
   }
   //#endregion
 

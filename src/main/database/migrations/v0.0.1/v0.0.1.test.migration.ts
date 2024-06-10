@@ -17,8 +17,6 @@ export class V0_0_1_Test_Migration implements IBaseMigration {
   public async down(db: Kysely<any>): Promise<void> {
     return db.schema.dropTable("test").execute();
   }
-
-
 }
 
 function createV0_0_1_Test(db: Kysely<any>): Promise < void> {

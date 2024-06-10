@@ -1,6 +1,7 @@
 import { InsertExpression } from "kysely/dist/cjs/parser/insert-values-parser";
 import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser";
 
+import { sqliteUTCTimeStamp } from "../../../../../common/util";
 import { DatabaseSchema } from "../../../../database/schema";
 import { ScryfallCardSet } from "../../types";
 import { ICardSetAdapter } from "../interface";
@@ -10,7 +11,7 @@ export class CardSetAdapter implements ICardSetAdapter {
 
   //#region ICardSetAdapter ---------------------------------------------------
   public toInsert(scryfall: ScryfallCardSet): InsertExpression<DatabaseSchema, "card_set"> {
-    const now = new Date().toISOString();
+    const now = sqliteUTCTimeStamp;
     return {
       created_at: now,
       last_synced_at: now,
@@ -36,9 +37,7 @@ export class CardSetAdapter implements ICardSetAdapter {
       uri: scryfall.uri,
       last_full_synchronization_at: null
     };
-  }
-
-  public toUpdate(scryfall: ScryfallCardSet): UpdateObjectExpression<DatabaseSchema, "card_set"> {
+  }  public toUpdate(scryfall: ScryfallCardSet): UpdateObjectExpression<DatabaseSchema, "card_set"> {
     return {
       arena_code: scryfall.arena_code,
       block: scryfall.block,
@@ -58,7 +57,7 @@ export class CardSetAdapter implements ICardSetAdapter {
       set_type: scryfall.set_type,
       tcgplayer_id: scryfall.tcgplayer_id,
       uri: scryfall.uri,
-      last_synced_at: new Date().toISOString(),
+      last_synced_at: sqliteUTCTimeStamp
       // last_full_synchronization_at => we do not overwrite this column
     };
   }

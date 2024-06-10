@@ -5,7 +5,7 @@ import { inject, injectable } from "tsyringe";
 import { CardImageDto, ChangedImageStatusAction, DtoSyncParam, IdSelectResult, TimespanUnit } from "../../../../../common/dto";
 import { GameFormat, ImageStatus, MTGColor, MTGColorType } from "../../../../../common/enums";
 import { CardSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
-import { isSingleCardFaceLayout } from "../../../../../common/util";
+import { isSingleCardFaceLayout, sqliteUTCTimeStamp } from "../../../../../common/util";
 import { DatabaseSchema } from "../../../../../main/database/schema";
 import INFRATOKENS, { IConfigurationService, IDatabaseService, IImageCacheService } from "../../../../../main/services/infra/interfaces";
 import { runSerial } from "../../../../../main/services/infra/util";
@@ -91,7 +91,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
         if (syncParam.cardSyncType == "byCardSet") {
           this.database
             .updateTable("card_set")
-            .set({ last_full_synchronization_at: new Date().toISOString() })
+            .set({ last_full_synchronization_at: sqliteUTCTimeStamp })
             .where("card_set.code", "=", syncParam.cardSetCodeToSyncCardsFor)
             .executeTakeFirst();
         }
@@ -141,11 +141,12 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
         .$call(this.logCompilable)
         .execute()
         .then(async (results: Array<IdAndStatusSelectResult>) => {
-          if (results.length > 0) {
-            const scryfallCards = await this.scryfallclient.getCardCollections(
-              results.map((result: IdSelectResult) => result.id),
-              progressCallback
-            );
+
+          if (results.length > 0 || syncParam.cardSelectionToSync.length > 0) {
+            const idsTouse = results.length > 0 ?
+              results.map((result: IdSelectResult) => result.id) :
+              syncParam.cardSelectionToSync;
+            const scryfallCards = await this.scryfallclient.getCardCollections(idsTouse, progressCallback);
             return {
               scryfallCards: scryfallCards,
               cardIdsWithStatus: results

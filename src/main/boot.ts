@@ -6,15 +6,15 @@ import MIGRATOKENS from "./database/migrations/migration.tokens";
 import { MigrationDi } from "./database/migrations/migrations.di";
 import INFRATOKENS, { IDatabaseService } from "./services/infra/interfaces";
 import SYNCTOKENS, { ICardSetSyncService, ICardSymbolSyncService, ICatalogSyncService } from "./services/scryfall";
-import { MigrationKyselyPlugin } from "./database/migrations/migration-kysely.plugin";
 
-export async function bootFunction(splashWindow: BrowserWindow) {
+
+export async function bootFunction(splashWindow: BrowserWindow): Promise<void> {
 
   const migrationContainer = MigrationDi.registerMigrations();
   await container.resolve<IDatabaseService>(INFRATOKENS.DatabaseService)
     .migrateToLatest(
-      new MigrationKyselyPlugin((label: string) => splashWindow.webContents.send("splash", label)),
-      migrationContainer.resolve<MigrationProvider>(MIGRATOKENS.NewCustomMigrationProvider)
+      migrationContainer.resolve<MigrationProvider>(MIGRATOKENS.NewCustomMigrationProvider),
+      (label: string) => splashWindow.webContents.send("splash", label)
     )
     .then((service: IDatabaseService) => service.connect())
     .then(() => migrationContainer.dispose())
@@ -31,4 +31,5 @@ export async function bootFunction(splashWindow: BrowserWindow) {
       (label: string) => splashWindow.webContents.send("splash", label))
     )
     .then(() => splashWindow.webContents.send("splash", "loading main program"));
+
 }

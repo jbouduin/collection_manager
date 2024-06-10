@@ -35,6 +35,8 @@ export function formatTimeStampedFileName(fileName: string) {
   return `${datePart}.${timePart}.${fileName}`;
 }
 
+export const sqliteUTCTimeStamp = new Date().toISOString();
+
 // export function canSynchronize(oracle_id: string): boolean {
 //   return oracle_id == "c3df3574-c4da-415f-a56b-807ed8e41d73" || // normal: (one multi lang, one english only) from Breaking news (OTP)
 //     oracle_id == "1c747fe2-289e-492a-a846-aa77707e2dc3" || // split: multi language from Breaking news (OTP)

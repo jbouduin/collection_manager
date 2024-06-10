@@ -5,10 +5,11 @@ import { DatabaseSchema } from "../../../../database/schema";
 import { ScryfallCard } from "../../types";
 import { ICardAdapter } from "../interface";
 import { scryfallBooleanToNumber, scryfallDateToIsoString } from "./utils";
+import { sqliteUTCTimeStamp } from "../../../../../common/util";
 
 export class CardAdapter implements ICardAdapter {
   public toInsert(scryfall: ScryfallCard): InsertExpression<DatabaseSchema, "card"> {
-    const now = new Date().toISOString();
+    const now = sqliteUTCTimeStamp;
     return {
       created_at: now,
       last_synced_at: now,
@@ -60,7 +61,7 @@ export class CardAdapter implements ICardAdapter {
       is_oversized: scryfallBooleanToNumber(scryfall.oversized),
       is_reserved: scryfallBooleanToNumber(scryfall.reserved),
       is_promo: scryfallBooleanToNumber(scryfall.promo),
-      last_synced_at: new Date().toISOString(),
+      last_synced_at: sqliteUTCTimeStamp,
       is_story_spotlight: scryfallBooleanToNumber(scryfall.story_spotlight),
       image_status: scryfall.image_status,
       is_variation: scryfallBooleanToNumber(scryfall.variation),

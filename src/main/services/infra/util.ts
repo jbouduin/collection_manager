@@ -8,6 +8,8 @@ export function runSerial<T>(
     result = result.then(async () => {
       console.log(`${progressMessageBuilder(taskParameter)} (${idx + 1}/${total})`);
       await task(taskParameter, idx, total);
+    }).catch((reason) => {
+      throw reason;
     });
   });
   return result;

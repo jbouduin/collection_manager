@@ -1,14 +1,14 @@
 import { InsertExpression } from "kysely/dist/cjs/parser/insert-values-parser";
 import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser";
 
+import { sqliteUTCTimeStamp } from "../../../../../common/util";
 import { DatabaseSchema } from "../../../../database/schema";
 import { IOracleLegalityAdapter } from "../interface";
 import { OracleLegalityAdapterParameter } from "../interface/param";
 
-
 export class OracleLegalityAdapter implements IOracleLegalityAdapter {
   public toInsert(scryfall: OracleLegalityAdapterParameter): InsertExpression<DatabaseSchema, "oracle_legality"> {
-    const now = new Date().toISOString();
+    const now = sqliteUTCTimeStamp;
     return {
       created_at: now,
       last_synced_at: now,
@@ -21,7 +21,7 @@ export class OracleLegalityAdapter implements IOracleLegalityAdapter {
   public toUpdate(scryfall: OracleLegalityAdapterParameter): UpdateObjectExpression<DatabaseSchema, "oracle_legality"> {
     return {
       legality: scryfall.legality,
-      last_synced_at: new Date().toISOString()
+      last_synced_at: sqliteUTCTimeStamp
     };
   }
 }

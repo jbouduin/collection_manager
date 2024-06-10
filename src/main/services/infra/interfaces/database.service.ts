@@ -1,8 +1,9 @@
-import { Kysely, KyselyPlugin, MigrationProvider } from "kysely";
+import { Kysely, MigrationProvider } from "kysely";
 import { DatabaseSchema } from "../../../database/schema";
+import { ProgressCallback } from "../../../../common/ipc-params";
 
 export interface IDatabaseService {
   readonly database: Kysely<DatabaseSchema>;
   connect(): IDatabaseService;
-  migrateToLatest(plugin: KyselyPlugin, migrationProvider: MigrationProvider): Promise<IDatabaseService>;
+  migrateToLatest(migrationProvider: MigrationProvider, progressCallback: ProgressCallback): Promise<IDatabaseService>;
 }

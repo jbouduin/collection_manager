@@ -1,4 +1,4 @@
-import { BrowserWindow, app } from "electron";
+import { BrowserWindow, app, dialog } from "electron";
 import { injectable } from "tsyringe";
 import { IConfigurationService, IWindowService } from "../interfaces";
 
@@ -34,23 +34,24 @@ export class WindowService implements IWindowService {
     const splashWindow = this.createSplashWindow();
 
     splashWindow.on("show", async () => {
-      await bootFunction(splashWindow).then(
-        () => {
-          this.createMainWindow();
-          this._mainWindow.on("ready-to-show", () => {
-            this._mainWindow.show();
-            if (!splashWindow.isDestroyed()) {
-              splashWindow.close();
-            }
-          });
-        },
-        () => {
-          // TODO show error dialog
-          if (!splashWindow.isDestroyed) {
-            splashWindow.close();
+      await bootFunction(splashWindow)
+        .then(
+          () => {
+            this.createMainWindow();
+            this._mainWindow.on("ready-to-show", () => {
+              this._mainWindow.show();
+              if (!splashWindow.isDestroyed()) {
+                splashWindow.close();
+              }
+            });
           }
-        }
-      );
+        )
+        .catch((reason: Error) => {
+          console.log("got it");
+          splashWindow.hide();
+          dialog.showErrorBox(`Error:" ${reason.message}`, reason.stack);
+          app.exit();
+        });
     });
 
     splashWindow.on("ready-to-show", () => {

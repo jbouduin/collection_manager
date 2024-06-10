@@ -4,19 +4,19 @@ import { clone } from "lodash";
 import * as React from "react";
 
 import { DtoSyncParam } from "../../../../common/dto";
+import { CardSetViewmodel } from "../../viewmodels";
 import { CardSetContext, CardSymbolContext, LanguagesContext, ThemeContext } from "../context";
 import { CollectionView } from "../views/collection-view/collection-view";
 import { DatabaseView } from "../views/database-view/database-view";
 import { DeckView } from "../views/deck-view/deck-view";
 import { ButtonBar } from "./button-bar/button-bar";
+import { CardSetDialog } from "./card-set-dialog/card-set-dialog";
 import { EDesktopView } from "./desktop-view.enum";
 import { DesktopProps } from "./desktop.props";
 import { DesktopState } from "./desktop.state";
 import { SettingsDialog } from "./settings-dialog/settings-dialog";
 import { SplashScreen } from "./splash-screen/splash-screen";
 import { SyncDialog } from "./sync-dialog/sync-dialog";
-import { CardSetDialog } from "./card-set-dialog/card-set-dialog";
-import { CardSetViewmodel } from "../../viewmodels";
 
 // import logo from "./logo.png";
 
@@ -88,7 +88,8 @@ export function Desktop(props: DesktopProps) {
       cardImageStatusToSync: [],
       syncCardsSyncedBeforeNumber: undefined,
       syncCardsSyncedBeforeUnit: undefined,
-      cardSetCodeToSyncCardsFor: code
+      cardSetCodeToSyncCardsFor: code,
+      changedImageStatusAction: "delete"
     };
     window.ipc.newSync(params);
   }
@@ -109,7 +110,8 @@ export function Desktop(props: DesktopProps) {
       cardImageStatusToSync: [],
       syncCardsSyncedBeforeNumber: undefined,
       syncCardsSyncedBeforeUnit: undefined,
-      cardSetCodeToSyncCardsFor: undefined
+      cardSetCodeToSyncCardsFor: undefined,
+      changedImageStatusAction: "delete"
     };
     window.ipc.newSync(params);
   }

@@ -12,6 +12,7 @@ export * from "./select/card-set.dto";
 export * from "./select/card-symbol.dto";
 export * from "./select/card.dto";
 export * from "./sync/card-sync-type.enum";
+export * from "./sync/changed-image-status-action.enum";
 export * from "./sync/ruling-sync-type.enum";
 export * from "./sync/sync-param.dto";
 export * from "./sync/sync-source.enum";

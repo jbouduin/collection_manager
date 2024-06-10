@@ -6,10 +6,10 @@ import * as path from "path";
 import { inject, injectable } from "tsyringe";
 
 import { CardImageDto } from "../../../../common/dto";
+import { ProgressCallback } from "../../../../common/ipc-params";
 import { CardSetTable, CardSymbolTable } from "../../../../main/database/schema";
 import SCRYTOKENS, { IScryfallClient } from "../../scryfall/client/interfaces";
 import INFRATOKENS, { IConfigurationService, IImageCacheService } from "../interfaces";
-import { ProgressCallback } from "../../../../common/ipc-params";
 
 
 @injectable()
@@ -52,6 +52,13 @@ export class ImageCacheService implements IImageCacheService {
       .catch((reason) => console.log(`failed ${cardSet.name}`, reason));
   }
 
+  public deleteCachedCardImage(card: CardImageDto): void {
+    const cachePath = this.pathToCachedCardImage(card);
+    if (fs.existsSync(cachePath)) {
+      fs.unlinkSync(cachePath);
+    }
+  }
+
   public async getAsset(path: string): Promise<string> {
     return Promise.resolve(fs.readFileSync(path, { encoding: "utf-8" }));
   }
@@ -61,12 +68,17 @@ export class ImageCacheService implements IImageCacheService {
     if (fs.existsSync(cachePath)) {
       return net.fetch(cachePath);
     } else {
-      return this.apiClient.fetchSvg(card.imageUri)
-        .then((arrayBuffer: ArrayBuffer) => {
-          const buffer = Buffer.from(arrayBuffer);
-          return fs.promises.writeFile(cachePath, buffer);
-        })
+      return this.fetchAndCacheCardImage(cachePath, card.imageUri)
         .then(() => net.fetch(cachePath));
+    }
+  }
+
+  public cacheCardImage(card: CardImageDto, onlyIfExists: boolean): Promise<void> {
+    const cachePath = this.pathToCachedCardImage(card);
+    if(!onlyIfExists){
+      return this.fetchAndCacheCardImage(cachePath, card.imageUri);
+    } else if (fs.existsSync(cachePath)) {
+      return this.fetchAndCacheCardImage(cachePath, card.imageUri);
     }
   }
 
@@ -80,6 +92,14 @@ export class ImageCacheService implements IImageCacheService {
   //#endregion
 
   //#region Private methods ---------------------------------------------------
+  private async fetchAndCacheCardImage(cachePath: string, url: string): Promise<void> {
+    return this.apiClient.fetchSvg(url)
+      .then((arrayBuffer: ArrayBuffer) => {
+        const buffer = Buffer.from(arrayBuffer);
+        return fs.promises.writeFile(cachePath, buffer);
+      });
+  }
+
   private pathToCardSymbolSvg(cardSymbol: Selectable<CardSymbolTable>): string {
     const fileName = new URL(cardSymbol.svg_uri).pathname.split("/").pop();
     const dirName = path.join(this.configurationService.cacheDirectory, "cardsymbols");

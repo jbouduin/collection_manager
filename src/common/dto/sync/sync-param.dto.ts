@@ -1,3 +1,4 @@
+import { ChangedImageStatusAction } from "..";
 import { CatalogType, ImageStatus } from "../../enums";
 import { CardSyncType } from "./card-sync-type.enum";
 import { RulingSyncType } from "./ruling-sync-type.enum";
@@ -31,4 +32,5 @@ export interface DtoSyncParam {
   syncCardsSyncedBeforeNumber: number;
   syncCardsSyncedBeforeUnit: TimespanUnit;
   cardSetCodeToSyncCardsFor: string;
+  changedImageStatusAction: ChangedImageStatusAction;
 }

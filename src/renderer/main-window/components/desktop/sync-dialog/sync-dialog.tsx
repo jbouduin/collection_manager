@@ -20,7 +20,8 @@ export function SyncDialog(props: SyncDialogProps) {
     cardImageStatusToSync: [],
     syncCardsSyncedBeforeNumber: 1,
     syncCardsSyncedBeforeUnit: "month",
-    cardSetCodeToSyncCardsFor: undefined
+    cardSetCodeToSyncCardsFor: undefined,
+    changedImageStatusAction: "delete"
   });
   const [syncParam, setSyncParam] = React.useState<SyncParamViewmodel>(initialState);
   //#endregion

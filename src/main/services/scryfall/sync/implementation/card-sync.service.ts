@@ -94,8 +94,17 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
           );
         break;
       case "byImageStatus":
-        // NOW implement fields and sync
-        cards = Promise.resolve(new Array<ScryfallCard>());
+        cards = this.database
+          .selectFrom("card")
+          .select("card.id")
+          .where("card.image_status", "in", syncParam.cardImageStatusToSync)
+          .execute()
+          .then((results: Array<IdSelectResult>) =>
+            this.scryfallclient.getCardCollections(
+              results.map((result: IdSelectResult) => result.id),
+              progressCallback
+            )
+          );
         break;
       case "byCardSet":
         cards = this.scryfallclient.getCardsForCardSet(syncParam.cardSetCodeToSyncCardsFor, progressCallback);

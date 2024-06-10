@@ -9,7 +9,3 @@ export interface CardMultiverseIdTable extends NonSynchronized {
    */
   multiverse_id: ColumnType<number, number, never>;
 }
-
-export type CardMultiverseId = Selectable<CardMultiverseIdTable>;
-export type InsertCardMultiverseId = Insertable<CardMultiverseIdTable>;
-export type UpdateCardMultiverseId = Updateable<CardMultiverseIdTable>;

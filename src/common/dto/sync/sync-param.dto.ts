@@ -2,14 +2,9 @@ import { ChangedImageStatusAction } from "..";
 import { CatalogType, ImageStatus } from "../../enums";
 import { CardSyncType } from "./card-sync-type.enum";
 import { RulingSyncType } from "./ruling-sync-type.enum";
-import { SyncSource } from "./sync-source.enum";
 import { TimespanUnit } from "./time-span-unit.enum";
 
 export interface DtoSyncParam {
-  /**
-   * The source requesting the synchronization
-   */
-  // syncRequestSource: SyncSource;
   /**
    * The catalogs to be synced
    */

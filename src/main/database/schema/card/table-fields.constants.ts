@@ -2,7 +2,7 @@ import { AnyColumnWithTable } from "kysely";
 
 import { DatabaseSchema } from "../database.schema";
 
-// TODO when creating tests, build a test that checks if all fields are in the array
+// TODO when creating tests, build a test that checks if all fields are in the array or find another way to get all field names
 export const cardTableFields: Array<AnyColumnWithTable<DatabaseSchema, "card">> = [
   "card.is_booster", "card.border", "card.card_back_id", "card.collector_number", "card.is_content_warning", "card.created_at",
   "card.is_digital", "card.frame", "card.is_full_art", "card.id", "card.lang", "card.last_synced_at", "card.layout", "card.name", "card.oracle_id",

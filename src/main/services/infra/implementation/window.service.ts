@@ -127,8 +127,7 @@ export class WindowService implements IWindowService {
 
   private firstUseSyncParam(): DtoSyncParam {
     const result: DtoSyncParam = {
-      // syncRequestSource: "startup",
-      catalogTypesToSync: ["AbilityWords", "LandTypes", "ArtifactTypes"],  // LATER make this allCatalogs when we need them to search
+      catalogTypesToSync: ["AbilityWords", "LandTypes", "ArtifactTypes"],  // add more catalogs when we need them to search
       syncCardSymbols: true,
       syncCardSets: true,
       rulingSyncType: "none",

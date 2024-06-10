@@ -1,15 +1,14 @@
 import { container, inject, singleton } from "tsyringe";
 
+import { BrowserWindow } from "electron";
 import { DtoSyncParam } from "../../../../common/dto";
-import { CardSyncOptions, CatalogSyncOptions, SyncOptions, SyncParam } from "../../../../common/ipc-params";
-import SYNCTOKENS, { ICardSetSyncService, ICardSymbolSyncService, ICardSyncService, ICatalogSyncService } from "../../scryfall";
-import { IUntypedBaseSyncService } from "../../scryfall/sync/interface/base-sync.service";
+import SYNCTOKENS from "../../scryfall";
 import INFRATOKENS, { IIpcSyncService, IWindowService } from "../interfaces";
 import { runSerial } from "../util";
-import { BrowserWindow } from "electron";
+import { IBaseSyncService } from "../../scryfall/sync/interface/base-sync.service";
 
 
-export interface taskParam {
+interface SyncTaskParam {
   displayName: string;
   serviceToken: string;
   syncParam: DtoSyncParam;
@@ -25,10 +24,10 @@ export class IpcSyncService implements IIpcSyncService {
     this.windowService = windowService;
   }
 
-  public async newHandle(syncParam: DtoSyncParam, browserWindow: BrowserWindow): Promise<void> {
+  public async handle(syncParam: DtoSyncParam, browserWindow: BrowserWindow): Promise<void> {
     console.log("start new IpcSyncService.handling", syncParam);
 
-    const taskParams = new Array<taskParam>();
+    const taskParams = new Array<SyncTaskParam>();
     if (syncParam.cardSyncType != "none") {
       taskParams.push({
         displayName: "Cards",
@@ -72,9 +71,9 @@ export class IpcSyncService implements IIpcSyncService {
 
     browserWindow.webContents.send("splash", "Start synchronization");
     try {
-      return await runSerial<taskParam>(
+      return await runSerial<SyncTaskParam>(
         taskParams,
-        (taskParam: taskParam) => `Serial task: ${taskParam.displayName}`,
+        (taskParam: SyncTaskParam) => `Serial task: ${taskParam.displayName}`,
         this.handleTask.bind(this));
     } catch (error) {
       console.log(error);
@@ -83,53 +82,11 @@ export class IpcSyncService implements IIpcSyncService {
     }
   }
 
-  private async handleTask(taskParam: taskParam, _index: number, _total: number): Promise<void> {
-    const synchronizer = container.resolve<IUntypedBaseSyncService>(taskParam.serviceToken);
-    return synchronizer.newSync(
+  private async handleTask(taskParam: SyncTaskParam, _index: number, _total: number): Promise<void> {
+    const synchronizer = container.resolve<IBaseSyncService>(taskParam.serviceToken);
+    return synchronizer.sync(
       taskParam.syncParam,
       (value: string) => taskParam.browserWindow.webContents.send("splash", value)
     );
-  }
-
-  public async handle(params: SyncParam<SyncOptions>): Promise<void> {
-    console.log("start IpcSyncService.handling", params);
-
-    this.windowService.mainWindow.webContents.send("splash", `Start sync ${params.type}`);
-    try {
-      switch (params.type) {
-        case "CardSet":
-          await container.resolve<ICardSetSyncService>(SYNCTOKENS.CardSetSyncService)
-            .sync({ source: "user", code: null }, (value: string) => this.windowService.mainWindow.webContents.send("splash", value))
-            .then(() => this.windowService.mainWindow.webContents.send("splash-end"));
-          break;
-        case "Card":
-          await container.resolve<ICardSyncService>(SYNCTOKENS.CardSyncService)
-            .sync(
-              (params as SyncParam<CardSyncOptions>).options,
-              (value: string) => this.windowService.mainWindow.webContents.send("splash", value)
-            )
-            .then(() => this.windowService.mainWindow.webContents.send("splash-end"));
-          break;
-        case "Catalog":
-          await container.resolve<ICatalogSyncService>(SYNCTOKENS.CatalogSyncService)
-            .sync(
-              (params as SyncParam<CatalogSyncOptions>).options,
-              (value: string) => this.windowService.mainWindow.webContents.send("splash", value)
-            )
-            .then(() => this.windowService.mainWindow.webContents.send("splash-end"));
-          break;
-        case "CardSymbol":
-          await container.resolve<ICardSymbolSyncService>(SYNCTOKENS.CardSymbolSyncService)
-            .sync(
-              { source: "user" },
-              (value: string) => this.windowService.mainWindow.webContents.send("splash", value)
-            )
-            .then(() => this.windowService.mainWindow.webContents.send("splash-end"));
-          break;
-      }
-    } catch (error) {
-      () => this.windowService.mainWindow.webContents.send("splash-end");
-      throw error;
-    }
   }
 }

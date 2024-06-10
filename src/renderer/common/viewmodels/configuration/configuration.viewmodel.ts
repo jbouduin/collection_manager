@@ -2,7 +2,6 @@ import { Classes } from "@blueprintjs/core";
 import { cloneDeep, isEqual } from "lodash";
 
 import { DtoConfiguration } from "../../../../common/dto/configuration/configuration.dto";
-import { SyncType } from "../../../../common/ipc-params";
 import { SyncParamViewmodel } from "../sync-param/sync-param.viewmodel";
 
 export class ConfigurationViewModel {

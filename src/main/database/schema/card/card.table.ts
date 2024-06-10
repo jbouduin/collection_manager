@@ -37,7 +37,7 @@ export interface CardTable extends SynchronizedWithStringId {
 // LATER store "frame_effects": Array of This card’s frame effects, if any.Will make some other properties redundant I suppose
 // LATER store "promo_types" in a table (An array of strings describing what categories of promo cards this card falls into.)
 
-// LATER variation_of? (The printing ID of the printing this card is a variation of.)
+// LATER store "variation_of?" (The printing ID of the printing this card is a variation of.)
 // LATER store "attraction_lights" in a table: The lit Unfinity attractions lights array on this card, if any.
 // LATER store "prices" in a table (probably after implementing collection)
 // LATER store "purchase_uris" in a table

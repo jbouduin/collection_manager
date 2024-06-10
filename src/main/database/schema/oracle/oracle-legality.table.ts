@@ -8,7 +8,3 @@ export interface OracleLegalityTable extends Synchronized {
   format: ColumnType<GameFormat, GameFormat, never>;
   legality: ColumnType<CardLegality>;
 }
-
-export type OracleLegality = Selectable<OracleLegalityTable>;
-export type InsertOracleLegality = Insertable<OracleLegalityTable>;
-// Not used export type UpdateOracleLegality = Updateable<OracleLegalityTable>;

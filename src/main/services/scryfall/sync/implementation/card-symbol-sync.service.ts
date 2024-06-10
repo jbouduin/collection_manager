@@ -1,20 +1,20 @@
 import { InsertResult, Selectable, Transaction, UpdateResult } from "kysely";
 import { inject, injectable } from "tsyringe";
 
-import { CardSymbolSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
+import { DtoSyncParam } from "../../../../../common/dto";
+import { ProgressCallback } from "../../../../../common/ipc-params";
 import { runSerial } from "../../../../../main/services/infra/util";
 import { CardSymbolTable, DatabaseSchema } from "../../../../database/schema";
 import INFRATOKENS, { IConfigurationService, IDatabaseService, IImageCacheService } from "../../../infra/interfaces";
 import ADAPTTOKENS, { ICardSymbolAdapter, ICardSymbolAlternativeAdapter, ICardSymbolColorMapAdapter } from "../../adapt/interface";
 import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
 import { ScryfallCardSymbol } from "../../types/card-symbol/scryfall-card-symbol";
-import { ICardSymbolSyncService } from "../interface/card-symbol-sync.service";
+import { ICardSymbolSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
-import { DtoSyncParam, SyncSource } from "../../../../../common/dto";
 
 
 @injectable()
-export class CardSymbolSyncService extends BaseSyncService<CardSymbolSyncOptions> implements ICardSymbolSyncService {
+export class CardSymbolSyncService extends BaseSyncService implements ICardSymbolSyncService {
 
   //#region private readonly fields -------------------------------------------
   private readonly imageCacheService: IImageCacheService;
@@ -41,14 +41,8 @@ export class CardSymbolSyncService extends BaseSyncService<CardSymbolSyncOptions
   //#endregion
 
   //#region ICardSymbolSyncService methods ------------------------------------
-  public override async newSync(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void> {
-    // return await this.shouldSync(syncParam.syncRequestSource)
-    //   .then(async (shouldSync: boolean) => {
-    //     if (shouldSync) {
-    //       console.log("start CardSymbolSyncService.sync");
-    //       if (progressCallback) {
+  public override async sync(_syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void> {
     progressCallback("Synchronizing card symbols");
-    // }
     return await this.scryfallclient.getCardSymbols(progressCallback)
       .then(async (all: Array<ScryfallCardSymbol>) => {
         this.dumpScryFallData("card-symbols.json", all);
@@ -64,44 +58,6 @@ export class CardSymbolSyncService extends BaseSyncService<CardSymbolSyncOptions
           await result;
         });
         return result;
-      });
-    // } else {
-    // console.log("skip CardSymbolSyncService.sync");
-    // if (progressCallback) {
-    //   progressCallback("Skip synchronizaton of card symbols");
-    // }
-    // return Promise.resolve();
-    // }
-    // });
-  }
-
-  public override async sync(options: CardSymbolSyncOptions, progressCallback: ProgressCallback): Promise<void> {
-    return await this.shouldSync(options.source)
-      .then(async (shouldSync: boolean) => {
-        if (shouldSync) {
-          console.log("start CardSymbolSyncService.sync");
-          if (progressCallback) {
-            progressCallback("Synchronizing card symbols");
-          }
-          return await this.scryfallclient.getCardSymbols(progressCallback)
-            .then(async (all: Array<ScryfallCardSymbol>) => this.processSync(all))
-            .then(async () => await this.database.selectFrom("card_symbol").selectAll().execute())
-            .then(async (allCardSymbols: Array<Selectable<CardSymbolTable>>) => {
-              console.log((`retrieved ${allCardSymbols.length} saved card symbols`));
-              let result = Promise.resolve();
-              allCardSymbols.forEach(async (cardSymbol: Selectable<CardSymbolTable>) => {
-                result = result.then(async () => await this.imageCacheService.cacheCardSymbolSvg(cardSymbol, progressCallback));
-                await result;
-              });
-              return result;
-            });
-        } else {
-          console.log("skip CardSymbolSyncService.sync");
-          if (progressCallback) {
-            progressCallback("Skip synchronizaton of card symbols");
-          }
-          return Promise.resolve();
-        }
       });
   }
   //#endregion
@@ -145,19 +101,6 @@ export class CardSymbolSyncService extends BaseSyncService<CardSymbolSyncOptions
             .then(() => Promise.resolve());
         });
     });
-  }
-
-  private async shouldSync(source: SyncSource): Promise<boolean> {
-    if (source == "user" || this.configurationService.syncAtStartup.syncCardSymbols) {
-      return Promise.resolve(true);
-    } else {
-      return await this.database
-        .selectFrom("card_symbol")
-        .selectAll()
-        .limit(1)
-        .executeTakeFirst()
-        .then((existing: Selectable<CardSymbolTable>) => existing ? false : true);
-    }
   }
   //#endregion
 }

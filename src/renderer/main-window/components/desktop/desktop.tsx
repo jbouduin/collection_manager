@@ -78,7 +78,6 @@ export function Desktop(props: DesktopProps) {
     setDesktopState(newState);
 
     const params: DtoSyncParam = {
-      // syncRequestSource: "user",
       catalogTypesToSync: [],
       syncCardSymbols: false,
       syncCardSets: false,
@@ -91,7 +90,7 @@ export function Desktop(props: DesktopProps) {
       cardSetCodeToSyncCardsFor: code,
       changedImageStatusAction: "delete"
     };
-    window.ipc.newSync(params);
+    window.ipc.sync(params);
   }
 
   function synchronizeCollection(ids: Array<string>): void {
@@ -100,7 +99,6 @@ export function Desktop(props: DesktopProps) {
     setDesktopState(newState);
 
     const params: DtoSyncParam = {
-      // syncRequestSource: "user",
       catalogTypesToSync: [],
       syncCardSymbols: false,
       syncCardSets: false,
@@ -113,12 +111,12 @@ export function Desktop(props: DesktopProps) {
       cardSetCodeToSyncCardsFor: undefined,
       changedImageStatusAction: "delete"
     };
-    window.ipc.newSync(params);
+    window.ipc.sync(params);
   }
 
   function startSync(syncParam: DtoSyncParam): void {
     setSplashScreenOpen(true);
-    window.ipc.newSync(syncParam);
+    window.ipc.sync(syncParam);
   }
   //#endregion
 

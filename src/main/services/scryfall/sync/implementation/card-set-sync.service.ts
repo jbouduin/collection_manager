@@ -1,7 +1,8 @@
 import { Selectable, Transaction } from "kysely";
 import { inject, injectable } from "tsyringe";
 
-import { CardSetSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
+import { DtoSyncParam } from "../../../../../common/dto";
+import { ProgressCallback } from "../../../../../common/ipc-params";
 import { runSerial } from "../../../../../main/services/infra/util";
 import { CardSetTable, DatabaseSchema } from "../../../../database/schema";
 import INFRATOKENS, { IConfigurationService, IDatabaseService, IImageCacheService } from "../../../infra/interfaces";
@@ -10,10 +11,9 @@ import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
 import { ScryfallCardSet } from "../../types";
 import { ICardSetSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
-import { DtoSyncParam, SyncSource } from "../../../../../common/dto";
 
 @injectable()
-export class CardSetSyncService extends BaseSyncService<CardSetSyncOptions> implements ICardSetSyncService {
+export class CardSetSyncService extends BaseSyncService implements ICardSetSyncService {
 
   //#region private readonly fields -------------------------------------------
   private readonly cardSetAdapter: ICardSetAdapter;
@@ -34,14 +34,9 @@ export class CardSetSyncService extends BaseSyncService<CardSetSyncOptions> impl
   //#endregion
 
   //#region ICardSetSyncService methods ---------------------------------------
-  public override async newSync(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void> {
-    // return await this.shouldSync(syncParam.syncRequestSource)
-    //   .then(async (shouldSync: boolean) => {
-    //     if (shouldSync) {
-    //       console.log("start CardSetSyncService.sync");
-    //       if (progressCallback) {
+  public override async sync(_syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void> {
+
     progressCallback("Synchronizing Card sets");
-    // }
     return await this.scryfallclient.getCardSets(progressCallback)
       .then(async (sets: Array<ScryfallCardSet>) => {
         this.dumpScryFallData("card-sets.json", sets);
@@ -56,38 +51,6 @@ export class CardSetSyncService extends BaseSyncService<CardSetSyncOptions> impl
           await result;
         });
         return result;
-      });
-    //       } else {
-    //         console.log("skip CardSetSyncService.sync");
-    //         return Promise.resolve();
-    //       }
-    //     });
-  }
-
-  public override async sync(options: CardSetSyncOptions, progressCallback: ProgressCallback): Promise<void> {
-    return await this.shouldSync(options.source)
-      .then(async (shouldSync: boolean) => {
-        if (shouldSync) {
-          console.log("start CardSetSyncService.sync");
-          if (progressCallback) {
-            progressCallback("Synchronizing Card sets");
-          }
-          return await this.scryfallclient.getCardSets(progressCallback)
-            .then(async (sets: Array<ScryfallCardSet>) => this.processSync(sets))
-            .then(async () => await this.database.selectFrom("card_set").selectAll().execute())
-            .then(async (cardSets: Array<Selectable<CardSetTable>>) => {
-              let result = Promise.resolve();
-              console.log((`retrieved ${cardSets.length} saved card sets`));
-              cardSets.forEach(async (cardset: Selectable<CardSetTable>) => {
-                result = result.then(async () => await this.imageCacheService.cacheCardSetSvg(cardset, progressCallback));
-                await result;
-              });
-              return result;
-            });
-        } else {
-          console.log("skip CardSetSyncService.sync");
-          return Promise.resolve();
-        }
       });
   }
   //#endregion
@@ -108,19 +71,6 @@ export class CardSetSyncService extends BaseSyncService<CardSetSyncOptions> impl
           );
         });
     });
-  }
-
-  private async shouldSync(source: SyncSource): Promise<boolean> {
-    if (source == "user" || this.configurationService.syncAtStartup.syncCardSets) {
-      return await Promise.resolve(true);
-    } else {
-      return await this.database
-        .selectFrom("card_set")
-        .selectAll()
-        .limit(1)
-        .executeTakeFirst()
-        .then((existing: Selectable<CardSetTable>) => existing ? false : true);
-    }
   }
   //#endregion
 }

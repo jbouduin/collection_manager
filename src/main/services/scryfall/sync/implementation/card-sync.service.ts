@@ -4,7 +4,7 @@ import { inject, injectable } from "tsyringe";
 
 import { CardImageDto, ChangedImageStatusAction, DtoSyncParam, IdSelectResult, TimespanUnit } from "../../../../../common/dto";
 import { GameFormat, ImageStatus, MTGColor, MTGColorType } from "../../../../../common/enums";
-import { CardSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
+import { ProgressCallback } from "../../../../../common/ipc-params";
 import { isSingleCardFaceLayout, sqliteUTCTimeStamp } from "../../../../../common/util";
 import { DatabaseSchema } from "../../../../../main/database/schema";
 import INFRATOKENS, { IConfigurationService, IDatabaseService, IImageCacheService } from "../../../../../main/services/infra/interfaces";
@@ -30,7 +30,7 @@ type PreSyncSelectResult = {
 };
 
 @injectable()
-export class CardSyncService extends BaseSyncService<CardSyncOptions> implements ICardSyncService {
+export class CardSyncService extends BaseSyncService implements ICardSyncService {
 
   //#region Private readonly fields -------------------------------------------
   private readonly imageCacheService: IImageCacheService;
@@ -81,7 +81,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
   //#endregion
 
   //#region ICardSyncService methods ------------------------------------------
-  public override async newSync(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void> {
+  public override async sync(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void> {
     return this.GetSyncData(syncParam, progressCallback)
       .then(async (presync: PreSyncSelectResult) => {
         this.dumpScryFallData("cards.json", presync.scryfallCards);
@@ -96,11 +96,6 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
             .executeTakeFirst();
         }
       });
-  }
-
-  public override async sync(_options: CardSyncOptions, _progressCallback: ProgressCallback): Promise<void> {
-    throw new Error("not implemented");
-
   }
   //#endregion
 
@@ -141,11 +136,10 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
         .$call(this.logCompilable)
         .execute()
         .then(async (results: Array<IdAndStatusSelectResult>) => {
-
           if (results.length > 0 || syncParam.cardSelectionToSync.length > 0) {
-            const idsTouse = results.length > 0 ?
-              results.map((result: IdSelectResult) => result.id) :
-              syncParam.cardSelectionToSync;
+            const idsTouse = syncParam.cardSyncType == "collection" ?
+              syncParam.cardSelectionToSync :
+              results.map((result: IdSelectResult) => result.id);
             const scryfallCards = await this.scryfallclient.getCardCollections(idsTouse, progressCallback);
             return {
               scryfallCards: scryfallCards,
@@ -412,7 +406,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
         return await this.genericDeleteAndRecreate(
           trx,
           "cardface_image",
-          (eb) => eb("cardface_image.card_id", "=", scryfallCard.id), // TODO not required because of cascaded delete
+          (eb) => eb("cardface_image.card_id", "=", scryfallCard.id), // NEXT not required because of cascaded delete
           this.cardfaceImageAdapter,
           { cardId: scryfallCard.id, images: cardfaceImagesMap }
         );
@@ -456,7 +450,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
       tableName: "cardface_color_map",
       filter: (eb) => eb("cardface_color_map.card_id", "=", cardId)
         .and("cardface_color_map.sequence", "=", sequence)
-        .and("cardface_color_map.color_type", "=", colorType), // TODO useless as cascaded delete should have removed old stuff
+        .and("cardface_color_map.color_type", "=", colorType), // NEXT useless as cascaded delete should have removed old stuff
       adapter: this.cardfaceColorMapAdapter,
       scryfall: { cardId: cardId, sequence: sequence, colorType: colorType, colors: colors }
     };
@@ -471,7 +465,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
       trx: trx,
       tableName: "card_color_map",
       filter: (eb) => eb("card_color_map.card_id", "=", cardId)
-        .and("card_color_map.color_type", "=", colorType), // TODO useless as cascaded delete should have removed old stuff
+        .and("card_color_map.color_type", "=", colorType), // NEXT useless as cascaded delete should have removed old stuff
       adapter: this.cardColorMapAdapter,
       scryfall: { cardId: cardId, colorType: colorType, colors: colors }
     };

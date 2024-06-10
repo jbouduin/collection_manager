@@ -66,7 +66,7 @@ export function CardImageViewWrapper(props: CardImageViewWrapperProps) {
       case "emblem":
       case "host":
       case "leveler":
-      case "meld": // // FEATURE "Show back" as it can have a back
+      case "meld": // NEXT "Show back" as it can have a back
       case "mutate":
       case "normal":
       case "planar":
@@ -75,7 +75,7 @@ export function CardImageViewWrapper(props: CardImageViewWrapperProps) {
       case "scheme":
       case "split":
       case "token":
-      case "vanguard": // FEATURE "Show back" vanguard has "show back on scryfall", but it looks like a normal back"
+      case "vanguard": // NEXT "Show back" vanguard has "show back on scryfall", but it looks like a normal back"
         return (
           <CardImageView
             cardfaceSequence={0}
@@ -96,7 +96,7 @@ export function CardImageViewWrapper(props: CardImageViewWrapperProps) {
       case "modal_dfc":
       case "double_faced_token":
       case "reversible_card":
-      case "art_series": // TODO art series have reverse and need flip as there are horizontal and vertical cards
+      case "art_series": // NEXT art series have reverse and need flip as there are horizontal and vertical cards solve by adding buttons
         return (
           <CardImageView
             cardfaceSequence={cardfaceSequence}

@@ -1,20 +1,20 @@
+import * as fs from "fs";
 import { Compilable, ExpressionOrFactory, InsertResult, Kysely, SqlBool, Transaction, UpdateResult } from "kysely";
 import * as path from "path";
-import * as fs from "fs";
 
-import { ProgressCallback, SyncOptions } from "../../../../../common/ipc-params";
+import { ExtractTableAlias } from "kysely/dist/cjs/parser/table-parser";
+import { DtoSyncParam } from "../../../../../common/dto";
+import { ProgressCallback } from "../../../../../common/ipc-params";
+import { formatTimeStampedFileName } from "../../../../../common/util";
 import { DatabaseSchema } from "../../../../database/schema";
 import { IConfigurationService, IDatabaseService } from "../../../infra/interfaces";
-import { IBaseSyncService } from "../interface/base-sync.service";
-import { ExtractTableAlias } from "kysely/dist/cjs/parser/table-parser";
 import { ITableAdapter } from "../../adapt/interface/table.adapter";
-import { GenericSyncTaskParameter } from "./generic-sync-task.parameter";
-import { DtoSyncParam } from "../../../../../common/dto";
 import { IScryfallClient } from "../../client/interfaces";
-import { formatTimeStampedFileName } from "../../../../../common/util";
+import { IBaseSyncService } from "../interface/base-sync.service";
+import { GenericSyncTaskParameter } from "./generic-sync-task.parameter";
 
 // @injectable()
-export abstract class BaseSyncService<O extends SyncOptions> implements IBaseSyncService<O> {
+export abstract class BaseSyncService implements IBaseSyncService {
   //#region private readonly fields -------------------------------------------
   private readonly databaseService: IDatabaseService;
   //#endregion
@@ -42,8 +42,7 @@ export abstract class BaseSyncService<O extends SyncOptions> implements IBaseSyn
   //#endregion
 
   //#region IBaseSyncService abstract methods ---------------------------------
-  public abstract sync(params: O, progressCallback: ProgressCallback): Promise<void>;
-  public abstract newSync(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void>;
+  public abstract sync(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void>;
   //#endregion
 
   protected logCompilable<T extends Compilable>(compilable: T): T {

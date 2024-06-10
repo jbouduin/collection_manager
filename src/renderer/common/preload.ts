@@ -14,7 +14,7 @@ const versions = {
 const ipc = {
   darkmode: (mode: DarkmodeOption) => ipcRenderer.invoke("darkmode", mode),
   query: (param: QueryParam<QueryOptions>) => ipcRenderer.invoke("query", param),
-  newSync: (param: DtoSyncParam) => ipcRenderer.invoke("new-sync", param),
+  sync: (param: DtoSyncParam) => ipcRenderer.invoke("sync", param),
   post: (param: PostParam<PostData>) => ipcRenderer.invoke("post", param),
   // FEATURE extended progress reporting with two progress bars
   onProgress: (callback: (status: string) => void) => {

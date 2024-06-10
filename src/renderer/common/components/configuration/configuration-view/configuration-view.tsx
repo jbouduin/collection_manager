@@ -7,8 +7,8 @@ import { SyncParameterView } from "../../sync-parameter-view/sync-parameter-view
 import { SyncParamViewmodel } from "../../../viewmodels/sync-param/sync-param.viewmodel";
 
 export function ConfigurationView(props: ConfigurationViewProps) {
-  const onSyncParamChanged = (syncParam: SyncParamViewmodel) => {
-    props.configurationChanged(props.configuration)
+  const onSyncParamChanged = (_syncParam: SyncParamViewmodel) => {
+    props.configurationChanged(props.configuration);
 };
   //#region Main --------------------------------------------------------------
   return (

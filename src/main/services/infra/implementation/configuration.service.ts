@@ -132,7 +132,6 @@ export class ConfigurationService implements IConfigurationService {
 
   private createSyncAtStartupDefault(): DtoSyncParam {
     const result: DtoSyncParam = {
-      // syncRequestSource: "startup",
       catalogTypesToSync: [],
       syncCardSymbols: false,
       syncCardSets: false,
@@ -144,7 +143,7 @@ export class ConfigurationService implements IConfigurationService {
       syncCardsSyncedBeforeUnit: undefined,
       cardSetCodeToSyncCardsFor: undefined,
       changedImageStatusAction: "delete"
-    }
+    };
     return result;
   }
   //#endregion

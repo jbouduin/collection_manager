@@ -1,7 +1,9 @@
 import { DeleteResult, ExpressionOrFactory, InsertResult, Selectable, SqlBool, Transaction, UpdateResult } from "kysely";
 import { inject, injectable } from "tsyringe";
 
-import { ProgressCallback, RulingSyncOptions } from "../../../../../common/ipc-params";
+import { DtoSyncParam } from "../../../../../common/dto";
+import { ProgressCallback } from "../../../../../common/ipc-params";
+import { runSerial } from "../../../../../main/services/infra/util";
 import { CardTable, DatabaseSchema } from "../../../../database/schema";
 import INFRATOKENS, { IConfigurationService, IDatabaseService } from "../../../infra/interfaces";
 import ADAPTTOKENS, { IOracleRulingAdapter, IOracleRulingLineAdapter } from "../../adapt/interface";
@@ -9,11 +11,9 @@ import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
 import { ScryfallRuling } from "../../types";
 import { IRulingSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
-import { DtoSyncParam } from "../../../../../common/dto";
-import { runSerial } from "../../../../../main/services/infra/util";
 
 @injectable()
-export class RulingSyncService extends BaseSyncService<RulingSyncOptions> implements IRulingSyncService {
+export class RulingSyncService extends BaseSyncService implements IRulingSyncService {
 
   //#region private readonly fields -------------------------------------------
   private readonly rulingLineAdapter: IOracleRulingLineAdapter;
@@ -32,7 +32,8 @@ export class RulingSyncService extends BaseSyncService<RulingSyncOptions> implem
     this.rulingAdapter = rulingAdapter;
   }
 
-  public override async newSync(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void> {
+  //#region IRulingSyncService methods ----------------------------------------
+  public override async sync(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void> {
     // this will not return reversible_card of type land, as they do not have an oracle id
     progressCallback("Synchronizing rulings");
     const cards = await this.database.selectFrom("card")
@@ -57,15 +58,9 @@ export class RulingSyncService extends BaseSyncService<RulingSyncOptions> implem
       }
     );
   }
+  //#endregion
 
-  public override async sync(options: RulingSyncOptions, progressCallback: ProgressCallback): Promise<void> {
-    if (progressCallback) {
-      progressCallback("Synchronizing rulings");
-    }
-    return this.scryfallclient.getRulings(options.cardId)
-      .then((scryFall: Array<ScryfallRuling>) => this.processSync(options.cardId, scryFall));
-  }
-
+  //#region Auxiliary methods -------------------------------------------------
   private async processSync(cardId: string, rulings: Array<ScryfallRuling>): Promise<void> {
     if (rulings.length > 0) {
       const groupByOracleid: Map<string, Array<ScryfallRuling>> = new Map<string, Array<ScryfallRuling>>();
@@ -136,4 +131,5 @@ export class RulingSyncService extends BaseSyncService<RulingSyncOptions> implem
       return Promise.resolve();
     }
   }
+  //#endregion
 }

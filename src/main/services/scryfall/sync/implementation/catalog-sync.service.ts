@@ -1,9 +1,10 @@
-import { Selectable, Transaction } from "kysely";
+import { Transaction } from "kysely";
 import { inject, injectable } from "tsyringe";
 
+import { DtoSyncParam } from "../../../../../common/dto";
 import { CatalogType } from "../../../../../common/enums";
-import { CatalogSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
-import { CatalogItemTable, DatabaseSchema } from "../../../../../main/database/schema";
+import { ProgressCallback } from "../../../../../common/ipc-params";
+import { DatabaseSchema } from "../../../../../main/database/schema";
 import INFRATOKENS, { IConfigurationService, IDatabaseService } from "../../../../../main/services/infra/interfaces";
 import { runSerial } from "../../../../../main/services/infra/util";
 import ADAPTTOKENS, { ICatalogAdapter } from "../../adapt/interface";
@@ -11,7 +12,6 @@ import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
 import { ScryfallCatalog } from "../../types";
 import { ICatalogSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
-import { DtoSyncParam, SyncSource } from "../../../../../common/dto";
 
 type SyncSingleCatalogParameter = {
   catalogType: CatalogType,
@@ -19,7 +19,7 @@ type SyncSingleCatalogParameter = {
 };
 
 @injectable()
-export class CatalogSyncService extends BaseSyncService<CatalogSyncOptions> implements ICatalogSyncService {
+export class CatalogSyncService extends BaseSyncService implements ICatalogSyncService {
 
   //#region private readonly fields -------------------------------------------
   private readonly catalogAdapter: ICatalogAdapter;
@@ -37,36 +37,14 @@ export class CatalogSyncService extends BaseSyncService<CatalogSyncOptions> impl
   //#endregion
 
   //#region ICatalogSyncService methods ---------------------------------------
-  public override async newSync(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void> {
-    // return await this.shouldSync(syncParam.syncRequestSource)
-    //   .then(async (shouldSync: boolean) => {
-    //     if (shouldSync) {
+  public override async sync(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void> {
     console.log("Start CatalogSyncService.sync");
     const serialExecutionArray = syncParam.catalogTypesToSync.map<SyncSingleCatalogParameter>((catalog: CatalogType) => { return { catalogType: catalog, progressCallback: progressCallback }; });
     await runSerial<SyncSingleCatalogParameter>(
       serialExecutionArray,
       (param: SyncSingleCatalogParameter) => `Processing catalog '${param.catalogType}'`,
-      this.syncSingleCatalog.bind(this));
-    //   } else {
-    //     console.log("Skip CatalogSyncService.sync");
-    //   }
-    // });
-  }
-
-  public override async sync(options: CatalogSyncOptions, progressCallback: ProgressCallback): Promise<void> {
-    return await this.shouldSync(options.source)
-      .then(async (shouldSync: boolean) => {
-        if (shouldSync) {
-          console.log("Start CatalogSyncService.sync");
-          const serialExecutionArray = options.catalogs.map<SyncSingleCatalogParameter>((catalog: CatalogType) => { return { catalogType: catalog, progressCallback: progressCallback }; });
-          await runSerial<SyncSingleCatalogParameter>(
-            serialExecutionArray,
-            (param: SyncSingleCatalogParameter) => `Processing catalog '${param.catalogType}'`,
-            this.syncSingleCatalog.bind(this));
-        } else {
-          console.log("Skip CatalogSyncService.sync");
-        }
-      });
+      this.syncSingleCatalog.bind(this)
+    );
   }
   //#endregion
 
@@ -146,19 +124,6 @@ export class CatalogSyncService extends BaseSyncService<CatalogSyncOptions> impl
         .values(catalog.data.map((item: string) => this.catalogAdapter.toInsert({ catalogType: parameter.catalogType, item: item })))
         .executeTakeFirstOrThrow();
     });
-  }
-
-  private async shouldSync(source: SyncSource): Promise<boolean> {
-    if (source == "user") {
-      return Promise.resolve(true);
-    } else {
-      return await this.database
-        .selectFrom("catalog_item")
-        .selectAll()
-        .limit(1)
-        .executeTakeFirst()
-        .then((existing: Selectable<CatalogItemTable>) => existing ? false : true);
-    }
   }
   //#endregion
 }

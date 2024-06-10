@@ -42,37 +42,37 @@ export class CardSymbolSyncService extends BaseSyncService<CardSymbolSyncOptions
 
   //#region ICardSymbolSyncService methods ------------------------------------
   public override async newSync(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void> {
-    return await this.shouldSync(syncParam.syncRequestSource)
-      .then(async (shouldSync: boolean) => {
-        if (shouldSync) {
-          console.log("start CardSymbolSyncService.sync");
-          if (progressCallback) {
-            progressCallback("Synchronizing card symbols");
-          }
-          return await this.scryfallclient.getCardSymbols(progressCallback)
-            .then(async (all: Array<ScryfallCardSymbol>) => {
-              this.dumpScryFallData("card-symbols.json", all);
-              this.processSync(all);
-            })
-            .then(async () => await this.database.selectFrom("card_symbol").selectAll().execute())
-            .then(async (allCardSymbols: Array<Selectable<CardSymbolTable>>) => {
-              console.log((`Saved ${allCardSymbols.length} card symbols`));
-              progressCallback(`Saved ${allCardSymbols.length} card symbols`);
-              let result = Promise.resolve();
-              allCardSymbols.forEach(async (cardSymbol: Selectable<CardSymbolTable>) => {
-                result = result.then(async () => await this.imageCacheService.cacheCardSymbolSvg(cardSymbol, progressCallback));
-                await result;
-              });
-              return result;
-            });
-        } else {
-          console.log("skip CardSymbolSyncService.sync");
-          if (progressCallback) {
-            progressCallback("Skip synchronizaton of card symbols");
-          }
-          return Promise.resolve();
-        }
+    // return await this.shouldSync(syncParam.syncRequestSource)
+    //   .then(async (shouldSync: boolean) => {
+    //     if (shouldSync) {
+    //       console.log("start CardSymbolSyncService.sync");
+    //       if (progressCallback) {
+    progressCallback("Synchronizing card symbols");
+    // }
+    return await this.scryfallclient.getCardSymbols(progressCallback)
+      .then(async (all: Array<ScryfallCardSymbol>) => {
+        this.dumpScryFallData("card-symbols.json", all);
+        this.processSync(all);
+      })
+      .then(async () => await this.database.selectFrom("card_symbol").selectAll().execute())
+      .then(async (allCardSymbols: Array<Selectable<CardSymbolTable>>) => {
+        console.log((`Saved ${allCardSymbols.length} card symbols`));
+        progressCallback(`Saved ${allCardSymbols.length} card symbols`);
+        let result = Promise.resolve();
+        allCardSymbols.forEach(async (cardSymbol: Selectable<CardSymbolTable>) => {
+          result = result.then(async () => await this.imageCacheService.cacheCardSymbolSvg(cardSymbol, progressCallback));
+          await result;
+        });
+        return result;
       });
+    // } else {
+    // console.log("skip CardSymbolSyncService.sync");
+    // if (progressCallback) {
+    //   progressCallback("Skip synchronizaton of card symbols");
+    // }
+    // return Promise.resolve();
+    // }
+    // });
   }
 
   public override async sync(options: CardSymbolSyncOptions, progressCallback: ProgressCallback): Promise<void> {
@@ -148,7 +148,7 @@ export class CardSymbolSyncService extends BaseSyncService<CardSymbolSyncOptions
   }
 
   private async shouldSync(source: SyncSource): Promise<boolean> {
-    if (source == "user" || this.configurationService.syncAtStartup.indexOf("CardSymbol") >= 0) {
+    if (source == "user" || this.configurationService.syncAtStartup.syncCardSymbols) {
       return Promise.resolve(true);
     } else {
       return await this.database

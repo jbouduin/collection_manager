@@ -38,19 +38,19 @@ export class CatalogSyncService extends BaseSyncService<CatalogSyncOptions> impl
 
   //#region ICatalogSyncService methods ---------------------------------------
   public override async newSync(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void> {
-    return await this.shouldSync(syncParam.syncRequestSource)
-      .then(async (shouldSync: boolean) => {
-        if (shouldSync) {
-          console.log("Start CatalogSyncService.sync");
-          const serialExecutionArray = syncParam.catalogTypesToSync.map<SyncSingleCatalogParameter>((catalog: CatalogType) => { return { catalogType: catalog, progressCallback: progressCallback }; });
-          await runSerial<SyncSingleCatalogParameter>(
-            serialExecutionArray,
-            (param: SyncSingleCatalogParameter) => `Processing catalog '${param.catalogType}'`,
-            this.syncSingleCatalog.bind(this));
-        } else {
-          console.log("Skip CatalogSyncService.sync");
-        }
-      });
+    // return await this.shouldSync(syncParam.syncRequestSource)
+    //   .then(async (shouldSync: boolean) => {
+    //     if (shouldSync) {
+    console.log("Start CatalogSyncService.sync");
+    const serialExecutionArray = syncParam.catalogTypesToSync.map<SyncSingleCatalogParameter>((catalog: CatalogType) => { return { catalogType: catalog, progressCallback: progressCallback }; });
+    await runSerial<SyncSingleCatalogParameter>(
+      serialExecutionArray,
+      (param: SyncSingleCatalogParameter) => `Processing catalog '${param.catalogType}'`,
+      this.syncSingleCatalog.bind(this));
+    //   } else {
+    //     console.log("Skip CatalogSyncService.sync");
+    //   }
+    // });
   }
 
   public override async sync(options: CatalogSyncOptions, progressCallback: ProgressCallback): Promise<void> {

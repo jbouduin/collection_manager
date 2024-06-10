@@ -35,33 +35,33 @@ export class CardSetSyncService extends BaseSyncService<CardSetSyncOptions> impl
 
   //#region ICardSetSyncService methods ---------------------------------------
   public override async newSync(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void> {
-    return await this.shouldSync(syncParam.syncRequestSource)
-      .then(async (shouldSync: boolean) => {
-        if (shouldSync) {
-          console.log("start CardSetSyncService.sync");
-          if (progressCallback) {
-            progressCallback("Synchronizing Card sets");
-          }
-          return await this.scryfallclient.getCardSets(progressCallback)
-            .then(async (sets: Array<ScryfallCardSet>) => {
-              this.dumpScryFallData("card-sets.json", sets);
-              this.processSync(sets);
-            })
-            .then(async () => await this.database.selectFrom("card_set").selectAll().execute())
-            .then(async (cardSets: Array<Selectable<CardSetTable>>) => {
-              let result = Promise.resolve();
-              console.log((`Saved ${cardSets.length} card sets`));
-              cardSets.forEach(async (cardset: Selectable<CardSetTable>) => {
-                result = result.then(async () => await this.imageCacheService.cacheCardSetSvg(cardset, progressCallback));
-                await result;
-              });
-              return result;
-            });
-        } else {
-          console.log("skip CardSetSyncService.sync");
-          return Promise.resolve();
-        }
+    // return await this.shouldSync(syncParam.syncRequestSource)
+    //   .then(async (shouldSync: boolean) => {
+    //     if (shouldSync) {
+    //       console.log("start CardSetSyncService.sync");
+    //       if (progressCallback) {
+    progressCallback("Synchronizing Card sets");
+    // }
+    return await this.scryfallclient.getCardSets(progressCallback)
+      .then(async (sets: Array<ScryfallCardSet>) => {
+        this.dumpScryFallData("card-sets.json", sets);
+        this.processSync(sets);
+      })
+      .then(async () => await this.database.selectFrom("card_set").selectAll().execute())
+      .then(async (cardSets: Array<Selectable<CardSetTable>>) => {
+        let result = Promise.resolve();
+        console.log((`Saved ${cardSets.length} card sets`));
+        cardSets.forEach(async (cardset: Selectable<CardSetTable>) => {
+          result = result.then(async () => await this.imageCacheService.cacheCardSetSvg(cardset, progressCallback));
+          await result;
+        });
+        return result;
       });
+    //       } else {
+    //         console.log("skip CardSetSyncService.sync");
+    //         return Promise.resolve();
+    //       }
+    //     });
   }
 
   public override async sync(options: CardSetSyncOptions, progressCallback: ProgressCallback): Promise<void> {
@@ -111,7 +111,7 @@ export class CardSetSyncService extends BaseSyncService<CardSetSyncOptions> impl
   }
 
   private async shouldSync(source: SyncSource): Promise<boolean> {
-    if (source == "user" || this.configurationService.syncAtStartup.indexOf("CardSet") >= 0) {
+    if (source == "user" || this.configurationService.syncAtStartup.syncCardSets) {
       return await Promise.resolve(true);
     } else {
       return await this.database

@@ -78,7 +78,7 @@ export function Desktop(props: DesktopProps) {
     setDesktopState(newState);
 
     const params: DtoSyncParam = {
-      syncRequestSource: "user",
+      // syncRequestSource: "user",
       catalogTypesToSync: [],
       syncCardSymbols: false,
       syncCardSets: false,
@@ -100,7 +100,7 @@ export function Desktop(props: DesktopProps) {
     setDesktopState(newState);
 
     const params: DtoSyncParam = {
-      syncRequestSource: "user",
+      // syncRequestSource: "user",
       catalogTypesToSync: [],
       syncCardSymbols: false,
       syncCardSets: false,

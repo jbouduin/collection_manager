@@ -9,7 +9,7 @@ export interface DtoSyncParam {
   /**
    * The source requesting the synchronization
    */
-  syncRequestSource: SyncSource;
+  // syncRequestSource: SyncSource;
   /**
    * The catalogs to be synced
    */

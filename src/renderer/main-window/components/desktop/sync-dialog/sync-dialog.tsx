@@ -10,7 +10,7 @@ import { SyncDialogProps } from "./sync-dialog.props";
 export function SyncDialog(props: SyncDialogProps) {
   //#region State -------------------------------------------------------------
   const initialState = new SyncParamViewmodel({
-    syncRequestSource: "user",
+    // syncRequestSource: "user",
     catalogTypesToSync: [],
     syncCardSymbols: false,
     syncCardSets: false,

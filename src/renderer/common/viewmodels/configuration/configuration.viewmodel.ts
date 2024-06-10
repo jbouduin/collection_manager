@@ -3,12 +3,14 @@ import { cloneDeep, isEqual } from "lodash";
 
 import { DtoConfiguration } from "../../../../common/dto/configuration/configuration.dto";
 import { SyncType } from "../../../../common/ipc-params";
+import { SyncParamViewmodel } from "../sync-param/sync-param.viewmodel";
 
 export class ConfigurationViewModel {
 
   //#region private fields ----------------------------------------------------
   private readonly _orgConfiguration: DtoConfiguration;
   private readonly _dtoConfiguration: DtoConfiguration;
+  private _syncParamViewmodel: SyncParamViewmodel;
   private _hasChanges: boolean;
   //#endregion
 
@@ -49,6 +51,15 @@ export class ConfigurationViewModel {
   public get theme(): string {
     return this._dtoConfiguration.rendererConfiguration.useDarkTheme ? Classes.DARK : "";
   }
+
+  public get syncParamViewmodel(): SyncParamViewmodel {
+    return this._syncParamViewmodel;
+  }
+
+  public set syncParamViewmodel(value: SyncParamViewmodel) {
+    this._syncParamViewmodel = value;
+    this._dtoConfiguration.mainConfiguration.syncAtStartup = value.dto;
+  }
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
@@ -56,21 +67,10 @@ export class ConfigurationViewModel {
     this._orgConfiguration = cloneDeep(dtoConfiguration);
     this._dtoConfiguration = dtoConfiguration;
     this._hasChanges = hasChanges;
+    this._syncParamViewmodel = new SyncParamViewmodel(dtoConfiguration.mainConfiguration.syncAtStartup);
   }
   //#endregion
 
   //#region Public methods ----------------------------------------------------
-  public getSyncAtStartup(syncType: SyncType): boolean {
-    return this._dtoConfiguration.mainConfiguration.syncAtStartup.indexOf(syncType) >= 0;
-  }
-
-  public setSyncAtStartup(syncType: SyncType, value: boolean) {
-    if (value) {
-      this._dtoConfiguration.mainConfiguration.syncAtStartup.push(syncType);
-    } else {
-      this._dtoConfiguration.mainConfiguration.syncAtStartup = this._dtoConfiguration.mainConfiguration.syncAtStartup
-        .filter((s: SyncType) => s != syncType);
-    }
-  }
   //#endregion
 }

@@ -1,8 +1,7 @@
-import { Checkbox, FormGroup, InputGroup, SectionCard } from "@blueprintjs/core";
+import { FormGroup, InputGroup, SectionCard } from "@blueprintjs/core";
 import * as React from "react";
 
-import { SyncType, SyncTypeDisplayValue } from "../../../../../common/ipc-params";
-import { handleBooleanChange, handleStringChange } from "../../../../common/utils";
+import { handleStringChange } from "../../../../common/utils";
 import { ConfigurationViewProps } from "../configuration-view/configuration-view.props";
 
 export function BasicConfigurationView(props: ConfigurationViewProps) {
@@ -55,38 +54,10 @@ export function BasicConfigurationView(props: ConfigurationViewProps) {
           }
         />
       </FormGroup>
-      <FormGroup label="Synchronize at startup" key="sync-at-startup">
-        <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
-          {
-            renderStartup()
-          }
-        </div>
-      </FormGroup>
     </SectionCard>
   );
   //#endregion
 
   //#region Auxiliary methods -------------------------------------------------
-  function renderStartup(): Array<React.JSX.Element> {
-    const result = new Array<React.JSX.Element>();
-    SyncTypeDisplayValue.forEach((displayValue: string, key: SyncType) => {
-      result.push(
-        (
-          <Checkbox
-            key={key}
-            label={displayValue}
-            checked={props.configuration.getSyncAtStartup(key)}
-            onChange={
-              handleBooleanChange((value: boolean) => {
-              props.configuration.setSyncAtStartup(key, value);
-              props.configurationChanged(props.configuration);
-              })
-            }
-          />
-        )
-      );
-    });
-    return result;
-  }
   //#endregion
 }

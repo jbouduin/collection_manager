@@ -1,4 +1,3 @@
-import { sql } from "kysely";
 import { InsertExpression } from "kysely/dist/cjs/parser/insert-values-parser";
 import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser";
 
@@ -6,10 +5,14 @@ import { DatabaseSchema } from "../../../../database/schema";
 import { ScryfallCard } from "../../types";
 import { ICardAdapter } from "../interface";
 import { scryfallBooleanToNumber, scryfallDateToIsoString } from "./utils";
+import { sqliteUTCTimeStamp } from "../../../../../common/util";
 
 export class CardAdapter implements ICardAdapter {
   public toInsert(scryfall: ScryfallCard): InsertExpression<DatabaseSchema, "card"> {
+    const now = sqliteUTCTimeStamp;
     return {
+      created_at: now,
+      last_synced_at: now,
       id: scryfall.id,
       name: scryfall.name,
       lang: scryfall.lang,
@@ -30,7 +33,11 @@ export class CardAdapter implements ICardAdapter {
       set_id: scryfall.set_id,
       is_oversized: scryfallBooleanToNumber(scryfall.oversized),
       is_reserved: scryfallBooleanToNumber(scryfall.reserved),
-      is_promo: scryfallBooleanToNumber(scryfall.promo)
+      is_promo: scryfallBooleanToNumber(scryfall.promo),
+      is_story_spotlight: scryfallBooleanToNumber(scryfall.story_spotlight),
+      image_status: scryfall.image_status,
+      is_variation: scryfallBooleanToNumber(scryfall.variation),
+      security_stamp: scryfall.security_stamp
     };
   }
 
@@ -54,7 +61,11 @@ export class CardAdapter implements ICardAdapter {
       is_oversized: scryfallBooleanToNumber(scryfall.oversized),
       is_reserved: scryfallBooleanToNumber(scryfall.reserved),
       is_promo: scryfallBooleanToNumber(scryfall.promo),
-      last_synced_at: sql`CURRENT_TIMESTAMP`
+      last_synced_at: sqliteUTCTimeStamp,
+      is_story_spotlight: scryfallBooleanToNumber(scryfall.story_spotlight),
+      image_status: scryfall.image_status,
+      is_variation: scryfallBooleanToNumber(scryfall.variation),
+      security_stamp: scryfall.security_stamp
     };
   }
 }

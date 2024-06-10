@@ -2,12 +2,13 @@ import { inject, injectable } from "tsyringe";
 
 import { DtoScryfallConfiguration } from "../../../../../common/dto/configuration/scryfall-configuration.dto";
 import { CatalogType } from "../../../../../common/enums";
-import { CardSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
+import { ProgressCallback } from "../../../../../common/ipc-params";
 import INFRATOKENS, { IConfigurationService } from "../../../../../main/services/infra/interfaces";
 import { ScryfallCard, ScryfallCardSet, ScryfallCatalog, ScryfallRuling } from "../../types";
 import { ScryfallCardSymbol } from "../../types/card-symbol/scryfall-card-symbol";
 import { ScryfallList } from "../../types/scryfall-list";
 import { IScryfallClient, ScryfallSearchOptions } from "../interfaces";
+import { runSerial } from "../../../../../main/services/infra/util";
 
 
 @injectable()
@@ -40,7 +41,8 @@ export class ScryfallClient implements IScryfallClient {
       .then((response: Response) => response.body);
   }
 
-  public async getCatalog(type: CatalogType): Promise<ScryfallCatalog> {
+  public async getCatalog(type: CatalogType, progressCallback: ProgressCallback): Promise<ScryfallCatalog> {
+    progressCallback(`Fetching catalog '${type}' from Scryfall`);
     const uri = `${this.scryfallConfiguration.scryfallApiRoot}/${this.scryfallConfiguration.scryfallEndpoints["catalog"]}/${this.scryfallConfiguration.scryfallCatalogPaths[type]}`;
     return this
       .tryFetch(uri)
@@ -48,33 +50,62 @@ export class ScryfallClient implements IScryfallClient {
   }
 
   // LATER use emitter in getCards or in getlist
-  public async getCards(options: CardSyncOptions): Promise<Array<ScryfallCard>> {
-    if (options.setCode) {
-      const scryfallOptions: ScryfallSearchOptions = {
-        unique: "prints",
-        include_extras: true,
-        include_multilingual: true,
-        include_variations: true
-      };
-      const uri = this.buildCardUri(options, scryfallOptions);
-      return this.fetchList<ScryfallCard>(uri, new Array<ScryfallCard>());
-    } else if (options.cardIds) {
-      const requestBody: Array<{ id: string }> = options.cardIds.map((id: string) => { return { id: id }; });
-      return await this.tryPost(
-        `${this.scryfallConfiguration.scryfallApiRoot}/${this.scryfallConfiguration.scryfallEndpoints["collection"]}`,
-        JSON.stringify({ identifiers: requestBody })
-      );
-    } else {
-      return Promise.resolve(new Array<ScryfallCard>());
-    }
+  public async getCardsForCardSet(cardSetCode: string, progressCallback: ProgressCallback): Promise<Array<ScryfallCard>> {
+    progressCallback("Fetching cards of from Scryfall");
+    const scryfallOptions: ScryfallSearchOptions = {
+      unique: "prints",
+      include_extras: true,
+      include_multilingual: true,
+      include_variations: true
+    };
+    const uri = this.buildCardBySetUri(cardSetCode, scryfallOptions);
+    return this.fetchList<ScryfallCard>(uri, new Array<ScryfallCard>());
   }
 
-  public async getCardSets(): Promise<Array<ScryfallCardSet>> {
+  public async getCardCollections(cardIds: Array<string>, progressCallback: ProgressCallback): Promise<Array<ScryfallCard>> {
+    progressCallback(`Fetching ${cardIds.length} cards from Scryfall`);
+    const result = new Array<ScryfallCard>();
+    // split array
+    const chunks = cardIds.reduce(
+      (resultArray, item, index) => {
+        const chunkIndex = Math.floor(index / this.scryfallConfiguration.collectionChunkSize);
+        if (!resultArray[chunkIndex]) {
+          resultArray[chunkIndex] = []; // start a new chunk
+        }
+        resultArray[chunkIndex].push(item);
+        return resultArray;
+      },
+      []
+    );
+
+    await runSerial<Array<string>>(
+      chunks,
+      (param: Array<string>) => `length of chunk: ${param.length}`,
+      async (chunk: Array<string>, index: number, _total: number) => {
+        const first = (this.scryfallConfiguration.collectionChunkSize * index) + 1;
+        const last = first + chunk.length - 1;
+        const message = `Fetching cards ${first} - ${last} of ${cardIds.length} from Scryfall`;
+        progressCallback(message);
+        console.log(message);
+        const fetched = await this.tryPost(
+          `${this.scryfallConfiguration.scryfallApiRoot}/${this.scryfallConfiguration.scryfallEndpoints["collection"]}`,
+          JSON.stringify({ identifiers: chunk.map((id: string) => { return { id: id }; }) })
+        );
+        result.push(...fetched);
+      }
+    );
+    return result;
+
+
+  }
+  public async getCardSets(progressCallback: ProgressCallback): Promise<Array<ScryfallCardSet>> {
+    progressCallback("Fetching card set data from Scryfall");
     const uri = `${this.scryfallConfiguration.scryfallApiRoot}/${this.scryfallConfiguration.scryfallEndpoints["cardSet"]}`;
     return this.fetchList<ScryfallCardSet>(uri, new Array<ScryfallCardSet>());
   }
 
-  public getCardSymbols(): Promise<Array<ScryfallCardSymbol>> {
+  public getCardSymbols(progressCallback: ProgressCallback): Promise<Array<ScryfallCardSymbol>> {
+    progressCallback("Fetching card symbol data from Scryfall");
     const uri = `${this.scryfallConfiguration.scryfallApiRoot}/${this.scryfallConfiguration.scryfallEndpoints["cardSymbol"]}`;
     return this.fetchList<ScryfallCardSymbol>(uri, new Array<ScryfallCardSymbol>());
   }
@@ -103,6 +134,7 @@ export class ScryfallClient implements IScryfallClient {
     const now = Date.now();
     const sleepTime = this.nextQuery - now;
     this.nextQuery = now + this.scryfallConfiguration.minimumRequestTimeout;
+    console.log(body);
     return await this
       .sleep(sleepTime)
       .then(() => fetch(uri, {
@@ -139,14 +171,14 @@ export class ScryfallClient implements IScryfallClient {
       });
   }
 
-  private buildCardUri(options: CardSyncOptions, scryfallOptions: ScryfallSearchOptions): URL {
+  private buildCardBySetUri(cardSetCode: string, scryfallOptions: ScryfallSearchOptions): URL {
     const result = new URL(`${this.scryfallConfiguration.scryfallApiRoot}/${this.scryfallConfiguration.scryfallEndpoints["card"]}`);
     result.searchParams.set("include_extras", scryfallOptions.include_extras ? "true" : "false");
     result.searchParams.set("unique", scryfallOptions.unique);
     result.searchParams.set("include_multilingual", scryfallOptions.include_multilingual ? "true" : "false");
     result.searchParams.set("include_variations", scryfallOptions.include_variations ? "true" : "false");
     const query = new Array<string>();
-    query.push(`e=${options.setCode}`);
+    query.push(`e=${cardSetCode}`);
     query.push("lang=any");
     result.searchParams.set("q", query.join("+"));
     return result;

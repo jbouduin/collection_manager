@@ -1,10 +1,9 @@
 import * as fs from "fs";
 import * as path from "path";
 
-import { DtoConfiguration } from "../../../../common/dto/configuration/configuration.dto";
+import { DtoConfiguration, DtoSyncParam } from "../../../../common/dto";
 import { DtoScryfallConfiguration } from "../../../../common/dto/configuration/scryfall-configuration.dto";
 import { CatalogType } from "../../../../common/enums";
-import { SyncType } from "../../../../common/ipc-params";
 import { ScryfallEndpoint } from "../../scryfall";
 import { IConfigurationService } from "../interfaces";
 
@@ -41,7 +40,7 @@ export class ConfigurationService implements IConfigurationService {
     return this._configuration.scryfallConfiguration.scryfallApiRoot;
   }
 
-  public get syncAtStartup(): Array<SyncType> {
+  public get syncAtStartup(): DtoSyncParam {
     return this._configuration.mainConfiguration.syncAtStartup;
   }
   //#endregion
@@ -77,7 +76,7 @@ export class ConfigurationService implements IConfigurationService {
         rootDataDirectory: path.join(homeDirectory, "collection-manager"),
         cacheDirectory: path.join(appDirectory, ".cache"),
         databaseName: "magic-db.sqlite",
-        syncAtStartup: new Array<SyncType>()
+        syncAtStartup: this.createSyncAtStartupDefault()
       },
       rendererConfiguration: {
         useDarkTheme: useDarkTheme
@@ -121,9 +120,30 @@ export class ConfigurationService implements IConfigurationService {
       scryfallApiRoot: "https://api.scryfall.com",
       scryfallEndpoints: endpoints,
       scryfallCatalogPaths: catalogPaths,
-      minimumRequestTimeout: 60
+      // Scryfall api requests 50-100 ms between calls, let's give it some slack
+      minimumRequestTimeout: 60,
+      dumpRetrievedData: false,
+      // Scryfall api allows up to 75 per collection
+      collectionChunkSize: 50
     };
     console.log(JSON.stringify(result, null,2));
+    return result;
+  }
+
+  private createSyncAtStartupDefault(): DtoSyncParam {
+    const result: DtoSyncParam = {
+      catalogTypesToSync: [],
+      syncCardSymbols: false,
+      syncCardSets: false,
+      rulingSyncType: "none",
+      cardSyncType: "none",
+      cardSelectionToSync: [],
+      cardImageStatusToSync: [],
+      syncCardsSyncedBeforeNumber: 0,
+      syncCardsSyncedBeforeUnit: undefined,
+      cardSetCodeToSyncCardsFor: undefined,
+      changedImageStatusAction: "delete"
+    };
     return result;
   }
   //#endregion

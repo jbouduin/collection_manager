@@ -1,9 +1,19 @@
 import { container, inject, singleton } from "tsyringe";
 
-import { CardSyncOptions, CatalogSyncOptions, SyncOptions, SyncParam } from "../../../../common/ipc-params";
-import SYNCTOKENS, { ICardSetSyncService, ICardSymbolSyncService, ICardSyncService, ICatalogSyncService } from "../../scryfall";
+import { BrowserWindow } from "electron";
+import { DtoSyncParam } from "../../../../common/dto";
+import SYNCTOKENS from "../../scryfall";
 import INFRATOKENS, { IIpcSyncService, IWindowService } from "../interfaces";
+import { runSerial } from "../util";
+import { IBaseSyncService } from "../../scryfall/sync/interface/base-sync.service";
 
+
+interface SyncTaskParam {
+  displayName: string;
+  serviceToken: string;
+  syncParam: DtoSyncParam;
+  browserWindow: BrowserWindow;
+}
 
 @singleton()
 export class IpcSyncService implements IIpcSyncService {
@@ -14,44 +24,69 @@ export class IpcSyncService implements IIpcSyncService {
     this.windowService = windowService;
   }
 
-  public async handle(params: SyncParam<SyncOptions>): Promise<void> {
-    console.log("start IpcSyncService.handling", params);
-    const splashWindow = this.windowService.createSplashWindow();
-    splashWindow.on("ready-to-show", async () => {
-      splashWindow.show();
-      splashWindow.webContents.send("splash", `Start sync ${params.type}`);
-      switch (params.type) {
-        case "CardSet":
-          await container.resolve<ICardSetSyncService>(SYNCTOKENS.CardSetSyncService)
-            .sync({ source: "user", code: null }, (value: string) => splashWindow.webContents.send("splash", value))
-            .then(() => splashWindow.close());
-          break;
-        case "Card":
-          await container.resolve<ICardSyncService>(SYNCTOKENS.CardSyncService)
-            .sync(
-              (params as SyncParam<CardSyncOptions>).options,
-              (value: string) => splashWindow.webContents.send("splash", value)
-            )
-            .then(() => splashWindow.close());
-          break;
-        case "Catalog":
-          await container.resolve<ICatalogSyncService>(SYNCTOKENS.CatalogSyncService)
-            .sync(
-              (params as SyncParam<CatalogSyncOptions>).options,
-              (value: string) => splashWindow.webContents.send("splash", value)
-            )
-            .then(() => splashWindow.close());
-          break;
-        case "CardSymbol":
-          await container.resolve<ICardSymbolSyncService>(SYNCTOKENS.CardSymbolSyncService)
-            .sync(
-              { source: "user" },
-              (value: string) => splashWindow.webContents.send("splash", value)
-            )
-            .then(() => splashWindow.close());
-          break;
-      }
-    });
+  public async handle(syncParam: DtoSyncParam, browserWindow: BrowserWindow): Promise<void> {
+    console.log("start new IpcSyncService.handling", syncParam);
+
+    const taskParams = new Array<SyncTaskParam>();
+    if (syncParam.cardSyncType != "none") {
+      taskParams.push({
+        displayName: "Cards",
+        serviceToken: SYNCTOKENS.CardSyncService,
+        syncParam: syncParam,
+        browserWindow: browserWindow
+      });
+    }
+    if (syncParam.rulingSyncType != "none") {
+      taskParams.push({
+        displayName: "Rulings",
+        serviceToken: SYNCTOKENS.RulingSyncService,
+        syncParam: syncParam,
+        browserWindow: browserWindow
+      });
+    }
+    if (syncParam.syncCardSymbols) {
+      taskParams.push({
+        displayName: "CardSymbol",
+        serviceToken: SYNCTOKENS.CardSymbolSyncService,
+        syncParam: syncParam,
+        browserWindow: browserWindow
+      });
+    }
+    if (syncParam.syncCardSets) {
+      taskParams.push({
+        displayName: "CardSets",
+        serviceToken: SYNCTOKENS.CardSetSyncService,
+        syncParam: syncParam,
+        browserWindow: browserWindow
+      });
+    }
+    if (syncParam.catalogTypesToSync.length > 0) {
+      taskParams.push({
+        displayName: "Catalog",
+        serviceToken: SYNCTOKENS.CatalogSyncService,
+        syncParam: syncParam,
+        browserWindow: browserWindow
+      });
+    }
+
+    browserWindow.webContents.send("splash", "Start synchronization");
+    try {
+      return await runSerial<SyncTaskParam>(
+        taskParams,
+        (taskParam: SyncTaskParam) => `Serial task: ${taskParam.displayName}`,
+        this.handleTask.bind(this));
+    } catch (error) {
+      console.log(error);
+    } finally {
+      browserWindow.webContents.send("splash-end");
+    }
   }
 
+  private async handleTask(taskParam: SyncTaskParam, _index: number, _total: number): Promise<void> {
+    const synchronizer = container.resolve<IBaseSyncService>(taskParam.serviceToken);
+    return synchronizer.sync(
+      taskParam.syncParam,
+      (value: string) => taskParam.browserWindow.webContents.send("splash", value)
+    );
+  }
 }

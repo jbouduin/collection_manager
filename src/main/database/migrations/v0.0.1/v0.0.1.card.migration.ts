@@ -58,10 +58,15 @@ async function createV0_0_1_Card(db: Kysely<any>): Promise<void> {
     .addColumn("is_oversized", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
     .addColumn("is_reserved", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
     .addColumn("is_promo", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
+    .addColumn("security_stamp", "text")
+    .addColumn("image_status", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
+    .addColumn("is_story_spotlight", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
+    .addColumn("is_variation", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
     .execute()
     .then(async () => await db.schema.createIndex("card_set_id_idx").on("card").column("set_id").execute())
-    .then(async () => await db.schema.createIndex("card_oracle_id_idx").on("card").column("oracle_id").execute());
-
+    .then(async () => await db.schema.createIndex("card_oracle_id_idx").on("card").column("oracle_id").execute())
+    .then(async () => await db.schema.createIndex("card_image_status_idx").on("card").column("image_status").execute())
+    .then(async () => await db.schema.createIndex("card_last_synced_at_idx").on("card").column("last_synced_at").execute());
 }
 
 async function createV0_0_1_CardMultiversId(db: Kysely<any>): Promise<void> {

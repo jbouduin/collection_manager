@@ -4,5 +4,7 @@ import { EDesktopView } from "../desktop-view.enum";
 
 export interface ButtonBarProps extends Props {
   currentView: EDesktopView;
-  onSelectButton: (desktopView: EDesktopView) => void
+  onDesktopViewSelectionClick: (desktopView: EDesktopView) => void;
+  onSettingsMenuClick: () => void;
+  onSyncMenuClick: () => void;
 }

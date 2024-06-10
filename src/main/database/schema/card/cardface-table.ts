@@ -24,12 +24,6 @@ export interface CardfaceTable {
   illustration_id?: ColumnType<string, string | undefined>;
 
   /**
-   * An object providing URIs to imagery for this face,
-   * if this is a double - sided card.If this card is not double - sided, then the image_uris property will be part of the parent object instead.
-   */
-  // table face_images image_uris 	Object 	Nullable
-
-  /**
    * The layout of this card face, if the card is reversible.
    */
   layout?: ColumnType<CardLayout, CardLayout | undefined>;
@@ -67,5 +61,5 @@ export interface CardfaceTable {
   flavor_text?: ColumnType<string, string | undefined>;
 }
 
-// LATER vanguard: hand_modfier? (This card’s hand modifier, if it is Vanguard card. This value will contain a delta, such as -1.)
-// LATER vanguard: life_modfier? (This card’s life modifier, if it is Vanguard card. This value will contain a delta, such as +2.)
+// LATER store "hand_modfier?" (This card’s hand modifier, if it is Vanguard card. This value will contain a delta, such as -1.)
+// LATER store "life_modfier?" (This card’s life modifier, if it is Vanguard card. This value will contain a delta, such as +2.)

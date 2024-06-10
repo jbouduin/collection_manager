@@ -1,6 +1,6 @@
 import { container, singleton } from "tsyringe";
 
-import { DtoRulingLine } from "../../../../common/dto";
+import { DtoRulingLine, DtoSyncParam } from "../../../../common/dto";
 import { AssetQueryOptions, CardSetDetailsQueryOptions, LegalityQueryOptions, QueryOptions, QueryParam, RulingQueryOptions } from "../../../../common/ipc-params";
 import { CardQueryOptions } from "../../../../common/ipc-params/query/card-query.options";
 import REPOTOKENS, { ICardRepository, ICardSetRepository, ICardSymbolRepository, ICatalogRepository, IColorRepository, ILanguageRepository, IOracleRepository } from "../../repo/interfaces";
@@ -72,7 +72,21 @@ export class IpcQueryService implements IIpcQueryService {
     return oracleRepository.getByCardId(options.cardId)
       .then((queryResult: Array<DtoRulingLine>) => {
         if (queryResult.length == 0) {
-          return container.resolve<IRulingSyncService>(SYNCTOKENS.RulingSyncService).sync({source: "user", cardId: options.cardId}, null)
+          const dtoSyncParam: DtoSyncParam = {
+            catalogTypesToSync: [],
+            syncCardSymbols: false,
+            syncCardSets: false,
+            rulingSyncType: "selectionOfCards",
+            cardSyncType: "none",
+            cardSelectionToSync: [options.cardId],
+            cardImageStatusToSync: [],
+            syncCardsSyncedBeforeNumber: 0,
+            syncCardsSyncedBeforeUnit: undefined,
+            cardSetCodeToSyncCardsFor: undefined,
+            changedImageStatusAction: undefined
+          };
+          return container.resolve<IRulingSyncService>(SYNCTOKENS.RulingSyncService)
+            .sync(dtoSyncParam, (s: string) => console.log(s))
             .then(() => oracleRepository
               .getByCardId(options.cardId)
               .then((afterSync: Array<DtoRulingLine>) => afterSync.filter((line: DtoRulingLine) => line.oracle_id !== null))

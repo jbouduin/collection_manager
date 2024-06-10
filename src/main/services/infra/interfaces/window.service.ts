@@ -1,10 +1,13 @@
 import { BrowserWindow } from "electron";
+
 import { IConfigurationService } from "./configuration.service";
+import { DtoSyncParam } from "../../../../common/dto";
 
 export interface IWindowService {
-
-  boot(bootFunction: (splashWindow: BrowserWindow) => Promise<void>, configurationService: IConfigurationService): void;
-  createSplashWindow(): BrowserWindow;
-  createFirstTimeWindow(): BrowserWindow;
+  readonly mainWindow: BrowserWindow;
+  boot(
+    bootFunction: (splashWindow: BrowserWindow, syncParam: DtoSyncParam) => Promise<void>,
+    configurationService: IConfigurationService
+  ): Promise<void>;
   createMainWindow(): BrowserWindow;
 }

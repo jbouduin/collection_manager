@@ -1,4 +1,3 @@
-import { Props } from "@blueprintjs/core";
 import * as React from "react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
@@ -6,10 +5,11 @@ import { CardSetViewmodel, CardViewmodel } from "../../../viewmodels";
 import { CardSetsView } from "../../common/card-sets-view/card-sets-view";
 import { CardView } from "../../common/card-view/card-view";
 import { CardsTableView } from "../../common/cards-table-view/cards-table-view";
+import { DatabaseViewProps } from "./database-view.props";
 import { DatabaseViewState } from "./database-view.state";
 
 
-export function DatabaseView(_props: Props) {
+export function DatabaseView(props: DatabaseViewProps) {
   console.log("in databaseview function");
 
   //#region State -------------------------------------------------------------
@@ -34,7 +34,10 @@ export function DatabaseView(_props: Props) {
     <>
       <PanelGroup direction="horizontal">
         <Panel defaultSize={20}>
-          <CardSetsView onSetsSelected={onCardSetsSelected} />
+          <CardSetsView
+            onSetsSelected={onCardSetsSelected}
+            onSynchronizeSet={props.onSynchronizeSet}
+            onCardSetDialog={props.onCardSetDialog}/>
         </Panel>
         <PanelResizeHandle />
         <Panel>

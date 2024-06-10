@@ -136,3 +136,21 @@ img.rotate-180 {
   overflow-y: auto;
   max-width: 100%
 }
+
+.no-left-padding {
+  padding-left: 0px;
+}
+
+.splash-window {
+  width: 900px;
+}
+
+.splash-wrapper {
+  background-image: url("/assets/img/Splash.webp");
+  background-size: cover;
+  max-height: 506px;
+  max-width: 900px;
+  padding: 20px;
+  padding-top: 375px;
+  color: white;
+}

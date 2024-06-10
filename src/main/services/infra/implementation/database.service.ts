@@ -1,9 +1,11 @@
 import SQLite from "better-sqlite3";
-import { Kysely, KyselyPlugin, MigrationProvider, MigrationResultSet, Migrator, ParseJSONResultsPlugin, SqliteDialect } from "kysely";
+import { Kysely, MigrationInfo, MigrationProvider, MigrationResultSet, Migrator, ParseJSONResultsPlugin, SqliteDialect } from "kysely";
 import { inject, singleton } from "tsyringe";
 
+import { ProgressCallback } from "../../../../common/ipc-params";
 import { DatabaseSchema } from "../../../database/schema";
 import INFRATOKENS, { IConfigurationService, IDatabaseService } from "../interfaces";
+import { runSerial } from "../util";
 import { SqliteKyselyPlugin } from "./sqlite.kysely.plugin";
 
 @singleton()
@@ -39,27 +41,37 @@ export class DatabaseService implements IDatabaseService {
     return this;
   }
 
-  public async migrateToLatest(plugin: KyselyPlugin, migrationProvider: MigrationProvider): Promise<IDatabaseService> {
+  public async migrateToLatest(migrationProvider: MigrationProvider, progressCallback: ProgressCallback): Promise<IDatabaseService> {
     const dialect = new SqliteDialect({
       database: new SQLite(this.configurationService.dataBaseFilePath)
     });
     const connection = new Kysely<DatabaseSchema>({
       dialect: dialect,
-      plugins: [plugin]
     });
-    await new Migrator(
+
+    const migrator = new Migrator(
       {
         db: connection,
         provider: migrationProvider
+      }
+    );
+
+    const migrationsToExecute = (await migrator.getMigrations()).filter((migration: MigrationInfo) => !migration.executedAt);
+
+    return runSerial<MigrationInfo>(
+      migrationsToExecute,
+      (mig: MigrationInfo) => `executing ${mig.name}`,
+      async (mig: MigrationInfo, index: number, total: number) => {
+        console.log(`Performing migration ${mig.name} (${index + 1}/${total})`);
+        progressCallback(`Performing Migration ${mig.name} (${index + 1}/${total})`);
+        await migrator.migrateTo(mig.name)
+          .then((migrationResultSet: MigrationResultSet) => {
+            if (migrationResultSet.error) {
+              throw migrationResultSet.error;
+            }
+          });
       })
-      .migrateToLatest()
-      .then((result: MigrationResultSet) => {
-        console.log("Migration result: ", result);
-        if (result.error) {
-          throw new Error("migration failed");
-        }
-      });
-    return Promise.resolve(this);
+      .then(() => this);
   }
   //#endregion
 }

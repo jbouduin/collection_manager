@@ -17,3 +17,11 @@ export function handleValueChange<T>(handler: (value: T) => void) {
 export function handleNumberChange(handler: (value: number) => void) {
     return handleStringChange(value => handler(+value));
 }
+
+export type SelectOption<T> = { value: T, label: string };
+
+export function displayValueMapToSelectOptions<T>(map: Map<T, string>): Array<SelectOption<T>> {
+    const result = new Array<SelectOption<T>>();
+    map.forEach((value: string, key: T) => result.push({ value: key, label: value }));
+    return result;
+}

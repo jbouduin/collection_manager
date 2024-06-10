@@ -1,5 +1,6 @@
 import { ColumnType } from "kysely";
 
+// LATER update oracle texts that use alternatives during sync
 
 export interface CardSymbolAlternativeTable  {
   /**

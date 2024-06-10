@@ -1,6 +1,6 @@
 import { ColumnType } from "kysely";
 
-import { CardBorderColor, CardFrame, CardLayout, CardRarity, MTGLanguage } from "../../../../common/enums";
+import { CardBorderColor, CardFrame, CardLayout, CardRarity, CardSecurityStamp, ImageStatus, MTGLanguage } from "../../../../common/enums";
 import { SynchronizedWithStringId } from "../base.types";
 
 export interface CardTable extends SynchronizedWithStringId {
@@ -24,17 +24,20 @@ export interface CardTable extends SynchronizedWithStringId {
   is_oversized: ColumnType<boolean, number, number>;
   is_reserved: ColumnType<boolean, number, number>;
   is_promo: ColumnType<boolean, number, number>;
+  security_stamp?: ColumnType<CardSecurityStamp, CardSecurityStamp | undefined>;
+  image_status: ColumnType<ImageStatus, ImageStatus>;
+  is_story_spotlight: ColumnType<boolean, number, number>;
+  is_variation: ColumnType<boolean, number, number>;
 }
 
-// LATER store property "finishes" in a table (An array of computer - readable flags that indicate if this card can come in foil, nonfoil, or etched finishes.)
-// LATER prints_search_uri (A link to where you can begin paginating all re/prints for this card on Scryfall’s API.)
-// LATER store property "frame_effects": Array of This card’s frame effects, if any.Will make some other properties redundant I suppose
-// LATER store promo_types in a table (An array of strings describing what categories of promo cards this card falls into.)
-// LATER story_spotlight (True if this card is a Story Spotlight.)
-// LATER variation (Whether this card is a variation of another printing.) => redundant ? if variation_of has a value, this one is true
-// LATER variation_of? (The printing ID of the printing this card is a variation of.)
-// LATER security_stamp?: (The security stamp on this card, if any.One of oval, triangle, acorn, circle, arena, or heart.)
-// LATER store property "attraction_lights" in a table: The lit Unfinity attractions lights array on this card, if any.
-// LATER store imagestatus (one of missing, placeholder, lowres, or highres_scan) and allow resync of those who have no high-res
+// NOT prints_search_uri (A link to where you can begin paginating all re/prints for this card on Scryfall’s API.):
+// link is like "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aaa454a53-859c-4d54-b3e1-3764f67c00ff&unique=prints",
+
+// LATER store "finishes" in a table (An array of computer - readable flags that indicate if this card can come in foil, nonfoil, or etched finishes.)
+// LATER store "frame_effects": Array of This card’s frame effects, if any.Will make some other properties redundant I suppose
+// LATER store "promo_types" in a table (An array of strings describing what categories of promo cards this card falls into.)
+
+// LATER store "variation_of?" (The printing ID of the printing this card is a variation of.)
+// LATER store "attraction_lights" in a table: The lit Unfinity attractions lights array on this card, if any.
 // LATER store "prices" in a table (probably after implementing collection)
 // LATER store "purchase_uris" in a table

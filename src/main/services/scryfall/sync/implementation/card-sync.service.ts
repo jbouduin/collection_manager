@@ -1,23 +1,18 @@
-import fs from "fs";
 import { DeleteResult, InsertResult, Transaction, UpdateResult, sql } from "kysely";
 import { inject, injectable } from "tsyringe";
 
-import { GameFormat, MTGColor, MTGColorType } from "../../../../../common/enums";
-import { CardSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
-import { isSingleCardFaceLayout } from "../../../../../common/util";
+
+import { CardImageDto, ChangedImageStatusAction, DtoSyncParam, IdSelectResult, TimespanUnit } from "../../../../../common/dto";
+import { GameFormat, ImageStatus, MTGColor, MTGColorType } from "../../../../../common/enums";
+import { ProgressCallback } from "../../../../../common/ipc-params";
+import { isSingleCardFaceLayout, sqliteUTCTimeStamp } from "../../../../../common/util";
 import { DatabaseSchema } from "../../../../../main/database/schema";
-import INFRATOKENS, { IDatabaseService } from "../../../../../main/services/infra/interfaces";
+import INFRATOKENS, { IConfigurationService, IDatabaseService, IImageCacheService } from "../../../../../main/services/infra/interfaces";
 import { runSerial } from "../../../../../main/services/infra/util";
 import ADAPTTOKENS, {
-  ICardAdapter,
-  ICardCardMapAdapter,
-  ICardColorMapAdapter,
-  ICardGameAdapter,
-  ICardMultiverseIdAdapter, ICardfaceAdapter, ICardfaceColorMapAdapter,
-  ICardfaceImageAdapter,
-  IOracleAdapter,
-  IOracleKeywordAdapter,
-  IOracleLegalityAdapter
+  ICardAdapter, ICardCardMapAdapter, ICardColorMapAdapter, ICardGameAdapter, ICardMultiverseIdAdapter,
+  ICardfaceAdapter, ICardfaceColorMapAdapter, ICardfaceImageAdapter,
+  IOracleAdapter, IOracleKeywordAdapter, IOracleLegalityAdapter
 } from "../../adapt/interface";
 import { CardColorMapAdapterParameter, CardFaceAdapterParameter, OracleAdapterParameter } from "../../adapt/interface/param";
 import { CardfaceColorMapAdapterParameter } from "../../adapt/interface/param/cardface-color-map-adapter.param";
@@ -28,11 +23,17 @@ import { ICardSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
 import { GenericSyncTaskParameter } from "./generic-sync-task.parameter";
 
+type IdAndStatusSelectResult = IdSelectResult & { image_status: ImageStatus };
+type PreSyncSelectResult = {
+  scryfallCards: Array<ScryfallCard>
+  cardIdsWithStatus: Array<IdAndStatusSelectResult>
+};
+
 @injectable()
-export class CardSyncService extends BaseSyncService<CardSyncOptions> implements ICardSyncService {
+export class CardSyncService extends BaseSyncService implements ICardSyncService {
 
   //#region Private readonly fields -------------------------------------------
-  private readonly scryfallclient: IScryfallClient;
+  private readonly imageCacheService: IImageCacheService;
   private readonly cardAdapter: ICardAdapter;
   private readonly cardColorMapAdapter: ICardColorMapAdapter;
   private readonly cardCardMapAdapter: ICardCardMapAdapter;
@@ -49,6 +50,8 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
   //#region Constructor & C° --------------------------------------------------
   public constructor(
     @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
+    @inject(INFRATOKENS.ConfigurationService) configurationService: IConfigurationService,
+    @inject(INFRATOKENS.ImageCacheService) imageCacheService: IImageCacheService,
     @inject(CLIENTTOKENS.ScryfallClient) scryfallclient: IScryfallClient,
     @inject(ADAPTTOKENS.CardAdapter) cardAdapter: ICardAdapter,
     @inject(ADAPTTOKENS.CardColorMapAdapter) cardColorMapAdapter: ICardColorMapAdapter,
@@ -61,8 +64,8 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
     @inject(ADAPTTOKENS.OracleAdapter) oracleAdapter: IOracleAdapter,
     @inject(ADAPTTOKENS.OracleKeywordAdapter) oracleKeywordAdapter: IOracleKeywordAdapter,
     @inject(ADAPTTOKENS.OracleLegalityAdapter) oracleLegalityAdapter: IOracleLegalityAdapter) {
-    super(databaseService);
-    this.scryfallclient = scryfallclient;
+    super(databaseService, configurationService, scryfallclient);
+    this.imageCacheService = imageCacheService;
     this.cardAdapter = cardAdapter;
     this.cardColorMapAdapter = cardColorMapAdapter;
     this.cardCardMapAdapter = cardCardMapAdapter;
@@ -78,30 +81,83 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
   //#endregion
 
   //#region ICardSyncService methods ------------------------------------------
-  public override async sync(options: CardSyncOptions, progressCallback: ProgressCallback): Promise<void> {
-    console.log("start CardSyncService.sync");
-    if (progressCallback) {
-      progressCallback("Sync cards");
-    }
-    // TODO check if all required master data is available
-    const cards = this.scryfallclient.getCards(options);
-    return cards.then((cardArray: Array<ScryfallCard>) => {
-      fs.writeFileSync("c:/data/new-assistant/json/cards_" + options.setCode + ".json", JSON.stringify(cardArray, null, 2));
-      console.log("Found %d cards", cardArray.length);
-      return this.processSync(cardArray, progressCallback);
-    }).then(() => {
-      if (options.setCode) {
-        this.database
-          .updateTable("card_set")
-          .set({ last_full_synchronization_at: sql`CURRENT_TIMESTAMP` })
-          .where("card_set.code", "=", options.setCode)
-          .executeTakeFirst();
-      }
-    });
+  public override async sync(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void> {
+    return this.GetSyncData(syncParam, progressCallback)
+      .then(async (presync: PreSyncSelectResult) => {
+        this.dumpScryFallData("cards.json", presync.scryfallCards);
+        return this.processSync(presync.scryfallCards, progressCallback)
+          .then(async () => this.processChangedImages(syncParam.changedImageStatusAction, presync.cardIdsWithStatus, progressCallback));
+      }).then(() => {
+        if (syncParam.cardSyncType == "byCardSet") {
+          this.database
+            .updateTable("card_set")
+            .set({ last_full_synchronization_at: sqliteUTCTimeStamp })
+            .where("card_set.code", "=", syncParam.cardSetCodeToSyncCardsFor)
+            .executeTakeFirst();
+        }
+      });
   }
   //#endregion
 
-  //#region private sync methods ----------------------------------------------
+  //#region Presync auxiliary methods -----------------------------------------
+  private async GetSyncData(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<PreSyncSelectResult> {
+    let presyncResult: Promise<PreSyncSelectResult>;
+    if (syncParam.cardSyncType == "byCardSet") {
+      presyncResult = this.database.selectFrom("card")
+        .select(["card.id", "card.image_status"])
+        .innerJoin("card_set", "card_set.id", "card.set_id")
+        .where("card_set.code", "=", syncParam.cardSetCodeToSyncCardsFor)
+        .execute().then(async (results: Array<IdAndStatusSelectResult>) => {
+          const scryfallCards = await this.scryfallclient.getCardsForCardSet(
+            syncParam.cardSetCodeToSyncCardsFor,
+            progressCallback
+          );
+          return {
+            scryfallCards: scryfallCards,
+            cardIdsWithStatus: results
+          };
+        });
+    } else {
+      presyncResult = this.database
+        .selectFrom("card")
+        .select(["card.id", "card.image_status"])
+        .$if(
+          syncParam.cardSyncType == "byLastSynchronized",
+          (eb) => eb.where("card.last_synced_at", "<", sql.lit(this.convertLastSyncParameters(syncParam.syncCardsSyncedBeforeNumber, syncParam.syncCardsSyncedBeforeUnit)))
+        )
+        .$if(
+          syncParam.cardSyncType == "byImageStatus",
+          (eb) => eb.where("card.image_status", "in", syncParam.cardImageStatusToSync)
+        )
+        .$if(
+          syncParam.cardSyncType == "collection",
+          (eb) => eb.where("card.id", "in", syncParam.cardSelectionToSync)
+        )
+        .$call(this.logCompilable)
+        .execute()
+        .then(async (results: Array<IdAndStatusSelectResult>) => {
+          if (results.length > 0 || syncParam.cardSelectionToSync.length > 0) {
+            const idsTouse = syncParam.cardSyncType == "collection" ?
+              syncParam.cardSelectionToSync :
+              results.map((result: IdSelectResult) => result.id);
+            const scryfallCards = await this.scryfallclient.getCardCollections(idsTouse, progressCallback);
+            return {
+              scryfallCards: scryfallCards,
+              cardIdsWithStatus: results
+            };
+          } else {
+            return {
+              scryfallCards: new Array<ScryfallCard>(),
+              cardIdsWithStatus: results
+            };
+          }
+        });
+    }
+    return presyncResult;
+  }
+  //#endregion
+
+  //#region Auxiliary sync methods --------------------------------------------
   private async processSync(cards: Array<ScryfallCard>, progressCallback?: ProgressCallback): Promise<void> {
     const total = cards.length;
     let cnt = 0;
@@ -350,7 +406,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
         return await this.genericDeleteAndRecreate(
           trx,
           "cardface_image",
-          (eb) => eb("cardface_image.card_id", "=", scryfallCard.id), // TODO not required because of cascaded delete
+          (eb) => eb("cardface_image.card_id", "=", scryfallCard.id), // NEXT not required because of cascaded delete
           this.cardfaceImageAdapter,
           { cardId: scryfallCard.id, images: cardfaceImagesMap }
         );
@@ -394,7 +450,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
       tableName: "cardface_color_map",
       filter: (eb) => eb("cardface_color_map.card_id", "=", cardId)
         .and("cardface_color_map.sequence", "=", sequence)
-        .and("cardface_color_map.color_type", "=", colorType), // TODO useless as cascaded delete should have removed old stuff
+        .and("cardface_color_map.color_type", "=", colorType), // NEXT useless as cascaded delete should have removed old stuff
       adapter: this.cardfaceColorMapAdapter,
       scryfall: { cardId: cardId, sequence: sequence, colorType: colorType, colors: colors }
     };
@@ -409,7 +465,7 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
       trx: trx,
       tableName: "card_color_map",
       filter: (eb) => eb("card_color_map.card_id", "=", cardId)
-        .and("card_color_map.color_type", "=", colorType), // TODO useless as cascaded delete should have removed old stuff
+        .and("card_color_map.color_type", "=", colorType), // NEXT useless as cascaded delete should have removed old stuff
       adapter: this.cardColorMapAdapter,
       scryfall: { cardId: cardId, colorType: colorType, colors: colors }
     };
@@ -433,6 +489,66 @@ export class CardSyncService extends BaseSyncService<CardSyncOptions> implements
         .where("card_card_map.card_id", "=", scryfallCard.id)
         .execute();
     }
+  }
+  //#endregion
+
+  //#region Post sync auxiliary methods ---------------------------------------
+  private async processChangedImages(action: ChangedImageStatusAction, previousImageStatuses: Array<IdAndStatusSelectResult>, progressCallback: ProgressCallback): Promise<void> {
+    await runSerial<IdAndStatusSelectResult>(
+      previousImageStatuses,
+      (prev: IdAndStatusSelectResult) => `checking ${prev.id} - ${prev.image_status}`,
+      async (prev: IdAndStatusSelectResult, index: number, total: number) => {
+        return this.database.selectFrom("cardface_image")
+          .innerJoin("card", "card.id", "cardface_image.card_id")
+          .innerJoin("card_set", "card_set.id", "card.set_id")
+          .select([
+            "card.collector_number as collectorNumber",
+            "cardface_image.uri as imageUri",
+            "card_set.code as setCode",
+            "card.lang as language",
+            "cardface_image.image_type as imageType",
+            "cardface_image.sequence as sequence"
+          ])
+          .where("cardface_image.card_id", "=", prev.id)
+          .where("card.image_status", "!=", prev.image_status)
+          // .$call(this.logCompilable)
+          .execute()
+          .then(async (current: Array<CardImageDto>) => {
+            progressCallback(`Processing image (${index}/${total})`);
+            console.log(`Processing image (${index}/${total})`);
+            current.forEach(async (cardImageDto: CardImageDto) => {
+              if (action == "delete") {
+                this.imageCacheService.deleteCachedCardImage(cardImageDto);
+              } else {
+                await this.imageCacheService.cacheCardImage(cardImageDto, true);
+              }
+            });
+          });
+      }
+    );
+    return Promise.resolve();
+  }
+  //#endregion
+
+  //#region Other auxiliary methods -------------------------------------------
+  private convertLastSyncParameters(value: number, unit: TimespanUnit): Date {
+    // this is very rudimentary...
+    let date: number;
+    switch (unit) {
+      case "day":
+        date = Date.now() - (24 * 60 * 60 * 1000);
+        break;
+      case "week":
+        date = Date.now() - (7 * 24 * 60 * 60 * 1000);
+        break;
+      case "month":
+        date = Date.now() - (30 * 24 * 60 * 60 * 1000);
+        break;
+      case "year":
+        date = Date.now() - (365 * 24 * 60 * 60 * 1000);
+        break;
+    }
+    return new Date(date); //.toISOString();
   }
   //#endregion
 }

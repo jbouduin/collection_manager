@@ -1,14 +1,11 @@
 import { Classes, ContextMenu, Menu, MenuItem, Tree, TreeNodeInfo } from "@blueprintjs/core";
+import classNames from "classnames";
 import * as _ from "lodash";
 import * as React from "react";
 
-import { CardSyncOptions, SyncParam } from "../../../../../../common/ipc-params";
 import { CardSetViewmodel } from "../../../../viewmodels";
 import { SvgProvider } from "../../svg-provider/svg-provider";
-import { CardSetDialog } from "../card-set-dialog/card-set-dialog";
 import { TreeViewProps } from "./tree-view.props";
-import { DialogState } from "./dialog.state";
-import classNames from "classnames";
 
 type NodePath = Array<number>;
 
@@ -55,12 +52,8 @@ export function TreeView(props: TreeViewProps) {
   console.log("in treeview function", props.textFilter);
 
   //#region State -------------------------------------------------------------
-  const initialDialogState: DialogState = {
-    dialogIsOpen: false,
-    cardSet: null
-  };
   const [nodes, dispatch] = React.useReducer(treeExampleReducer, undefined);
-  const [dialogState, setDialogState] = React.useState<DialogState>(initialDialogState);
+
   //#endregion
 
   //#region event handlers ----------------------------------------------------
@@ -99,8 +92,6 @@ export function TreeView(props: TreeViewProps) {
     },
     []
   );
-
-  const handlePropertyDialogClose = React.useCallback(() => setDialogState(initialDialogState), []);
   //#endregion
 
   //#region Effect ------------------------------------------------------------
@@ -216,6 +207,8 @@ export function TreeView(props: TreeViewProps) {
     }
   }
 
+  // TODO this creates as much virtual targets as there are sets in the tree
+  // check how to put Contextmenu on tree itself and pass set under cursor to the methods
   function mapViewModelToTreeItem(cardSet: CardSetViewmodel): TreeNodeInfo<CardSetViewmodel> {
     const node: TreeNodeInfo<CardSetViewmodel> = {
       id: cardSet.id,
@@ -225,12 +218,12 @@ export function TreeView(props: TreeViewProps) {
           content={
             <Menu>
               <MenuItem
-                text="Synchronize"
-                onClick={(e) => { e.preventDefault(); synchronizeSet(cardSet.setCode); }}
+                text="Synchronize cards"
+                onClick={(e) => { e.preventDefault();  props.onSynchronizeSet(cardSet.setCode); }}
               />
               <MenuItem
                 text="Properties"
-                onClick={(e) => { e.preventDefault(); setDialogState({dialogIsOpen: true, cardSet: cardSet}); }}
+                onClick={(e) => { e.preventDefault(); props.onCardSetDialog(cardSet); }}
               />
             </Menu>}>
           <SvgProvider key={cardSet.setCode} className="tree-view-image" width={26} svg={cardSet.cardSetSvg} />
@@ -252,16 +245,6 @@ export function TreeView(props: TreeViewProps) {
     node.childNodes?.forEach((child: TreeNodeInfo<CardSetViewmodel>) => getTreeNodeItemsRecursive(child, result));
     return result;
   }
-
-  function synchronizeSet(code: string): void {
-    const params: SyncParam<CardSyncOptions> = {
-      type: "Card",
-      options: { source: "user", setCode: code }
-    };
-    console.log("before");
-    window.ipc.sync(params);
-    console.log("after");
-  }
   //#endregion
 
   //#region Main --------------------------------------------------------------
@@ -274,12 +257,6 @@ export function TreeView(props: TreeViewProps) {
         onNodeCollapse={handleNodeCollapse}
         onNodeExpand={handleNodeExpand}
         className={classNames(Classes.ELEVATION_0, "card-set-tree")}
-      />
-      <CardSetDialog
-        isOpen={dialogState.dialogIsOpen}
-        onClose={handlePropertyDialogClose}
-        cardSetId={dialogState.cardSet?.id}
-        cardSetSvg={dialogState.cardSet?.cardSetSvg}
       />
     </>
   );

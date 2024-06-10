@@ -1,5 +1,6 @@
 export function runSerial<T>(
   taskParameters: Array<T>,
+  // NEXT remove this parameter
   progressMessageBuilder: (t: T) => string,
   task: (t: T, index: number, total: number) => Promise<void>): Promise<void> {
   let result = Promise.resolve();
@@ -8,6 +9,8 @@ export function runSerial<T>(
     result = result.then(async () => {
       console.log(`${progressMessageBuilder(taskParameter)} (${idx + 1}/${total})`);
       await task(taskParameter, idx, total);
+    }).catch((reason) => {
+      throw reason;
     });
   });
   return result;

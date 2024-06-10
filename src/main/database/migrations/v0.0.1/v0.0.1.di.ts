@@ -9,6 +9,7 @@ import { V0_0_1_Color_Migration } from "./v0.0.1.color.migration";
 import { V0_0_1_Language_Migration } from "./v0.0.1.language.migration";
 import { V0_0_1_Ruling_Migration } from "./v0.0.1.oracle.migration";
 import { V0_0_1_Set_Migration } from "./v0.0.1.set.migration";
+// import { V0_0_1_Test_Migration } from "./v0.0.1.test";
 
 
 export class V0_0_1_Di {
@@ -21,6 +22,7 @@ export class V0_0_1_Di {
     container.register<IBaseMigration>(MIGRATOKENS.Migration, { useClass: V0_0_1_Ruling_Migration }, { lifecycle: Lifecycle.ResolutionScoped });
     container.register<IBaseMigration>(MIGRATOKENS.Migration, { useClass: V0_0_1_Set_Migration }, { lifecycle: Lifecycle.ResolutionScoped });
     container.register<IBaseMigration>(MIGRATOKENS.Migration, { useClass: V0_0_1_CardSymbol_Migration }, { lifecycle: Lifecycle.ResolutionScoped });
+    // container.register<IBaseMigration>(MIGRATOKENS.Migration, { useClass: V0_0_1_Test_Migration }, { lifecycle: Lifecycle.ResolutionScoped });
     return container;
   }
 }

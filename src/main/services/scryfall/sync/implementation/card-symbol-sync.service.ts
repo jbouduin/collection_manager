@@ -1,23 +1,22 @@
 import { InsertResult, Selectable, Transaction, UpdateResult } from "kysely";
 import { inject, injectable } from "tsyringe";
 
-import { CardSymbolSyncOptions, ProgressCallback } from "../../../../../common/ipc-params";
+import { DtoSyncParam } from "../../../../../common/dto";
+import { ProgressCallback } from "../../../../../common/ipc-params";
 import { runSerial } from "../../../../../main/services/infra/util";
 import { CardSymbolTable, DatabaseSchema } from "../../../../database/schema";
 import INFRATOKENS, { IConfigurationService, IDatabaseService, IImageCacheService } from "../../../infra/interfaces";
 import ADAPTTOKENS, { ICardSymbolAdapter, ICardSymbolAlternativeAdapter, ICardSymbolColorMapAdapter } from "../../adapt/interface";
 import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
 import { ScryfallCardSymbol } from "../../types/card-symbol/scryfall-card-symbol";
-import { ICardSymbolSyncService } from "../interface/card-symbol-sync.service";
+import { ICardSymbolSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
 
 
 @injectable()
-export class CardSymbolSyncService extends BaseSyncService<CardSymbolSyncOptions> implements ICardSymbolSyncService {
+export class CardSymbolSyncService extends BaseSyncService implements ICardSymbolSyncService {
 
   //#region private readonly fields -------------------------------------------
-  private readonly scryfallclient: IScryfallClient;
-  private readonly configurationService: IConfigurationService;
   private readonly imageCacheService: IImageCacheService;
   private readonly cardSymbolAdapter: ICardSymbolAdapter;
   private readonly cardSymbolAlternativeAdapter: ICardSymbolAlternativeAdapter;
@@ -27,15 +26,13 @@ export class CardSymbolSyncService extends BaseSyncService<CardSymbolSyncOptions
   //#region Constructor & C° --------------------------------------------------
   public constructor(
     @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
-    @inject(CLIENTTOKENS.ScryfallClient) scryfallclient: IScryfallClient,
     @inject(INFRATOKENS.ConfigurationService) configurationService: IConfigurationService,
     @inject(INFRATOKENS.ImageCacheService) imageCacheService: IImageCacheService,
+    @inject(CLIENTTOKENS.ScryfallClient) scryfallclient: IScryfallClient,
     @inject(ADAPTTOKENS.CardSymbolAdapter) cardSymbolAdapter: ICardSymbolAdapter,
     @inject(ADAPTTOKENS.CardSymbolAlternativeAdapter) cardSymbolAlternativeAdapter: ICardSymbolAlternativeAdapter,
     @inject(ADAPTTOKENS.CardSymbolColorMapAdapter) cardSymbolColorMapAdapter: ICardSymbolColorMapAdapter) {
-    super(databaseService);
-    this.scryfallclient = scryfallclient;
-    this.configurationService = configurationService;
+    super(databaseService, configurationService, scryfallclient);
     this.imageCacheService = imageCacheService;
     this.cardSymbolAdapter = cardSymbolAdapter;
     this.cardSymbolAlternativeAdapter = cardSymbolAlternativeAdapter;
@@ -44,33 +41,23 @@ export class CardSymbolSyncService extends BaseSyncService<CardSymbolSyncOptions
   //#endregion
 
   //#region ICardSymbolSyncService methods ------------------------------------
-  public override async sync(options: CardSymbolSyncOptions, progressCallback: ProgressCallback): Promise<void> {
-    return await this.shouldSync(options)
-      .then(async (shouldSync: boolean) => {
-        if (shouldSync) {
-          console.log("start CardSymbolSyncService.sync");
-          if (progressCallback) {
-            progressCallback("Synchronizing card symbols");
-          }
-          return await this.scryfallclient.getCardSymbols()
-            .then(async (all: Array<ScryfallCardSymbol>) => this.processSync(all))
-            .then(async () => await this.database.selectFrom("card_symbol").selectAll().execute())
-            .then(async (allCardSymbols: Array<Selectable<CardSymbolTable>>) => {
-              console.log((`retrieved ${allCardSymbols.length} saved card symbols`));
-              let result = Promise.resolve();
-              allCardSymbols.forEach(async (cardSymbol: Selectable<CardSymbolTable>) => {
-                result = result.then(async () => await this.imageCacheService.cacheCardSymbolSvg(cardSymbol));
-                await result;
-              });
-              return result;
-            });
-        } else {
-          console.log("skip CardSymbolSyncService.sync");
-          if (progressCallback) {
-            progressCallback("Skip synchronizaton of card symbols");
-          }
-          return Promise.resolve();
-        }
+  public override async sync(_syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void> {
+    progressCallback("Synchronizing card symbols");
+    return await this.scryfallclient.getCardSymbols(progressCallback)
+      .then(async (all: Array<ScryfallCardSymbol>) => {
+        this.dumpScryFallData("card-symbols.json", all);
+        this.processSync(all);
+      })
+      .then(async () => await this.database.selectFrom("card_symbol").selectAll().execute())
+      .then(async (allCardSymbols: Array<Selectable<CardSymbolTable>>) => {
+        console.log((`Saved ${allCardSymbols.length} card symbols`));
+        progressCallback(`Saved ${allCardSymbols.length} card symbols`);
+        let result = Promise.resolve();
+        allCardSymbols.forEach(async (cardSymbol: Selectable<CardSymbolTable>) => {
+          result = result.then(async () => await this.imageCacheService.cacheCardSymbolSvg(cardSymbol, progressCallback));
+          await result;
+        });
+        return result;
       });
   }
   //#endregion
@@ -114,19 +101,6 @@ export class CardSymbolSyncService extends BaseSyncService<CardSymbolSyncOptions
             .then(() => Promise.resolve());
         });
     });
-  }
-
-  private async shouldSync(options: CardSymbolSyncOptions): Promise<boolean> {
-    if (options.source == "user" || this.configurationService.syncAtStartup.indexOf("CardSymbol") >= 0) {
-      return Promise.resolve(true);
-    } else {
-      return await this.database
-        .selectFrom("card_symbol")
-        .selectAll()
-        .limit(1)
-        .executeTakeFirst()
-        .then((existing: Selectable<CardSymbolTable>) => existing ? false : true);
-    }
   }
   //#endregion
 }

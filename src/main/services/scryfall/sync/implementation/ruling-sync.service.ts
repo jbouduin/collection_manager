@@ -1,21 +1,21 @@
 import { DeleteResult, ExpressionOrFactory, InsertResult, Selectable, SqlBool, Transaction, UpdateResult } from "kysely";
 import { inject, injectable } from "tsyringe";
 
-import { ProgressCallback, RulingSyncOptions } from "../../../../../common/ipc-params";
+import { DtoSyncParam } from "../../../../../common/dto";
+import { ProgressCallback } from "../../../../../common/ipc-params";
+import { runSerial } from "../../../../../main/services/infra/util";
 import { CardTable, DatabaseSchema } from "../../../../database/schema";
-import INFRATOKENS, { IDatabaseService } from "../../../infra/interfaces";
+import INFRATOKENS, { IConfigurationService, IDatabaseService } from "../../../infra/interfaces";
 import ADAPTTOKENS, { IOracleRulingAdapter, IOracleRulingLineAdapter } from "../../adapt/interface";
 import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
 import { ScryfallRuling } from "../../types";
 import { IRulingSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
 
-
 @injectable()
-export class RulingSyncService extends BaseSyncService<RulingSyncOptions> implements IRulingSyncService {
+export class RulingSyncService extends BaseSyncService implements IRulingSyncService {
 
   //#region private readonly fields -------------------------------------------
-  private readonly scryfallclient: IScryfallClient;
   private readonly rulingLineAdapter: IOracleRulingLineAdapter;
   private readonly rulingAdapter: IOracleRulingAdapter;
   //#endregion
@@ -23,23 +23,44 @@ export class RulingSyncService extends BaseSyncService<RulingSyncOptions> implem
   //#region Constructor & C° --------------------------------------------------
   public constructor(
     @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
+    @inject(INFRATOKENS.ConfigurationService) configurationService: IConfigurationService,
     @inject(CLIENTTOKENS.ScryfallClient) scryfallclient: IScryfallClient,
     @inject(ADAPTTOKENS.OracleRulingLineAdapter) rulingLineAdapter: IOracleRulingLineAdapter,
     @inject(ADAPTTOKENS.OracleRulingAdapter) rulingAdapter: IOracleRulingAdapter) {
-    super(databaseService);
-    this.scryfallclient = scryfallclient;
+    super(databaseService, configurationService, scryfallclient);
     this.rulingLineAdapter = rulingLineAdapter;
     this.rulingAdapter = rulingAdapter;
   }
 
-  public override async sync(options: RulingSyncOptions, progressCallback: ProgressCallback): Promise<void> {
-    if (progressCallback) {
-      progressCallback("Synchronizing rulings");
-    }
-    return this.scryfallclient.getRulings(options.cardId)
-      .then((scryFall: Array<ScryfallRuling>) => this.processSync(options.cardId, scryFall));
+  //#region IRulingSyncService methods ----------------------------------------
+  public override async sync(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void> {
+    // this will not return reversible_card of type land, as they do not have an oracle id
+    progressCallback("Synchronizing rulings");
+    const cards = await this.database.selectFrom("card")
+      .$if(syncParam.rulingSyncType == "update", (eb) => eb.innerJoin("oracle_ruling", "oracle_ruling.oracle_id", "card.oracle_id"))
+      .$if(syncParam.rulingSyncType == "selectionOfCards", (eb) => eb.where("card.id", "in", syncParam.cardSelectionToSync))
+      .selectAll("card")
+      .where("card.oracle_id", "is not", null)
+      .groupBy("card.oracle_id")
+      // .$call(this.logCompilable)
+      .execute();
+    // .then((result) => console.log(`${result.length} cards to be updated`));
+    return runSerial<Selectable<CardTable>>(
+      cards,
+      (param: Selectable<CardTable>) => `Processing ruling for oracle id ${param.oracle_id}`,
+      async (card: Selectable<CardTable>, index: number, total: number) => {
+        progressCallback(`Processing ruling for oracle id ${card.oracle_id} (${index}/${total})`);
+        return this.scryfallclient.getRulings(card.id)
+          .then((scryFall: Array<ScryfallRuling>) => {
+            this.dumpScryFallData(`ruling-${card.oracle_id}.json`, scryFall);
+            this.processSync(card.id, scryFall);
+          });
+      }
+    );
   }
+  //#endregion
 
+  //#region Auxiliary methods -------------------------------------------------
   private async processSync(cardId: string, rulings: Array<ScryfallRuling>): Promise<void> {
     if (rulings.length > 0) {
       const groupByOracleid: Map<string, Array<ScryfallRuling>> = new Map<string, Array<ScryfallRuling>>();
@@ -110,4 +131,5 @@ export class RulingSyncService extends BaseSyncService<RulingSyncOptions> implem
       return Promise.resolve();
     }
   }
+  //#endregion
 }

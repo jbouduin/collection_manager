@@ -6,7 +6,8 @@ import { DatabaseSchema } from "../database.schema";
 export const cardTableFields: Array<AnyColumnWithTable<DatabaseSchema, "card">> = [
   "card.is_booster", "card.border", "card.card_back_id", "card.collector_number", "card.is_content_warning", "card.created_at",
   "card.is_digital", "card.frame", "card.is_full_art", "card.id", "card.lang", "card.last_synced_at", "card.layout", "card.name", "card.oracle_id",
-  "card.rarity", "card.released_at", "card.is_reprint", "card.scryfall_uri", "card.set_id", "card.is_oversized", "card.is_reserved", "card.is_promo"
+  "card.rarity", "card.released_at", "card.is_reprint", "card.scryfall_uri", "card.set_id", "card.is_oversized", "card.is_reserved", "card.is_promo",
+  "card.is_story_spotlight", "card.is_variation", "card.security_stamp", "card.image_status"
 ];
 
 export const cardfaceTableFields: Array<AnyColumnWithTable<DatabaseSchema, "cardface">> = [

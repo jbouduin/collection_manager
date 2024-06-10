@@ -32,7 +32,11 @@ export class CardAdapter implements ICardAdapter {
       set_id: scryfall.set_id,
       is_oversized: scryfallBooleanToNumber(scryfall.oversized),
       is_reserved: scryfallBooleanToNumber(scryfall.reserved),
-      is_promo: scryfallBooleanToNumber(scryfall.promo)
+      is_promo: scryfallBooleanToNumber(scryfall.promo),
+      is_story_spotlight: scryfallBooleanToNumber(scryfall.story_spotlight),
+      image_status: scryfall.image_status,
+      is_variation: scryfallBooleanToNumber(scryfall.variation),
+      security_stamp: scryfall.security_stamp
     };
   }
 
@@ -56,7 +60,11 @@ export class CardAdapter implements ICardAdapter {
       is_oversized: scryfallBooleanToNumber(scryfall.oversized),
       is_reserved: scryfallBooleanToNumber(scryfall.reserved),
       is_promo: scryfallBooleanToNumber(scryfall.promo),
-      last_synced_at: new Date().toISOString()
+      last_synced_at: new Date().toISOString(),
+      is_story_spotlight: scryfallBooleanToNumber(scryfall.story_spotlight),
+      image_status: scryfall.image_status,
+      is_variation: scryfallBooleanToNumber(scryfall.variation),
+      security_stamp: scryfall.security_stamp
     };
   }
 }

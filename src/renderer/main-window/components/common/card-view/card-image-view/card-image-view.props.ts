@@ -2,6 +2,6 @@ import { Props } from "@blueprintjs/core";
 
 import { CardViewmodel } from "../../../../viewmodels";
 
-export interface CardImageViewWrapperProps extends Props {
+export interface CardImageViewProps extends Props {
   card: CardViewmodel;
 }

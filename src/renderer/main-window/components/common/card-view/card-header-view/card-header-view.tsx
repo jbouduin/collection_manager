@@ -11,27 +11,26 @@ import { CardSetViewmodel } from "../../../../viewmodels";
 
 export function CardHeaderView(props: CardHeaderViewProps) {
   console.log("in CardHeaderView function");
+
   //#region Main --------------------------------------------------------------
   return (
     <CardSetContext.Consumer>
       {
         (cardSets: Array<CardSetViewmodel>) =>
         (
-          <SectionCard className="card-view-section-card">
-            <div className="card-header-wrapper">
-              <div className="card-header-line-1">
-                <SvgProvider
-                  svg={cardSets.find((cardSet: CardSetViewmodel) => cardSet.id == props.card.setId)?.cardSetSvg}
-                  height={25}
-                  width={25}
-                  className={getRarityColorClassname(props.card.rarity)}
-                />
-                <H3>{props.card.cardName}</H3>
-              </div>
-              <div className="card-header-line-2">
-                <H5>{props.card.cardtypeLine}</H5>
-                <CardSymbolProvider cardSymbols={props.card.cardManacost} />
-              </div>
+          <SectionCard className="card-view-section-card" padded={false}>
+            <div className="card-header-line-1">
+              <SvgProvider
+                svg={cardSets.find((cardSet: CardSetViewmodel) => cardSet.id == props.card.setId)?.cardSetSvg}
+                height={25}
+                width={25}
+                className={getRarityColorClassname(props.card.rarity)}
+              />
+              <H3>{props.card.cardName}</H3>
+            </div>
+            <div className="card-header-line-2">
+              <H5>{props.card.cardtypeLine}</H5>
+              <CardSymbolProvider cardSymbols={props.card.cardManacost} className="mana-cost-image-in-text" />
             </div>
           </SectionCard>
         )

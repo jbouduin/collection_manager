@@ -15,10 +15,10 @@ export function SubCardHeaderView(props: SubCardHeaderViewProps) {
           <H5>  {props.cardface.printedName} </H5>
         </div>
         <div className="card-header-line-2">
-          <H6 >{props.cardface.printedTypeLine} </H6>
+          <H6>{props.cardface.printedTypeLine} </H6>
           {
             props.showManaCost &&
-            <CardSymbolProvider cardSymbols={props.cardface.manaCost} />
+            <CardSymbolProvider cardSymbols={props.cardface.manaCost} className="mana-cost-image-in-text"/>
           }
         </div>
       </div>

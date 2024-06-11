@@ -12,6 +12,7 @@ export function CardSetsView(props: CardSetsViewProps) {
   console.log("in cardsetsview function");
 
   //#region State -------------------------------------------------------------
+  // NOW have this as rendersettings and create a context for rendersettings (instead of theme context)
   const initial: Map<CardSetType, boolean> = new Map<CardSetType, boolean>([
     ["core", true],
     ["expansion", true],
@@ -37,7 +38,8 @@ export function CardSetsView(props: CardSetsViewProps) {
     ["memorabilia", false],
     ["minigame", false]
   ]);
-  console.log(initial);
+
+  // NOW consolidate state
   const [textFilterValue, setTextFilterValue] = React.useState<string>(() => { console.log("passing textFilterValue initiation"); return null; });
   const [cardSetSort, setCardSetSort] = React.useState<CardSetSort>(() => { console.log("passing cardSetSort initiation"); return "releaseDateDescending"; });
   const [cardSetGroupBy, setCardSetGroupBy] = React.useState<CardSetGroupBy>(() => { console.log("passing cardSetGroupBy initiation"); return "parent"; });

@@ -15,6 +15,7 @@ body {
   overflow: hidden;
 }
 
+
 .desktop-wrapper {
   padding: 0px;
   display: flex;
@@ -49,7 +50,7 @@ body {
 }
 
 .tree-view-image {
-  padding-right: 10px;
+  padding-right: 5px;
 }
 
 .image-wrapper {
@@ -57,12 +58,21 @@ body {
   margin: auto;
 }
 
-.mana-cost-image {
+.mana-cost-image-in-table {
   margin-right: 3px;
+  margin-bottom: -2px
+}
+
+.mana-cost-image-in-text {
+  margin-right: 3px;
+  margin-bottom: -3px
+}
+
+.mana-cost-image-in-text:first-child {
+  margin-left: 3px
 }
 
 .ruling-line-paragraph {
-  /* border-bottom: red; */
   border-bottom-width: thin;
   border-bottom-style: solid;
   padding-bottom: 10px;
@@ -89,6 +99,7 @@ body {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 img.rotate-90 {
@@ -118,9 +129,10 @@ img.rotate-180 {
 
 .card-view-section-card {
   padding-top: 10px;
-  padding-bottom: 10px;
   padding-left: 15px;
   padding-right: 15px;
+  display: flex;
+  flex-direction: column;
 }
 
 .card-set-tree-wrapper {

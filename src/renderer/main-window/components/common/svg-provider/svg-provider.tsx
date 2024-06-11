@@ -1,7 +1,7 @@
 
 import * as React from "react";
 import { SvgProviderProps } from "./svg-provider.props";
-import classNames from "classnames";
+
 
 export function SvgProvider(props: SvgProviderProps) {
   //#region Main --------------------------------------------------------------
@@ -14,15 +14,16 @@ export function SvgProvider(props: SvgProviderProps) {
   const viewbox = document.body.firstElementChild.attributes.getNamedItem("viewBox").value;
 
   return (
-    <span aria-hidden="true" className={classNames("mana-cost-image", props.className)} >
+    // <span aria-hidden="true" className={props.className} >
       <svg
+        className={props.className}
         viewBox={viewbox}
         role="img"
         height={props.height ?? 16}
         width={props.width ?? 16}
         dangerouslySetInnerHTML={{ __html: path }}>
       </svg>
-    </span>
+    // </span>
   );
   //#endregion
 }

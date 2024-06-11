@@ -1,21 +1,21 @@
 import * as React from "react";
-import { CardImageViewWrapperProps } from "./card-image-view-wrapper.props";
+import { CardImageViewProps } from "./card-image-view.props";
 
 import { Button, SectionCard } from "@blueprintjs/core";
 import classNames from "classnames";
-import { CardImageViewWrapperState } from "./card-image-view-wrapper.state";
+import { CardImageViewState } from "./card-image-view.state";
 
-export function CardImageViewWrapper(props: CardImageViewWrapperProps) {
-  // NOW replace rotation class by a number and change onflipclicked to rotate click etc
+
+export function CardImageView(props: CardImageViewProps) {
 
   //#region State -------------------------------------------------------------
-  const [cardImageState, setCardImageState] = React.useState<CardImageViewWrapperState>({currentDisplayedSide: "front", rotationClass:""});
+  const [cardImageState, setCardImageState] = React.useState<CardImageViewState>({currentDisplayedSide: "front", rotationClass:""});
   //#endregion
 
   //#region Event handling ----------------------------------------------------
   const onFlipClicked = React.useCallback(
     () => {
-      const newState: CardImageViewWrapperState = {
+      const newState: CardImageViewState = {
         currentDisplayedSide: cardImageState.currentDisplayedSide,
         rotationClass: cardImageState.rotationClass == "" ? "rotate-180" : ""
       };
@@ -24,9 +24,20 @@ export function CardImageViewWrapper(props: CardImageViewWrapperProps) {
     [cardImageState, props.card]
   );
 
+  const onRotateClicked = React.useCallback(
+    () => {
+      const newState: CardImageViewState = {
+        currentDisplayedSide: cardImageState.currentDisplayedSide,
+        rotationClass: cardImageState.rotationClass == "" ? "rotate-90" : ""
+      };
+      setCardImageState(newState);
+    },
+    [cardImageState, props.card]
+  );
+
   const onReverseClicked = React.useCallback(
     () => {
-      const newState: CardImageViewWrapperState = {
+      const newState: CardImageViewState = {
         currentDisplayedSide: cardImageState.currentDisplayedSide == "front" ? "back" : "front",
         rotationClass: cardImageState.rotationClass
       };
@@ -55,13 +66,12 @@ export function CardImageViewWrapper(props: CardImageViewWrapperProps) {
     <>
       {
         props.card &&
-        <SectionCard style={{ "display": "flex", "flexFlow": "column" }} className="card-view-section-card">
+        <SectionCard style={{ "display": "flex", "flexFlow": "column"}} className="card-view-section-card" padded={false}>
           <img
             className={classNames("card-image", cardImageState.rotationClass)}
             src={`cached-image://${props.card.cardId}/?size=normal&side=${cardImageState.currentDisplayedSide}`}
           />
-          <div style={{ "display": "flex", "flexFlow": "row" }}>
-
+            <div style={{ "display": "flex", "flexFlow": "row", "justifyContent": "center", "margin": "5px" }}>
             {
               renderButtons()
             }
@@ -78,11 +88,17 @@ export function CardImageViewWrapper(props: CardImageViewWrapperProps) {
     result.push((
       <Button key="reverse" onClick={onReverseClicked}>Reverse</Button>
     ));
-    if (props.card.cardLayout == "flip" || props.card.cardLayout == "art_series") {
+    if (props.card.cardLayout == "flip") {
       result.push((
         <Button key="flip" onClick={onFlipClicked}>Flip</Button>
       ));
     }
+    if (props.card.cardLayout == "art_series") {
+      result.push((
+        <Button key="flip" onClick={onRotateClicked}>Rotate</Button>
+      ));
+    }
+
     return result;
   }
   //#endregion

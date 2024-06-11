@@ -69,7 +69,7 @@ export function CardsTableView(props: CardsTableViewProps) {
   function symbolRenderer(valueCallBack: (card: CardViewmodel) => Array<string>): CellRenderer {
     return (row: number) => (
       <Cell>
-        <CardSymbolProvider cardSymbols={valueCallBack(cards[row])} />
+        <CardSymbolProvider cardSymbols={valueCallBack(cards[row])} className="mana-cost-image-in-table"/>
       </Cell >
     );
   }

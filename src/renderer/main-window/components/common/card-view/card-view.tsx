@@ -8,7 +8,7 @@ import { CardQueryOptions, QueryParam } from "../../../../../common/ipc-params";
 import { CardViewmodel } from "../../../viewmodels";
 import { LanguageButtonBar } from "../language-button-bar/language-button-bar";
 import { CardHeaderView } from "./card-header-view/card-header-view";
-import { CardImageViewWrapper } from "./card-image-view/card-image-view-wrapper";
+import { CardImageView } from "./card-image-view/card-image-viewr";
 import { CardRulingsView } from "./card-rulings-view/card-rulings-view";
 import { CardViewState } from "./card-view-state";
 import { CardViewProps } from "./card-view.props";
@@ -18,7 +18,7 @@ import { PrintedView } from "./printed-view/printed-view";
 import { SubCardHeaderView } from "./sub-card-header-view/sub-card-header-view";
 
 export function CardView(props: CardViewProps) {
-
+  console.log("in cardview function");
   // TODO use collapsible panels when displaying two faces
 
   //#region State -------------------------------------------------------------
@@ -26,47 +26,55 @@ export function CardView(props: CardViewProps) {
   //#endregion
 
   //#region Effects -----------------------------------------------------------
-  React.useEffect(() => {
-    if (props.cardId) {
-      loadCard(props.cardId);
-    }
-  }, [props.cardId]);
+  React.useEffect(
+    () => {
+      if (props.cardId) {
+        loadCard(props.cardId);
+      }
+    },
+    [props.cardId]
+  );
   //#endregion
 
   //#region Main --------------------------------------------------------------
-  return (cardViewState.card ?
-    <Section>
-      <CardHeaderView
-        card={cardViewState.card}
-      />
+  return (
+    <>
       {
-        cardViewState.card.isMultipleLanguage &&
-        <LanguageButtonBar
-          cardLanguages={cardViewState.card.otherCardLanguages}
-          currentLanguage={cardViewState.card.cardLanguage}
-          onButtonClick={(language: DtoCardLanguage) => loadCard(language.id)}
-        />
-      }
-      {
-        renderViewByLayout(cardViewState.card.cardLayout)
-      }
-      <SectionCard className="card-view-section-card" >
-        <Tabs animate={true} id="card-detail-tabs" defaultSelectedTabId="Rulings" renderActiveTabPanelOnly={true}>
-          <Tab
-            id="Rulings"
-            title="Rulings"
-            panel={<CardRulingsView card={cardViewState.card} />}
+        cardViewState.card &&
+        <Section compact={true}>
+          <CardHeaderView
+            card={cardViewState.card}
           />
-          <Tab
-            id="Legality"
-            title="Legality"
-            panel={<LegalitiesView oracleId={cardViewState.card.oracleId} />}
-          />
-        </Tabs>
-      </SectionCard>
-    </Section>
-    : <Section ></Section>
+          {
+            cardViewState.card.isMultipleLanguage &&
+            <LanguageButtonBar
+              cardLanguages={cardViewState.card.otherCardLanguages}
+              currentLanguage={cardViewState.card.cardLanguage}
+              onButtonClick={(language: DtoCardLanguage) => loadCard(language.id)}
+            />
+          }
+          {
+            renderViewByLayout(cardViewState.card.cardLayout)
+          }
+          <SectionCard className="card-view-section-card" >
+            <Tabs animate={true} id="card-detail-tabs" defaultSelectedTabId="Rulings" renderActiveTabPanelOnly={true}>
+              <Tab
+                id="Rulings"
+                title="Rulings"
+                panel={<CardRulingsView card={cardViewState.card} />}
+              />
+              <Tab
+                id="Legality"
+                title="Legality"
+                panel={<LegalitiesView oracleId={cardViewState.card.oracleId} />}
+              />
+            </Tabs>
+          </SectionCard>
+        </Section>
+      }
+    </>
   );
+  {/* <Section ></Section> */ }
   //#endregion
 
   //#region Auxiliary rendering functions -------------------------------------
@@ -107,7 +115,7 @@ export function CardView(props: CardViewProps) {
   function renderSingleFaceLayout(): React.JSX.Element {
     return (
       <div>
-        <CardImageViewWrapper
+        <CardImageView
           card={cardViewState.card}
         />
         {
@@ -117,7 +125,7 @@ export function CardView(props: CardViewProps) {
             showManaCost={false}
           />
         }
-        <SectionCard className="card-view-section-card">
+        <SectionCard className="card-view-section-card" padded={false}>
           <Tabs animate={true} id="card-detail-tabs" defaultSelectedTabId="Oracle0" renderActiveTabPanelOnly={true}>
             <Tab
               id="Oracle0"
@@ -137,7 +145,7 @@ export function CardView(props: CardViewProps) {
   function renderDoubleFaceLayout(): React.JSX.Element {
     return (
       <div>
-        <CardImageViewWrapper
+        <CardImageView
           card={cardViewState.card}
         />
         <SubCardHeaderView

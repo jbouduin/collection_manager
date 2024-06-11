@@ -66,7 +66,7 @@ export class ImageCacheService implements IImageCacheService {
     if (fs.existsSync(cachePath)) {
       return net.fetch(cachePath);
     } else {
-      return this.fetchAndCacheCardImage(cachePath, this.buildCardImageUrl(card))
+      return this.fetchAndCacheCardImage(cachePath, card)
         .then(() => net.fetch(cachePath));
     }
   }
@@ -74,9 +74,9 @@ export class ImageCacheService implements IImageCacheService {
   public cacheCardImage(card: DtoCardImageData, onlyIfExists: boolean): Promise<void> {
     const cachePath = this.pathToCachedCardImage(card);
     if (!onlyIfExists) {
-      return this.fetchAndCacheCardImage(cachePath, this.buildCardImageUrl(card));
+      return this.fetchAndCacheCardImage(cachePath, card);
     } else if (fs.existsSync(cachePath)) {
-      return this.fetchAndCacheCardImage(cachePath, this.buildCardImageUrl(card));
+      return this.fetchAndCacheCardImage(cachePath, card);
     }
   }
 
@@ -90,24 +90,8 @@ export class ImageCacheService implements IImageCacheService {
   //#endregion
 
   //#region Private methods ---------------------------------------------------
-  private buildCardImageUrl(card: DtoCardImageData): URL {
-    let url: URL;
-    // NOW add to scryfallconfiguration
-    if (card.side == "back" && card.cardBackId) {
-      url = new URL(`https://backs.scryfall.io/large/${card.cardBackId.substring(0, 1)}/${card.cardBackId.substring(1, 2)}/${card.cardBackId}.jpg`);
-    } else {
-      url = new URL(`https://api.scryfall.com/cards/${card.cardId}`);
-      url.searchParams.set("format", "image");
-      url.searchParams.set("size", card.imageType);
-      if (card.side == "back") {
-        url.searchParams.set("face", "back");
-      }
-    }
-    return url;
-
-  }
-  private async fetchAndCacheCardImage(cachePath: string, url: URL): Promise<void> {
-    return this.apiClient.fetchArrayBuffer(url)
+  private async fetchAndCacheCardImage(cachePath: string, card: DtoCardImageData): Promise<void> {
+    return this.apiClient.getCardImage(card)
       .then((arrayBuffer: ArrayBuffer) => {
         const buffer = Buffer.from(arrayBuffer);
         return fs.promises.writeFile(cachePath, buffer);

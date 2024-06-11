@@ -108,15 +108,17 @@ export class ConfigurationService implements IConfigurationService {
     };
 
     const endpoints: Record<ScryfallEndpoint, string> = {
-      "card": "cards/search",
+      "cards": "card/:id",
       "cardSet": "sets",
       "cardSymbol": "symbology",
       "catalog": "catalog",
+      "collection": "cards/collection",
       "ruling": "cards/:id/rulings",
-      "collection": "cards/collection"
+      "search": "cards/search"
     };
 
     const result: DtoScryfallConfiguration = {
+      cardBackRoot: "https://backs.scryfall.io",
       scryfallApiRoot: "https://api.scryfall.com",
       scryfallEndpoints: endpoints,
       scryfallCatalogPaths: catalogPaths,

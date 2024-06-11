@@ -1,10 +1,11 @@
 enum EScryfallEndpoint  {
-  card,
+  cards,
   cardSet,
   cardSymbol,
   catalog,
+  collection,
   ruling,
-  collection
+  search
 }
 
 export type ScryfallEndpoint = keyof typeof EScryfallEndpoint;

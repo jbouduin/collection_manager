@@ -2,7 +2,7 @@ import { DeleteResult, InsertResult, Transaction, UpdateResult, sql } from "kyse
 import { inject, injectable } from "tsyringe";
 
 
-import { CardImageDto, ChangedImageStatusAction, DtoSyncParam, IdSelectResult, TimespanUnit } from "../../../../../common/dto";
+import { DtoCardImageData, ChangedImageStatusAction, DtoSyncParam, IdSelectResult, TimespanUnit } from "../../../../../common/dto";
 import { GameFormat, ImageStatus, MTGColor, MTGColorType } from "../../../../../common/enums";
 import { ProgressCallback } from "../../../../../common/ipc-params";
 import { isSingleCardFaceLayout, sqliteUTCTimeStamp } from "../../../../../common/util";
@@ -486,6 +486,7 @@ export class CardSyncService extends BaseSyncService implements ICardSyncService
 
   //#region Post sync auxiliary methods ---------------------------------------
   private async processChangedImages(action: ChangedImageStatusAction, previousImageStatuses: Array<IdAndStatusSelectResult>, progressCallback: ProgressCallback): Promise<void> {
+    // NOW this has changed
     await runSerial<IdAndStatusSelectResult>(
       previousImageStatuses,
       async (prev: IdAndStatusSelectResult, index: number, total: number) => {
@@ -503,10 +504,11 @@ export class CardSyncService extends BaseSyncService implements ICardSyncService
           .where("cardface_image.card_id", "=", prev.id)
           .where("card.image_status", "!=", prev.image_status)
           // .$call(this.logCompilable)
+          .$castTo<DtoCardImageData>()
           .execute()
-          .then(async (current: Array<CardImageDto>) => {
+          .then(async (current: Array<DtoCardImageData>) => {
             progressCallback(`Processing image (${index}/${total})`);
-            current.forEach(async (cardImageDto: CardImageDto) => {
+            current.forEach(async (cardImageDto: DtoCardImageData) => {
               if (action == "delete") {
                 this.imageCacheService.deleteCachedCardImage(cardImageDto);
               } else {

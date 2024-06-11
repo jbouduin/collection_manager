@@ -6,7 +6,7 @@ import "reflect-metadata";
 import { container } from "tsyringe";
 import { updateElectronApp } from "update-electron-app";
 
-import { CardImageDto } from "../common/dto";
+import { DtoCardImageData, CardSide } from "../common/dto";
 import { ImageSize } from "../common/enums";
 import { bootFunction } from "./boot";
 import INFRATOKENS, { IConfigurationService, IImageCacheService, IWindowService } from "./services/infra/interfaces";
@@ -33,11 +33,13 @@ app.whenReady().then(async () => {
   }
 
   ServicesDI.register();
-  protocol.handle("cached-image", async (request: Request) => {
-    const url = new URL(request.url);
+  protocol.handle("cached-image", async (request: Request): Promise<Response> => {
+    const requestedUrl = new URL(request.url);
     return container.resolve<ICardRepository>(REPOTOKENS.CardRepository)
-      .getCardImageData(url.hostname, Number.parseInt(url.searchParams.get("sequence")), url.searchParams.get("size") as ImageSize)
-      .then((data: CardImageDto) => {
+      .getCardImageData(requestedUrl.hostname)
+      .then((data: DtoCardImageData) => {
+        data.imageType = requestedUrl.searchParams.get("size") as ImageSize;
+        data.side = requestedUrl.searchParams.get("side") as CardSide;
         const cacheService = container.resolve<IImageCacheService>(INFRATOKENS.ImageCacheService);
         return cacheService.getCardImage(data);
       });

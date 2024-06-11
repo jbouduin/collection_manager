@@ -11,3 +11,4 @@ export type DtoCardfaceColor = Selectable<CardFaceColorMapTable>;
 export type DtoLegality = Selectable<OracleLegalityTable>;
 
 export type IdSelectResult = { id: string };
+export type CardSide = "front" | "back";

@@ -5,8 +5,7 @@ import { ScryfallCardSymbol } from "../../types/card-symbol/scryfall-card-symbol
 
 
 export interface IScryfallClient {
-  fetchSvg(uri: string): Promise<ArrayBuffer>;
-  fetchImage(uri: string): Promise<ReadableStream<Uint8Array>>;
+  fetchArrayBuffer(uri: string | URL): Promise<ArrayBuffer>;
   getCardsForCardSet(cardSetCode: string, progressCallback: ProgressCallback): Promise<Array<ScryfallCard>>;
   getCardCollections(cardIds: Array<string>, progressCallback: ProgressCallback): Promise<Array<ScryfallCard>>;
   getCardSets(progressCallback: ProgressCallback): Promise<Array<ScryfallCardSet>>;

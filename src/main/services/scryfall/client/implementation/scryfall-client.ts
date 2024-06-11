@@ -31,14 +31,9 @@ export class ScryfallClient implements IScryfallClient {
   //#endregion
 
   //#region IScryfallClient methods -------------------------------------------
-  public async fetchSvg(uri: string): Promise<ArrayBuffer> {
+  public async fetchArrayBuffer(uri: string | URL): Promise<ArrayBuffer> {
     return this.tryFetch(uri)
       .then((response: Response) => response.arrayBuffer());
-  }
-
-  public async fetchImage(uri: string): Promise<ReadableStream<Uint8Array>> {
-    return this.tryFetch(uri)
-      .then((response: Response) => response.body);
   }
 
   public async getCatalog(type: CatalogType, progressCallback: ProgressCallback): Promise<ScryfallCatalog> {
@@ -120,7 +115,10 @@ export class ScryfallClient implements IScryfallClient {
     this.nextQuery = now + this.scryfallConfiguration.minimumRequestTimeout;
     return await this
       .sleep(sleepTime)
-      .then(() => fetch(uri))
+      .then(() => {
+        console.log(`fetch ${uri}`);
+        return fetch(uri);
+      })
       .then((result: Response) => {
         console.log(`retrieved ${uri} -> status: ${result.status}`);
         return result;

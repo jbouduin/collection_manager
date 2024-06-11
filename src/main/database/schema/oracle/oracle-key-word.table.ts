@@ -1,4 +1,4 @@
-import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
+import { ColumnType } from "kysely";
 
 export interface OracleKeywordTable {
   oracle_id: ColumnType<string, string, never>;

@@ -30,8 +30,6 @@ export class IpcSyncService implements IIpcSyncService {
 
   //#region IIpcSyncService methods -------------------------------------------
   public async handle(syncParam: DtoSyncParam, browserWindow: BrowserWindow): Promise<void> {
-    console.log("start new IpcSyncService.handling", syncParam);
-
     const taskParams = new Array<SyncTaskParam>();
     if (syncParam.cardSyncType != "none") {
       taskParams.push({

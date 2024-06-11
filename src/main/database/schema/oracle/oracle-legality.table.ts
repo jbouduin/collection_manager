@@ -1,4 +1,4 @@
-import { ColumnType, Insertable, Selectable } from "kysely";
+import { ColumnType } from "kysely";
 
 import { CardLegality, GameFormat } from "../../../../common/enums";
 import { Synchronized } from "../base.types";

@@ -1,4 +1,4 @@
-import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
+import { ColumnType } from "kysely";
 
 import { NonSynchronized } from "../base.types";
 

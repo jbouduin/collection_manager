@@ -131,7 +131,7 @@ export class ScryfallClient implements IScryfallClient {
     const now = Date.now();
     const sleepTime = this.nextQuery - now;
     this.nextQuery = now + this.scryfallConfiguration.minimumRequestTimeout;
-    console.log(body);
+    console.log(`POST ${uri} - body\n${JSON.stringify(body,null, 2)}`);
     return await this
       .sleep(sleepTime)
       .then(() => fetch(uri, {

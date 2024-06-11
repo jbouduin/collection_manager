@@ -14,7 +14,10 @@ export async function bootFunction(splashWindow: BrowserWindow, syncParam: DtoSy
   await container.resolve<IDatabaseService>(INFRATOKENS.DatabaseService)
     .migrateToLatest(
       migrationContainer.resolve<MigrationProvider>(MIGRATOKENS.NewCustomMigrationProvider),
-      (label: string) => splashWindow.webContents.send("splash", label)
+      (label: string) => {
+        console.log(label);
+        splashWindow.webContents.send("splash", label);
+      }
     )
     .then((service: IDatabaseService) => service.connect())
     .then(() => migrationContainer.dispose())

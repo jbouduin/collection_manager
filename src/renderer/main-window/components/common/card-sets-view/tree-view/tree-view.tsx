@@ -96,7 +96,6 @@ export function TreeView(props: TreeViewProps) {
 
   //#region Effect ------------------------------------------------------------
   React.useEffect(() => {
-    console.log("using effect");
     dispatch({
       type: "FILTER",
       payload: buildTree(applyFilterProps(props.cardSets))
@@ -132,7 +131,6 @@ export function TreeView(props: TreeViewProps) {
         ...new Map(result.map((r: CardSetViewmodel) =>
           [r["setCode"], r])).values()
       ];
-      console.log(`after-filter: # of items = ${uniqueResult.length}`);
       return uniqueResult;
     } else {
       return result;

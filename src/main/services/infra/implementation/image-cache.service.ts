@@ -31,7 +31,6 @@ export class ImageCacheService implements IImageCacheService {
 
   //#region IImageCacheService methods ----------------------------------------
   public async cacheCardSymbolSvg(cardSymbol: Selectable<CardSymbolTable>, progressCallback: ProgressCallback): Promise<void> {
-    console.log(`  -> start cache svg for symbol '${cardSymbol.english}'`);
     progressCallback(`Caching image for '${cardSymbol.english}'`);
     return this.apiClient.fetchSvg(cardSymbol.svg_uri)
       .then((arrayBuffer: ArrayBuffer) => {
@@ -41,7 +40,6 @@ export class ImageCacheService implements IImageCacheService {
   }
 
   public async cacheCardSetSvg(cardSet: Selectable<CardSetTable>, progressCallback: ProgressCallback): Promise<void> {
-    console.log(`  -> start cache svg for cardset '${cardSet.name}'`);
     progressCallback(`Caching image for '${cardSet.name}'`);
     await this.apiClient.fetchSvg(cardSet.icon_svg_uri)
       .then((arrayBuffer: ArrayBuffer) => {

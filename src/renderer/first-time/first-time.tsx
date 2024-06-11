@@ -25,7 +25,6 @@ FocusStyleManager.onlyShowFocusOnTabs();
     .then((configuration: DtoConfiguration) => configurationViewmodel = new ConfigurationViewModel( configuration, true))
     .then(() => {
       const container = document.getElementById("root") as HTMLElement;
-      console.log(configurationViewmodel);
       const root = createRoot(container);
       root.render(
         <BlueprintProvider>

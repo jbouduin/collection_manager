@@ -126,7 +126,6 @@ export class ConfigurationService implements IConfigurationService {
       // Scryfall api allows up to 75 per collection
       collectionChunkSize: 50
     };
-    console.log(JSON.stringify(result, null,2));
     return result;
   }
 

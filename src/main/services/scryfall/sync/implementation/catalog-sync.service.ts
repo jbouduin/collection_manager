@@ -38,19 +38,13 @@ export class CatalogSyncService extends BaseSyncService implements ICatalogSyncS
 
   //#region ICatalogSyncService methods ---------------------------------------
   public override async sync(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void> {
-    console.log("Start CatalogSyncService.sync");
     const serialExecutionArray = syncParam.catalogTypesToSync.map<SyncSingleCatalogParameter>((catalog: CatalogType) => { return { catalogType: catalog, progressCallback: progressCallback }; });
-    await runSerial<SyncSingleCatalogParameter>(
-      serialExecutionArray,
-      (param: SyncSingleCatalogParameter) => `Processing catalog '${param.catalogType}'`,
-      this.syncSingleCatalog.bind(this)
-    );
+    await runSerial<SyncSingleCatalogParameter>(serialExecutionArray, this.syncSingleCatalog.bind(this));
   }
   //#endregion
 
   //#region Private methods ---------------------------------------------------
   private async syncSingleCatalog(parameter: SyncSingleCatalogParameter): Promise<void> {
-    console.log("  -> start CatalogSyncService.syncSingleCatalog", parameter.catalogType);
     parameter.progressCallback(`Synchronizing catalog '${parameter.catalogType}'`);
 
     let catalog: Promise<ScryfallCatalog>;
@@ -114,7 +108,6 @@ export class CatalogSyncService extends BaseSyncService implements ICatalogSyncS
   }
 
   private async processSync(parameter: SyncSingleCatalogParameter, catalog: ScryfallCatalog): Promise<void> {
-    console.log(`Retrieved ${catalog.total_values} items for catalog '${parameter.catalogType}'`);
     if (parameter.progressCallback) {
       parameter.progressCallback(`Saving ${catalog.total_values} items for catalog '${parameter.catalogType}'`);
     }

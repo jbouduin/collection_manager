@@ -88,7 +88,6 @@ export function CardsTableView(props: CardsTableViewProps) {
         };
         window.ipc.query(cardQueryParam)
           .then((cardResult: Array<DtoCard>) => {
-            console.log(`retrieved ${cardResult.length} cards`);
             setCards(
               cardResult
                 .map((card: DtoCard) => new CardViewmodel(card))

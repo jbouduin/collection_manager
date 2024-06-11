@@ -38,7 +38,6 @@ export function Desktop(props: DesktopProps) {
 
   //#region Event handling ----------------------------------------------------
   function onDesktopViewSelectionClick(desktopView: EDesktopView): void {
-    console.log("in desktop buttonbar button click event:", desktopView);
     const newState = clone(desktopState);
     newState.currentView = desktopView;
     setDesktopState(newState);

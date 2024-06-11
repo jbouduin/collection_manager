@@ -42,12 +42,10 @@ export class RulingSyncService extends BaseSyncService implements IRulingSyncSer
       .selectAll("card")
       .where("card.oracle_id", "is not", null)
       .groupBy("card.oracle_id")
-      // .$call(this.logCompilable)
+      .$call(this.logCompilable)
       .execute();
-    // .then((result) => console.log(`${result.length} cards to be updated`));
     return runSerial<Selectable<CardTable>>(
       cards,
-      (param: Selectable<CardTable>) => `Processing ruling for oracle id ${param.oracle_id}`,
       async (card: Selectable<CardTable>, index: number, total: number) => {
         progressCallback(`Processing ruling for oracle id ${card.oracle_id} (${index}/${total})`);
         return this.scryfallclient.getRulings(card.id)

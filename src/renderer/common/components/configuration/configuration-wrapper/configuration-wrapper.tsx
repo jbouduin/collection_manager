@@ -25,8 +25,6 @@ export function ConfigurationWrapper(props: ConfigurationWrapperProps) {
   //#region Event handling ----------------------------------------------------
   const onSave = React.useCallback(
     (toSave: ConfigurationViewModel) => {
-      console.log(toSave.dto);
-      console.log(toSave);
       const params: PostParam<DtoConfiguration> = {
         type: "Configuration",
         data: toSave.dto

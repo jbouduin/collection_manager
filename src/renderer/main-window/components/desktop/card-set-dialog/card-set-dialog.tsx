@@ -27,7 +27,6 @@ export function CardSetDialog(props: CardSetDialogProps) {
         window.ipc
           .query(setDetailQueryParam)
           .then((cardSetDetails: DtoCardSetDetails) => {
-            console.log(cardSetDetails);
             setCardSetDetails(new CardSetDetailsViewmodel(cardSetDetails));
           });
       }

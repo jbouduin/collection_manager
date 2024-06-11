@@ -60,9 +60,7 @@ export class DatabaseService implements IDatabaseService {
 
     return runSerial<MigrationInfo>(
       migrationsToExecute,
-      (mig: MigrationInfo) => `executing ${mig.name}`,
       async (mig: MigrationInfo, index: number, total: number) => {
-        console.log(`Performing migration ${mig.name} (${index + 1}/${total})`);
         progressCallback(`Performing Migration ${mig.name} (${index + 1}/${total})`);
         await migrator.migrateTo(mig.name)
           .then((migrationResultSet: MigrationResultSet) => {

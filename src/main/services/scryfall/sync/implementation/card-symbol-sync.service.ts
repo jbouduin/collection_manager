@@ -67,7 +67,6 @@ export class CardSymbolSyncService extends BaseSyncService implements ICardSymbo
     return await this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
       await runSerial<ScryfallCardSymbol>(
         symbols,
-        (symbol: ScryfallCardSymbol) => `Processing '${symbol.symbol}'`,
         async (symbol: ScryfallCardSymbol, _idx: number, _total: number) => {
           const insertOrUpdate: Promise<InsertResult | UpdateResult> = super.genericSingleSync(
             trx,

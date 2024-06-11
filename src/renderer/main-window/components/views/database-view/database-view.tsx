@@ -19,12 +19,10 @@ export function DatabaseView(props: DatabaseViewProps) {
 
   //#region Event handlers ----------------------------------------------------
   function onCardSetsSelected(sets: Array<CardSetViewmodel>): void {
-    console.log("Card set selected in tree", sets.map((s: CardSetViewmodel) => s.cardSetName));
     setState({ selectedSets: sets, selectedCards: state.selectedCards });
   }
 
   function onCardSelected(cards?: Array<CardViewmodel>): void {
-    console.log("Cards selected in table", cards.map((c: CardViewmodel) => c.cardName));
     setState({ selectedCards: cards, selectedSets: state.selectedSets });
   }
   //#endregion

@@ -80,13 +80,10 @@ export class ScryfallClient implements IScryfallClient {
 
     await runSerial<Array<string>>(
       chunks,
-      (param: Array<string>) => `length of chunk: ${param.length}`,
       async (chunk: Array<string>, index: number, _total: number) => {
         const first = (this.scryfallConfiguration.collectionChunkSize * index) + 1;
         const last = first + chunk.length - 1;
-        const message = `Fetching cards ${first} - ${last} of ${cardIds.length} from Scryfall`;
-        progressCallback(message);
-        console.log(message);
+        progressCallback(`Fetching cards ${first} - ${last} of ${cardIds.length} from Scryfall`);
         const fetched = await this.tryPost(
           `${this.scryfallConfiguration.scryfallApiRoot}/${this.scryfallConfiguration.scryfallEndpoints["collection"]}`,
           JSON.stringify({ identifiers: chunk.map((id: string) => { return { id: id }; }) })

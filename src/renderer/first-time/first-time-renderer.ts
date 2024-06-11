@@ -26,6 +26,4 @@
  * ```
  */
 
-console.log("👋 This message is being logged by 'first-time-renderer.js', included via webpack");
-
 import "./first-time";

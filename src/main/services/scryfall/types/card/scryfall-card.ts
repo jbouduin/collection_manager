@@ -1,6 +1,5 @@
 import { CardBorderColor, CardFinish, CardFrame, CardFrameEffect, CardLayout, CardPromoType, CardRarity, CardSecurityStamp, CardSetType, Game, ImageStatus, MTGColor, MTGLanguage } from "../../../../../common/enums";
 import { ScryfallCardface } from "./scryfall-card-face";
-import { ScryfallImageUris } from "./scryfall-image-uris";
 import { ScryfallLegalities } from "./scryfall-legalities";
 import { ScryfallPreviewInfo } from "./scryfall-preview-info";
 import { ScryfallPrices } from "./scryfall-prices";
@@ -385,9 +384,8 @@ export interface ScryfallCard {
    card_back_id: string;
 
    /**
-    * An object listing available imagery for this card. See the Card Imagery article for more information.
+    * image_uris? => not saved, as images can be retrieved differently
     */
-   image_uris?: ScryfallImageUris;
 
    /**
     * The just-for-fun name printed on the card (such as for Godzilla series cards).

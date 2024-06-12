@@ -11,7 +11,6 @@ import { CardSymbolColorMapAdapter } from "./implementation/card-symbol-color-ma
 import { CardSymbolAdapter } from "./implementation/card-symbol.adapter";
 import { CardAdapter } from "./implementation/card.adapter";
 import { CardfaceColorMapAdapter } from "./implementation/cardface-color-map.adapter";
-import { CardfaceImageAdapter } from "./implementation/cardface-image.adapter";
 import { CardfaceAdapter } from "./implementation/cardface.adapter";
 import { CatalogAdapter } from "./implementation/catalog.adapter";
 import { OracleKeywordAdapter } from "./implementation/oracle-keyword.adapter";
@@ -23,7 +22,7 @@ import ADAPTTOKENS, {
   ICardAdapter, ICardCardMapAdapter, ICardColorMapAdapter, ICardGameAdapter, ICardMultiverseIdAdapter,
   ICardSetAdapter,
   ICardSymbolAdapter, ICardSymbolAlternativeAdapter, ICardSymbolColorMapAdapter,
-  ICardfaceAdapter, ICardfaceColorMapAdapter, ICardfaceImageAdapter, ICatalogAdapter,
+  ICardfaceAdapter, ICardfaceColorMapAdapter, ICatalogAdapter,
   IOracleAdapter, IOracleKeywordAdapter,
   IOracleLegalityAdapter,
   IOracleRulingAdapter, IOracleRulingLineAdapter,
@@ -41,7 +40,6 @@ export class AdaptDi {
     container.register<ICardColorMapAdapter>(ADAPTTOKENS.CardColorMapAdapter, { useClass: CardColorMapAdapter });
     container.register<ICardfaceAdapter>(ADAPTTOKENS.CardfaceAdapter, { useClass: CardfaceAdapter });
     container.register<ICardfaceColorMapAdapter>(ADAPTTOKENS.CardfaceColorMapAdapter, { useClass: CardfaceColorMapAdapter });
-    container.register<ICardfaceImageAdapter>((ADAPTTOKENS.CardfaceImageAdapter), { useClass: CardfaceImageAdapter });
     container.register<ICatalogAdapter>(ADAPTTOKENS.CatalogAdapter, { useClass: CatalogAdapter });
     container.register<ICardSymbolAlternativeAdapter>(ADAPTTOKENS.CardSymbolAlternativeAdapter, { useClass: CardSymbolAlternativeAdapter });
     container.register<ICardSymbolColorMapAdapter>(ADAPTTOKENS.CardSymbolColorMapAdapter, { useClass: CardSymbolColorMapAdapter });

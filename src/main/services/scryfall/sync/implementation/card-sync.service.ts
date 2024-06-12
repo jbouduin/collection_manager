@@ -11,14 +11,14 @@ import INFRATOKENS, { IConfigurationService, IDatabaseService, IImageCacheServic
 import { runSerial } from "../../../../../main/services/infra/util";
 import ADAPTTOKENS, {
   ICardAdapter, ICardCardMapAdapter, ICardColorMapAdapter, ICardGameAdapter, ICardMultiverseIdAdapter,
-  ICardfaceAdapter, ICardfaceColorMapAdapter, ICardfaceImageAdapter,
+  ICardfaceAdapter, ICardfaceColorMapAdapter,
   IOracleAdapter, IOracleKeywordAdapter, IOracleLegalityAdapter
 } from "../../adapt/interface";
 import { CardColorMapAdapterParameter, CardFaceAdapterParameter, OracleAdapterParameter } from "../../adapt/interface/param";
 import { CardfaceColorMapAdapterParameter } from "../../adapt/interface/param/cardface-color-map-adapter.param";
 import { OracleLegalityAdapterParameter } from "../../adapt/interface/param/oracle-legality-adapter.param";
 import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
-import { ScryfallCard, ScryfallCardface, ScryfallImageUris, ScryfallLegalities } from "../../types";
+import { ScryfallCard, ScryfallCardface, ScryfallLegalities } from "../../types";
 import { ICardSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
 import { GenericSyncTaskParameter } from "./generic-sync-task.parameter";
@@ -41,7 +41,6 @@ export class CardSyncService extends BaseSyncService implements ICardSyncService
   private readonly cardMultiverseIdAdapter: ICardMultiverseIdAdapter;
   private readonly cardfaceAdapter: ICardfaceAdapter;
   private readonly cardfaceColorMapAdapter: ICardfaceColorMapAdapter;
-  private readonly cardfaceImageAdapter: ICardfaceImageAdapter;
   private readonly oracleAdapter: IOracleAdapter;
   private readonly oracleKeywordAdapter: IOracleKeywordAdapter;
   private readonly oracleLegalityAdapter: IOracleLegalityAdapter;
@@ -60,7 +59,6 @@ export class CardSyncService extends BaseSyncService implements ICardSyncService
     @inject(ADAPTTOKENS.CardMultiverseIdAdapter) cardMultiverseIdAdapter: ICardMultiverseIdAdapter,
     @inject(ADAPTTOKENS.CardfaceAdapter) cardfaceAdapter: ICardfaceAdapter,
     @inject(ADAPTTOKENS.CardfaceColorMapAdapter) cardfaceColorMapAdapter: ICardfaceColorMapAdapter,
-    @inject(ADAPTTOKENS.CardfaceImageAdapter) cardfaceImageAdapter: ICardfaceImageAdapter,
     @inject(ADAPTTOKENS.OracleAdapter) oracleAdapter: IOracleAdapter,
     @inject(ADAPTTOKENS.OracleKeywordAdapter) oracleKeywordAdapter: IOracleKeywordAdapter,
     @inject(ADAPTTOKENS.OracleLegalityAdapter) oracleLegalityAdapter: IOracleLegalityAdapter) {
@@ -73,7 +71,6 @@ export class CardSyncService extends BaseSyncService implements ICardSyncService
     this.cardMultiverseIdAdapter = cardMultiverseIdAdapter;
     this.cardfaceAdapter = cardfaceAdapter;
     this.cardfaceColorMapAdapter = cardfaceColorMapAdapter;
-    this.cardfaceImageAdapter = cardfaceImageAdapter;
     this.oracleAdapter = oracleAdapter;
     this.oracleKeywordAdapter = oracleKeywordAdapter;
     this.oracleLegalityAdapter = oracleLegalityAdapter;
@@ -387,25 +384,6 @@ export class CardSyncService extends BaseSyncService implements ICardSyncService
         cardfaceAdapterParameter
       )
       .then(async () => {
-        console.log(`${scryfallCard.name} ${scryfallCard.lang} - delete and recreate cardface_images`);
-        const cardfaceImagesMap = new Map<number, ScryfallImageUris>();
-        if (isSingleCardFaceLayout(scryfallCard.layout) || scryfallCard.layout == "split" || scryfallCard.layout == "flip" || scryfallCard.layout == "adventure") {
-          cardfaceImagesMap.set(0, scryfallCard.image_uris);
-        }
-        else {
-          scryfallCard.card_faces.forEach((cardface: ScryfallCardface, idx: number) =>
-            cardfaceImagesMap.set(idx, cardface.image_uris)
-          );
-        }
-        return await this.genericDeleteAndRecreate(
-          trx,
-          "cardface_image",
-          (eb) => eb("cardface_image.card_id", "=", scryfallCard.id), // NEXT not required because of cascaded delete
-          this.cardfaceImageAdapter,
-          { cardId: scryfallCard.id, images: cardfaceImagesMap }
-        );
-      })
-      .then(async () => {
         if (!isSingleCardFaceLayout(scryfallCard.layout)) {
           const taskParameters = new Array<GenericSyncTaskParameter<"cardface_color_map", CardfaceColorMapAdapterParameter>>();
           scryfallCard.card_faces.forEach((cardFace: ScryfallCardface, idx: number) => {
@@ -428,7 +406,6 @@ export class CardSyncService extends BaseSyncService implements ICardSyncService
           return Promise.resolve();
         }
       });
-    // }
   }
 
   private createCardFaceColorMapTaskParameter(
@@ -486,22 +463,19 @@ export class CardSyncService extends BaseSyncService implements ICardSyncService
 
   //#region Post sync auxiliary methods ---------------------------------------
   private async processChangedImages(action: ChangedImageStatusAction, previousImageStatuses: Array<IdAndStatusSelectResult>, progressCallback: ProgressCallback): Promise<void> {
-    // NOW this has changed
     await runSerial<IdAndStatusSelectResult>(
       previousImageStatuses,
       async (prev: IdAndStatusSelectResult, index: number, total: number) => {
-        return this.database.selectFrom("cardface_image")
-          .innerJoin("card", "card.id", "cardface_image.card_id")
+        return this.database.selectFrom("card")
           .innerJoin("card_set", "card_set.id", "card.set_id")
           .select([
+            "card.id as cardId",
             "card.collector_number as collectorNumber",
-            "cardface_image.uri as imageUri",
+            "card.card_back_id as cardBackId",
             "card_set.code as setCode",
             "card.lang as language",
-            "cardface_image.image_type as imageType",
-            "cardface_image.sequence as sequence"
           ])
-          .where("cardface_image.card_id", "=", prev.id)
+          .where("card.id", "=", prev.id)
           .where("card.image_status", "!=", prev.image_status)
           // .$call(this.logCompilable)
           .$castTo<DtoCardImageData>()

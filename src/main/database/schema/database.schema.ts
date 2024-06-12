@@ -1,12 +1,12 @@
 import {
   CardTable, CardCardMapTable, CardGameTable, CardMultiverseIdTable,
-  CardfaceTable, CardFaceColorMapTable, CardFaceImageTable,
+  CardfaceTable, CardFaceColorMapTable,
   OracleTable, OracleKeywordTable, OracleLegalityTable, OracleRulingTable, OracleRulingLineTable,
   CardSetTable, CatalogItemTable, ColorTable, LanguageTable,
   CardSymbolAlternativeTable, CardSymbolColorMapTable, CardSymbolTable,
-
+  CardColorMapTable
 } from ".";
-import { CardColorMapTable } from "./card/card-color-map.table";
+
 
 
 export interface DatabaseSchema {
@@ -17,7 +17,6 @@ export interface DatabaseSchema {
   card_color_map: CardColorMapTable;
   cardface: CardfaceTable;
   cardface_color_map: CardFaceColorMapTable;
-  cardface_image: CardFaceImageTable;
   card_card_map: CardCardMapTable;
   //#endregion
 

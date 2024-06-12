@@ -15,15 +15,14 @@ export class V0_0_1_Card_Migration implements IBaseMigration {
       .then(async () => await createV0_0_1_CardColorMap(db))
       .then(async () => await createV0_0_1_Cardface(db))
       .then(async () => await createV0_0_1_CardCardMap(db))
-      .then(async () => await createV0_0_1_CardfaceImage(db))
       .then(async () => await createV0_0_1_CardFaceColorMap(db));
   }
 
   public async down(db: Kysely<any>): Promise<void> {
     return db.schema.dropTable("cardface_color_map").execute()
-      .then(async () => await db.schema.dropTable("cardface_image").execute())
       .then(async () => await db.schema.dropTable("cardface").execute())
       .then(async () => await db.schema.dropTable("card_card_map").execute())
+      .then(async () => await db.schema.dropTable("card_color_map").execute())
       .then(async () => await db.schema.dropTable("card_game").execute())
       .then(async () => await db.schema.dropTable("card_multiverse_id").execute())
       .then(async () => await db.schema.dropTable("card").execute());
@@ -127,21 +126,6 @@ async function createV0_0_1_Cardface(db: Kysely<any>): Promise<void> {
     .addColumn("flavor_name", "text")
     .addColumn("flavor_text", "text")
     .addPrimaryKeyConstraint("CARDFACE_ID_PK", ["card_id", "sequence"])
-    .execute();
-}
-
-async function createV0_0_1_CardfaceImage(db: Kysely<any>): Promise<void> {
-  console.log("cardface_image");
-  return db.schema.createTable("cardface_image")
-    .addColumn("card_id", "text", (col: ColumnDefinitionBuilder) => col.notNull())
-    .addColumn("sequence", "integer", (col: ColumnDefinitionBuilder) => col.notNull())
-    .addColumn("image_type", "text", (col: ColumnDefinitionBuilder) => col.notNull())
-    .addColumn("uri", "text", (col: ColumnDefinitionBuilder) => col.notNull())
-    .addPrimaryKeyConstraint("CARDFACE_IMAGE_PK", ["card_id", "sequence", "image_type"])
-    .addForeignKeyConstraint(
-      "FK_cardface_image_cardface", ["card_id", "sequence"],
-      "cardface", ["card_id", "sequence"],
-      (cb) => cb.onDelete("cascade"))
     .execute();
 }
 

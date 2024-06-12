@@ -1,9 +1,9 @@
-import { SectionCard } from "@blueprintjs/core";
+import { Classes, SectionCard } from "@blueprintjs/core";
+import classNames from "classnames";
 import * as React from "react";
 
 import { DtoRulingLine } from "../../../../../../common/dto";
 import { QueryParam, RulingQueryOptions } from "../../../../../../common/ipc-params";
-import { RulingLineView } from "../ruling-line-view/ruling-line-view";
 import { CardRulingsViewProps } from "./card-rulings-view.props";
 
 export function CardRulingsView(props: CardRulingsViewProps) {
@@ -36,12 +36,26 @@ export function CardRulingsView(props: CardRulingsViewProps) {
   return (rulings?.length > 0 ?
     <SectionCard padded={false}>
       {
-        rulings.map((ruling: DtoRulingLine, idx: number) =>
-          (<RulingLineView ruling={ruling} key={`ruling_${idx}`} isLast={idx == rulings.length - 1} />)
-        )
+        rulings.map((ruling: DtoRulingLine, idx: number) => renderSingleRulingLine(idx, ruling, idx == rulings.length - 1))
+
       }
     </SectionCard> :
     undefined
   );
+  //#endregion
+
+  //#region Auxiliary methods -------------------------------------------------
+  function renderSingleRulingLine(idx: number, ruling: DtoRulingLine, isLast: boolean): React.JSX.Element {
+    return (
+      <div key={`r-${idx}`}>
+        <p>{ruling.published_at.toLocaleDateString(navigator.language, { day: "2-digit", month: "2-digit", year: "numeric" })} - {ruling.source}</p>
+        <p className={Classes.RUNNING_TEXT}>{ruling.comments}</p>
+        {
+          !isLast &&
+          <p className={classNames("bp5-divider", "ruling-divider")}></p>
+        }
+      </div>
+    );
+  }
   //#endregion
 }

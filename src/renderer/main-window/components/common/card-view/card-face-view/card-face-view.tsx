@@ -1,10 +1,10 @@
 import { H5, Section, SectionCard, Tab, Tabs } from "@blueprintjs/core";
+import classNames from "classnames";
 import * as React from "react";
 
-import { CardfaceViewProps } from "./card-face-view.props";
 import { CardSymbolProvider } from "../../card-symbol-provider/card-symbol-provider";
-import { OracleView } from "../oracle-view/oracle-view";
-import { PrintedView } from "../printed-view/printed-view";
+import { CardTextView } from "../card-text-view/card-text-view";
+import { CardfaceViewProps } from "./card-face-view.props";
 
 export function CardfaceView(props: CardfaceViewProps) {
   console.log("in cardfaceview function");
@@ -32,12 +32,23 @@ export function CardfaceView(props: CardfaceViewProps) {
           <Tab
             id="Oracle0"
             title="Oracle"
-            panel={<OracleView oracle={props.oracle} />}
+            panel={<CardTextView cardText={props.oracle?.oracleText} />}
           />
           <Tab
             id="Printed0"
             title="Printed"
-            panel={<PrintedView cardface={props.cardface} />}
+            panel={
+              <>
+                <CardTextView cardText={props.cardface.printedText} />
+                {
+                  props.cardface.hasFlavorText &&
+                  <div>
+                    <p className={classNames("bp5-divider", "ruling-divider")}></p>
+                    <p><i>{props.cardface.flavorText}</i></p>
+                  </div>
+                }
+              </>
+            }
           />
         </Tabs>
       </SectionCard>

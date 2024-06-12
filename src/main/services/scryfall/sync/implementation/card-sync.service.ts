@@ -419,7 +419,7 @@ export class CardSyncService extends BaseSyncService implements ICardSyncService
       tableName: "cardface_color_map",
       filter: (eb) => eb("cardface_color_map.card_id", "=", cardId)
         .and("cardface_color_map.sequence", "=", sequence)
-        .and("cardface_color_map.color_type", "=", colorType), // NEXT useless as cascaded delete should have removed old stuff
+        .and("cardface_color_map.color_type", "=", colorType), // cascaded delete should have removed old stuff
       adapter: this.cardfaceColorMapAdapter,
       scryfall: { cardId: cardId, sequence: sequence, colorType: colorType, colors: colors }
     };
@@ -434,7 +434,7 @@ export class CardSyncService extends BaseSyncService implements ICardSyncService
       trx: trx,
       tableName: "card_color_map",
       filter: (eb) => eb("card_color_map.card_id", "=", cardId)
-        .and("card_color_map.color_type", "=", colorType), // NEXT useless as cascaded delete should have removed old stuff
+        .and("card_color_map.color_type", "=", colorType), // cascaded delete should have removed old stuff
       adapter: this.cardColorMapAdapter,
       scryfall: { cardId: cardId, colorType: colorType, colors: colors }
     };

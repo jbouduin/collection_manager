@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogBody, DialogFooter } from "@blueprintjs/core";
+import { Button, Classes, Dialog, DialogBody, DialogFooter } from "@blueprintjs/core";
 import { cloneDeep } from "lodash";
 import * as React from "react";
 
@@ -6,11 +6,11 @@ import { SyncParameterView } from "../../../../common/components/sync-parameter-
 import { SyncParamViewmodel } from "../../../../common/viewmodels/sync-param/sync-param.viewmodel";
 import { ConfigurationContext } from "../../context";
 import { SyncDialogProps } from "./sync-dialog.props";
+import { DtoRendererConfiguration } from "../../../../../common/dto";
 
 export function SyncDialog(props: SyncDialogProps) {
   //#region State -------------------------------------------------------------
   const initialState = new SyncParamViewmodel({
-    // syncRequestSource: "user",
     catalogTypesToSync: [],
     syncCardSymbols: false,
     syncCardSets: false,
@@ -37,7 +37,7 @@ export function SyncDialog(props: SyncDialogProps) {
   return (
     <ConfigurationContext.Consumer>
       {
-        (theme: string) => (
+        (configuration: DtoRendererConfiguration) => (
           <Dialog
             style={{ width: "800px" }}
             isOpen={props.isOpen}
@@ -47,7 +47,7 @@ export function SyncDialog(props: SyncDialogProps) {
             canOutsideClickClose={false}
             isCloseButtonShown={true}
             title="Synchronize"
-            className={theme}
+            className={configuration.useDarkTheme ? Classes.DARK : ""}
           >
             <DialogBody>
               <SyncParameterView

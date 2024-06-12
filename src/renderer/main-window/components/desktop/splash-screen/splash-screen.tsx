@@ -1,10 +1,11 @@
-import { Dialog } from "@blueprintjs/core";
+import { Classes, Dialog } from "@blueprintjs/core";
 import classNames from "classnames";
 import * as React from "react";
 
 import { SplashContent } from "../../../../common/components/splash/splash-contents";
 import { BaseDialogProps } from "../../../../common/components/base-dialog-props";
 import { ConfigurationContext } from "../../context";
+import { DtoRendererConfiguration } from "../../../../..//common/dto";
 
 export function SplashScreen(props: BaseDialogProps) {
   window.ipc.onEndProgress(() => {
@@ -16,13 +17,13 @@ export function SplashScreen(props: BaseDialogProps) {
       {
         <ConfigurationContext.Consumer>
           {
-            (theme: string) => (
+            (configuration: DtoRendererConfiguration) => (
               <Dialog
                 isOpen={props.isOpen}
                 enforceFocus={true}
                 canEscapeKeyClose={true}
                 canOutsideClickClose={false}
-                className={classNames(theme, "splash-window")}
+                className={classNames(configuration.useDarkTheme ? Classes.DARK : "", "splash-window")}
                 shouldReturnFocusOnClose={true}
                 onClose={props.onDialogClose}
               >

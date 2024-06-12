@@ -21,6 +21,7 @@ FocusStyleManager.onlyShowFocusOnTabs();
     type: "Configuration",
     options: null
   };
+  // Go to main to ask for the factory default
   window.ipc.query(queryParam)
     .then((configuration: DtoConfiguration) => configurationViewmodel = new ConfigurationViewModel( configuration, true))
     .then(() => {

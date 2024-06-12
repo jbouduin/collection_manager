@@ -1,7 +1,7 @@
-import { AnchorButton, Button, Dialog, DialogBody, DialogFooter, HTMLTable, Icon, Tab, Tabs } from "@blueprintjs/core";
+import { AnchorButton, Button, Classes, Dialog, DialogBody, DialogFooter, HTMLTable, Icon, Tab, Tabs } from "@blueprintjs/core";
 import * as React from "react";
 
-import { DtoCardSetDetails, DtoCardSetLanguage, DtoLanguage } from "../../../../../common/dto";
+import { DtoCardSetDetails, DtoCardSetLanguage, DtoLanguage, DtoRendererConfiguration } from "../../../../../common/dto";
 import { CardSetDetailsQueryOptions, QueryParam } from "../../../../../common/ipc-params";
 import { CardSetDetailsViewmodel } from "../../../viewmodels/card-set/card-set-details.viewmodel";
 import { LanguagesContext, ConfigurationContext } from "../../context";
@@ -42,7 +42,7 @@ export function CardSetDialog(props: CardSetDialogProps) {
         cardSetDetails &&
         <ConfigurationContext.Consumer>
           {
-            (theme: string) => (
+            (configuration: DtoRendererConfiguration) => (
               <Dialog
                 isOpen={props.isOpen}
                 onClose={props.onDialogClose}
@@ -50,7 +50,7 @@ export function CardSetDialog(props: CardSetDialogProps) {
                 canEscapeKeyClose={true}
                 isCloseButtonShown={true}
                 title={renderTitle()}
-                className={theme}>
+                className={configuration.useDarkTheme ? Classes.DARK: ""}>
                 <DialogBody>
                   {
                     renderBody()

@@ -1,4 +1,4 @@
-import { Dialog } from "@blueprintjs/core";
+import { Classes, Dialog } from "@blueprintjs/core";
 import * as React from "react";
 
 import { DtoConfiguration } from "../../../../../common/dto/configuration/configuration.dto";
@@ -7,6 +7,7 @@ import { ConfigurationWrapper } from "../../../../common/components/configuratio
 import { ConfigurationViewModel } from "../../../../common/viewmodels/configuration/configuration.viewmodel";
 import { BaseDialogProps } from "../../../../common/components/base-dialog-props";
 import { ConfigurationContext } from "../../context";
+import { DtoRendererConfiguration } from "../../../../../common/dto";
 
 export function SettingsDialog(props: BaseDialogProps) {
 
@@ -32,7 +33,7 @@ export function SettingsDialog(props: BaseDialogProps) {
   return (
     <ConfigurationContext.Consumer>
       {
-        (theme: string) => (
+        (rendererConfiguration: DtoRendererConfiguration) => (
           <Dialog
             isOpen={props.isOpen}
             onClose={() => props.onDialogClose()}
@@ -40,7 +41,7 @@ export function SettingsDialog(props: BaseDialogProps) {
             canEscapeKeyClose={true}
             isCloseButtonShown={true}
             title="Settings"
-            className={theme}
+            className={rendererConfiguration.useDarkTheme ? Classes.DARK: ""}
           >
             <ConfigurationWrapper
               configuration={configuration}

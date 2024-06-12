@@ -63,6 +63,11 @@ body {
   margin-bottom: -2px
 }
 
+.mana-cost-image-in-title {
+  margin-right: 3px;
+  margin-bottom: -3px
+}
+
 .mana-cost-image-in-text {
   margin-right: 3px;
   margin-bottom: -3px
@@ -78,28 +83,20 @@ body {
   padding-bottom: 10px;
 }
 
-.card-image {
-  max-height: 50%;
-  max-width: 80%;
-  display: block;
-  margin: auto;
+.card-view-wrapper {
+  height: 100vh;
+  overflow: auto;
 }
 
-.card-header-wrapper {
-  display: flex;
-  flex-direction: column;
+.card-image {
+  display: block;
+  margin: auto;
+  max-height: 400px;
 }
 
 .card-header-line-1 {
   display: flex;
   flex-direction: row;
-}
-
-.card-header-line-2 {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  flex-wrap: wrap;
 }
 
 img.rotate-90 {
@@ -133,6 +130,18 @@ img.rotate-180 {
   padding-right: 15px;
   display: flex;
   flex-direction: column;
+}
+
+.language-button-bar {
+  padding-left: 10px;
+  padding-right: 10px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.language-button-bar-button {
+  padding: 5px;
 }
 
 .card-set-tree-wrapper {

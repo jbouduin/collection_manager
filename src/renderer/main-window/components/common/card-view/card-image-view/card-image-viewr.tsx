@@ -68,7 +68,7 @@ export function CardImageView(props: CardImageViewProps) {
         props.card &&
         <SectionCard style={{ "display": "flex", "flexFlow": "column"}} className="card-view-section-card" padded={false}>
           <img
-            className={classNames("card-image", cardImageState.rotationClass)}
+            className={classNames(cardImageState.rotationClass == "rotate-90" ? "card-image-landscape" : "card-image-portrait", "card-image", cardImageState.rotationClass)}
             src={`cached-image://${props.card.cardId}/?size=normal&side=${cardImageState.currentDisplayedSide}`}
           />
             <div style={{ "display": "flex", "flexFlow": "row", "justifyContent": "center", "margin": "5px" }}>

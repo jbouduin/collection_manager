@@ -1,12 +1,11 @@
-import { H3, H5, SectionCard } from "@blueprintjs/core";
+import { H3, H5 } from "@blueprintjs/core";
 import * as React from "react";
 
-import { CardSymbolProvider } from "../../card-symbol-provider/card-symbol-provider";
+import { CardRarity } from "../../../../../../common/enums";
+import { CardSetViewmodel } from "../../../../viewmodels";
+import { CardSetContext } from "../../../context";
 import { SvgProvider } from "../../svg-provider/svg-provider";
 import { CardHeaderViewProps } from "./card-header-view.props";
-import { CardRarity } from "../../../../../../common/enums";
-import { CardSetContext } from "../../../context";
-import { CardSetViewmodel } from "../../../../viewmodels";
 
 
 export function CardHeaderView(props: CardHeaderViewProps) {
@@ -16,9 +15,8 @@ export function CardHeaderView(props: CardHeaderViewProps) {
   return (
     <CardSetContext.Consumer>
       {
-        (cardSets: Array<CardSetViewmodel>) =>
-        (
-          <SectionCard className="card-view-section-card" padded={false}>
+        (cardSets: Array<CardSetViewmodel>) => (
+          <>
             <div className="card-header-line-1">
               <SvgProvider
                 svg={cardSets.find((cardSet: CardSetViewmodel) => cardSet.id == props.card.setId)?.cardSetSvg}
@@ -28,11 +26,10 @@ export function CardHeaderView(props: CardHeaderViewProps) {
               />
               <H3>{props.card.cardName}</H3>
             </div>
-            <div className="card-header-line-2">
+            <div className="card-header-line-2" style={{ "width": "100%" }}>
               <H5>{props.card.cardtypeLine}</H5>
-              <CardSymbolProvider cardSymbols={props.card.cardManacost} className="mana-cost-image-in-text" />
             </div>
-          </SectionCard>
+          </>
         )
       }
     </CardSetContext.Consumer>

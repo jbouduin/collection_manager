@@ -7,7 +7,7 @@ import { OracleViewProps } from "./oracle-view.props";
 export function OracleView(props: OracleViewProps) {
   //#region Main --------------------------------------------------------------
   return (
-    <CardTextView cardText={props.oracle.oracleText}/>
+    <CardTextView cardText={props.oracle?.oracleText}/>
   );
   //#endregion
 }

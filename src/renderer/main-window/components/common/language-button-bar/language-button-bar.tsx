@@ -1,10 +1,10 @@
-import { ButtonGroup, SectionCard } from "@blueprintjs/core";
+import { ButtonGroup } from "@blueprintjs/core";
 import * as React from "react";
 
 import { DtoCardLanguage, DtoLanguage } from "../../../../../common/dto";
+import { LanguagesContext } from "../../context";
 import { LanguageButtonBarButton } from "./language-button-bar-button";
 import { LanguageButtonBarProps } from "./language-button-bar.props";
-import { LanguagesContext } from "../../context";
 
 export function LanguageButtonBar(props: LanguageButtonBarProps) {
   //#region Event handling ----------------------------------------------------
@@ -15,11 +15,10 @@ export function LanguageButtonBar(props: LanguageButtonBarProps) {
 
   //#region Main block --------------------------------------------------------
   return (
-    <SectionCard className="card-view-section-card" >
       <LanguagesContext.Consumer >
         {
-          (languages: Array<DtoLanguage>) => (
-            <ButtonGroup minimal={true} >
+        (languages: Array<DtoLanguage>) => (
+            <ButtonGroup minimal={true} className="language-button-bar" >
               {
                 props.cardLanguages.map((language: DtoCardLanguage) => {
                   const languageDef = languages.find((lng: DtoLanguage) => lng.id == language.lang);
@@ -40,7 +39,7 @@ export function LanguageButtonBar(props: LanguageButtonBarProps) {
             </ButtonGroup>
           )}
         </LanguagesContext.Consumer>
-    </SectionCard>
+
   );
   //#endregion
 }

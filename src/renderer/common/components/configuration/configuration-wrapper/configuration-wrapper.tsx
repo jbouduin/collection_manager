@@ -9,8 +9,8 @@ import { FooterView } from "../footer-view/footer-view";
 import { ConfigurationWrapperProps } from "./configuration-wrapper.props";
 
 export function ConfigurationWrapper(props: ConfigurationWrapperProps) {
-  console.log("in ConfigurationWrapper function");
 
+  // NOW check why we have configuration as state here and in settings dialog
   //#region State -------------------------------------------------------------
   const [configuration, setConfiguration] = React.useState<ConfigurationViewModel>();
   //#endregion
@@ -29,7 +29,9 @@ export function ConfigurationWrapper(props: ConfigurationWrapperProps) {
         type: "Configuration",
         data: toSave.dto
       };
+      // check how to activate renderer settings immediately after saving
       window.ipc.post(params).then(() => props.onSave());
+
     },
     []
   );

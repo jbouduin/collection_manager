@@ -41,7 +41,8 @@ export function SettingsDialog(props: BaseDialogProps) {
             canEscapeKeyClose={true}
             isCloseButtonShown={true}
             title="Settings"
-            className={rendererConfiguration.useDarkTheme ? Classes.DARK: ""}
+            className={rendererConfiguration.useDarkTheme ? Classes.DARK : ""}
+            style={{"minWidth": "800px"}}
           >
             <ConfigurationWrapper
               configuration={configuration}

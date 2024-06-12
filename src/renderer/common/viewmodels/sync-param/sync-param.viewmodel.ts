@@ -6,6 +6,7 @@ import { CardSyncType, DtoSyncParam, RulingSyncType, TimespanUnit } from "../../
 
 export class SyncParamViewmodel {
 
+  // NOW create a base class <T> for viewmodels which handles the dto stuff
   //#region private fields ----------------------------------------------------
   private readonly _dtoSyncParam: DtoSyncParam;
   private readonly _orgSyncParam: DtoSyncParam;
@@ -21,7 +22,6 @@ export class SyncParamViewmodel {
   //#endregion
 
   //#region Getters/Setters ---------------------------------------------------
-
   public get cardSyncType(): CardSyncType {
     return this._dtoSyncParam.cardSyncType;
   }
@@ -79,17 +79,17 @@ export class SyncParamViewmodel {
   //#endregion
 
   //#region Public methods ----------------------------------------------------
-
+  // NOW create a base class for viewmodels with arrays like this
   public getCardImageStatusToSync(imageStatus: ImageStatus): boolean {
     return this._dtoSyncParam.cardImageStatusToSync.indexOf(imageStatus) >= 0;
   }
 
-  public setCardImageStatusToSync(syncType: ImageStatus, value: boolean) {
+  public setCardImageStatusToSync(imageStatus: ImageStatus, value: boolean) {
     if (value) {
-      this._dtoSyncParam.cardImageStatusToSync.push(syncType);
+      this._dtoSyncParam.cardImageStatusToSync.push(imageStatus);
     } else {
       this._dtoSyncParam.cardImageStatusToSync = this._dtoSyncParam.cardImageStatusToSync
-        .filter((s: ImageStatus) => s != syncType);
+        .filter((s: ImageStatus) => s != imageStatus);
     }
   }
 

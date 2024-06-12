@@ -3,6 +3,7 @@ import { cloneDeep, isEqual } from "lodash";
 
 import { DtoConfiguration } from "../../../../common/dto/configuration/configuration.dto";
 import { SyncParamViewmodel } from "../sync-param/sync-param.viewmodel";
+import { DatabaseViewConfigurationViewmodel } from "./database-view-configuration.viewmodel";
 
 export class ConfigurationViewModel {
 
@@ -10,6 +11,7 @@ export class ConfigurationViewModel {
   private readonly _orgConfiguration: DtoConfiguration;
   private readonly _dtoConfiguration: DtoConfiguration;
   private _syncParamViewmodel: SyncParamViewmodel;
+  private _databaseConfigurationViewViewmodel: DatabaseViewConfigurationViewmodel;
   private _hasChanges: boolean;
   //#endregion
 
@@ -59,6 +61,15 @@ export class ConfigurationViewModel {
     this._syncParamViewmodel = value;
     this._dtoConfiguration.mainConfiguration.syncAtStartup = value.dto;
   }
+
+  public get databaseViewConfigurationViewmodel(): DatabaseViewConfigurationViewmodel {
+    return this._databaseConfigurationViewViewmodel;
+  }
+
+  public set databaseViewConfigurationViewmodel(value: DatabaseViewConfigurationViewmodel) {
+    this._databaseConfigurationViewViewmodel = value;
+    this._dtoConfiguration.rendererConfiguration.databaseViewConfiguration = value.dto;
+  }
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
@@ -67,6 +78,7 @@ export class ConfigurationViewModel {
     this._dtoConfiguration = dtoConfiguration;
     this._hasChanges = hasChanges;
     this._syncParamViewmodel = new SyncParamViewmodel(dtoConfiguration.mainConfiguration.syncAtStartup);
+    this._databaseConfigurationViewViewmodel = new DatabaseViewConfigurationViewmodel(dtoConfiguration.rendererConfiguration.databaseViewConfiguration);
   }
   //#endregion
 

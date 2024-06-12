@@ -7,6 +7,8 @@ import { CardView } from "../../common/card-view/card-view";
 import { CardsTableView } from "../../common/cards-table-view/cards-table-view";
 import { DatabaseViewProps } from "./database-view.props";
 import { DatabaseViewState } from "./database-view.state";
+import { ConfigurationContext } from "../../context";
+import { DtoRendererConfiguration } from "../../../../../common/dto";
 
 
 export function DatabaseView(props: DatabaseViewProps) {
@@ -29,29 +31,38 @@ export function DatabaseView(props: DatabaseViewProps) {
 
   //#region Main --------------------------------------------------------------
   return (
-    <>
-      <PanelGroup direction="horizontal">
-        <Panel defaultSize={20}>
-          <CardSetsView
-            onSetsSelected={onCardSetsSelected}
-            onSynchronizeSet={props.onSynchronizeSet}
-            onCardSetDialog={props.onCardSetDialog}/>
-        </Panel>
-        <PanelResizeHandle />
-        <Panel>
-          <CardsTableView
-            selectedSets={state.selectedSets}
-            onCardsSelected={onCardSelected}
-          />
-        </Panel>
-        <PanelResizeHandle />
-        <Panel defaultSize={20}>
-          <CardView
-            cardId={state.selectedCards ? calculateCardToDisplay() : null}
-          />
-        </Panel>
-      </PanelGroup>
-    </>
+    <ConfigurationContext.Consumer>
+      {
+        (configuration: DtoRendererConfiguration) => (
+          <>
+            <PanelGroup direction="horizontal">
+              <Panel defaultSize={20}>
+                <CardSetsView
+                  defaultCardSetGroupBy={configuration.databaseViewConfiguration.cardSetGroupBy}
+                  defaultCardSetSort={configuration.databaseViewConfiguration.cardSetSort}
+                  defaultCardSetTypeFilter={configuration.databaseViewConfiguration.cardSetTypeFilter}
+                  onSetsSelected={onCardSetsSelected}
+                  onSynchronizeSet={props.onSynchronizeSet}
+                  onCardSetDialog={props.onCardSetDialog} />
+              </Panel>
+              <PanelResizeHandle />
+              <Panel>
+                <CardsTableView
+                  selectedSets={state.selectedSets}
+                  onCardsSelected={onCardSelected}
+                />
+              </Panel>
+              <PanelResizeHandle />
+              <Panel defaultSize={20}>
+                <CardView
+                  cardId={state.selectedCards ? calculateCardToDisplay() : null}
+                />
+              </Panel>
+            </PanelGroup>
+          </>
+        )
+      }
+    </ConfigurationContext.Consumer >
   );
   //#endregion
 

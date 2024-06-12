@@ -1,12 +1,11 @@
 import * as fs from "fs";
 import * as path from "path";
 
-import { DtoConfiguration, DtoSyncParam } from "../../../../common/dto";
+import { DtoConfiguration, DtoRendererConfiguration, DtoSyncParam } from "../../../../common/dto";
 import { DtoScryfallConfiguration } from "../../../../common/dto/configuration/scryfall-configuration.dto";
 import { CatalogType } from "../../../../common/enums";
 import { ScryfallEndpoint } from "../../scryfall";
 import { IConfigurationService } from "../interfaces";
-
 
 export class ConfigurationService implements IConfigurationService {
 
@@ -76,11 +75,9 @@ export class ConfigurationService implements IConfigurationService {
         rootDataDirectory: path.join(homeDirectory, "collection-manager"),
         cacheDirectory: path.join(appDirectory, ".cache"),
         databaseName: "magic-db.sqlite",
-        syncAtStartup: this.createSyncAtStartupDefault()
+        syncAtStartup: this.createSyncAtStartupFactoryDefault()
       },
-      rendererConfiguration: {
-        useDarkTheme: useDarkTheme
-      },
+      rendererConfiguration: this.createRendererConfigurationFactoryDefault(useDarkTheme)        ,
       scryfallConfiguration: this.createScryFallFactoryDefault()
     };
     return result;
@@ -131,7 +128,7 @@ export class ConfigurationService implements IConfigurationService {
     return result;
   }
 
-  private createSyncAtStartupDefault(): DtoSyncParam {
+  private createSyncAtStartupFactoryDefault(): DtoSyncParam {
     const result: DtoSyncParam = {
       catalogTypesToSync: [],
       syncCardSymbols: false,
@@ -144,6 +141,42 @@ export class ConfigurationService implements IConfigurationService {
       syncCardsSyncedBeforeUnit: undefined,
       cardSetCodeToSyncCardsFor: undefined,
       changedImageStatusAction: "delete"
+    };
+    return result;
+  }
+
+  private createRendererConfigurationFactoryDefault(useDarkTheme: boolean): DtoRendererConfiguration {
+    const result: DtoRendererConfiguration = {
+      useDarkTheme: useDarkTheme,
+      databaseViewConfiguration: {
+        cardSetSort: "releaseDateDescending",
+        cardSetGroupBy: "parent",
+        cardSetTypeFilter: {
+          "core": true,
+          "expansion": true,
+          "token": true,
+          "starter": true,
+          "duel_deck": true,
+          "promo": false,
+          "commander": false,
+          "masters": false,
+          "alchemy": false,
+          "masterpiece": false,
+          "arsenal": false,
+          "from_the_vault": false,
+          "spellbook": false,
+          "premium_deck": false,
+          "draft_innovation": false,
+          "treasure_chest": false,
+          "planechase": false,
+          "archenemy": false,
+          "vanguard": false,
+          "funny": false,
+          "box": false,
+          "memorabilia": false,
+          "minigame": false
+        }
+      }
     };
     return result;
   }

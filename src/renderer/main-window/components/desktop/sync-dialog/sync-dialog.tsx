@@ -4,7 +4,7 @@ import * as React from "react";
 
 import { SyncParameterView } from "../../../../common/components/sync-parameter-view/sync-parameter-view";
 import { SyncParamViewmodel } from "../../../../common/viewmodels/sync-param/sync-param.viewmodel";
-import { ThemeContext } from "../../context";
+import { ConfigurationContext } from "../../context";
 import { SyncDialogProps } from "./sync-dialog.props";
 
 export function SyncDialog(props: SyncDialogProps) {
@@ -35,7 +35,7 @@ export function SyncDialog(props: SyncDialogProps) {
 
   //#region Main --------------------------------------------------------------
   return (
-    <ThemeContext.Consumer>
+    <ConfigurationContext.Consumer>
       {
         (theme: string) => (
           <Dialog
@@ -59,7 +59,7 @@ export function SyncDialog(props: SyncDialogProps) {
           </Dialog>
         )
       }
-    </ThemeContext.Consumer>
+    </ConfigurationContext.Consumer>
   );
   //#endregion
 

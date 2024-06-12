@@ -2,6 +2,7 @@ export * from "./configuration/configuration.dto";
 export * from "./configuration/main-configuration.dto";
 export * from "./configuration/renderer-configuration.dto";
 export * from "./configuration/scryfall-configuration.dto";
+export * from "./configuration/database-view-configuration.dto";
 export * from "./select/card-color.dto";
 export * from "./select/card-face.dto";
 export * from "./select/card-image.dto";

@@ -4,7 +4,7 @@ import * as React from "react";
 
 import { SplashContent } from "../../../../common/components/splash/splash-contents";
 import { BaseDialogProps } from "../../../../common/components/base-dialog-props";
-import { ThemeContext } from "../../context";
+import { ConfigurationContext } from "../../context";
 
 export function SplashScreen(props: BaseDialogProps) {
   window.ipc.onEndProgress(() => {
@@ -14,7 +14,7 @@ export function SplashScreen(props: BaseDialogProps) {
   return (
     <>
       {
-        <ThemeContext.Consumer>
+        <ConfigurationContext.Consumer>
           {
             (theme: string) => (
               <Dialog
@@ -30,7 +30,7 @@ export function SplashScreen(props: BaseDialogProps) {
               </Dialog>
             )
           }
-        </ThemeContext.Consumer>
+        </ConfigurationContext.Consumer>
       }
     </>
   );

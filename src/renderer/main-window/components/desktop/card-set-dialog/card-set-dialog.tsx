@@ -4,7 +4,7 @@ import * as React from "react";
 import { DtoCardSetDetails, DtoCardSetLanguage, DtoLanguage } from "../../../../../common/dto";
 import { CardSetDetailsQueryOptions, QueryParam } from "../../../../../common/ipc-params";
 import { CardSetDetailsViewmodel } from "../../../viewmodels/card-set/card-set-details.viewmodel";
-import { LanguagesContext, ThemeContext } from "../../context";
+import { LanguagesContext, ConfigurationContext } from "../../context";
 import { SvgProvider } from "../../common/svg-provider/svg-provider";
 import { CardSetDialogProps } from "./card-set-dialog.props";
 
@@ -40,7 +40,7 @@ export function CardSetDialog(props: CardSetDialogProps) {
     <>
       {
         cardSetDetails &&
-        <ThemeContext.Consumer>
+        <ConfigurationContext.Consumer>
           {
             (theme: string) => (
               <Dialog
@@ -60,7 +60,7 @@ export function CardSetDialog(props: CardSetDialogProps) {
               </Dialog>
             )
           }
-        </ThemeContext.Consumer>
+        </ConfigurationContext.Consumer>
       }
     </>
   );

@@ -6,7 +6,7 @@ import { QueryParam } from "../../../../../common/ipc-params";
 import { ConfigurationWrapper } from "../../../../common/components/configuration/configuration-wrapper/configuration-wrapper";
 import { ConfigurationViewModel } from "../../../../common/viewmodels/configuration/configuration.viewmodel";
 import { BaseDialogProps } from "../../../../common/components/base-dialog-props";
-import { ThemeContext } from "../../context";
+import { ConfigurationContext } from "../../context";
 
 export function SettingsDialog(props: BaseDialogProps) {
 
@@ -30,7 +30,7 @@ export function SettingsDialog(props: BaseDialogProps) {
 
   //#region Main ------------------------------------------------------------------------
   return (
-    <ThemeContext.Consumer>
+    <ConfigurationContext.Consumer>
       {
         (theme: string) => (
           <Dialog
@@ -49,7 +49,7 @@ export function SettingsDialog(props: BaseDialogProps) {
           </Dialog>
         )
       }
-    </ThemeContext.Consumer>
+    </ConfigurationContext.Consumer>
   );
   //#endregion
 }

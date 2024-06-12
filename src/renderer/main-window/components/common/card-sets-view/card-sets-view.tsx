@@ -12,45 +12,18 @@ import { CardSetsViewState } from "./card-sets-view.state";
 export function CardSetsView(props: CardSetsViewProps) {
 
   //#region State -------------------------------------------------------------
-  // NOW have this as rendersettings and create a context for rendersettings (instead of theme context)
-  const initial: CardSetsViewState = {
-    textFilterValue: null,
-    cardSetSort: "releaseDateDescending",
-    cardSetGroupBy: "parent",
-    cardSetTypeFilter: {
-      "core": true,
-      "expansion": true,
-      "token": true,
-      "starter": true,
-      "duel_deck": true,
-      "promo": false,
-      "commander": false,
-      "masters": false,
-      "alchemy": false,
-      "masterpiece": false,
-      "arsenal": false,
-      "from_the_vault": false,
-      "spellbook": false,
-      "premium_deck": false,
-      "draft_innovation": false,
-      "treasure_chest": false,
-      "planechase": false,
-      "archenemy": false,
-      "vanguard": false,
-      "funny": false,
-      "box": false,
-      "memorabilia": false,
-      "minigame": false
-    }
-  };
-
-  const [state, setState] = React.useState<CardSetsViewState>(() => { console.log("assigning initial state"); return initial; })
+  const [state, setState] = React.useState<CardSetsViewState>({
+    cardSetFilterValue: null,
+    cardSetSort: props.defaultCardSetSort,
+    cardSetGroupBy: props.defaultCardSetGroupBy,
+    cardSetTypeFilter: props.defaultCardSetTypeFilter
+  });
   //#endregion
 
   //#region event handling ----------------------------------------------------
   const onTextFilterChanged = (textFilterValue: string) => {
     const newState = cloneDeep(state);
-    newState.textFilterValue = textFilterValue;
+    newState.cardSetFilterValue = textFilterValue;
     setState(newState);
   };
 
@@ -93,7 +66,7 @@ export function CardSetsView(props: CardSetsViewProps) {
               onSetsSelected={props.onSetsSelected}
               onSynchronizeSet={props.onSynchronizeSet}
               onCardSetDialog={props.onCardSetDialog}
-              textFilter={state.textFilterValue}
+              textFilter={state.cardSetFilterValue}
               cardSetGroupBy={state.cardSetGroupBy}
               cardSetSort={state.cardSetSort}
               cardSetTypeFilter={state.cardSetTypeFilter}

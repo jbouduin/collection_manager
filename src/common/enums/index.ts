@@ -10,6 +10,8 @@ export * from "./card-promo-type.enum";
 export * from "./card-rarity.enum";
 export * from "./card-related-card-component";
 export * from "./card-security-stamp";
+export * from "./card-set-group.enum";
+export * from "./card-set-sort.enum";
 export * from "./card-set-type.enum";
 export * from "./catalog-type.enum";
 export * from "./game-format.enum";

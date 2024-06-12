@@ -53,7 +53,6 @@ export function TreeView(props: TreeViewProps) {
 
   //#region State -------------------------------------------------------------
   const [nodes, dispatch] = React.useReducer(treeExampleReducer, undefined);
-
   //#endregion
 
   //#region event handlers ----------------------------------------------------

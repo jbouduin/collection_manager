@@ -13,37 +13,37 @@ export function CardSetsView(props: CardSetsViewProps) {
 
   //#region State -------------------------------------------------------------
   // NOW have this as rendersettings and create a context for rendersettings (instead of theme context)
-  const initial: Map<CardSetType, boolean> = new Map<CardSetType, boolean>([
-    ["core", true],
-    ["expansion", true],
-    ["token", true],
-    ["starter", true],
-    ["duel_deck", true],
-    ["promo", false],
-    ["commander", false],
-    ["masters", false],
-    ["alchemy", false],
-    ["masterpiece", false],
-    ["arsenal", false],
-    ["from_the_vault", false],
-    ["spellbook", false],
-    ["premium_deck", false],
-    ["draft_innovation", false],
-    ["treasure_chest", false],
-    ["planechase", false],
-    ["archenemy", false],
-    ["vanguard", false],
-    ["funny", false],
-    ["box", false],
-    ["memorabilia", false],
-    ["minigame", false]
-  ]);
+  const initial: Record<CardSetType, boolean> = {
+    "core": true,
+    "expansion": true,
+    "token": true,
+    "starter": true,
+    "duel_deck": true,
+    "promo":  false,
+    "commander": false,
+    "masters":  false,
+    "alchemy":  false,
+    "masterpiece": false,
+    "arsenal": false,
+    "from_the_vault": false,
+    "spellbook": false,
+    "premium_deck": false,
+    "draft_innovation": false,
+    "treasure_chest": false,
+    "planechase": false,
+    "archenemy": false,
+    "vanguard": false,
+    "funny": false,
+    "box": false,
+    "memorabilia": false,
+    "minigame":  false
+  };
 
   // NOW consolidate state
   const [textFilterValue, setTextFilterValue] = React.useState<string>(() => { console.log("passing textFilterValue initiation"); return null; });
   const [cardSetSort, setCardSetSort] = React.useState<CardSetSort>(() => { console.log("passing cardSetSort initiation"); return "releaseDateDescending"; });
   const [cardSetGroupBy, setCardSetGroupBy] = React.useState<CardSetGroupBy>(() => { console.log("passing cardSetGroupBy initiation"); return "parent"; });
-  const [cardSetTypeFilter, setCardSetTypeFilter] = React.useState<Map<CardSetType, boolean>>(() => { console.log("passing cardSetTypeFilter initiation"); return initial; });
+  const [cardSetTypeFilter, setCardSetTypeFilter] = React.useState<Record<CardSetType, boolean>>(() => { console.log("passing cardSetTypeFilter initiation"); return initial; });
   //#endregion
 
   //#region event handling ----------------------------------------------------
@@ -64,9 +64,9 @@ export function CardSetsView(props: CardSetsViewProps) {
 
   const onCardSetTypeFilterChanged = React.useCallback(
     (cardSetType: CardSetType) => {
-      setCardSetTypeFilter((oldfilter: Map<CardSetType, boolean>) => {
+      setCardSetTypeFilter((oldfilter: Record<CardSetType, boolean>) => {
         const newCardSetTypeFilter = clone(oldfilter);
-        newCardSetTypeFilter.set(cardSetType, !newCardSetTypeFilter.get(cardSetType));
+        newCardSetTypeFilter[cardSetType] = !newCardSetTypeFilter[cardSetType];
         return newCardSetTypeFilter;
       });
     },

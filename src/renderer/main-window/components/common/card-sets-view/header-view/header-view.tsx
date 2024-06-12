@@ -163,7 +163,7 @@ export function HeaderView(props: HeaderViewProps) {
 
   function buildTypeFilterMenuItem(setType: CardSetType): React.JSX.Element{
     return(
-      <MenuItem text={CardSetTypeDisplayValue.get(setType)} selected={props.cardSetTypeFilter.get(setType)} roleStructure="listoption" onClick={() => handleCardSetTypeFilterItemClick(setType)} />
+      <MenuItem text={CardSetTypeDisplayValue.get(setType)} selected={props.cardSetTypeFilter[setType]} roleStructure="listoption" onClick={() => handleCardSetTypeFilterItemClick(setType)} />
     );
   }
   //#endregion

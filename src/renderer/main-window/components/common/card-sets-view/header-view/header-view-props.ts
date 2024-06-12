@@ -6,7 +6,7 @@ import { CardSetGroupBy, CardSetSort } from "../../../../viewmodels";
 export interface HeaderViewProps extends Props{
   cardSetSort: CardSetSort;
   cardSetGroupBy: CardSetGroupBy;
-  cardSetTypeFilter: Map<CardSetType, boolean>;
+  cardSetTypeFilter: Record<CardSetType, boolean>;
   onCardSetSortChanged: (cardSetSort: CardSetSort) => void;
   onCardSetGroupByChanged: (cardSetGroupBy: CardSetGroupBy) => void;
   onCardSetTypeFilterChanged: (cardSetType: CardSetType) => void;

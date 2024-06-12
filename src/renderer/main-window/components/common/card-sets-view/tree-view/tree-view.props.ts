@@ -8,7 +8,7 @@ export interface TreeViewProps extends Props {
   textFilter: string;
   cardSetSort: CardSetSort;
   cardSetGroupBy: CardSetGroupBy;
-  cardSetTypeFilter: Map<CardSetType, boolean>;
+  cardSetTypeFilter: Record<CardSetType, boolean>;
 
   onSynchronizeSet: (setCode: string) => void;
   onSetsSelected: (sets: Array<CardSetViewmodel>) => void;

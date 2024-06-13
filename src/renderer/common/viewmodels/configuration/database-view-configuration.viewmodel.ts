@@ -43,11 +43,17 @@ export class DatabaseViewConfigurationViewmodel {
 
   //#region Public methods ----------------------------------------------------
   public getCardSetTypeFilter(cardSetType: CardSetType): boolean {
-    return this._dtoConfiguration.cardSetTypeFilter[cardSetType];
+    return this._dtoConfiguration.cardSetTypeFilter.indexOf(cardSetType) >= 0;
+
   }
 
   public setCardSetTypeFilter(cardSetType: CardSetType, value: boolean) {
-    this._dtoConfiguration.cardSetTypeFilter[cardSetType] = value;
+    if (value) {
+      this._dtoConfiguration.cardSetTypeFilter.push(cardSetType);
+    } else {
+      this._dtoConfiguration.cardSetTypeFilter = this._dtoConfiguration.cardSetTypeFilter
+        .filter((s: CardSetType) => s != cardSetType);
+    }
   }
   //#endregion
 }

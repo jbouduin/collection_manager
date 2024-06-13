@@ -108,7 +108,7 @@ export function TreeView(props: TreeViewProps) {
   function applyFilterProps(items: Array<CardSetViewmodel>): Array<CardSetViewmodel> {
     const result = items.filter((cardSet: CardSetViewmodel) =>
       (props.textFilter ? (cardSet.cardSetName.toUpperCase().indexOf(props.textFilter.toUpperCase()) >= 0) : true) &&
-      props.cardSetTypeFilter[cardSet.cardSetType] == true
+      props.cardSetTypeFilter.indexOf(cardSet.cardSetType) >= 0
     );
     if (props.cardSetGroupBy == "parent") {
       let parents = result

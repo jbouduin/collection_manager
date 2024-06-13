@@ -4,5 +4,5 @@ export interface CardSetsViewState {
   cardSetFilterValue: string;
   cardSetSort: CardSetSort;
   cardSetGroupBy: CardSetGroupBy;
-  cardSetTypeFilter: Record<CardSetType, boolean>
+  cardSetTypeFilter: Array<CardSetType>
 }

@@ -5,7 +5,7 @@ import { CardSetGroupBy, CardSetSort, CardSetType } from "../../../../../..//com
 export interface HeaderViewProps extends Props{
   cardSetSort: CardSetSort;
   cardSetGroupBy: CardSetGroupBy;
-  cardSetTypeFilter: Record<CardSetType, boolean>;
+  cardSetTypeFilter: Array<CardSetType>;
   onCardSetSortChanged: (cardSetSort: CardSetSort) => void;
   onCardSetGroupByChanged: (cardSetGroupBy: CardSetGroupBy) => void;
   onCardSetTypeFilterChanged: (cardSetType: CardSetType) => void;

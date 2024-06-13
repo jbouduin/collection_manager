@@ -151,31 +151,14 @@ export class ConfigurationService implements IConfigurationService {
       databaseViewConfiguration: {
         cardSetSort: "releaseDateDescending",
         cardSetGroupBy: "parent",
-        cardSetTypeFilter: {
-          "core": true,
-          "expansion": true,
-          "token": true,
-          "starter": true,
-          "duel_deck": true,
-          "promo": false,
-          "commander": false,
-          "masters": false,
-          "alchemy": false,
-          "masterpiece": false,
-          "arsenal": false,
-          "from_the_vault": false,
-          "spellbook": false,
-          "premium_deck": false,
-          "draft_innovation": false,
-          "treasure_chest": false,
-          "planechase": false,
-          "archenemy": false,
-          "vanguard": false,
-          "funny": false,
-          "box": false,
-          "memorabilia": false,
-          "minigame": false
-        }
+        cardSetTypeFilter: [
+          "core",
+          "expansion",
+          "token",
+          "starter",
+          "duel_deck",
+          "promo",
+        ]
       }
     };
     return result;

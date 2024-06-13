@@ -41,7 +41,14 @@ export function CardSetsView(props: CardSetsViewProps) {
 
   const onCardSetTypeFilterChanged = (cardSetType: CardSetType) => {
     const newState = cloneDeep(state);
-    newState.cardSetTypeFilter[cardSetType] = !newState.cardSetTypeFilter[cardSetType];
+    const indexOfType = newState.cardSetTypeFilter.indexOf(cardSetType);
+    if ( indexOfType >= 0)
+    {
+      newState.cardSetTypeFilter = newState.cardSetTypeFilter
+        .filter((ct: CardSetType) => ct != cardSetType);
+    } else {
+      newState.cardSetTypeFilter.push(cardSetType)
+    }
     setState(newState);
   };
   //#endregion

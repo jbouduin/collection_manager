@@ -148,7 +148,7 @@ export function HeaderView(props: HeaderViewProps) {
     return(
       <MenuItem
         text={CardSetTypeDisplayValue.get(setType)}
-        selected={props.cardSetTypeFilter[setType]} roleStructure="listoption"
+        selected={props.cardSetTypeFilter.indexOf(setType) >= 0} roleStructure="listoption"
         onClick={() => props.onCardSetTypeFilterChanged(setType)} />
     );
   }

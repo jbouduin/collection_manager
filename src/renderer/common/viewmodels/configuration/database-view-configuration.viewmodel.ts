@@ -1,57 +1,43 @@
-import { cloneDeep, isEqual } from "lodash";
-
 import { DtoDatabaseViewConfiguration } from "../../../../common/dto";
 import { CardSetGroupBy, CardSetSort, CardSetType } from "../../../../common/enums";
+import { BaseViewmodel } from "../base.viewmodel";
 
-export class DatabaseViewConfigurationViewmodel {
-  private _dtoConfiguration: DtoDatabaseViewConfiguration;
-  private _orgConfiguration: DtoDatabaseViewConfiguration;
-
-  //#region Auxiliary getters -------------------------------------------------
-  public get dto(): DtoDatabaseViewConfiguration {
-    return this._dtoConfiguration;
-  }
-  public get hasChanges(): boolean {
-    return !isEqual(this._dtoConfiguration, this._orgConfiguration);
-  }
-  //#endregion
+export class DatabaseViewConfigurationViewmodel extends BaseViewmodel < DtoDatabaseViewConfiguration > {
 
   //#region Getters/Setters ---------------------------------------------------
   public get cardSetSort(): CardSetSort {
-    return this._dtoConfiguration.cardSetSort;
+    return this._dto.cardSetSort;
   }
 
   public set cardSetSort(value: CardSetSort) {
-    this._dtoConfiguration.cardSetSort = value;
+    this._dto.cardSetSort = value;
   }
 
   public get cardSetGroupBy(): CardSetGroupBy {
-    return this._dtoConfiguration.cardSetGroupBy;
+    return this._dto.cardSetGroupBy;
   }
 
   public set cardSetGroupBy(value: CardSetGroupBy) {
-    this._dtoConfiguration.cardSetGroupBy = value;
+    this._dto.cardSetGroupBy = value;
   }
   //#endregion
 
   //#region Constructor -------------------------------------------------------
   public constructor(dtoConfiguration: DtoDatabaseViewConfiguration) {
-    this._dtoConfiguration = dtoConfiguration;
-    this._orgConfiguration = cloneDeep(dtoConfiguration);
+    super(dtoConfiguration);
   }
   //#endregion
 
   //#region Public methods ----------------------------------------------------
   public getCardSetTypeFilter(cardSetType: CardSetType): boolean {
-    return this._dtoConfiguration.cardSetTypeFilter.indexOf(cardSetType) >= 0;
-
+    return this._dto.cardSetTypeFilter.indexOf(cardSetType) >= 0;
   }
 
   public setCardSetTypeFilter(cardSetType: CardSetType, value: boolean) {
     if (value) {
-      this._dtoConfiguration.cardSetTypeFilter.push(cardSetType);
+      this._dto.cardSetTypeFilter.push(cardSetType);
     } else {
-      this._dtoConfiguration.cardSetTypeFilter = this._dtoConfiguration.cardSetTypeFilter
+      this._dto.cardSetTypeFilter = this._dto.cardSetTypeFilter
         .filter((s: CardSetType) => s != cardSetType);
     }
   }

@@ -1,56 +1,51 @@
 import { Classes } from "@blueprintjs/core";
-import { cloneDeep, isEqual } from "lodash";
 
 import { DtoConfiguration } from "../../../../common/dto/configuration/configuration.dto";
+import { BaseViewmodel } from "../base.viewmodel";
 import { SyncParamViewmodel } from "../sync-param/sync-param.viewmodel";
 import { DatabaseViewConfigurationViewmodel } from "./database-view-configuration.viewmodel";
 
-export class ConfigurationViewModel {
+export class ConfigurationViewModel extends BaseViewmodel<DtoConfiguration> {
 
   //#region private fields ----------------------------------------------------
-  private readonly _orgConfiguration: DtoConfiguration;
-  private readonly _dtoConfiguration: DtoConfiguration;
   private _syncParamViewmodel: SyncParamViewmodel;
   private _databaseConfigurationViewViewmodel: DatabaseViewConfigurationViewmodel;
   private _hasChanges: boolean;
   //#endregion
 
   //#region Auxiliary getters -------------------------------------------------
-  public get dto(): DtoConfiguration {
-    return this._dtoConfiguration;
-  }
-  public get hasChanges(): boolean {
-    return this._hasChanges || !isEqual(this._dtoConfiguration, this._orgConfiguration);
+  public override get hasChanges(): boolean {
+    return this._hasChanges || super.hasChanges;
   }
   //#endregion
 
   //#region Getters/Setters ---------------------------------------------------
   public get cacheDirectory(): string {
-    return this._dtoConfiguration.mainConfiguration.cacheDirectory;
+    return this._dto.mainConfiguration.cacheDirectory;
   }
 
   public set cacheDirectory(value: string) {
-    this._dtoConfiguration.mainConfiguration.cacheDirectory = value;
+    this._dto.mainConfiguration.cacheDirectory = value;
   }
 
   public get databaseName(): string {
-    return this._dtoConfiguration.mainConfiguration.databaseName;
+    return this._dto.mainConfiguration.databaseName;
   }
 
   public set databaseName(value: string) {
-    this._dtoConfiguration.mainConfiguration.databaseName = value;
+    this._dto.mainConfiguration.databaseName = value;
   }
 
   public get rootDataDirectory(): string {
-    return this._dtoConfiguration.mainConfiguration.rootDataDirectory;
+    return this._dto.mainConfiguration.rootDataDirectory;
   }
 
   public set rootDataDirectory(value: string) {
-     this._dtoConfiguration.mainConfiguration.rootDataDirectory = value;
+     this._dto.mainConfiguration.rootDataDirectory = value;
   }
 
   public get theme(): string {
-    return this._dtoConfiguration.rendererConfiguration.useDarkTheme ? Classes.DARK : "";
+    return this._dto.rendererConfiguration.useDarkTheme ? Classes.DARK : "";
   }
 
   public get syncParamViewmodel(): SyncParamViewmodel {
@@ -59,7 +54,7 @@ export class ConfigurationViewModel {
 
   public set syncParamViewmodel(value: SyncParamViewmodel) {
     this._syncParamViewmodel = value;
-    this._dtoConfiguration.mainConfiguration.syncAtStartup = value.dto;
+    this._dto.mainConfiguration.syncAtStartup = value.dto;
   }
 
   public get databaseViewConfigurationViewmodel(): DatabaseViewConfigurationViewmodel {
@@ -68,14 +63,13 @@ export class ConfigurationViewModel {
 
   public set databaseViewConfigurationViewmodel(value: DatabaseViewConfigurationViewmodel) {
     this._databaseConfigurationViewViewmodel = value;
-    this._dtoConfiguration.rendererConfiguration.databaseViewConfiguration = value.dto;
+    this._dto.rendererConfiguration.databaseViewConfiguration = value.dto;
   }
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
   public constructor(dtoConfiguration: DtoConfiguration, hasChanges: boolean) {
-    this._orgConfiguration = cloneDeep(dtoConfiguration);
-    this._dtoConfiguration = dtoConfiguration;
+    super(dtoConfiguration);
     this._hasChanges = hasChanges;
     this._syncParamViewmodel = new SyncParamViewmodel(dtoConfiguration.mainConfiguration.syncAtStartup);
     this._databaseConfigurationViewViewmodel = new DatabaseViewConfigurationViewmodel(dtoConfiguration.rendererConfiguration.databaseViewConfiguration);

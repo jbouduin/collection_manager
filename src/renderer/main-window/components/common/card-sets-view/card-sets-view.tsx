@@ -47,7 +47,7 @@ export function CardSetsView(props: CardSetsViewProps) {
       newState.cardSetTypeFilter = newState.cardSetTypeFilter
         .filter((ct: CardSetType) => ct != cardSetType);
     } else {
-      newState.cardSetTypeFilter.push(cardSetType)
+      newState.cardSetTypeFilter.push(cardSetType);
     }
     setState(newState);
   };

@@ -100,7 +100,7 @@ export function CardView(props: CardViewProps) {
       <Section
         compact={true}
         collapsible={true}
-        title={<H5 style={{"marginBottom": "0px"}}>More</H5>}
+        title={<div><H5 style={{ "marginBottom": "0px" }}>More</H5></div>}
       >
         <SectionCard className="card-view-section-card" >
           <Tabs animate={true} id="card-detail-tabs" defaultSelectedTabId="Rulings" renderActiveTabPanelOnly={true}>

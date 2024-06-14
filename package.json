@@ -1,7 +1,7 @@
 {
   "name": "collection_manager",
-  "version": "0.0.3",
-  "description": "A tool to manage your collections",
+  "version": "0.0.10",
+  "description": "A tool to manage your MTG Cards collection",
   "main": ".webpack/main",
   "repository": {
     "type": "git",

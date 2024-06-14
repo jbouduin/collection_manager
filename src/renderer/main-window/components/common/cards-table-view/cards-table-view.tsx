@@ -69,7 +69,7 @@ export function CardsTableView(props: CardsTableViewProps) {
   function symbolRenderer(valueCallBack: (card: CardViewmodel) => Array<string>): CellRenderer {
     return (row: number) => (
       <Cell>
-        <CardSymbolProvider cardSymbols={valueCallBack(cards[row])} />
+        <CardSymbolProvider cardSymbols={valueCallBack(cards[row])} className="mana-cost-image-in-table"/>
       </Cell >
     );
   }
@@ -88,7 +88,6 @@ export function CardsTableView(props: CardsTableViewProps) {
         };
         window.ipc.query(cardQueryParam)
           .then((cardResult: Array<DtoCard>) => {
-            console.log(`retrieved ${cardResult.length} cards`);
             setCards(
               cardResult
                 .map((card: DtoCard) => new CardViewmodel(card))

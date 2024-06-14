@@ -8,10 +8,6 @@ import { SyncParameterViewProps } from "./sync-parameter-view.props";
 
 export function SyncParameterView(props: SyncParameterViewProps) {
 
-  //#region Select Item renderers ---------------------------------------------
-
-  //#endregion
-
   //#region Main --------------------------------------------------------------
   return (
     <SectionCard padded={false} >
@@ -114,15 +110,13 @@ export function SyncParameterView(props: SyncParameterViewProps) {
           })
         }
       />
-
-
       <HTMLTable compact={true} bordered={false} width="100%" key="catalogs">
         <thead>
           <tr><td colSpan={3} style={{ paddingLeft: "0px" }}>Catalogs</td></tr>
         </thead>
         <tbody>
           {
-            x()
+            renderCatalogs()
           }
         </tbody>
       </HTMLTable >
@@ -131,7 +125,7 @@ export function SyncParameterView(props: SyncParameterViewProps) {
   //#endregion
 
   //#region Auxiliary methods -------------------------------------------------
-  function x(): Array<React.JSX.Element> {
+  function renderCatalogs(): Array<React.JSX.Element> {
     const table = new Array<React.JSX.Element>();
     let currentRow: Array<React.JSX.Element>;
     let idx = 0;
@@ -172,7 +166,6 @@ export function SyncParameterView(props: SyncParameterViewProps) {
   }
 
   function renderImageStatus(): Array<React.JSX.Element> {
-
     const result = new Array<React.JSX.Element>();
     ImageStatusDisplayValue.forEach((displayValue: string, key: ImageStatus) => {
 
@@ -194,7 +187,5 @@ export function SyncParameterView(props: SyncParameterViewProps) {
     });
     return result;
   }
-
-
   //#endregion
 }

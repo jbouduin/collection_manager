@@ -1,84 +1,56 @@
-import { clone } from "lodash";
+import { cloneDeep } from "lodash";
 import * as React from "react";
 
-import { CardSetType } from "../../../../../common/enums";
-import { CardSetGroupBy, CardSetSort, CardSetViewmodel } from "../../../viewmodels";
+import { CardSetGroupBy, CardSetSort, CardSetType } from "../../../../../common/enums";
+import { CardSetViewmodel } from "../../../viewmodels";
+import { CardSetContext } from "../../context";
 import { CardSetsViewProps } from "./card-sets-view.props";
 import { HeaderView } from "./header-view/header-view";
 import { TreeView } from "./tree-view/tree-view";
-import { CardSetContext } from "../../context";
+import { TreeConfigurationViewmodel } from "../../../viewmodels/database-view/tree-configuration.viewmodel";
 
 export function CardSetsView(props: CardSetsViewProps) {
-  console.log("in cardsetsview function");
 
   //#region State -------------------------------------------------------------
-  const initial: Map<CardSetType, boolean> = new Map<CardSetType, boolean>([
-    ["core", true],
-    ["expansion", true],
-    ["token", true],
-    ["starter", true],
-    ["duel_deck", true],
-    ["promo", false],
-    ["commander", false],
-    ["masters", false],
-    ["alchemy", false],
-    ["masterpiece", false],
-    ["arsenal", false],
-    ["from_the_vault", false],
-    ["spellbook", false],
-    ["premium_deck", false],
-    ["draft_innovation", false],
-    ["treasure_chest", false],
-    ["planechase", false],
-    ["archenemy", false],
-    ["vanguard", false],
-    ["funny", false],
-    ["box", false],
-    ["memorabilia", false],
-    ["minigame", false]
-  ]);
-  console.log(initial);
-  const [textFilterValue, setTextFilterValue] = React.useState<string>(() => { console.log("passing textFilterValue initiation"); return null; });
-  const [cardSetSort, setCardSetSort] = React.useState<CardSetSort>(() => { console.log("passing cardSetSort initiation"); return "releaseDateDescending"; });
-  const [cardSetGroupBy, setCardSetGroupBy] = React.useState<CardSetGroupBy>(() => { console.log("passing cardSetGroupBy initiation"); return "parent"; });
-  const [cardSetTypeFilter, setCardSetTypeFilter] = React.useState<Map<CardSetType, boolean>>(() => { console.log("passing cardSetTypeFilter initiation"); return initial; });
+  const [state, setState] = React.useState<TreeConfigurationViewmodel>(new TreeConfigurationViewmodel(props.configuration));
   //#endregion
 
   //#region event handling ----------------------------------------------------
-  const onTextFilterChanged = React.useCallback(
-    (textFilterValue: string) => { console.log("onTextFilterChanged", cardSetTypeFilter); setTextFilterValue(textFilterValue); },
-    []
-  );
+  const onTextFilterChanged = (textFilterValue: string) => {
+    const newState = new TreeConfigurationViewmodel(cloneDeep(state.dto));
+    newState.cardSetFilterValue = textFilterValue;
+    setState(newState);
+  };
 
-  const onCardSetSortChanged = React.useCallback(
-    (cardSetSort: CardSetSort) => setCardSetSort(cardSetSort),
-    []
-  );
+  const onCardSetSortChanged = (cardSetSort: CardSetSort) => {
+    const newState = new TreeConfigurationViewmodel(cloneDeep(state.dto));
+    newState.cardSetFilterValue = state.cardSetFilterValue;
+    newState.cardSetSort = cardSetSort;
+    setState(newState);
+  };
 
-  const onCardSetGroupByChanged = React.useCallback(
-    (cardSetGroupBy: CardSetGroupBy) => setCardSetGroupBy(cardSetGroupBy),
-    []
-  );
+  const onCardSetGroupByChanged = (cardSetGroupBy: CardSetGroupBy) => {
+    const newState = new TreeConfigurationViewmodel(cloneDeep(state.dto));
+    newState.cardSetFilterValue = state.cardSetFilterValue;
+    newState.cardSetGroupBy = cardSetGroupBy;
+    setState(newState);
+  };
 
-  const onCardSetTypeFilterChanged = React.useCallback(
-    (cardSetType: CardSetType) => {
-      setCardSetTypeFilter((oldfilter: Map<CardSetType, boolean>) => {
-        const newCardSetTypeFilter = clone(oldfilter);
-        newCardSetTypeFilter.set(cardSetType, !newCardSetTypeFilter.get(cardSetType));
-        return newCardSetTypeFilter;
-      });
-    },
-    []
-  );
+  const onCardSetTypeFilterChanged = (cardSetType: CardSetType) => {
+    const newState = new TreeConfigurationViewmodel(cloneDeep(state.dto));
+    newState.cardSetFilterValue = state.cardSetFilterValue;
+    newState.toggleCardSetFilterType(cardSetType);
+    setState(newState);
+  };
   //#endregion
 
   //#region Main --------------------------------------------------------------
   return (
     <div className="card-set-tree-wrapper">
       <HeaderView
-        cardSetSort={cardSetSort}
-        cardSetGroupBy={cardSetGroupBy}
-        cardSetTypeFilter={cardSetTypeFilter}
+        cardSetSort={state.cardSetSort}
+        cardSetGroupBy={state.cardSetGroupBy}
+        cardSetTypeFilter={state.cardSetTypeFilter}
         onCardSetSortChanged={onCardSetSortChanged}
         onCardSetGroupByChanged={onCardSetGroupByChanged}
         onCardSetTypeFilterChanged={onCardSetTypeFilterChanged}
@@ -92,10 +64,10 @@ export function CardSetsView(props: CardSetsViewProps) {
               onSetsSelected={props.onSetsSelected}
               onSynchronizeSet={props.onSynchronizeSet}
               onCardSetDialog={props.onCardSetDialog}
-              textFilter={textFilterValue}
-              cardSetGroupBy={cardSetGroupBy}
-              cardSetSort={cardSetSort}
-              cardSetTypeFilter={cardSetTypeFilter}
+              textFilter={state.cardSetFilterValue}
+              cardSetGroupBy={state.cardSetGroupBy}
+              cardSetSort={state.cardSetSort}
+              cardSetTypeFilter={state.cardSetTypeFilter}
             />
           )
         }

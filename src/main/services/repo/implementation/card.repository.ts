@@ -2,8 +2,7 @@ import * as fs from "fs";
 import * as helpers from "kysely/helpers/sqlite";
 import { inject, injectable } from "tsyringe";
 
-import { CardImageDto, DtoCard, DtoCardColor, DtoCardface, DtoCardfaceColor, DtoOracle } from "../../../../common/dto";
-import { ImageSize } from "../../../../common/enums";
+import { DtoCard, DtoCardColor, DtoCardImageData, DtoCardface, DtoCardfaceColor, DtoOracle } from "../../../../common/dto";
 import { CardQueryOptions } from "../../../../common/ipc-params/query/card-query.options";
 import { cardColorMapTableFields, cardTableFields, cardfaceColorMapTableFields, cardfaceTableFields } from "../../../../main/database/schema/card/table-fields.constants";
 import { oracleTableFields } from "../../../../main/database/schema/oracle/table-field.constants";
@@ -23,21 +22,18 @@ export class CardRepository extends BaseRepository implements ICardRepository {
   //#endregion
 
   //#region ICardRepository methods -------------------------------------------
-  public async getCardImageData(cardId: string, sequence: number, imageType: ImageSize): Promise<CardImageDto> {
-    return this.database.selectFrom("cardface_image")
-      .innerJoin("card", "card.id", "cardface_image.card_id")
+  public async getCardImageData(cardId: string): Promise<DtoCardImageData> {
+    return this.database.selectFrom("card")
       .innerJoin("card_set", "card_set.id", "card.set_id")
       .select([
+        "card.id as cardId",
         "card.collector_number as collectorNumber",
-        "cardface_image.uri as imageUri",
+        "card.card_back_id as cardBackId",
         "card_set.code as setCode",
         "card.lang as language",
-        "cardface_image.image_type as imageType",
-        "cardface_image.sequence as sequence"
       ])
-      .where("cardface_image.card_id", "=", cardId)
-      .where("cardface_image.sequence", "=", sequence)
-      .where("cardface_image.image_type", "=", imageType)
+      .where("card.id", "=", cardId)
+      .$castTo<DtoCardImageData>()
       // .$call(this.logCompilable)
       .executeTakeFirst();
   }

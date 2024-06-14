@@ -1,5 +1,4 @@
 import { CardLayout, MTGColor } from "../../../../../common/enums";
-import { ScryfallImageUris } from "./scryfall-image-uris";
 
 export interface ScryfallCardface {
 
@@ -27,12 +26,12 @@ export interface ScryfallCardface {
   /**
    * This card’s hand modifier, if it is Vanguard card. This value will contain a delta, such as -1.
    */
-  hand_modifier?: string;
+   hand_modifier?: string;
+
   /**
    * This card’s life modifier, if it is Vanguard card. This value will contain a delta, such as +2.
    */
   life_modifier?: string;
-
 
   /**
    * This card's defense, if any.
@@ -97,7 +96,6 @@ export interface ScryfallCardface {
      */
   colors: Array<MTGColor>;
 
-  image_uris?: ScryfallImageUris;
   /**
    * The card’s mana value. Note that some funny cards have fractional mana costs.
    *

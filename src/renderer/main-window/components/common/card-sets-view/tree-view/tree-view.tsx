@@ -53,7 +53,6 @@ export function TreeView(props: TreeViewProps) {
 
   //#region State -------------------------------------------------------------
   const [nodes, dispatch] = React.useReducer(treeExampleReducer, undefined);
-
   //#endregion
 
   //#region event handlers ----------------------------------------------------
@@ -96,7 +95,6 @@ export function TreeView(props: TreeViewProps) {
 
   //#region Effect ------------------------------------------------------------
   React.useEffect(() => {
-    console.log("using effect");
     dispatch({
       type: "FILTER",
       payload: buildTree(applyFilterProps(props.cardSets))
@@ -110,7 +108,7 @@ export function TreeView(props: TreeViewProps) {
   function applyFilterProps(items: Array<CardSetViewmodel>): Array<CardSetViewmodel> {
     const result = items.filter((cardSet: CardSetViewmodel) =>
       (props.textFilter ? (cardSet.cardSetName.toUpperCase().indexOf(props.textFilter.toUpperCase()) >= 0) : true) &&
-      props.cardSetTypeFilter.get(cardSet.cardSetType) == true
+      props.cardSetTypeFilter.indexOf(cardSet.cardSetType) >= 0
     );
     if (props.cardSetGroupBy == "parent") {
       let parents = result
@@ -132,7 +130,6 @@ export function TreeView(props: TreeViewProps) {
         ...new Map(result.map((r: CardSetViewmodel) =>
           [r["setCode"], r])).values()
       ];
-      console.log(`after-filter: # of items = ${uniqueResult.length}`);
       return uniqueResult;
     } else {
       return result;

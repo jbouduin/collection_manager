@@ -1,188 +1,122 @@
-import { Section, SectionCard, Tab, Tabs } from "@blueprintjs/core";
+import { H5, Section, SectionCard, Tab, Tabs } from "@blueprintjs/core";
 import * as React from "react";
 
-
 import { DtoCard, DtoCardLanguage } from "../../../../../common/dto";
-import { CardLayout } from "../../../../../common/enums";
 import { CardQueryOptions, QueryParam } from "../../../../../common/ipc-params";
 import { CardViewmodel } from "../../../viewmodels";
+import { CardSymbolProvider } from "../card-symbol-provider/card-symbol-provider";
 import { LanguageButtonBar } from "../language-button-bar/language-button-bar";
+import { CardfaceView } from "./card-face-view/card-face-view";
 import { CardHeaderView } from "./card-header-view/card-header-view";
-import { CardImageViewWrapper } from "./card-image-view/card-image-view-wrapper";
+import { CardImageView } from "./card-image-view/card-image-viewr";
 import { CardRulingsView } from "./card-rulings-view/card-rulings-view";
 import { CardViewState } from "./card-view-state";
 import { CardViewProps } from "./card-view.props";
 import { LegalitiesView } from "./legalities-view/legalities-view";
-import { OracleView } from "./oracle-view/oracle-view";
-import { PrintedView } from "./printed-view/printed-view";
-import { SubCardHeaderView } from "./sub-card-header-view/sub-card-header-view";
+
 
 export function CardView(props: CardViewProps) {
-
-  // TODO use collapsible panels when displaying two faces
+  console.log("in cardview function");
 
   //#region State -------------------------------------------------------------
   const [cardViewState, setCardViewState] = React.useState<CardViewState>({ card: null, cardfaceSequence: 0 });
   //#endregion
 
   //#region Effects -----------------------------------------------------------
-  React.useEffect(() => {
-    if (props.cardId) {
-      loadCard(props.cardId);
-    }
-  }, [props.cardId]);
-  //#endregion
-
-  //#region Main --------------------------------------------------------------
-  return (cardViewState.card ?
-    <Section>
-      <CardHeaderView
-        card={cardViewState.card}
-      />
-      {
-        cardViewState.card.isMultipleLanguage &&
-        <LanguageButtonBar
-          cardLanguages={cardViewState.card.otherCardLanguages}
-          currentLanguage={cardViewState.card.cardLanguage}
-          onButtonClick={(language: DtoCardLanguage) => loadCard(language.id)}
-        />
+  React.useEffect(
+    () => {
+      if (props.cardId) {
+        loadCard(props.cardId);
       }
-      {
-        renderViewByLayout(cardViewState.card.cardLayout)
-      }
-      <SectionCard className="card-view-section-card" >
-        <Tabs animate={true} id="card-detail-tabs" defaultSelectedTabId="Rulings" renderActiveTabPanelOnly={true}>
-          <Tab
-            id="Rulings"
-            title="Rulings"
-            panel={<CardRulingsView card={cardViewState.card} />}
-          />
-          <Tab
-            id="Legality"
-            title="Legality"
-            panel={<LegalitiesView oracleId={cardViewState.card.oracleId} />}
-          />
-        </Tabs>
-      </SectionCard>
-    </Section>
-    : <Section ></Section>
+    },
+    [props.cardId]
   );
   //#endregion
 
+  //#region Main --------------------------------------------------------------
+  return (
+    <div className="card-view-wrapper">
+      {
+        cardViewState.card &&
+        <div style={{"minWidth": "410px"}}>
+          {renderTopSection()}
+          {renderFacesSection()}
+          {renderMoreSection()}
+        </div>
+      }
+    </div>
+  );
+
+  //#endregion
+
   //#region Auxiliary rendering functions -------------------------------------
-  function renderViewByLayout(cardLayout: CardLayout) {
-    switch (cardLayout) {
-      case "augment":
-      case "case":
-      case "class":
-      case "emblem":
-      case "host":
-      case "leveler":
-      case "meld":
-      case "mutate":
-      case "normal":
-      case "planar":
-      case "prototype":
-      case "saga":
-      case "scheme":
-      case "token":
-      case "vanguard":
-        return renderSingleFaceLayout();
-      case "art_series":
-      case "adventure":
-      case "double_faced_token":
-      case "flip":
-      case "modal_dfc":
-      case "reversible_card":
-      case "split":
-      case "transform":
-        return renderDoubleFaceLayout();
-      case "battle":
-        throw new Error("not supported as scryfall does not return result when searching");
-      default:
-        throw new Error("Card layout not supported");
-    }
-  }
-
-  function renderSingleFaceLayout(): React.JSX.Element {
+  function renderTopSection(): React.JSX.Element {
     return (
-      <div>
-        <CardImageViewWrapper
-          card={cardViewState.card}
-        />
+      <Section
+        compact={true}
+        collapsible={true}
+        title={<CardHeaderView card={cardViewState.card} />}
+        rightElement={<CardSymbolProvider cardSymbols={cardViewState.card.cardManacost} className="mana-cost-image-in-title" />}
+      >
         {
-          cardViewState.card.isLocalizedCard &&
-          <SubCardHeaderView
-            cardface={cardViewState.card.getCardface(0)}
-            showManaCost={false}
-          />
+          cardViewState.card.isMultipleLanguage &&
+          <SectionCard padded={false}>
+            <LanguageButtonBar
+              cardLanguages={cardViewState.card.otherCardLanguages}
+              currentLanguage={cardViewState.card.cardLanguage}
+              onButtonClick={(language: DtoCardLanguage) => loadCard(language.id)}
+            />
+          </SectionCard>
         }
-        <SectionCard className="card-view-section-card">
-          <Tabs animate={true} id="card-detail-tabs" defaultSelectedTabId="Oracle0" renderActiveTabPanelOnly={true}>
-            <Tab
-              id="Oracle0"
-              title="Oracle"
-              panel={<OracleView oracle={cardViewState.card.getOracle(0)} />}
-            />
-            <Tab
-              id="Printed0"
-              title="Printed"
-              panel={<PrintedView cardface={cardViewState.card.getCardface(0)} />}
-            />
-          </Tabs>
-        </SectionCard>
-      </div>);
-  }
-
-  function renderDoubleFaceLayout(): React.JSX.Element {
-    return (
-      <div>
-        <CardImageViewWrapper
+        <CardImageView
           card={cardViewState.card}
         />
-        <SubCardHeaderView
-          cardface={cardViewState.card.getCardface(0)}
-          showManaCost={true}
+      </Section>
+    );
+  }
+
+  function renderFacesSection(): Array<React.JSX.Element> {
+    const result = new Array<React.JSX.Element>();
+    result.push((
+      <CardfaceView key="face0"
+        cardface={cardViewState.card.getCardface(0)}
+        oracle={cardViewState.card.getOracle(0) ?? cardViewState.card.getCardface(0).oracle}
+      />
+    ));
+    const otherFace = cardViewState.card.getCardface(1);
+    if (otherFace) {
+      result.push((
+        <CardfaceView key="face1"
+          cardface={otherFace}
+          oracle={cardViewState.card.getOracle(1) ?? cardViewState.card.getCardface(1).oracle}
         />
+      ));
+    }
+    return result;
+  }
+
+  function renderMoreSection(): React.JSX.Element {
+    return (
+      <Section
+        compact={true}
+        collapsible={true}
+        title={<div><H5 style={{ "marginBottom": "0px" }}>More</H5></div>}
+      >
         <SectionCard className="card-view-section-card" >
-          <Tabs animate={true} id="card-detail-tabs" defaultSelectedTabId="Oracle0" renderActiveTabPanelOnly={true}>
+          <Tabs animate={true} id="card-detail-tabs" defaultSelectedTabId="Rulings" renderActiveTabPanelOnly={true}>
             <Tab
-              id="Oracle0"
-              title="Oracle"
-              panel={
-                <OracleView oracle={cardViewState.card.getOracle(0) ?? cardViewState.card.getCardface(0).oracle} />
-              }
+              id="Rulings"
+              title="Rulings"
+              panel={<CardRulingsView card={cardViewState.card} />}
             />
             <Tab
-              id="Printed0"
-              title="Printed"
-              panel={
-                <PrintedView cardface={cardViewState.card.getCardface(0)} />}
+              id="Legality"
+              title="Legality"
+              panel={<LegalitiesView oracleId={cardViewState.card.oracleId} />}
             />
           </Tabs>
         </SectionCard>
-        <SubCardHeaderView
-          cardface={cardViewState.card.getCardface(1)}
-          showManaCost={true}
-        />
-        <SectionCard className="card-view-section-card" >
-          <Tabs animate={true} id="card-detail-tabs" defaultSelectedTabId="Oracle1" renderActiveTabPanelOnly={true}>
-            <Tab
-              id="Oracle1"
-              title="Oracle"
-              panel={
-                <OracleView oracle={cardViewState.card.getOracle(1) ?? cardViewState.card.getCardface(1).oracle} />
-              }
-            />
-            <Tab
-              id="Printed1"
-              title="Printed"
-              panel={
-                <PrintedView cardface={cardViewState.card.getCardface(1)} />}
-            />
-          </Tabs>
-        </SectionCard>
-      </div>
+      </Section>
     );
   }
   //#endregion

@@ -18,7 +18,6 @@ export function CardTextView(props: CardTextViewProps) {
             }
           </>)
       }
-
     </CardSymbolContext.Consumer>
   );
   //#endregion
@@ -30,7 +29,7 @@ export function CardTextView(props: CardTextViewProps) {
         .replace(/\r\n/g, "\r")
         .replace(/\n/g, "\r")
         .split(/\r/)
-        .map((paragraph: string) => (<p>{splitParagraph(symbols, paragraph)}</p>));
+        .map((paragraph: string, idx: number) => (<p key={`p-${idx}`}>{splitParagraph(symbols, paragraph)}</p>));
     } else {
       return null;
     }
@@ -39,10 +38,10 @@ export function CardTextView(props: CardTextViewProps) {
   function splitParagraph(symbols: Map<string, string>, paragraph: string): Array<React.JSX.Element | string> {
     const matches = paragraph.match(/{[^}]*}|[^{}]+/gmi);
 
-    return matches.map((match: string) => {
+    return matches.map((match: string, idx: number) => {
       if (match.startsWith("{") && match.endsWith("}")) {
         const svg = symbols.get(match);
-        return (<SvgProvider svg={svg} />);
+        return (<SvgProvider key={`s-${idx}`} svg={svg} className="mana-cost-image-in-text"/>);
       } else {
         return match;
       }

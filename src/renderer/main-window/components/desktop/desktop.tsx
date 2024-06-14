@@ -1,11 +1,11 @@
-import { Card } from "@blueprintjs/core";
+import { Card, Classes } from "@blueprintjs/core";
 import classNames from "classnames";
 import { clone } from "lodash";
 import * as React from "react";
 
 import { DtoSyncParam } from "../../../../common/dto";
 import { CardSetViewmodel } from "../../viewmodels";
-import { CardSetContext, CardSymbolContext, LanguagesContext, ThemeContext } from "../context";
+import { CardSetContext, CardSymbolContext, LanguagesContext, ConfigurationContext } from "../context";
 import { CollectionView } from "../views/collection-view/collection-view";
 import { DatabaseView } from "../views/database-view/database-view";
 import { DeckView } from "../views/deck-view/deck-view";
@@ -38,7 +38,6 @@ export function Desktop(props: DesktopProps) {
 
   //#region Event handling ----------------------------------------------------
   function onDesktopViewSelectionClick(desktopView: EDesktopView): void {
-    console.log("in desktop buttonbar button click event:", desktopView);
     const newState = clone(desktopState);
     newState.currentView = desktopView;
     setDesktopState(newState);
@@ -122,11 +121,11 @@ export function Desktop(props: DesktopProps) {
 
   //#region Main --------------------------------------------------------------
   return (
-    <ThemeContext.Provider value={props.systemTheme}>
+    <ConfigurationContext.Provider value={props.configuration}>
       <LanguagesContext.Provider value={props.languages}>
         <CardSymbolContext.Provider value={props.symbolSvgs}>
           <CardSetContext.Provider value={props.cardSets}>
-            <Card className={classNames(props.systemTheme, "desktop-wrapper")}>
+            <Card className={classNames(props.configuration.useDarkTheme ? Classes.DARK: "", "desktop-wrapper")}>
               <ButtonBar
                 onDesktopViewSelectionClick={onDesktopViewSelectionClick}
                 onSettingsMenuClick={() => setSettingsDialogOpen(true)}
@@ -154,7 +153,7 @@ export function Desktop(props: DesktopProps) {
           </CardSetContext.Provider>
         </CardSymbolContext.Provider>
       </LanguagesContext.Provider>
-    </ThemeContext.Provider>
+    </ConfigurationContext.Provider>
   );
   //#endregion
 }

@@ -1,10 +1,10 @@
 import { FormGroup, InputGroup, SectionCard } from "@blueprintjs/core";
 import * as React from "react";
 
-import { handleStringChange } from "../../../../common/utils";
-import { ConfigurationViewProps } from "../configuration-view/configuration-view.props";
+import { handleStringChange } from "../../../utils";
+import { DataConfigurationViewProps } from "./data-configuration-view.props";
 
-export function BasicConfigurationView(props: ConfigurationViewProps) {
+export function DataConfigurationView(props: DataConfigurationViewProps) {
 
   //#region Main --------------------------------------------------------------
   return (
@@ -19,7 +19,7 @@ export function BasicConfigurationView(props: ConfigurationViewProps) {
           onChange={
             handleStringChange((value: string) => {
               props.configuration.rootDataDirectory = value;
-              props.configurationChanged(props.configuration);
+              props.onConfigurationChanged();
             })
           }
         />
@@ -34,7 +34,7 @@ export function BasicConfigurationView(props: ConfigurationViewProps) {
           onChange={
             handleStringChange((value: string) => {
               props.configuration.databaseName = value;
-              props.configurationChanged(props.configuration);
+              props.onConfigurationChanged();
             })
           }
         />
@@ -49,7 +49,7 @@ export function BasicConfigurationView(props: ConfigurationViewProps) {
           onChange={
             handleStringChange((value: string) => {
               props.configuration.cacheDirectory = value;
-              props.configurationChanged(props.configuration);
+              props.onConfigurationChanged();
             })
           }
         />

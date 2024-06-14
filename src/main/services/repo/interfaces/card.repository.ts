@@ -1,8 +1,7 @@
-import { CardImageDto, DtoCard } from "../../../../common/dto";
-import { ImageSize } from "../../../../common/enums";
+import { DtoCard, DtoCardImageData } from "../../../../common/dto";
 import { CardQueryOptions } from "../../../../common/ipc-params/query/card-query.options";
 
 export interface ICardRepository {
-  getCardImageData(cardId: string, sequence: number, imageType: ImageSize): Promise<CardImageDto>;
+  getCardImageData(cardId: string): Promise<DtoCardImageData>;
   getCards(options: CardQueryOptions): Promise<Array<DtoCard>>
 }

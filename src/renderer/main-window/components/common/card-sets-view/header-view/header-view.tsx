@@ -2,13 +2,11 @@ import { Button, ButtonGroup, IconName, InputGroup, Menu, MenuDivider, MenuItem,
 import * as React from "react";
 
 import { CardSetType, CardSetTypeDisplayValue } from "../../../../../../common/enums";
-import { CardSetGroupBy, CardSetSort } from "../../../../viewmodels";
 import { HeaderViewProps } from "./header-view-props";
 
 type PopoverKey = "card-set-group-by-menu" | "card-set-sort-menu" | "card-set-type-filter-menu";
 
 export function HeaderView(props: HeaderViewProps) {
-  console.log("Headerview function");
 
   //#region State -------------------------------------------------------------
   const [textFilterValue, setTextFilterValue] = React.useState<string>(null);
@@ -19,21 +17,6 @@ export function HeaderView(props: HeaderViewProps) {
     (event: React.FormEvent<HTMLElement>) => {
       setTextFilterValue((event.target as HTMLInputElement).value);
     },
-    []
-  );
-
-  const handleCardSetSortItemClick = React.useCallback(
-    (value: CardSetSort) => props.onCardSetSortChanged(value),
-    []
-  );
-
-  const handleCardSetGroupByItemClick = React.useCallback(
-    (value: CardSetGroupBy) => props.onCardSetGroupByChanged(value),
-    []
-  );
-
-  const handleCardSetTypeFilterItemClick = React.useCallback(
-    (value: CardSetType) => props.onCardSetTypeFilterChanged(value),
     []
   );
   //#endregion
@@ -109,10 +92,10 @@ export function HeaderView(props: HeaderViewProps) {
   function buildGroupByMenu(): React.JSX.Element {
     return (
       <Menu small={true}>
-        <MenuItem text="Parent" selected={props.cardSetGroupBy == "parent"} roleStructure="listoption" onClick={() => handleCardSetGroupByItemClick("parent")} />
-        <MenuItem text="Block" selected={props.cardSetGroupBy == "block"} roleStructure="listoption" onClick={() => handleCardSetGroupByItemClick("block")} />
-        <MenuItem text="Set-type" selected={props.cardSetGroupBy == "setType"} roleStructure="listoption" onClick={() => handleCardSetGroupByItemClick("setType")} />
-        <MenuItem text="No grouping (slow!)" selected={props.cardSetGroupBy == "none"} roleStructure="listoption" onClick={() => handleCardSetGroupByItemClick("none")} />
+        <MenuItem text="Parent" selected={props.cardSetGroupBy == "parent"} roleStructure="listoption" onClick={() => props.onCardSetGroupByChanged("parent")} />
+        <MenuItem text="Block" selected={props.cardSetGroupBy == "block"} roleStructure="listoption" onClick={() => props.onCardSetGroupByChanged("block")} />
+        <MenuItem text="Set-type" selected={props.cardSetGroupBy == "setType"} roleStructure="listoption" onClick={() => props.onCardSetGroupByChanged("setType")} />
+        <MenuItem text="No grouping (slow!)" selected={props.cardSetGroupBy == "none"} roleStructure="listoption" onClick={() => props.onCardSetGroupByChanged("none")} />
       </Menu>
     );
   }
@@ -120,11 +103,11 @@ export function HeaderView(props: HeaderViewProps) {
   function buildSortMenu(): React.JSX.Element {
     return (
       <Menu small={true}>
-        <MenuItem text="Release date ascending" selected={props.cardSetSort == "releaseDateAscending"} roleStructure="listoption" onClick={() => handleCardSetSortItemClick("releaseDateAscending")} />
-        <MenuItem text="Release date descending" selected={props.cardSetSort == "releaseDateDescending"} roleStructure="listoption" onClick={() => handleCardSetSortItemClick("releaseDateDescending")} />
+        <MenuItem text="Release date ascending" selected={props.cardSetSort == "releaseDateAscending"} roleStructure="listoption" onClick={() => props.onCardSetSortChanged("releaseDateAscending")} />
+        <MenuItem text="Release date descending" selected={props.cardSetSort == "releaseDateDescending"} roleStructure="listoption" onClick={() => props.onCardSetSortChanged("releaseDateDescending")} />
         <MenuDivider />
-        <MenuItem text="Alfabetically ascending" selected={props.cardSetSort == "alphabeticallyAscending"} roleStructure="listoption" onClick={() => handleCardSetSortItemClick("alphabeticallyAscending")} />
-        <MenuItem text="Alfabetically descending" selected={props.cardSetSort == "alphabeticallyDescending"} roleStructure="listoption" onClick={() => handleCardSetSortItemClick("alphabeticallyDescending")} />
+        <MenuItem text="Alfabetically ascending" selected={props.cardSetSort == "alphabeticallyAscending"} roleStructure="listoption" onClick={() => props.onCardSetSortChanged("alphabeticallyAscending")} />
+        <MenuItem text="Alfabetically descending" selected={props.cardSetSort == "alphabeticallyDescending"} roleStructure="listoption" onClick={() => props.onCardSetSortChanged("alphabeticallyDescending")} />
       </Menu>
     );
   }
@@ -163,7 +146,10 @@ export function HeaderView(props: HeaderViewProps) {
 
   function buildTypeFilterMenuItem(setType: CardSetType): React.JSX.Element{
     return(
-      <MenuItem text={CardSetTypeDisplayValue.get(setType)} selected={props.cardSetTypeFilter.get(setType)} roleStructure="listoption" onClick={() => handleCardSetTypeFilterItemClick(setType)} />
+      <MenuItem
+        text={CardSetTypeDisplayValue.get(setType)}
+        selected={props.cardSetTypeFilter.indexOf(setType) >= 0} roleStructure="listoption"
+        onClick={() => props.onCardSetTypeFilterChanged(setType)} />
     );
   }
   //#endregion

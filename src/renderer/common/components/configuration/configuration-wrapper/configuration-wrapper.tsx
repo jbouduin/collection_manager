@@ -9,8 +9,6 @@ import { FooterView } from "../footer-view/footer-view";
 import { ConfigurationWrapperProps } from "./configuration-wrapper.props";
 
 export function ConfigurationWrapper(props: ConfigurationWrapperProps) {
-  console.log("in ConfigurationWrapper function");
-
   //#region State -------------------------------------------------------------
   const [configuration, setConfiguration] = React.useState<ConfigurationViewModel>();
   //#endregion
@@ -25,13 +23,13 @@ export function ConfigurationWrapper(props: ConfigurationWrapperProps) {
   //#region Event handling ----------------------------------------------------
   const onSave = React.useCallback(
     (toSave: ConfigurationViewModel) => {
-      console.log(toSave.dto);
-      console.log(toSave);
       const params: PostParam<DtoConfiguration> = {
         type: "Configuration",
         data: toSave.dto
       };
+      // check how to activate renderer settings immediately after saving
       window.ipc.post(params).then(() => props.onSave());
+
     },
     []
   );

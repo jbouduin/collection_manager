@@ -1,10 +1,10 @@
 import "./App.css";
 
-import { BlueprintProvider, Classes, FocusStyleManager } from "@blueprintjs/core";
+import { BlueprintProvider, FocusStyleManager } from "@blueprintjs/core";
 import * as React from "react";
 import { createRoot } from "react-dom/client";
 
-import { DtoCardSet, DtoLanguage } from "../../common/dto";
+import { DtoCardSet, DtoConfiguration, DtoLanguage } from "../../common/dto";
 import { QueryParam } from "../../common/ipc-params";
 import { Desktop } from "./components/desktop/desktop";
 import { DesktopProps } from "./components/desktop/desktop.props";
@@ -26,11 +26,11 @@ FocusStyleManager.onlyShowFocusOnTabs();
     cardSets: new Array<CardSetViewmodel>(),
     symbolSvgs: new Map<string, string>(),
     languages: new Array<DtoLanguage>(),
-    systemTheme: null
+    configuration: null
   };
-  window.ipc.darkmode("system")
-    .then((useDarkColors: boolean) => desktopProps.systemTheme = useDarkColors ?  Classes.DARK : "")
-    .then(async() => window.ipc.query(cardSymbolQueryParam))
+  window.ipc.query({ type: "Configuration", options: null })
+    .then((configuration: DtoConfiguration) => desktopProps.configuration = configuration.rendererConfiguration)
+    .then(async () => window.ipc.query(cardSymbolQueryParam))
     .then((cachedSvgs: Map<string, string>) => {
       desktopProps.symbolSvgs = cachedSvgs;
     })

@@ -1,10 +1,12 @@
 import { ImageSize } from "../../enums";
+import { CardSide } from "../types";
 
-export interface CardImageDto {
+export interface DtoCardImageData {
+  cardId: string;
   collectorNumber: string,
-  sequence: number,
-  imageUri: string,
+  cardBackId: string,
   setCode: string,
   language: string,
-  imageType: ImageSize
+  imageType: ImageSize,
+  side: CardSide
 }

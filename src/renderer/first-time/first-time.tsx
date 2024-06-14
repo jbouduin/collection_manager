@@ -21,11 +21,11 @@ FocusStyleManager.onlyShowFocusOnTabs();
     type: "Configuration",
     options: null
   };
+  // Go to main to ask for the factory default
   window.ipc.query(queryParam)
     .then((configuration: DtoConfiguration) => configurationViewmodel = new ConfigurationViewModel( configuration, true))
     .then(() => {
       const container = document.getElementById("root") as HTMLElement;
-      console.log(configurationViewmodel);
       const root = createRoot(container);
       root.render(
         <BlueprintProvider>

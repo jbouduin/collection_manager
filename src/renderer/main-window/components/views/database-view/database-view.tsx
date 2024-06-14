@@ -7,6 +7,8 @@ import { CardView } from "../../common/card-view/card-view";
 import { CardsTableView } from "../../common/cards-table-view/cards-table-view";
 import { DatabaseViewProps } from "./database-view.props";
 import { DatabaseViewState } from "./database-view.state";
+import { ConfigurationContext } from "../../context";
+import { DtoDatabaseTreeViewConfiguration, DtoRendererConfiguration } from "../../../../../common/dto";
 
 
 export function DatabaseView(props: DatabaseViewProps) {
@@ -19,41 +21,49 @@ export function DatabaseView(props: DatabaseViewProps) {
 
   //#region Event handlers ----------------------------------------------------
   function onCardSetsSelected(sets: Array<CardSetViewmodel>): void {
-    console.log("Card set selected in tree", sets.map((s: CardSetViewmodel) => s.cardSetName));
     setState({ selectedSets: sets, selectedCards: state.selectedCards });
   }
 
   function onCardSelected(cards?: Array<CardViewmodel>): void {
-    console.log("Cards selected in table", cards.map((c: CardViewmodel) => c.cardName));
     setState({ selectedCards: cards, selectedSets: state.selectedSets });
   }
   //#endregion
-
+  function getc(configuration: DtoRendererConfiguration): DtoDatabaseTreeViewConfiguration {
+    console.log(configuration);
+    return configuration.databaseViewTreeConfiguration;
+  }
   //#region Main --------------------------------------------------------------
   return (
-    <>
-      <PanelGroup direction="horizontal">
-        <Panel defaultSize={20}>
-          <CardSetsView
-            onSetsSelected={onCardSetsSelected}
-            onSynchronizeSet={props.onSynchronizeSet}
-            onCardSetDialog={props.onCardSetDialog}/>
-        </Panel>
-        <PanelResizeHandle />
-        <Panel>
-          <CardsTableView
-            selectedSets={state.selectedSets}
-            onCardsSelected={onCardSelected}
-          />
-        </Panel>
-        <PanelResizeHandle />
-        <Panel defaultSize={20}>
-          <CardView
-            cardId={state.selectedCards ? calculateCardToDisplay() : null}
-          />
-        </Panel>
-      </PanelGroup>
-    </>
+    <ConfigurationContext.Consumer>
+      {
+        (configuration: DtoRendererConfiguration) => (
+          <>
+            <PanelGroup direction="horizontal">
+              <Panel defaultSize={20}>
+                <CardSetsView
+                  configuration={getc(configuration)}
+                  onSetsSelected={onCardSetsSelected}
+                  onSynchronizeSet={props.onSynchronizeSet}
+                  onCardSetDialog={props.onCardSetDialog} />
+              </Panel>
+              <PanelResizeHandle />
+              <Panel>
+                <CardsTableView
+                  selectedSets={state.selectedSets}
+                  onCardsSelected={onCardSelected}
+                />
+              </Panel>
+              <PanelResizeHandle />
+              <Panel defaultSize={20}>
+                <CardView
+                  cardId={state.selectedCards ? calculateCardToDisplay() : null}
+                />
+              </Panel>
+            </PanelGroup>
+          </>
+        )
+      }
+    </ConfigurationContext.Consumer >
   );
   //#endregion
 

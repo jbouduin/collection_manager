@@ -45,7 +45,7 @@ export class CardSetSyncService extends BaseSyncService implements ICardSetSyncS
       .then(async () => await this.database.selectFrom("card_set").selectAll().execute())
       .then(async (cardSets: Array<Selectable<CardSetTable>>) => {
         let result = Promise.resolve();
-        console.log((`Saved ${cardSets.length} card sets`));
+        progressCallback(`Saved ${cardSets.length} card sets`);
         cardSets.forEach(async (cardset: Selectable<CardSetTable>) => {
           result = result.then(async () => await this.imageCacheService.cacheCardSetSvg(cardset, progressCallback));
           await result;
@@ -60,7 +60,6 @@ export class CardSetSyncService extends BaseSyncService implements ICardSetSyncS
     return await this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
       await runSerial<ScryfallCardSet>(
         cardSets,
-        (scryfallCardSet: ScryfallCardSet) => `Processing '${scryfallCardSet.name}'`,
         async (scryfallCardSet: ScryfallCardSet, _idx: number, _total: number) => {
           await this.genericSingleSync(
             trx,

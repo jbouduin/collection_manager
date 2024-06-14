@@ -1,4 +1,4 @@
-import { Dialog } from "@blueprintjs/core";
+import { Classes, Dialog } from "@blueprintjs/core";
 import * as React from "react";
 
 import { DtoConfiguration } from "../../../../../common/dto/configuration/configuration.dto";
@@ -6,7 +6,8 @@ import { QueryParam } from "../../../../../common/ipc-params";
 import { ConfigurationWrapper } from "../../../../common/components/configuration/configuration-wrapper/configuration-wrapper";
 import { ConfigurationViewModel } from "../../../../common/viewmodels/configuration/configuration.viewmodel";
 import { BaseDialogProps } from "../../../../common/components/base-dialog-props";
-import { ThemeContext } from "../../context";
+import { ConfigurationContext } from "../../context";
+import { DtoRendererConfiguration } from "../../../../../common/dto";
 
 export function SettingsDialog(props: BaseDialogProps) {
 
@@ -30,9 +31,9 @@ export function SettingsDialog(props: BaseDialogProps) {
 
   //#region Main ------------------------------------------------------------------------
   return (
-    <ThemeContext.Consumer>
+    <ConfigurationContext.Consumer>
       {
-        (theme: string) => (
+        (rendererConfiguration: DtoRendererConfiguration) => (
           <Dialog
             isOpen={props.isOpen}
             onClose={() => props.onDialogClose()}
@@ -40,7 +41,8 @@ export function SettingsDialog(props: BaseDialogProps) {
             canEscapeKeyClose={true}
             isCloseButtonShown={true}
             title="Settings"
-            className={theme}
+            className={rendererConfiguration.useDarkTheme ? Classes.DARK : ""}
+            style={{"minWidth": "800px"}}
           >
             <ConfigurationWrapper
               configuration={configuration}
@@ -49,7 +51,7 @@ export function SettingsDialog(props: BaseDialogProps) {
           </Dialog>
         )
       }
-    </ThemeContext.Consumer>
+    </ConfigurationContext.Consumer>
   );
   //#endregion
 }

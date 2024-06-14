@@ -11,14 +11,12 @@ export class IpcPostService implements IIpcPostService {
 
   //#region IIpcPostService methods -------------------------------------------
   public async handle(params: PostParam<PostData>): Promise<void> {
-    console.log("start IpcPostService.handling", params);
-
-      switch (params.type) {
-        case "Configuration":
-          container.resolve<IConfigurationService>(INFRATOKENS.ConfigurationService)
-            .saveConfiguration((params as PostParam<DtoConfiguration>).data);
-          break;
-      }
+    switch (params.type) {
+      case "Configuration":
+        container.resolve<IConfigurationService>(INFRATOKENS.ConfigurationService)
+          .saveConfiguration((params as PostParam<DtoConfiguration>).data);
+        break;
+    }
   }
   //#endregion
 }

@@ -28,4 +28,9 @@ export interface DtoSyncParam {
   syncCardsSyncedBeforeUnit: TimespanUnit;
   cardSetCodeToSyncCardsFor: string;
   changedImageStatusAction: ChangedImageStatusAction;
+
+  // FEATURE additional settings
+  // boolean: automatically retrieve rulings when retrieving a card
+  // boolean: automatically retrieve image(s) when retrieving a card
+  // boolean: check for new released spoilers (future sets) (startup only)
 }

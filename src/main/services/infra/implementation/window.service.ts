@@ -53,7 +53,6 @@ export class WindowService implements IWindowService {
           }
         )
         .catch((reason: Error) => {
-          console.log("got it");
           splashWindow.hide();
           dialog.showErrorBox(`Error:" ${reason.message}`, reason.stack);
           app.exit();

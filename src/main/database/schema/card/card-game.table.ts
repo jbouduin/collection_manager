@@ -1,4 +1,4 @@
-import { ColumnType, Insertable, Selectable, Updateable } from "kysely";
+import { ColumnType } from "kysely";
 
 import { Game } from "../../../../common/enums";
 

@@ -1,12 +1,11 @@
 import * as fs from "fs";
 import * as path from "path";
 
-import { DtoConfiguration, DtoSyncParam } from "../../../../common/dto";
+import { DtoConfiguration, DtoRendererConfiguration, DtoSyncParam } from "../../../../common/dto";
 import { DtoScryfallConfiguration } from "../../../../common/dto/configuration/scryfall-configuration.dto";
 import { CatalogType } from "../../../../common/enums";
 import { ScryfallEndpoint } from "../../scryfall";
 import { IConfigurationService } from "../interfaces";
-
 
 export class ConfigurationService implements IConfigurationService {
 
@@ -22,7 +21,7 @@ export class ConfigurationService implements IConfigurationService {
   }
 
   public get cacheDirectory(): string {
-    return this._configuration.mainConfiguration.cacheDirectory;
+    return this._configuration.dataConfiguration.cacheDirectory;
   }
 
   public get isFirstUsage(): boolean {
@@ -31,8 +30,8 @@ export class ConfigurationService implements IConfigurationService {
 
   public get dataBaseFilePath(): string {
     return path.join(
-      this._configuration.mainConfiguration.rootDataDirectory,
-      this._configuration.mainConfiguration.databaseName
+      this._configuration.dataConfiguration.rootDataDirectory,
+      this._configuration.dataConfiguration.databaseName
     );
   }
 
@@ -41,7 +40,7 @@ export class ConfigurationService implements IConfigurationService {
   }
 
   public get syncAtStartup(): DtoSyncParam {
-    return this._configuration.mainConfiguration.syncAtStartup;
+    return this._configuration.syncAtStartupConfiguration;
   }
   //#endregion
 
@@ -60,8 +59,8 @@ export class ConfigurationService implements IConfigurationService {
 
   public saveConfiguration(configuration: DtoConfiguration): boolean {
     // LATER Validation
-    this.createDirectoryIfNotExists(configuration.mainConfiguration.rootDataDirectory);
-    this.createDirectoryIfNotExists(configuration.mainConfiguration.cacheDirectory);
+    this.createDirectoryIfNotExists(configuration.dataConfiguration.rootDataDirectory);
+    this.createDirectoryIfNotExists(configuration.dataConfiguration.cacheDirectory);
     fs.writeFileSync(this.configFilePath, JSON.stringify(configuration, null, 2));
     this._configuration = configuration;
     this._isFirstUsage = false;
@@ -72,15 +71,13 @@ export class ConfigurationService implements IConfigurationService {
   //#region Auxiliary factory default methods ---------------------------------
   private createFactoryDefault(appDirectory: string, homeDirectory: string, useDarkTheme: boolean): DtoConfiguration {
     const result: DtoConfiguration = {
-      mainConfiguration: {
+      dataConfiguration: {
         rootDataDirectory: path.join(homeDirectory, "collection-manager"),
         cacheDirectory: path.join(appDirectory, ".cache"),
         databaseName: "magic-db.sqlite",
-        syncAtStartup: this.createSyncAtStartupDefault()
-      },
-      rendererConfiguration: {
-        useDarkTheme: useDarkTheme
-      },
+        },
+      syncAtStartupConfiguration: this.createSyncAtStartupFactoryDefault(),
+      rendererConfiguration: this.createRendererConfigurationFactoryDefault(useDarkTheme)        ,
       scryfallConfiguration: this.createScryFallFactoryDefault()
     };
     return result;
@@ -108,15 +105,17 @@ export class ConfigurationService implements IConfigurationService {
     };
 
     const endpoints: Record<ScryfallEndpoint, string> = {
-      "card": "cards/search",
+      "cards": "card/:id",
       "cardSet": "sets",
       "cardSymbol": "symbology",
       "catalog": "catalog",
+      "collection": "cards/collection",
       "ruling": "cards/:id/rulings",
-      "collection": "cards/collection"
+      "search": "cards/search"
     };
 
     const result: DtoScryfallConfiguration = {
+      cardBackRoot: "https://backs.scryfall.io",
       scryfallApiRoot: "https://api.scryfall.com",
       scryfallEndpoints: endpoints,
       scryfallCatalogPaths: catalogPaths,
@@ -126,11 +125,10 @@ export class ConfigurationService implements IConfigurationService {
       // Scryfall api allows up to 75 per collection
       collectionChunkSize: 50
     };
-    console.log(JSON.stringify(result, null,2));
     return result;
   }
 
-  private createSyncAtStartupDefault(): DtoSyncParam {
+  private createSyncAtStartupFactoryDefault(): DtoSyncParam {
     const result: DtoSyncParam = {
       catalogTypesToSync: [],
       syncCardSymbols: false,
@@ -143,6 +141,25 @@ export class ConfigurationService implements IConfigurationService {
       syncCardsSyncedBeforeUnit: undefined,
       cardSetCodeToSyncCardsFor: undefined,
       changedImageStatusAction: "delete"
+    };
+    return result;
+  }
+
+  private createRendererConfigurationFactoryDefault(useDarkTheme: boolean): DtoRendererConfiguration {
+    const result: DtoRendererConfiguration = {
+      useDarkTheme: useDarkTheme,
+      databaseViewTreeConfiguration: {
+        cardSetSort: "releaseDateDescending",
+        cardSetGroupBy: "parent",
+        cardSetTypeFilter: [
+          "core",
+          "expansion",
+          "token",
+          "starter",
+          "duel_deck",
+          "promo",
+        ]
+      }
     };
     return result;
   }

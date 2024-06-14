@@ -18,15 +18,18 @@ interface SyncTaskParam {
 @singleton()
 export class IpcSyncService implements IIpcSyncService {
 
+  //#region private readonly fields -------------------------------------------
   private readonly windowService: IWindowService;
+  //#endregion
 
+  //#region Constructor -------------------------------------------------------
   public constructor(@inject(INFRATOKENS.WindowService) windowService: IWindowService) {
     this.windowService = windowService;
   }
+  //#endregion
 
+  //#region IIpcSyncService methods -------------------------------------------
   public async handle(syncParam: DtoSyncParam, browserWindow: BrowserWindow): Promise<void> {
-    console.log("start new IpcSyncService.handling", syncParam);
-
     const taskParams = new Array<SyncTaskParam>();
     if (syncParam.cardSyncType != "none") {
       taskParams.push({
@@ -73,7 +76,6 @@ export class IpcSyncService implements IIpcSyncService {
     try {
       return await runSerial<SyncTaskParam>(
         taskParams,
-        (taskParam: SyncTaskParam) => `Serial task: ${taskParam.displayName}`,
         this.handleTask.bind(this));
     } catch (error) {
       console.log(error);
@@ -81,12 +83,18 @@ export class IpcSyncService implements IIpcSyncService {
       browserWindow.webContents.send("splash-end");
     }
   }
+  //#endregion
 
+  //#region Auxiliary methods -------------------------------------------------
   private async handleTask(taskParam: SyncTaskParam, _index: number, _total: number): Promise<void> {
     const synchronizer = container.resolve<IBaseSyncService>(taskParam.serviceToken);
     return synchronizer.sync(
       taskParam.syncParam,
-      (value: string) => taskParam.browserWindow.webContents.send("splash", value)
+      (value: string) => {
+        taskParam.browserWindow.webContents.send("splash", value);
+        console.log(value);
+      }
     );
   }
+  //#endregion
 }

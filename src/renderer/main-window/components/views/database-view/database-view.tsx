@@ -8,7 +8,7 @@ import { CardsTableView } from "../../common/cards-table-view/cards-table-view";
 import { DatabaseViewProps } from "./database-view.props";
 import { DatabaseViewState } from "./database-view.state";
 import { ConfigurationContext } from "../../context";
-import { DtoRendererConfiguration } from "../../../../../common/dto";
+import { DtoDatabaseTreeViewConfiguration, DtoRendererConfiguration } from "../../../../../common/dto";
 
 
 export function DatabaseView(props: DatabaseViewProps) {
@@ -28,7 +28,10 @@ export function DatabaseView(props: DatabaseViewProps) {
     setState({ selectedCards: cards, selectedSets: state.selectedSets });
   }
   //#endregion
-
+  function getc(configuration: DtoRendererConfiguration): DtoDatabaseTreeViewConfiguration {
+    console.log(configuration);
+    return configuration.databaseViewTreeConfiguration;
+  }
   //#region Main --------------------------------------------------------------
   return (
     <ConfigurationContext.Consumer>
@@ -38,9 +41,7 @@ export function DatabaseView(props: DatabaseViewProps) {
             <PanelGroup direction="horizontal">
               <Panel defaultSize={20}>
                 <CardSetsView
-                  defaultCardSetGroupBy={configuration.databaseViewTreeConfiguration.cardSetGroupBy}
-                  defaultCardSetSort={configuration.databaseViewTreeConfiguration.cardSetSort}
-                  defaultCardSetTypeFilter={configuration.databaseViewTreeConfiguration.cardSetTypeFilter}
+                  configuration={getc(configuration)}
                   onSetsSelected={onCardSetsSelected}
                   onSynchronizeSet={props.onSynchronizeSet}
                   onCardSetDialog={props.onCardSetDialog} />

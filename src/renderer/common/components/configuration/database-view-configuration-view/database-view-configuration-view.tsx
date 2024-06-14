@@ -62,14 +62,13 @@ export function DatabaseViewConfigurationView(props: DatabaseViewConfigurationVi
       currentRow.push(
         (
           <td style={{ paddingLeft: "0px" }} key={`cell-${key}`}>
-
             <Checkbox
               key={key}
               label={displayValue}
-              checked={props.configuration.getCardSetTypeFilter(key)}
+              checked={props.configuration.cardSetTypeFilter.indexOf(key) >= 0}
               onChange={
-                handleBooleanChange((value: boolean) => {
-                  props.configuration.setCardSetTypeFilter(key, value);
+                handleBooleanChange((_value: boolean) => {
+                  props.configuration.toggleCardSetFilterType(key);
                   props.onConfigurationChanged();
                 })
               }

@@ -1,12 +1,10 @@
 import { Props } from "@blueprintjs/core";
 
+import { DtoDatabaseTreeViewConfiguration } from "../../../../../common/dto";
 import { CardSetViewmodel } from "../../../viewmodels";
-import { CardSetGroupBy, CardSetSort, CardSetType } from "../../../../../common/enums";
 
 export interface CardSetsViewProps extends Props {
-  defaultCardSetSort: CardSetSort;
-  defaultCardSetGroupBy: CardSetGroupBy;
-  defaultCardSetTypeFilter: Array<CardSetType>;
+  configuration: DtoDatabaseTreeViewConfiguration;
   onSetsSelected(sets: Array<CardSetViewmodel>): void;
   onSynchronizeSet: (setCode: string) => void;
   onCardSetDialog: (cardSet: CardSetViewmodel) => void;

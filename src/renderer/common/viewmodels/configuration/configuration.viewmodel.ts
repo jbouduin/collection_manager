@@ -3,7 +3,7 @@ import { Classes } from "@blueprintjs/core";
 import { DtoConfiguration } from "../../../../common/dto/configuration/configuration.dto";
 import { BaseViewmodel } from "../base.viewmodel";
 import { SyncParamViewmodel } from "../sync-param/sync-param.viewmodel";
-import { DatabaseViewTreeConfigurationViewmodel } from "./database-view-configuration.viewmodel";
+import { DatabaseViewTreeConfigurationViewmodel } from "./database-view-tree-configuration.viewmodel";
 import { DataConfigurationViewmodel } from "./data-configuration.viewmodel";
 
 export class ConfigurationViewModel extends BaseViewmodel<DtoConfiguration> {

@@ -8,5 +8,4 @@ export interface DtoConfiguration {
   rendererConfiguration: DtoRendererConfiguration;
   scryfallConfiguration: DtoScryfallConfiguration;
   syncAtStartupConfiguration: DtoSyncParam;
-  // FEATURE backup configuration (target directory, backups to keep, interval)
 }

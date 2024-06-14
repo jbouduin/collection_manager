@@ -9,8 +9,6 @@ import { FooterView } from "../footer-view/footer-view";
 import { ConfigurationWrapperProps } from "./configuration-wrapper.props";
 
 export function ConfigurationWrapper(props: ConfigurationWrapperProps) {
-
-  // NOW check why we have configuration as state here and in settings dialog
   //#region State -------------------------------------------------------------
   const [configuration, setConfiguration] = React.useState<ConfigurationViewModel>();
   //#endregion

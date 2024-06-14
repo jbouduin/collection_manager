@@ -20,6 +20,10 @@ export class DatabaseViewTreeConfigurationViewmodel extends BaseViewmodel < DtoD
   public set cardSetGroupBy(value: CardSetGroupBy) {
     this._dto.cardSetGroupBy = value;
   }
+
+  public get cardSetTypeFilter(): Array<CardSetType> {
+    return this._dto.cardSetTypeFilter;
+  }
   //#endregion
 
   //#region Constructor -------------------------------------------------------
@@ -29,16 +33,13 @@ export class DatabaseViewTreeConfigurationViewmodel extends BaseViewmodel < DtoD
   //#endregion
 
   //#region Public methods ----------------------------------------------------
-  public getCardSetTypeFilter(cardSetType: CardSetType): boolean {
-    return this._dto.cardSetTypeFilter.indexOf(cardSetType) >= 0;
-  }
-
-  public setCardSetTypeFilter(cardSetType: CardSetType, value: boolean) {
-    if (value) {
-      this._dto.cardSetTypeFilter.push(cardSetType);
-    } else {
+  public toggleCardSetFilterType(cardSetType: CardSetType): void {
+    const indexOfType = this._dto.cardSetTypeFilter.indexOf(cardSetType);
+    if (indexOfType >= 0) {
       this._dto.cardSetTypeFilter = this._dto.cardSetTypeFilter
-        .filter((s: CardSetType) => s != cardSetType);
+        .filter((ct: CardSetType) => ct != cardSetType);
+    } else {
+      this._dto.cardSetTypeFilter.push(cardSetType);
     }
   }
   //#endregion

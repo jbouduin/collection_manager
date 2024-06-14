@@ -21,7 +21,7 @@ export class ConfigurationService implements IConfigurationService {
   }
 
   public get cacheDirectory(): string {
-    return this._configuration.mainConfiguration.cacheDirectory;
+    return this._configuration.dataConfiguration.cacheDirectory;
   }
 
   public get isFirstUsage(): boolean {
@@ -30,8 +30,8 @@ export class ConfigurationService implements IConfigurationService {
 
   public get dataBaseFilePath(): string {
     return path.join(
-      this._configuration.mainConfiguration.rootDataDirectory,
-      this._configuration.mainConfiguration.databaseName
+      this._configuration.dataConfiguration.rootDataDirectory,
+      this._configuration.dataConfiguration.databaseName
     );
   }
 
@@ -40,7 +40,7 @@ export class ConfigurationService implements IConfigurationService {
   }
 
   public get syncAtStartup(): DtoSyncParam {
-    return this._configuration.mainConfiguration.syncAtStartup;
+    return this._configuration.syncAtStartupConfiguration;
   }
   //#endregion
 
@@ -59,8 +59,8 @@ export class ConfigurationService implements IConfigurationService {
 
   public saveConfiguration(configuration: DtoConfiguration): boolean {
     // LATER Validation
-    this.createDirectoryIfNotExists(configuration.mainConfiguration.rootDataDirectory);
-    this.createDirectoryIfNotExists(configuration.mainConfiguration.cacheDirectory);
+    this.createDirectoryIfNotExists(configuration.dataConfiguration.rootDataDirectory);
+    this.createDirectoryIfNotExists(configuration.dataConfiguration.cacheDirectory);
     fs.writeFileSync(this.configFilePath, JSON.stringify(configuration, null, 2));
     this._configuration = configuration;
     this._isFirstUsage = false;
@@ -71,12 +71,12 @@ export class ConfigurationService implements IConfigurationService {
   //#region Auxiliary factory default methods ---------------------------------
   private createFactoryDefault(appDirectory: string, homeDirectory: string, useDarkTheme: boolean): DtoConfiguration {
     const result: DtoConfiguration = {
-      mainConfiguration: {
+      dataConfiguration: {
         rootDataDirectory: path.join(homeDirectory, "collection-manager"),
         cacheDirectory: path.join(appDirectory, ".cache"),
         databaseName: "magic-db.sqlite",
-        syncAtStartup: this.createSyncAtStartupFactoryDefault()
-      },
+        },
+      syncAtStartupConfiguration: this.createSyncAtStartupFactoryDefault(),
       rendererConfiguration: this.createRendererConfigurationFactoryDefault(useDarkTheme)        ,
       scryfallConfiguration: this.createScryFallFactoryDefault()
     };
@@ -148,7 +148,7 @@ export class ConfigurationService implements IConfigurationService {
   private createRendererConfigurationFactoryDefault(useDarkTheme: boolean): DtoRendererConfiguration {
     const result: DtoRendererConfiguration = {
       useDarkTheme: useDarkTheme,
-      databaseViewConfiguration: {
+      databaseViewTreeConfiguration: {
         cardSetSort: "releaseDateDescending",
         cardSetGroupBy: "parent",
         cardSetTypeFilter: [

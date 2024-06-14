@@ -1,8 +1,8 @@
-import { DtoDatabaseViewConfiguration } from "../../../../common/dto";
+import { DtoDatabaseTreeViewConfiguration } from "../../../../common/dto";
 import { CardSetGroupBy, CardSetSort, CardSetType } from "../../../../common/enums";
 import { BaseViewmodel } from "../base.viewmodel";
 
-export class DatabaseViewConfigurationViewmodel extends BaseViewmodel < DtoDatabaseViewConfiguration > {
+export class DatabaseViewTreeConfigurationViewmodel extends BaseViewmodel < DtoDatabaseTreeViewConfiguration > {
 
   //#region Getters/Setters ---------------------------------------------------
   public get cardSetSort(): CardSetSort {
@@ -23,7 +23,7 @@ export class DatabaseViewConfigurationViewmodel extends BaseViewmodel < DtoDatab
   //#endregion
 
   //#region Constructor -------------------------------------------------------
-  public constructor(dtoConfiguration: DtoDatabaseViewConfiguration) {
+  public constructor(dtoConfiguration: DtoDatabaseTreeViewConfiguration) {
     super(dtoConfiguration);
   }
   //#endregion

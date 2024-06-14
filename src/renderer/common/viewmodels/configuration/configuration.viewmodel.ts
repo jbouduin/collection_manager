@@ -3,13 +3,15 @@ import { Classes } from "@blueprintjs/core";
 import { DtoConfiguration } from "../../../../common/dto/configuration/configuration.dto";
 import { BaseViewmodel } from "../base.viewmodel";
 import { SyncParamViewmodel } from "../sync-param/sync-param.viewmodel";
-import { DatabaseViewConfigurationViewmodel } from "./database-view-configuration.viewmodel";
+import { DatabaseViewTreeConfigurationViewmodel } from "./database-view-configuration.viewmodel";
+import { DataConfigurationViewmodel } from "./data-configuration.viewmodel";
 
 export class ConfigurationViewModel extends BaseViewmodel<DtoConfiguration> {
 
   //#region private fields ----------------------------------------------------
   private _syncParamViewmodel: SyncParamViewmodel;
-  private _databaseConfigurationViewViewmodel: DatabaseViewConfigurationViewmodel;
+  private _databaseViewTreeConfigurationViewmodel: DatabaseViewTreeConfigurationViewmodel;
+  private _dataConfigurationViewmodel: DataConfigurationViewmodel;
   private _hasChanges: boolean;
   //#endregion
 
@@ -20,29 +22,7 @@ export class ConfigurationViewModel extends BaseViewmodel<DtoConfiguration> {
   //#endregion
 
   //#region Getters/Setters ---------------------------------------------------
-  public get cacheDirectory(): string {
-    return this._dto.mainConfiguration.cacheDirectory;
-  }
 
-  public set cacheDirectory(value: string) {
-    this._dto.mainConfiguration.cacheDirectory = value;
-  }
-
-  public get databaseName(): string {
-    return this._dto.mainConfiguration.databaseName;
-  }
-
-  public set databaseName(value: string) {
-    this._dto.mainConfiguration.databaseName = value;
-  }
-
-  public get rootDataDirectory(): string {
-    return this._dto.mainConfiguration.rootDataDirectory;
-  }
-
-  public set rootDataDirectory(value: string) {
-     this._dto.mainConfiguration.rootDataDirectory = value;
-  }
 
   public get theme(): string {
     return this._dto.rendererConfiguration.useDarkTheme ? Classes.DARK : "";
@@ -54,16 +34,25 @@ export class ConfigurationViewModel extends BaseViewmodel<DtoConfiguration> {
 
   public set syncParamViewmodel(value: SyncParamViewmodel) {
     this._syncParamViewmodel = value;
-    this._dto.mainConfiguration.syncAtStartup = value.dto;
+    this._dto.syncAtStartupConfiguration = value.dto;
   }
 
-  public get databaseViewConfigurationViewmodel(): DatabaseViewConfigurationViewmodel {
-    return this._databaseConfigurationViewViewmodel;
+  public get databaseViewConfigurationViewmodel(): DatabaseViewTreeConfigurationViewmodel {
+    return this._databaseViewTreeConfigurationViewmodel;
   }
 
-  public set databaseViewConfigurationViewmodel(value: DatabaseViewConfigurationViewmodel) {
-    this._databaseConfigurationViewViewmodel = value;
-    this._dto.rendererConfiguration.databaseViewConfiguration = value.dto;
+  public set databaseViewConfigurationViewmodel(value: DatabaseViewTreeConfigurationViewmodel) {
+    this._databaseViewTreeConfigurationViewmodel = value;
+    this._dto.rendererConfiguration.databaseViewTreeConfiguration = value.dto;
+  }
+
+  public get dataConfigurationViewmodel(): DataConfigurationViewmodel {
+    return this._dataConfigurationViewmodel;
+  }
+
+  public set dataConfigurationViewmodel(value: DataConfigurationViewmodel) {
+    this._dataConfigurationViewmodel = value;
+    this._dto.dataConfiguration = value.dto;
   }
   //#endregion
 
@@ -71,8 +60,9 @@ export class ConfigurationViewModel extends BaseViewmodel<DtoConfiguration> {
   public constructor(dtoConfiguration: DtoConfiguration, hasChanges: boolean) {
     super(dtoConfiguration);
     this._hasChanges = hasChanges;
-    this._syncParamViewmodel = new SyncParamViewmodel(dtoConfiguration.mainConfiguration.syncAtStartup);
-    this._databaseConfigurationViewViewmodel = new DatabaseViewConfigurationViewmodel(dtoConfiguration.rendererConfiguration.databaseViewConfiguration);
+    this._syncParamViewmodel = new SyncParamViewmodel(dtoConfiguration.syncAtStartupConfiguration);
+    this._databaseViewTreeConfigurationViewmodel = new DatabaseViewTreeConfigurationViewmodel(dtoConfiguration.rendererConfiguration.databaseViewTreeConfiguration);
+    this._dataConfigurationViewmodel = new DataConfigurationViewmodel(dtoConfiguration.dataConfiguration);
   }
   //#endregion
 

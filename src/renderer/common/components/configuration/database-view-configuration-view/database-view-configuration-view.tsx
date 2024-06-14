@@ -18,7 +18,7 @@ export function DatabaseViewConfigurationView(props: DatabaseViewConfigurationVi
           onChange={
             handleValueChange((value: CardSetSort) => {
               props.configuration.cardSetSort = value;
-              props.onConfigurationChanged(props.configuration);
+              props.onConfigurationChanged();
             })
           }
         />
@@ -31,7 +31,7 @@ export function DatabaseViewConfigurationView(props: DatabaseViewConfigurationVi
           onChange={
             handleValueChange((value: CardSetGroupBy) => {
               props.configuration.cardSetGroupBy = value;
-              props.onConfigurationChanged(props.configuration);
+              props.onConfigurationChanged();
             })
           }
         />
@@ -70,7 +70,7 @@ export function DatabaseViewConfigurationView(props: DatabaseViewConfigurationVi
               onChange={
                 handleBooleanChange((value: boolean) => {
                   props.configuration.setCardSetTypeFilter(key, value);
-                  props.onConfigurationChanged(props.configuration);
+                  props.onConfigurationChanged();
                 })
               }
             />

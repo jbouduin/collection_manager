@@ -1,6 +1,6 @@
 import { CardSetGroupBy, CardSetSort, CardSetType } from "../../../../../common/enums";
 
-// NOW create viewmodel for treeview containing all this
+// NOW create viewmodel for treeview containing DtoDatabaseViewTreeConfiguration + filtervalue
 export interface CardSetsViewState {
   cardSetFilterValue: string;
   cardSetSort: CardSetSort;

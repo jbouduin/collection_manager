@@ -38,9 +38,9 @@ export function DatabaseView(props: DatabaseViewProps) {
             <PanelGroup direction="horizontal">
               <Panel defaultSize={20}>
                 <CardSetsView
-                  defaultCardSetGroupBy={configuration.databaseViewConfiguration.cardSetGroupBy}
-                  defaultCardSetSort={configuration.databaseViewConfiguration.cardSetSort}
-                  defaultCardSetTypeFilter={configuration.databaseViewConfiguration.cardSetTypeFilter}
+                  defaultCardSetGroupBy={configuration.databaseViewTreeConfiguration.cardSetGroupBy}
+                  defaultCardSetSort={configuration.databaseViewTreeConfiguration.cardSetSort}
+                  defaultCardSetTypeFilter={configuration.databaseViewTreeConfiguration.cardSetTypeFilter}
                   onSetsSelected={onCardSetsSelected}
                   onSynchronizeSet={props.onSynchronizeSet}
                   onCardSetDialog={props.onCardSetDialog} />

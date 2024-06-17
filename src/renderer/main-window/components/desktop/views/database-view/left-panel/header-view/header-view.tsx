@@ -1,7 +1,7 @@
 import { Button, ButtonGroup, IconName, InputGroup, Menu, MenuDivider, MenuItem, Popover } from "@blueprintjs/core";
 import * as React from "react";
 
-import { CardSetType, CardSetTypeDisplayValue } from "../../../../../../common/enums";
+import { CardSetType, CardSetTypeDisplayValue } from "../../../../../../../../common/enums";
 import { HeaderViewProps } from "./header-view-props";
 
 type PopoverKey = "card-set-group-by-menu" | "card-set-sort-menu" | "card-set-type-filter-menu";

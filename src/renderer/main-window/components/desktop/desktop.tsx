@@ -6,9 +6,8 @@ import * as React from "react";
 import { DtoSyncParam } from "../../../../common/dto";
 import { CardSetViewmodel } from "../../viewmodels";
 import { CardSetContext, CardSymbolContext, LanguagesContext, ConfigurationContext } from "../context";
-import { CollectionView } from "../views/collection-view/collection-view";
-import { DatabaseView } from "../views/database-view/database-view";
-import { DeckView } from "../views/deck-view/deck-view";
+import { CollectionView } from "./views/collection-view/collection-view";
+import { DeckView } from "./views/deck-view/deck-view";
 import { ButtonBar } from "./button-bar/button-bar";
 import { CardSetDialog } from "./card-set-dialog/card-set-dialog";
 import { EDesktopView } from "./desktop-view.enum";
@@ -17,6 +16,7 @@ import { DesktopState } from "./desktop.state";
 import { SettingsDialog } from "./settings-dialog/settings-dialog";
 import { SplashScreen } from "./splash-screen/splash-screen";
 import { SyncDialog } from "./sync-dialog/sync-dialog";
+import { DatabaseView } from "./views/database-view/database-view";
 
 // import logo from "./logo.png";
 

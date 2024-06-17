@@ -1,14 +1,14 @@
 import * as React from "react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
-import { CardSetViewmodel, CardViewmodel } from "../../../viewmodels";
-import { CardSetsView } from "../../common/card-sets-view/card-sets-view";
-import { CardView } from "../../common/card-view/card-view";
-import { CardsTableView } from "../../common/cards-table-view/cards-table-view";
+import { DtoRendererConfiguration } from "../../../../../../common/dto";
+import { CardSetViewmodel, CardViewmodel } from "../../../../viewmodels";
+import { CardView } from "../../../common/card-view/card-view";
+import { CardsTableView } from "../../../common/cards-table-view/cards-table-view";
+import { ConfigurationContext } from "../../../context";
 import { DatabaseViewProps } from "./database-view.props";
 import { DatabaseViewState } from "./database-view.state";
-import { ConfigurationContext } from "../../context";
-import { DtoDatabaseTreeViewConfiguration, DtoRendererConfiguration } from "../../../../../common/dto";
+import { LeftPanel } from "./left-panel/left-panel";
 
 
 export function DatabaseView(props: DatabaseViewProps) {
@@ -28,10 +28,7 @@ export function DatabaseView(props: DatabaseViewProps) {
     setState({ selectedCards: cards, selectedSets: state.selectedSets });
   }
   //#endregion
-  function getc(configuration: DtoRendererConfiguration): DtoDatabaseTreeViewConfiguration {
-    console.log(configuration);
-    return configuration.databaseViewTreeConfiguration;
-  }
+
   //#region Main --------------------------------------------------------------
   return (
     <ConfigurationContext.Consumer>
@@ -40,11 +37,12 @@ export function DatabaseView(props: DatabaseViewProps) {
           <>
             <PanelGroup direction="horizontal">
               <Panel defaultSize={20}>
-                <CardSetsView
-                  configuration={getc(configuration)}
+                <LeftPanel
+                  configuration={configuration.databaseViewTreeConfiguration}
                   onSetsSelected={onCardSetsSelected}
                   onSynchronizeSet={props.onSynchronizeSet}
-                  onCardSetDialog={props.onCardSetDialog} />
+                  onCardSetDialog={props.onCardSetDialog}
+                />
               </Panel>
               <PanelResizeHandle />
               <Panel>

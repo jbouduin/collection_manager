@@ -11,6 +11,7 @@ const REPOTOKENS = Object.freeze({
   CardSetRepository: "CardSetRepository",
   CardSymbolRepository: "CardSymbolRepository",
   CatalogRepository: "CatalogRepository",
+  CollectionRepository: "CollectionRepository",
   ColorRepository: "ColorRepository",
   LanguageRepository: "LanguageRepository",
   OracleRepository: "OracleRepository"

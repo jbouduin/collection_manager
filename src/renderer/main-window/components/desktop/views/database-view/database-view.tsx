@@ -4,8 +4,8 @@ import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { DtoRendererConfiguration } from "../../../../../../common/dto";
 import { CardSetViewmodel, CardViewmodel } from "../../../../viewmodels";
 import { CardView } from "../../../common/card-view/card-view";
-import { CardsTableView } from "../../../common/cards-table-view/cards-table-view";
 import { ConfigurationContext } from "../../../context";
+import { CenterPanel } from "./center-panel/center-panel";
 import { DatabaseViewProps } from "./database-view.props";
 import { DatabaseViewState } from "./database-view.state";
 import { LeftPanel } from "./left-panel/left-panel";
@@ -46,7 +46,7 @@ export function DatabaseView(props: DatabaseViewProps) {
               </Panel>
               <PanelResizeHandle />
               <Panel>
-                <CardsTableView
+                <CenterPanel
                   selectedSets={state.selectedSets}
                   onCardsSelected={onCardSelected}
                 />

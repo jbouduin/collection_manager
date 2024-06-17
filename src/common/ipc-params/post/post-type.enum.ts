@@ -1,4 +1,5 @@
 enum EPostType {
+  Collection,
   Configuration
 }
 

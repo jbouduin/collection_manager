@@ -6,6 +6,7 @@ import { CardQueryOptions } from "../../../../common/ipc-params/query/card-query
 import REPOTOKENS, { ICardRepository, ICardSetRepository, ICardSymbolRepository, ICatalogRepository, IColorRepository, ILanguageRepository, IOracleRepository } from "../../repo/interfaces";
 import SYNCTOKENS, { IRulingSyncService } from "../../scryfall";
 import INFRATOKENS, { IConfigurationService, IImageCacheService, IIpcQueryService } from "../interfaces";
+import { ICollectionRepository } from "../../repo/interfaces/collection.repository";
 
 
 @singleton()
@@ -36,6 +37,10 @@ export class IpcQueryService implements IIpcQueryService {
         return container
           .resolve<ICatalogRepository>(REPOTOKENS.CatalogRepository)
           .getAll("AbilityWords");
+      case "Collection":
+        return container
+          .resolve<ICollectionRepository>(REPOTOKENS.CollectionRepository)
+          .getAll();
       case "Color":
         return container
           .resolve<IColorRepository>(REPOTOKENS.ColorRepository)

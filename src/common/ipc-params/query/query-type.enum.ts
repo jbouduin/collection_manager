@@ -5,6 +5,7 @@ enum EQueryType {
   Card,
   Catalog,
   Color,
+  Collection,
   Configuration,
   Language,
   Legality,

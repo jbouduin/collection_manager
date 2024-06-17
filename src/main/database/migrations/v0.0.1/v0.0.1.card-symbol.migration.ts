@@ -25,7 +25,7 @@ async function createV0_0_1_CardSymbol(db: Kysely<any>): Promise<void> {
   const options: CreateTableOptions = {
     isSynced: true,
     tableName: "card_symbol",
-    defaultIdPrimaryKey: true
+    primaryKeyType: "text"
   };
   return createTable(db, options)
     .addColumn("svg_uri", "text", (col: ColumnDefinitionBuilder) => col.notNull())

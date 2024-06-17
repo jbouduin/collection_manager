@@ -26,7 +26,7 @@ async function createV0_0_1_Color(db: Kysely<any>): Promise<void> {
   const options: CreateTableOptions = {
     isSynced: false,
     tableName: "color",
-    defaultIdPrimaryKey: true
+    primaryKeyType: "text"
   };
   return createTable(db, options)
     .addColumn("sequence", "integer", (col: ColumnDefinitionBuilder) => col.notNull().unique())

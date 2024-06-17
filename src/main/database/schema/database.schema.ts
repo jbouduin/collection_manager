@@ -4,8 +4,10 @@ import {
   OracleTable, OracleKeywordTable, OracleLegalityTable, OracleRulingTable, OracleRulingLineTable,
   CardSetTable, CatalogItemTable, ColorTable, LanguageTable,
   CardSymbolAlternativeTable, CardSymbolColorMapTable, CardSymbolTable,
-  CardColorMapTable
+  CardColorMapTable,
+  CollectionTable,  OwnedCardTable
 } from ".";
+
 
 
 
@@ -41,4 +43,8 @@ export interface DatabaseSchema {
   card_symbol_color_map: CardSymbolColorMapTable;
   //#endregion
 
+  //#region Collection --------------------------------------------------------
+  collection: CollectionTable;
+  owned_card: OwnedCardTable;
+  //#endregion
 }

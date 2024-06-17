@@ -14,8 +14,8 @@ export class V0_0_1_Card_Migration implements IBaseMigration {
       .then(async () => await createV0_0_1_CardGame(db))
       .then(async () => await createV0_0_1_CardColorMap(db))
       .then(async () => await createV0_0_1_Cardface(db))
-      .then(async () => await createV0_0_1_CardCardMap(db))
-      .then(async () => await createV0_0_1_CardFaceColorMap(db));
+      .then(async () => await createV0_0_1_CardFaceColorMap(db))
+      .then(async () => await createV0_0_1_CardCardMap(db));
   }
 
   public async down(db: Kysely<any>): Promise<void> {
@@ -34,7 +34,7 @@ async function createV0_0_1_Card(db: Kysely<any>): Promise<void> {
   const options: CreateTableOptions = {
     isSynced: true,
     tableName: "card",
-    defaultIdPrimaryKey: true
+    primaryKeyType: "text"
   };
   await createTable(db, options)
     .addColumn("lang", "text", (col: ColumnDefinitionBuilder) => col.references("language.id").onDelete("cascade").notNull())

@@ -27,7 +27,7 @@ async function createV0_0_1_Ruling(db: Kysely<any>): Promise<void> {
   const options: CreateTableOptions = {
     isSynced: true,
     tableName: "oracle_ruling",
-    defaultIdPrimaryKey: false,
+    primaryKeyType: "custom",
     primaryKey: [
       { columnName: "oracle_id", dataType: "text", callback: (col: ColumnDefinitionBuilder) => col.notNull() }
     ]
@@ -55,7 +55,7 @@ async function createV0_0_1_Oracle(db: Kysely<any>): Promise<void> {
   const options: CreateTableOptions = {
     isSynced: true,
     tableName: "oracle",
-    defaultIdPrimaryKey: false,
+    primaryKeyType: "custom",
     primaryKey: [
       { columnName: "oracle_id", dataType: "text", callback: (col: ColumnDefinitionBuilder) => col.notNull() },
       { columnName: "face_sequence", dataType: "integer", callback: (col: ColumnDefinitionBuilder) => col.notNull() }
@@ -73,7 +73,7 @@ async function createV0_0_1_OracleLegality(db: Kysely<any>): Promise<void> {
   const options: CreateTableOptions = {
     isSynced: true,
     tableName: "oracle_legality",
-    defaultIdPrimaryKey: false,
+    primaryKeyType: "custom",
     primaryKey: [
       { columnName: "oracle_id", dataType: "text", callback: (col: ColumnDefinitionBuilder) => col.notNull() },
       { columnName: "format", dataType: "text", callback: (col: ColumnDefinitionBuilder) => col.notNull() }

@@ -23,7 +23,7 @@ function createV0_0_1_Test(db: Kysely<any>): Promise < void> {
   const options: CreateTableOptions = {
     isSynced: false,
     tableName: "test",
-    defaultIdPrimaryKey: true
+    primaryKeyType: "text"
   };
 
   return createTable(db, options)

@@ -3,6 +3,6 @@ import { PrimaryKeyColumnDefinition } from "./primary-key-column-definition";
 export interface CreateTableOptions {
   tableName: string;
   isSynced: boolean;
-  defaultIdPrimaryKey?: boolean;
+  primaryKeyType: "text" | "integer" | "custom";
   primaryKey?: Array<PrimaryKeyColumnDefinition>;
 }

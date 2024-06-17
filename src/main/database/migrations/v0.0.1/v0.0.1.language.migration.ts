@@ -25,7 +25,7 @@ async function createV0_0_1_Language(db: Kysely<any>): Promise<void> {
   const options: CreateTableOptions = {
     isSynced: false,
     tableName: "language",
-    defaultIdPrimaryKey: true
+    primaryKeyType: "text"
   };
 
   return createTable(db, options)

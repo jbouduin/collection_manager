@@ -138,11 +138,11 @@ export function Desktop(props: DesktopProps) {
                 }
                 {
                   desktopState.currentView == EDesktopView.Collection &&
-                  <CollectionView onSynchronizeCollection={synchronizeCollection} />
+                  <CollectionView />
                 }
                 {
                   desktopState.currentView == EDesktopView.Deck &&
-                  <DeckView />
+                  <DeckView onSynchronizeCollection={synchronizeCollection} />
                 }
               </div>
             </Card>

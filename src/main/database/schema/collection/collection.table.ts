@@ -6,5 +6,6 @@ export interface CollectionTable extends NonSynchronized {
   parent_id?: ColumnType<number, number | undefined>;
   name: ColumnType<string>;
   description?: ColumnType<string>;
-  is_system: ColumnType<number>;
+  is_system: ColumnType<boolean, number, never>;
+  is_folder: ColumnType<boolean, number, never>;
 }

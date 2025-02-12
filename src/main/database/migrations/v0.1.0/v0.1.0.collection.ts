@@ -28,6 +28,7 @@ function createV0_1_0_Collection(db: Kysely<any>) {
     .addColumn("name", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
     .addColumn("description", "text")
     .addColumn("is_system", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
+    .addColumn("is_folder", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
     .addUniqueConstraint("COLLECTION_PARENT_ID_NAME_UC", ["parent_id", "name"])
     .execute();
 }
@@ -36,9 +37,10 @@ function populateV0_1_0_Collection(db: Kysely<any>): Promise<InsertResult> {
   return db.insertInto("collection")
     .values({
       parent_id: null,
-      name: "Main",
+      name: "All",
       description: null,
       is_system: 1,
+      is_folder: 1,
       created_at: sqliteUTCTimeStamp,
       modified_at: sqliteUTCTimeStamp
     })

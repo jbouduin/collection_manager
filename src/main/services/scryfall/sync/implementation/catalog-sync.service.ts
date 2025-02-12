@@ -102,7 +102,7 @@ export class CatalogSyncService extends BaseSyncService implements ICatalogSyncS
         break;
     }
     return catalog.then((fetched: ScryfallCatalog) => {
-      this.dumpScryFallData(`catalog-${parameter}.json`, fetched);
+      this.dumpScryFallData(`catalog-${parameter.catalogType}.json`, fetched);
       this.processSync(parameter, fetched);
     });
   }

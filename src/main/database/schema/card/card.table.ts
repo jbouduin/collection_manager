@@ -1,6 +1,6 @@
 import { ColumnType } from "kysely";
 
-import { CardBorderColor, CardFrame, CardLayout, CardRarity, CardSecurityStamp, ImageStatus, MTGLanguage } from "../../../../common/enums";
+import { CardBorderColor, CardFrame, CardLayout, CardRarity, CardSecurityStamp, ImageStatus, MTGLanguage } from "../../../../common/types";
 import { SynchronizedWithStringId } from "../base.types";
 
 export interface CardTable extends SynchronizedWithStringId {

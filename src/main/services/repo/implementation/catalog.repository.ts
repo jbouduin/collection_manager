@@ -1,10 +1,10 @@
 import { inject, injectable } from "tsyringe";
 import { CatalogItemDto } from "../../../../common/dto";
-import { CatalogType } from "../../../../common/enums";
+import { CatalogType } from "../../../../common/types";
 import { IDatabaseService, ILogService } from "../../infra/interfaces";
+import { INFRASTRUCTURE } from "../../service.tokens";
 import { ICatalogRepository } from "../interfaces";
 import { BaseRepository } from "./base.repository";
-import { INFRASTRUCTURE } from "../../service.tokens";
 
 
 @injectable()

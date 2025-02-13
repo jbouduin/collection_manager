@@ -1,4 +1,4 @@
-import { CardRelatedCardComponent } from "../../../../../common/enums";
+import { CardRelatedCardComponent } from "../../../../../common/types";
 
 export interface ScryfallRelatedCard {
   /**

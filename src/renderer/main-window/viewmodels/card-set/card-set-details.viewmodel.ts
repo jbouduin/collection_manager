@@ -1,5 +1,5 @@
-import { CardSetTypeDisplayValue } from "../../../../common/enums";
 import { DtoCardSetDetails, DtoCardSetLanguage, DtoLanguage } from "../../../../common/dto";
+import { CardSetTypeDisplayValue } from "../../../common/display-values";
 
 
 export class CardSetDetailsViewmodel {

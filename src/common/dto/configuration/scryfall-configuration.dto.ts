@@ -1,5 +1,5 @@
-import { CatalogType } from "../../../common/enums";
-import { ScryfallEndpoint } from "../../../main/services/scryfall";
+import { CatalogType, ScryfallEndpoint } from "../../../common/types";
+
 
 export interface DtoScryfallConfiguration {
   readonly scryfallApiRoot: string;

@@ -1,6 +1,5 @@
 import { ColumnType } from "kysely";
-
-import { BasicLandType, MTGColor } from "../../../../common/enums";
+import { BasicLandType, MTGColor } from "../../../../common/types";
 import { NonSynchronized } from "../base.types";
 
 // fields are not updateable in code: if required Colors will be updated during migration

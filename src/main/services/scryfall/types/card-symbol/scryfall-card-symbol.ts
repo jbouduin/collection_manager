@@ -1,4 +1,4 @@
-import { MTGColor } from "../../../../../common/enums";
+import { MTGColor } from "../../../../../common/types";
 
 export interface ScryfallCardSymbol {
   /**

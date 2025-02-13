@@ -1,4 +1,4 @@
-import { CardSetGroupBy, CardSetSort, CardSetType } from "../../enums";
+import { CardSetGroupBy, CardSetSort, CardSetType } from "../../types";
 
 export interface DtoDatabaseTreeViewConfiguration {
   cardSetSort: CardSetSort;

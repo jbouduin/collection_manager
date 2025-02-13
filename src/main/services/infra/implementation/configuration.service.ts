@@ -1,10 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
-
-import { DtoConfiguration, DtoRendererConfiguration, DtoSyncParam } from "../../../../common/dto";
-import { DtoScryfallConfiguration } from "../../../../common/dto/configuration/scryfall-configuration.dto";
-import { CatalogType } from "../../../../common/enums";
-import { ScryfallEndpoint } from "../../scryfall";
+import { DtoConfiguration, DtoRendererConfiguration, DtoScryfallConfiguration, DtoSyncParam } from "../../../../common/dto";
+import { CatalogType, ScryfallEndpoint } from "../../../../common/types";
 import { IConfigurationService } from "../interfaces";
 
 export class ConfigurationService implements IConfigurationService {

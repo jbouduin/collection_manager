@@ -1,6 +1,5 @@
 import { ColumnType } from "kysely";
-
-import { CardLegality, GameFormat } from "../../../../common/enums";
+import { CardLegality, GameFormat } from "../../../../common/types";
 import { Synchronized } from "../base.types";
 
 export interface OracleLegalityTable extends Synchronized {

@@ -1,7 +1,7 @@
 import { Checkbox, Divider, FormGroup, H4, HTMLSelect, HTMLTable, NumericInput, SectionCard } from "@blueprintjs/core";
 import * as React from "react";
-import { CardSyncType, CardSyncTypeDisplayValue, RulingSyncType, RulingSyncTypeDisplayValue, TimespanUnit, TimespanUnitDisplayValue } from "../../../../common/dto";
-import { CatalogType, CatalogTypeDisplayValue, ImageStatus, ImageStatusDisplayValue } from "../../../../common/enums";
+import { CardSyncType, CatalogType, ImageStatus, RulingSyncType, TimespanUnit } from "../../../../common/types";
+import { CardSyncTypeDisplayValue, CatalogTypeDisplayValue, ImageStatusDisplayValue, RulingSyncTypeDisplayValue, TimespanUnitDisplayValue } from "../../display-values";
 import { displayValueMapToSelectOptions, handleBooleanChange, handleValueChange } from "../../utils";
 import { SyncParameterViewProps } from "./sync-parameter-view.props";
 

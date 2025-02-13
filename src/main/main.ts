@@ -5,14 +5,14 @@ import * as path from "path";
 import "reflect-metadata";
 import { container } from "tsyringe";
 import { updateElectronApp } from "update-electron-app";
-import { DtoCardImageData, CardSide } from "../common/dto";
-import { ImageSize } from "../common/enums";
+import { DtoCardImageData } from "../common/dto";
+import { CardSide, ImageSize } from "../common/types";
 import { bootFunction } from "./boot";
 import { IConfigurationService, IImageCacheService, IWindowService } from "./services/infra/interfaces";
 import { IIpcDispatcherService } from "./services/infra/interfaces/ipc-dispatcher.service";
 import { ICardRepository } from "./services/repo/interfaces";
-import { ServicesDI } from "./services/services.di";
 import { INFRASTRUCTURE, REPOSITORIES } from "./services/service.tokens";
+import { ServicesDI } from "./services/services.di";
 
 // check for updates
 updateElectronApp();

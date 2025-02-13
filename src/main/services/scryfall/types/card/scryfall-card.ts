@@ -1,4 +1,4 @@
-import { CardBorderColor, CardFinish, CardFrame, CardFrameEffect, CardLayout, CardPromoType, CardRarity, CardSecurityStamp, CardSetType, Game, ImageStatus, MTGColor, MTGLanguage } from "../../../../../common/enums";
+import { CardBorderColor, CardFinish, CardFrame, CardFrameEffect, CardLayout, CardPromoType, CardRarity, CardSecurityStamp, CardSetType, Game, ImageStatus, MTGColor, MTGLanguage } from "../../../../../common/types";
 import { ScryfallCardface } from "./scryfall-card-face";
 import { ScryfallLegalities } from "./scryfall-legalities";
 import { ScryfallPreviewInfo } from "./scryfall-preview-info";

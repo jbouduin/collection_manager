@@ -1,4 +1,4 @@
-import { MTGLanguage } from "../../../common/enums";
+import { MTGLanguage } from "../../../common/types";
 
 export interface DtoCardLanguage {
   id: string;

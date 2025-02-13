@@ -1,5 +1,5 @@
 import { ColumnType } from "kysely";
-import { CatalogType } from "../../../../common/enums";
+import { CatalogType } from "../../../../common/types";
 
 
 export interface CatalogItemTable {

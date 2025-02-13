@@ -1,18 +1,18 @@
 import { Transaction } from "kysely";
 import { inject, injectable } from "tsyringe";
-
 import { DtoSyncParam } from "../../../../../common/dto";
-import { CatalogType } from "../../../../../common/enums";
 import { ProgressCallback } from "../../../../../common/ipc-params";
+import { CatalogType } from "../../../../../common/types";
 import { DatabaseSchema } from "../../../../../main/database/schema";
 import { IConfigurationService, IDatabaseService, ILogService } from "../../../../../main/services/infra/interfaces";
 import { runSerial } from "../../../../../main/services/infra/util";
+import { INFRASTRUCTURE, SCRYFALL } from "../../../service.tokens";
 import { ICatalogAdapter } from "../../adapt/interface";
 import { IScryfallClient } from "../../client/interfaces";
 import { ScryfallCatalog } from "../../types";
 import { ICatalogSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
-import { INFRASTRUCTURE, SCRYFALL } from "../../../service.tokens";
+
 
 type SyncSingleCatalogParameter = {
   catalogType: CatalogType;

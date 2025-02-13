@@ -1,8 +1,8 @@
 import { DeleteResult, InsertResult, Transaction, UpdateResult, sql } from "kysely";
 import { inject, injectable } from "tsyringe";
-import { ChangedImageStatusAction, DtoCardImageData, DtoSyncParam, IdSelectResult, TimespanUnit } from "../../../../../common/dto";
-import { GameFormat, ImageStatus, MTGColor, MTGColorType } from "../../../../../common/enums";
+import { DtoCardImageData, DtoSyncParam, IdSelectResult } from "../../../../../common/dto";
 import { ProgressCallback } from "../../../../../common/ipc-params";
+import { ChangedImageStatusAction, GameFormat, ImageStatus, MTGColor, MTGColorType, TimespanUnit } from "../../../../../common/types";
 import { isSingleCardFaceLayout, sqliteUTCTimeStamp } from "../../../../../common/util";
 import { DatabaseSchema } from "../../../../../main/database/schema";
 import { IConfigurationService, IDatabaseService, IImageCacheService, ILogService } from "../../../../../main/services/infra/interfaces";

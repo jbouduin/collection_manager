@@ -1,7 +1,7 @@
+import { ContextMenu, Menu, MenuItem, TreeNodeInfo } from "@blueprintjs/core";
 import { cloneDeep, upperFirst } from "lodash";
 import * as React from "react";
-import { ContextMenu, Menu, MenuItem, TreeNodeInfo } from "@blueprintjs/core";
-import { CardSetGroupBy, CardSetSort, CardSetType } from "../../../../../../../common/enums";
+import { CardSetGroupBy, CardSetSort, CardSetType } from "../../../../../../../common/types";
 import { CardSetViewmodel } from "../../../../../viewmodels";
 import { TreeConfigurationViewmodel } from "../../../../../viewmodels/database-view/tree-configuration.viewmodel";
 import { BaseTreeView } from "../../../../common/base-tree-view/base-tree-view";

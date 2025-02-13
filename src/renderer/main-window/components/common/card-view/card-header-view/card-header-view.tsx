@@ -1,6 +1,6 @@
 import { H3, H5 } from "@blueprintjs/core";
 import * as React from "react";
-import { CardRarity } from "../../../../../../common/enums";
+import { CardRarity } from "../../../../../../common/types";
 import { CardSetViewmodel } from "../../../../viewmodels";
 import { CardSetContext } from "../../../context";
 import { SvgProvider } from "../../svg-provider/svg-provider";

@@ -8,4 +8,3 @@ export * from "./card/scryfall-related-card";
 export * from "./card/scryfall-legalities";
 export * from "./catalog/scryfall-catalog";
 export * from "./ruling/scryfall-ruling";
-export * from "./scryfall-endpoint.enum";

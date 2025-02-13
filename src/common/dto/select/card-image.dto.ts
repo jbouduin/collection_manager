@@ -1,5 +1,5 @@
-import { ImageSize } from "../../enums";
-import { CardSide } from "../types";
+import { CardSide, ImageSize } from "../../types";
+
 
 export interface DtoCardImageData {
   cardId: string;

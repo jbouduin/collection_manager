@@ -1,6 +1,6 @@
 import { DtoCardImageData } from "../../../../../common/dto";
-import { CatalogType } from "../../../../../common/enums";
 import { ProgressCallback } from "../../../../../common/ipc-params";
+import { CatalogType } from "../../../../../common/types";
 import { ScryfallCard, ScryfallCardSet, ScryfallCatalog, ScryfallRuling } from "../../types";
 import { ScryfallCardSymbol } from "../../types/card-symbol/scryfall-card-symbol";
 

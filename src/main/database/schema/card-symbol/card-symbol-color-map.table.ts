@@ -1,6 +1,6 @@
 import { ColumnType } from "kysely";
+import { MTGColor } from "../../../../common/types";
 
-import { MTGColor } from "../../../../common/enums";
 
 export interface CardSymbolColorMapTable {
   /**

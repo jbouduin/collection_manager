@@ -1,5 +1,5 @@
-import { CardSyncType, DtoSyncParam, RulingSyncType, TimespanUnit } from "../../../../common/dto";
-import { CatalogType, ImageStatus } from "../../../../common/enums";
+import { DtoSyncParam } from "../../../../common/dto";
+import { CardSyncType, CatalogType, ImageStatus, RulingSyncType, TimespanUnit } from "../../../../common/types";
 import { BaseViewmodel } from "../base.viewmodel";
 
 

@@ -1,5 +1,5 @@
 import { DtoDatabaseTreeViewConfiguration } from "../../../../common/dto";
-import { CardSetGroupBy, CardSetSort, CardSetType } from "../../../../common/enums";
+import { CardSetGroupBy, CardSetSort, CardSetType } from "../../../../common/types";
 import { BaseViewmodel } from "../base.viewmodel";
 
 export class DatabaseViewTreeConfigurationViewmodel extends BaseViewmodel<DtoDatabaseTreeViewConfiguration> {

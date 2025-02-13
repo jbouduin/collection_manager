@@ -1,8 +1,11 @@
 import { Checkbox, FormGroup, HTMLSelect, HTMLTable } from "@blueprintjs/core";
 import * as React from "react";
-import { DatabaseViewConfigurationViewProps } from "./database-view-configuration-view.props";
-import { CardSetGroupBy, CardSetGroupByDisplayValue, CardSetSort, CardSetSortDisplayValue, CardSetType, CardSetTypeDisplayValue } from "../../../../../common/enums";
+import { CardSetGroupBy, CardSetSort, CardSetType } from "../../../../../common/types";
+import { CardSetGroupByDisplayValue, CardSetSortDisplayValue, CardSetTypeDisplayValue } from "../../../display-values";
 import { displayValueMapToSelectOptions, handleBooleanChange, handleValueChange } from "../../../utils";
+import { DatabaseViewConfigurationViewProps } from "./database-view-configuration-view.props";
+
+
 
 export function DatabaseViewConfigurationView(props: DatabaseViewConfigurationViewProps) {
   //#region Main --------------------------------------------------------------

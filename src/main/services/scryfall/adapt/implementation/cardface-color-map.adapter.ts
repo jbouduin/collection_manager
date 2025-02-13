@@ -1,10 +1,10 @@
 import { InsertExpression } from "kysely/dist/cjs/parser/insert-values-parser";
 import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser";
-
-import { MTGColor } from "../../../../../common/enums";
+import { MTGColor } from "../../../../../common/types";
 import { DatabaseSchema } from "../../../../database/schema";
 import { ICardfaceColorMapAdapter } from "../interface";
 import { CardfaceColorMapAdapterParameter } from "../interface/param";
+
 
 export class CardfaceColorMapAdapter implements ICardfaceColorMapAdapter {
   public toInsert(scryfall: CardfaceColorMapAdapterParameter): InsertExpression<DatabaseSchema, "cardface_color_map"> {

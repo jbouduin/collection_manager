@@ -1,8 +1,8 @@
 import { Cell, CellRenderer, Column, ColumnProps } from "@blueprintjs/table";
 import * as React from "react";
 import { DtoCard, DtoLanguage } from "../../../../../../../common/dto";
-import { MTGLanguage } from "../../../../../../../common/enums";
 import { CardQueryOptions, QueryParam } from "../../../../../../../common/ipc-params";
+import { MTGLanguage } from "../../../../../../../common/types";
 import { BaseCardsTableView } from "../../../../../components/common/base-cards-table-view/base-cards-table-view";
 import { cardSetNameRenderer, symbolRenderer, textCellRenderer } from "../../../../../components/common/base-cards-table-view/cell-renderers";
 import { LanguagesContext } from "../../../../../components/context";

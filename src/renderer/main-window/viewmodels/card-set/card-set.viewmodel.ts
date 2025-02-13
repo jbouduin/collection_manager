@@ -1,5 +1,5 @@
-import { CardSetType } from "../../../../common/enums";
 import { DtoCardSet } from "../../../../common/dto";
+import { CardSetType } from "../../../../common/types";
 
 export class CardSetViewmodel {
   //#region private readonly fields -------------------------------------------

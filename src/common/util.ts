@@ -1,4 +1,4 @@
-import { CardLayout } from "./enums";
+import { CardLayout } from "./types";
 
 export function isSingleCardFaceLayout(layout: CardLayout): boolean {
   return [

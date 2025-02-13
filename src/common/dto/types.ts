@@ -1,5 +1,4 @@
 import { Insertable, Selectable, Updateable } from "kysely";
-
 import { CardFaceColorMapTable, CatalogItemTable, CollectionTable, ColorTable, LanguageTable, OracleLegalityTable, OracleRulingLineTable, OracleTable } from "../../main/database/schema";
 
 export type CatalogItemDto = Selectable<CatalogItemTable>;
@@ -14,4 +13,3 @@ export type DtoCardfaceColor = Selectable<CardFaceColorMapTable>;
 export type DtoLegality = Selectable<OracleLegalityTable>;
 
 export type IdSelectResult = { id: string };
-export type CardSide = "front" | "back";

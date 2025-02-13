@@ -1,4 +1,4 @@
-import { RulingSource } from "../../../../../common/enums";
+import { RulingSource } from "../../../../../common/types";
 
 export interface ScryfallRuling {
   /**

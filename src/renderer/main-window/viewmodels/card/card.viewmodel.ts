@@ -1,5 +1,5 @@
 import { DtoCard, DtoCardColor, DtoCardLanguage, DtoCardface, DtoOracle } from "../../../../common/dto";
-import { CardLayout, CardRarity, MTGLanguage } from "../../../../common/enums";
+import { CardLayout, CardRarity, MTGLanguage } from "../../../../common/types";
 import { OracleViewmodel } from "../oracle/oracle-viewmodel";
 import { CardfaceViewmodel } from "./cardface.viewmodel";
 

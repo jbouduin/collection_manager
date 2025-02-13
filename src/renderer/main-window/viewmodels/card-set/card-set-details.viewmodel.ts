@@ -1,5 +1,5 @@
 import { DtoCardSetDetails, DtoCardSetLanguage, DtoLanguage } from "../../../../common/dto";
-import { CardSetTypeDisplayValue } from "../../../common/display-values";
+import { CardSetType } from "../../../../common/types";
 
 
 export class CardSetDetailsViewmodel {
@@ -16,8 +16,8 @@ export class CardSetDetailsViewmodel {
     return this._dtoCardSet.name;
   }
 
-  public get cardSetType(): string {
-    return CardSetTypeDisplayValue.get(this._dtoCardSet.set_type);
+  public get cardSetType(): CardSetType {
+    return this._dtoCardSet.set_type;
   }
 
   public get lastFullSynchronizationString(): string {

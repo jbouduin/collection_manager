@@ -6,11 +6,16 @@ import { CardSetDetailsViewmodel } from "../../../viewmodels/card-set/card-set-d
 import { SvgProvider } from "../../common/svg-provider/svg-provider";
 import { ConfigurationContext, LanguagesContext } from "../../context";
 import { CardSetDialogProps } from "./card-set-dialog.props";
+import { DisplayValueService, DisplayValueServiceContext } from "../../../../common/context";
 
 
 export function CardSetDialog(props: CardSetDialogProps) {
   //#region State -------------------------------------------------------------
   const [cardSetDetails, setCardSetDetails] = React.useState<CardSetDetailsViewmodel>(undefined);
+  //#endregion
+
+  //#region Context -----------------------------------------------------------
+  const displayValueService = React.useContext<DisplayValueService>(DisplayValueServiceContext);
   //#endregion
 
   //#region Effects -----------------------------------------------------------
@@ -141,7 +146,7 @@ export function CardSetDialog(props: CardSetDialogProps) {
     table.push((
       <tr>
         <td style={{ paddingLeft: "0px" }}>Type:</td>
-        <td style={{ paddingLeft: "0px" }}>{cardSetDetails.cardSetType}</td>
+        <td style={{ paddingLeft: "0px" }}>{displayValueService.cardSetTypeDisplayValues.get(cardSetDetails.cardSetType)}</td>
       </tr>
     ));
     table.push((

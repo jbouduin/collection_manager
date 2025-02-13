@@ -1,14 +1,18 @@
 import { Button, ButtonGroup, IconName, InputGroup, Menu, MenuDivider, MenuItem, Popover } from "@blueprintjs/core";
 import * as React from "react";
 import { CardSetType } from "../../../../../../../../common/types";
-import { CardSetTypeDisplayValue } from "../../../../../../../common/display-values";
 import { HeaderViewProps } from "./header-view-props";
+import { DisplayValueService, DisplayValueServiceContext } from "../../../../../../../common/context";
 
 type PopoverKey = "card-set-group-by-menu" | "card-set-sort-menu" | "card-set-type-filter-menu";
 
 export function HeaderView(props: HeaderViewProps) {
   //#region State -------------------------------------------------------------
   const [textFilterValue, setTextFilterValue] = React.useState<string>(null);
+  //#endregion
+
+  //#region Context -----------------------------------------------------------
+  const displayValueService = React.useContext<DisplayValueService>(DisplayValueServiceContext);
   //#endregion
 
   //#region Event handling ----------------------------------------------------
@@ -191,7 +195,7 @@ export function HeaderView(props: HeaderViewProps) {
         onClick={() => props.onCardSetTypeFilterChanged(setType)}
         roleStructure="listoption"
         selected={props.cardSetTypeFilter.indexOf(setType) >= 0}
-        text={CardSetTypeDisplayValue.get(setType)}
+        text={displayValueService.cardSetTypeDisplayValues.get(setType)}
       />
     );
   }

@@ -1,138 +1,143 @@
 import { Checkbox, Divider, FormGroup, H4, HTMLSelect, HTMLTable, NumericInput, SectionCard } from "@blueprintjs/core";
 import * as React from "react";
 import { CardSyncType, CatalogType, ImageStatus, RulingSyncType, TimespanUnit } from "../../../../common/types";
-import { CardSyncTypeDisplayValue, CatalogTypeDisplayValue, ImageStatusDisplayValue, RulingSyncTypeDisplayValue, TimespanUnitDisplayValue } from "../../display-values";
+import { DisplayValueService, DisplayValueServiceContext } from "../../context";
 import { displayValueMapToSelectOptions, handleBooleanChange, handleValueChange } from "../../utils";
 import { SyncParameterViewProps } from "./sync-parameter-view.props";
 
 export function SyncParameterView(props: SyncParameterViewProps) {
-  //#region Main --------------------------------------------------------------
+  //#region Rendering --------------------------------------------------------------
   return (
-    <SectionCard padded={false} >
-      <H4>Cards</H4>
-      <FormGroup label="Cards" labelFor="card-sync-type">
-        <HTMLSelect
-          id="card-sync-type"
-          onChange={
-            handleValueChange((value: CardSyncType) => {
-              props.syncParam.cardSyncType = value;
-              props.onSyncParamChanged(props.syncParam);
-            })
-          }
-          options={displayValueMapToSelectOptions(CardSyncTypeDisplayValue)}
-          value={props.syncParam.cardSyncType}
-        />
-      </FormGroup>
-
+    <DisplayValueServiceContext.Consumer>
       {
-        props.syncParam.cardSyncType == "byImageStatus" &&
-        <FormGroup key="sync-by-image-status">
-          <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
-            {
-              renderImageStatus()
-            }
-          </div>
-        </FormGroup>
-      }
+        (displayValueService: DisplayValueService) => (
 
-      {
-        props.syncParam.cardSyncType == "byLastSynchronized" &&
-        <FormGroup key="sync-by-last-sync">
-          <div style={{ display: "flex", flexDirection: "row" }}>
-            <NumericInput
-              allowNumericCharactersOnly={true}
-              buttonPosition="none"
-              min={0}
-              onValueChange={
-                (value: number) => {
-                  props.syncParam.syncCardsSyncedBeforeNumber = value;
-                  props.onSyncParamChanged(props.syncParam);
+          <SectionCard padded={false} >
+            <H4>Cards</H4>
+            <FormGroup label="Cards" labelFor="card-sync-type">
+              <HTMLSelect
+                id="card-sync-type"
+                onChange={
+                  handleValueChange((value: CardSyncType) => {
+                    props.syncParam.cardSyncType = value;
+                    props.onSyncParamChanged(props.syncParam);
+                  })
                 }
-              }
-              selectAllOnFocus={true}
-              style={{ maxWidth: "50px", textAlign: "right" }}
-              value={props.syncParam.syncCardsSyncedBeforeNumber}
-            />
-            <HTMLSelect
+                options={displayValueMapToSelectOptions(displayValueService.cardSyncTypeDisplayValues)}
+                value={props.syncParam.cardSyncType}
+              />
+            </FormGroup>
+
+            {
+              props.syncParam.cardSyncType == "byImageStatus" &&
+              <FormGroup key="sync-by-image-status">
+                <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+                  {
+                    renderImageStatus(displayValueService)
+                  }
+                </div>
+              </FormGroup>
+            }
+
+            {
+              props.syncParam.cardSyncType == "byLastSynchronized" &&
+              <FormGroup key="sync-by-last-sync">
+                <div style={{ display: "flex", flexDirection: "row" }}>
+                  <NumericInput
+                    allowNumericCharactersOnly={true}
+                    buttonPosition="none"
+                    min={0}
+                    onValueChange={
+                      (value: number) => {
+                        props.syncParam.syncCardsSyncedBeforeNumber = value;
+                        props.onSyncParamChanged(props.syncParam);
+                      }
+                    }
+                    selectAllOnFocus={true}
+                    style={{ maxWidth: "50px", textAlign: "right" }}
+                    value={props.syncParam.syncCardsSyncedBeforeNumber}
+                  />
+                  <HTMLSelect
+                    onChange={
+                      handleValueChange((value: TimespanUnit) => {
+                        props.syncParam.syncCardsSyncedBeforeUnit = value;
+                        props.onSyncParamChanged(props.syncParam);
+                      })
+                    }
+                    options={displayValueMapToSelectOptions(displayValueService.timespanUnitDisplayValues)}
+                    value={props.syncParam.syncCardsSyncedBeforeUnit}
+                  />
+                </div>
+              </FormGroup>
+            }
+
+            <FormGroup label="Rulings" labelFor="rulings-sync-type">
+              <HTMLSelect
+                id="rulings-sync-type"
+                onChange={
+                  handleValueChange((value: RulingSyncType) => {
+                    props.syncParam.rulingSyncType = value;
+                    props.onSyncParamChanged(props.syncParam);
+                  })
+                }
+                options={displayValueMapToSelectOptions(displayValueService.rulingSyncTypeDisplayValues)}
+                value={props.syncParam.rulingSyncType}
+              />
+            </FormGroup>
+
+            <Divider className="ruling-divider" key="divider" />
+
+            <H4>Master data</H4>
+            {/* <FormGroup label="Master data" key="master-data"> */}
+            {/* <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}> */}
+            <Checkbox
+              checked={props.syncParam.syncCardSets}
+              key="card-sets"
+              label="Card set data"
               onChange={
-                handleValueChange((value: TimespanUnit) => {
-                  props.syncParam.syncCardsSyncedBeforeUnit = value;
+                handleBooleanChange((value: boolean) => {
+                  props.syncParam.syncCardSets = value;
                   props.onSyncParamChanged(props.syncParam);
                 })
               }
-              options={displayValueMapToSelectOptions(TimespanUnitDisplayValue)}
-              value={props.syncParam.syncCardsSyncedBeforeUnit}
             />
-          </div>
-        </FormGroup>
+            <Checkbox
+              checked={props.syncParam.syncCardSymbols}
+              key="card-symbols"
+              label="Card symbols"
+              onChange={
+                handleBooleanChange((value: boolean) => {
+                  props.syncParam.syncCardSymbols = value;
+                  props.onSyncParamChanged(props.syncParam);
+                })
+              }
+            />
+            <HTMLTable
+              bordered={false}
+              compact={true}
+              key="catalogs"
+              width="100%"
+            >
+              <thead>
+                <tr><td colSpan={3} style={{ paddingLeft: "0px" }}>Catalogs</td></tr>
+              </thead>
+              <tbody>
+                {
+                  renderCatalogs(displayValueService)
+                }
+              </tbody>
+            </HTMLTable >
+          </SectionCard>
+        )
       }
-
-      <FormGroup label="Rulings" labelFor="rulings-sync-type">
-        <HTMLSelect
-          id="rulings-sync-type"
-          onChange={
-            handleValueChange((value: RulingSyncType) => {
-              props.syncParam.rulingSyncType = value;
-              props.onSyncParamChanged(props.syncParam);
-            })
-          }
-          options={displayValueMapToSelectOptions(RulingSyncTypeDisplayValue)}
-          value={props.syncParam.rulingSyncType}
-        />
-      </FormGroup>
-
-      <Divider className="ruling-divider" key="divider" />
-
-      <H4>Master data</H4>
-      {/* <FormGroup label="Master data" key="master-data"> */}
-      {/* <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}> */}
-      <Checkbox
-        checked={props.syncParam.syncCardSets}
-        key="card-sets"
-        label="Card set data"
-        onChange={
-          handleBooleanChange((value: boolean) => {
-            props.syncParam.syncCardSets = value;
-            props.onSyncParamChanged(props.syncParam);
-          })
-        }
-      />
-      <Checkbox
-        checked={props.syncParam.syncCardSymbols}
-        key="card-symbols"
-        label="Card symbols"
-        onChange={
-          handleBooleanChange((value: boolean) => {
-            props.syncParam.syncCardSymbols = value;
-            props.onSyncParamChanged(props.syncParam);
-          })
-        }
-      />
-      <HTMLTable
-        bordered={false}
-        compact={true}
-        key="catalogs"
-        width="100%"
-      >
-        <thead>
-          <tr><td colSpan={3} style={{ paddingLeft: "0px" }}>Catalogs</td></tr>
-        </thead>
-        <tbody>
-          {
-            renderCatalogs()
-          }
-        </tbody>
-      </HTMLTable >
-    </SectionCard>
+    </DisplayValueServiceContext.Consumer>
   );
-  //#endregion
 
-  //#region Auxiliary methods -------------------------------------------------
-  function renderCatalogs(): Array<React.JSX.Element> {
+  function renderCatalogs(displayValueService: DisplayValueService): Array<React.JSX.Element> {
     const table = new Array<React.JSX.Element>();
     let currentRow: Array<React.JSX.Element>;
     let idx = 0;
-    CatalogTypeDisplayValue.forEach((displayValue: string, key: CatalogType) => {
+    displayValueService.catalogTypeDisplayValues.forEach((displayValue: string, key: CatalogType) => {
       if (idx % 3 == 0) {
         currentRow = new Array<React.JSX.Element>();
       }
@@ -163,9 +168,9 @@ export function SyncParameterView(props: SyncParameterViewProps) {
     return table;
   }
 
-  function renderImageStatus(): Array<React.JSX.Element> {
+  function renderImageStatus(displayValueService: DisplayValueService): Array<React.JSX.Element> {
     const result = new Array<React.JSX.Element>();
-    ImageStatusDisplayValue.forEach((displayValue: string, key: ImageStatus) => {
+    displayValueService.imageStatusDisplayValues.forEach((displayValue: string, key: ImageStatus) => {
       result.push((
         <Checkbox
           checked={props.syncParam.getCardImageStatusToSync(key)}

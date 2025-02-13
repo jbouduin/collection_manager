@@ -4,9 +4,10 @@ import { inject, singleton } from "tsyringe";
 
 import { ProgressCallback } from "../../../../common/ipc-params";
 import { DatabaseSchema } from "../../../database/schema";
-import INFRATOKENS, { IConfigurationService, IDatabaseService } from "../interfaces";
+import { IConfigurationService, IDatabaseService } from "../interfaces";
 import { runSerial } from "../util";
 import { SqliteKyselyPlugin } from "./sqlite.kysely.plugin";
+import { INFRASTRUCTURE } from "../../service.tokens";
 
 @singleton()
 export class DatabaseService implements IDatabaseService {
@@ -22,14 +23,13 @@ export class DatabaseService implements IDatabaseService {
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
-  public constructor(@inject(INFRATOKENS.ConfigurationService) configurationService: IConfigurationService) {
+  public constructor(@inject(INFRASTRUCTURE.ConfigurationService) configurationService: IConfigurationService) {
     this.configurationService = configurationService;
   }
   //#endregion
 
   //#region IDatabaseService methods ------------------------------------------
   public connect(): IDatabaseService {
-
     const dialect = new SqliteDialect({
       database: new SQLite(this.configurationService.dataBaseFilePath)
     });

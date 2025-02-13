@@ -47,7 +47,7 @@ export class ConfigurationService implements IConfigurationService {
   public loadConfiguration(appDirectory: string, homeDirectory: string, useDarkTheme: boolean): void {
     this.configFilePath = path.join(appDirectory, "collection-manager.config.json");
     if (fs.existsSync(this.configFilePath)) {
-      this._configuration = JSON.parse(fs.readFileSync(this.configFilePath, "utf-8"));
+      this._configuration = JSON.parse(fs.readFileSync(this.configFilePath, "utf-8")) as DtoConfiguration;
       this._isFirstUsage = false;
     } else {
       this._configuration = this.createFactoryDefault(appDirectory, homeDirectory, useDarkTheme);
@@ -155,7 +155,7 @@ export class ConfigurationService implements IConfigurationService {
           "token",
           "starter",
           "duel_deck",
-          "promo",
+          "promo"
         ]
       }
     };

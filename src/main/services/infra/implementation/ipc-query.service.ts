@@ -3,10 +3,11 @@ import { container, singleton } from "tsyringe";
 import { DtoRulingLine, DtoSyncParam } from "../../../../common/dto";
 import { AssetQueryOptions, CardSetDetailsQueryOptions, LegalityQueryOptions, QueryOptions, QueryParam, RulingQueryOptions } from "../../../../common/ipc-params";
 import { CardQueryOptions } from "../../../../common/ipc-params/query/card-query.options";
-import REPOTOKENS, { ICardRepository, ICardSetRepository, ICardSymbolRepository, ICatalogRepository, IColorRepository, ILanguageRepository, IOracleRepository } from "../../repo/interfaces";
-import SYNCTOKENS, { IRulingSyncService } from "../../scryfall";
-import INFRATOKENS, { IConfigurationService, IImageCacheService, IIpcQueryService } from "../interfaces";
+import { ICardRepository, ICardSetRepository, ICardSymbolRepository, ICatalogRepository, IColorRepository, ILanguageRepository, IOracleRepository } from "../../repo/interfaces";
+import { IRulingSyncService } from "../../scryfall";
+import { IConfigurationService, IImageCacheService, IIpcQueryService } from "../interfaces";
 import { ICollectionRepository } from "../../repo/interfaces/collection.repository";
+import { INFRASTRUCTURE, REPOSITORIES, SCRYFALL } from "../../service.tokens";
 
 
 @singleton()
@@ -19,51 +20,51 @@ export class IpcQueryService implements IIpcQueryService {
     switch (params.type) {
       case "Asset":
         return container
-          .resolve<IImageCacheService>(INFRATOKENS.ImageCacheService)
+          .resolve<IImageCacheService>(INFRASTRUCTURE.ImageCacheService)
           .getAsset((params.options as AssetQueryOptions).path);
       case "Card":
         return container
-          .resolve<ICardRepository>(REPOTOKENS.CardRepository)
+          .resolve<ICardRepository>(REPOSITORIES.CardRepository)
           .getCards(params.options as CardQueryOptions);
       case "CardSet":
         return container
-          .resolve<ICardSetRepository>(REPOTOKENS.CardSetRepository)
+          .resolve<ICardSetRepository>(REPOSITORIES.CardSetRepository)
           .getAll();
       case "CardSetDetails":
         return container
-          .resolve<ICardSetRepository>(REPOTOKENS.CardSetRepository)
+          .resolve<ICardSetRepository>(REPOSITORIES.CardSetRepository)
           .getDetails((params.options as CardSetDetailsQueryOptions).cardSetId);
       case "Catalog":
         return container
-          .resolve<ICatalogRepository>(REPOTOKENS.CatalogRepository)
+          .resolve<ICatalogRepository>(REPOSITORIES.CatalogRepository)
           .getAll("AbilityWords");
       case "Collection":
         return container
-          .resolve<ICollectionRepository>(REPOTOKENS.CollectionRepository)
+          .resolve<ICollectionRepository>(REPOSITORIES.CollectionRepository)
           .getAll();
       case "Color":
         return container
-          .resolve<IColorRepository>(REPOTOKENS.ColorRepository)
+          .resolve<IColorRepository>(REPOSITORIES.ColorRepository)
           .getAll();
       case "Configuration":
         return container
-          .resolve<IConfigurationService>(INFRATOKENS.ConfigurationService)
+          .resolve<IConfigurationService>(INFRASTRUCTURE.ConfigurationService)
           .configuration;
       case "Language":
         return container
-          .resolve<ILanguageRepository>(REPOTOKENS.LanguageRepository)
+          .resolve<ILanguageRepository>(REPOSITORIES.LanguageRepository)
           .getAll();
       case "Legality":
         return container
-          .resolve<IOracleRepository>(REPOTOKENS.OracleRepository)
+          .resolve<IOracleRepository>(REPOSITORIES.OracleRepository)
           .getLegalities((params.options as LegalityQueryOptions).oracleId);
       case "CardSymbol":
         return container
-          .resolve<ICardSymbolRepository>(REPOTOKENS.CardSymbolRepository)
+          .resolve<ICardSymbolRepository>(REPOSITORIES.CardSymbolRepository)
           .getAll();
       case "CardSymbolCachedSvg":
         return container
-          .resolve<ICardSymbolRepository>(REPOTOKENS.CardSymbolRepository)
+          .resolve<ICardSymbolRepository>(REPOSITORIES.CardSymbolRepository)
           .getCardSymbolSvg();
       case "Ruling":
         return this.handleRuling(params.options as RulingQueryOptions);
@@ -73,7 +74,7 @@ export class IpcQueryService implements IIpcQueryService {
 
   //#region Private methods ---------------------------------------------------
   private async handleRuling(options: RulingQueryOptions): Promise<Array<DtoRulingLine>> {
-    const oracleRepository = container.resolve<IOracleRepository>(REPOTOKENS.OracleRepository);
+    const oracleRepository = container.resolve<IOracleRepository>(REPOSITORIES.OracleRepository);
     return oracleRepository.getByCardId(options.cardId)
       .then((queryResult: Array<DtoRulingLine>) => {
         if (queryResult.length == 0) {
@@ -90,7 +91,7 @@ export class IpcQueryService implements IIpcQueryService {
             cardSetCodeToSyncCardsFor: undefined,
             changedImageStatusAction: undefined
           };
-          return container.resolve<IRulingSyncService>(SYNCTOKENS.RulingSyncService)
+          return container.resolve<IRulingSyncService>(SCRYFALL.RulingSyncService)
             .sync(dtoSyncParam, (s: string) => console.log(s))
             .then(() => oracleRepository
               .getByCardId(options.cardId)

@@ -1,6 +1,6 @@
 
 import { container } from "tsyringe";
-
+import { SCRYFALL } from "../../service.tokens";
 import { CardCardMapAdapter } from "./implementation/card-card-map.adapter";
 import { CardColorMapAdapter } from "./implementation/card-color-map.adapter";
 import { CardGameAdapter } from "./implementation/card-game.adapter";
@@ -18,7 +18,7 @@ import { OracleLegalityAdapter } from "./implementation/oracle-legality.adapter"
 import { OracleRulingLineAdapter } from "./implementation/oracle-ruling-line.adapter";
 import { OracleRulingAdapter } from "./implementation/oracle-ruling.adapter";
 import { OracleAdapter } from "./implementation/oracle.adapter";
-import ADAPTTOKENS, {
+import {
   ICardAdapter, ICardCardMapAdapter, ICardColorMapAdapter, ICardGameAdapter, ICardMultiverseIdAdapter,
   ICardSetAdapter,
   ICardSymbolAdapter, ICardSymbolAlternativeAdapter, ICardSymbolColorMapAdapter,
@@ -31,22 +31,22 @@ import ADAPTTOKENS, {
 
 export class AdaptDi {
   public static registerAdapters() {
-    container.register<ICardCardMapAdapter>(ADAPTTOKENS.CardCardMapAdapter, { useClass: CardCardMapAdapter });
-    container.register<ICardGameAdapter>(ADAPTTOKENS.CardGameAdapter, { useClass: CardGameAdapter });
-    container.register<ICardMultiverseIdAdapter>(ADAPTTOKENS.CardMultiverseIdAdapter, { useClass: CardMultiverseIdAdapter });
-    container.register<ICardSetAdapter>(ADAPTTOKENS.CardSetAdapter, { useClass: CardSetAdapter });
-    container.register<ICardAdapter>(ADAPTTOKENS.CardAdapter, { useClass: CardAdapter });
-    container.register<ICardColorMapAdapter>(ADAPTTOKENS.CardColorMapAdapter, { useClass: CardColorMapAdapter });
-    container.register<ICardfaceAdapter>(ADAPTTOKENS.CardfaceAdapter, { useClass: CardfaceAdapter });
-    container.register<ICardfaceColorMapAdapter>(ADAPTTOKENS.CardfaceColorMapAdapter, { useClass: CardfaceColorMapAdapter });
-    container.register<ICatalogAdapter>(ADAPTTOKENS.CatalogAdapter, { useClass: CatalogAdapter });
-    container.register<ICardSymbolAlternativeAdapter>(ADAPTTOKENS.CardSymbolAlternativeAdapter, { useClass: CardSymbolAlternativeAdapter });
-    container.register<ICardSymbolColorMapAdapter>(ADAPTTOKENS.CardSymbolColorMapAdapter, { useClass: CardSymbolColorMapAdapter });
-    container.register<ICardSymbolAdapter>(ADAPTTOKENS.CardSymbolAdapter, { useClass: CardSymbolAdapter });
-    container.register<IOracleAdapter>(ADAPTTOKENS.OracleAdapter, { useClass: OracleAdapter });
-    container.register<IOracleKeywordAdapter>(ADAPTTOKENS.OracleKeywordAdapter, { useClass: OracleKeywordAdapter });
-    container.register<IOracleRulingLineAdapter>(ADAPTTOKENS.OracleRulingLineAdapter, { useClass: OracleRulingLineAdapter });
-    container.register<IOracleRulingAdapter>(ADAPTTOKENS.OracleRulingAdapter, { useClass: OracleRulingAdapter });
-    container.register<IOracleLegalityAdapter>(ADAPTTOKENS.OracleLegalityAdapter, { useClass: OracleLegalityAdapter });
+    container.register<ICardCardMapAdapter>(SCRYFALL.CardCardMapAdapter, { useClass: CardCardMapAdapter });
+    container.register<ICardGameAdapter>(SCRYFALL.CardGameAdapter, { useClass: CardGameAdapter });
+    container.register<ICardMultiverseIdAdapter>(SCRYFALL.CardMultiverseIdAdapter, { useClass: CardMultiverseIdAdapter });
+    container.register<ICardSetAdapter>(SCRYFALL.CardSetAdapter, { useClass: CardSetAdapter });
+    container.register<ICardAdapter>(SCRYFALL.CardAdapter, { useClass: CardAdapter });
+    container.register<ICardColorMapAdapter>(SCRYFALL.CardColorMapAdapter, { useClass: CardColorMapAdapter });
+    container.register<ICardfaceAdapter>(SCRYFALL.CardfaceAdapter, { useClass: CardfaceAdapter });
+    container.register<ICardfaceColorMapAdapter>(SCRYFALL.CardfaceColorMapAdapter, { useClass: CardfaceColorMapAdapter });
+    container.register<ICatalogAdapter>(SCRYFALL.CatalogAdapter, { useClass: CatalogAdapter });
+    container.register<ICardSymbolAlternativeAdapter>(SCRYFALL.CardSymbolAlternativeAdapter, { useClass: CardSymbolAlternativeAdapter });
+    container.register<ICardSymbolColorMapAdapter>(SCRYFALL.CardSymbolColorMapAdapter, { useClass: CardSymbolColorMapAdapter });
+    container.register<ICardSymbolAdapter>(SCRYFALL.CardSymbolAdapter, { useClass: CardSymbolAdapter });
+    container.register<IOracleAdapter>(SCRYFALL.OracleAdapter, { useClass: OracleAdapter });
+    container.register<IOracleKeywordAdapter>(SCRYFALL.OracleKeywordAdapter, { useClass: OracleKeywordAdapter });
+    container.register<IOracleRulingLineAdapter>(SCRYFALL.OracleRulingLineAdapter, { useClass: OracleRulingLineAdapter });
+    container.register<IOracleRulingAdapter>(SCRYFALL.OracleRulingAdapter, { useClass: OracleRulingAdapter });
+    container.register<IOracleLegalityAdapter>(SCRYFALL.OracleLegalityAdapter, { useClass: OracleLegalityAdapter });
   }
 }

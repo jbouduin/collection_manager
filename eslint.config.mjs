@@ -43,7 +43,16 @@ export default tseslint.config(
       "@stylistic/semi": "error",
       "@stylistic/linebreak-style": "off",
       "@stylistic/lines-between-class-members": "off",
-      "@stylistic/no-extra-parens": ["error", "all", { "ignoreJSX": "all" }],
+      "@stylistic/no-extra-parens": [
+        "error",
+        "all",
+        {
+          "ignoreJSX": "all",
+          "nestedBinaryExpressions": false,
+          "ternaryOperandBinaryExpressions": false,
+          "nestedConditionalExpressions": false
+        }
+      ],
       "@stylistic/object-curly-spacing": "off",
       "@stylistic/object-property-newline": ["error", { "allowAllPropertiesOnSameLine": true }],
       "@stylistic/padded-blocks": ["error", "never", { "allowSingleLineBlocks": true }],

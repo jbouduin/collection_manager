@@ -1,22 +1,22 @@
 import { inject, injectable } from "tsyringe";
-
+import { DtoCardImageData } from "../../../../../common/dto";
 import { DtoScryfallConfiguration } from "../../../../../common/dto/configuration/scryfall-configuration.dto";
 import { CatalogType } from "../../../../../common/enums";
 import { ProgressCallback } from "../../../../../common/ipc-params";
-import INFRATOKENS, { IConfigurationService } from "../../../../../main/services/infra/interfaces";
+import { IConfigurationService, ILogService } from "../../../../../main/services/infra/interfaces";
+import { runSerial } from "../../../../../main/services/infra/util";
+import { INFRASTRUCTURE } from "../../../service.tokens";
 import { ScryfallCard, ScryfallCardSet, ScryfallCatalog, ScryfallRuling } from "../../types";
 import { ScryfallCardSymbol } from "../../types/card-symbol/scryfall-card-symbol";
 import { ScryfallList } from "../../types/scryfall-list";
 import { IScryfallClient, ScryfallSearchOptions } from "../interfaces";
-import { runSerial } from "../../../../../main/services/infra/util";
-import { DtoCardImageData } from "../../../../../common/dto";
 
 
 @injectable()
 export class ScryfallClient implements IScryfallClient {
-
   //#region private readonly fields -------------------------------------------
   private readonly scryfallConfiguration: DtoScryfallConfiguration;
+  private readonly logService: ILogService;
   //#endregion
 
   //#region private fields ----------------------------------------------------
@@ -25,8 +25,11 @@ export class ScryfallClient implements IScryfallClient {
 
   //#region Construcotr & C^ --------------------------------------------------
   public constructor(
-    @inject(INFRATOKENS.ConfigurationService) configurationService: IConfigurationService) {
+    @inject(INFRASTRUCTURE.ConfigurationService) configurationService: IConfigurationService,
+    @inject(INFRASTRUCTURE.LogService) logService: ILogService
+  ) {
     this.scryfallConfiguration = configurationService.configuration.scryfallConfiguration;
+    this.logService = logService;
     this.nextQuery = Date.now() + this.scryfallConfiguration.minimumRequestTimeout;
   }
   //#endregion
@@ -97,7 +100,11 @@ export class ScryfallClient implements IScryfallClient {
         progressCallback(`Fetching cards ${first} - ${last} of ${cardIds.length} from Scryfall`);
         const fetched = await this.tryPost(
           `${this.scryfallConfiguration.scryfallApiRoot}/${this.scryfallConfiguration.scryfallEndpoints["collection"]}`,
-          JSON.stringify({ identifiers: chunk.map((id: string) => { return { id: id }; }) })
+          JSON.stringify({
+            identifiers: chunk.map((id: string) => {
+              return { id: id };
+            })
+          })
         );
         result.push(...fetched);
       }
@@ -131,11 +138,11 @@ export class ScryfallClient implements IScryfallClient {
     return await this
       .sleep(sleepTime)
       .then(() => {
-        console.log(`fetch ${uri}`);
+        this.logService.debug("Main", `fetch ${uri}`);
         return fetch(uri);
       })
       .then((result: Response) => {
-        console.log(`retrieved ${uri} -> status: ${result.status}`);
+        this.logService.debug("Main", `retrieved ${uri} -> status: ${result.status}`);
         return result;
       });
   }
@@ -144,7 +151,7 @@ export class ScryfallClient implements IScryfallClient {
     const now = Date.now();
     const sleepTime = this.nextQuery - now;
     this.nextQuery = now + this.scryfallConfiguration.minimumRequestTimeout;
-    console.log(`POST ${uri} - body\n${JSON.stringify(body, null, 2)}`);
+    this.logService.debug("Main", `POST ${uri} - body\n${JSON.stringify(body, null, 2)}`);
     return await this
       .sleep(sleepTime)
       .then(() => fetch(uri, {
@@ -156,14 +163,14 @@ export class ScryfallClient implements IScryfallClient {
         body: body
       }))
       .then(async (response: Response) => {
-        console.log(`retrieved ${uri} -> status: ${response.status}`);
+        this.logService.debug("Main", `retrieved ${uri} -> status: ${response.status}`);
         return ((await response.json()) as ScryfallList<ScryfallCard>).data;
       });
   }
 
   private async sleep(ms: number): Promise<void> {
     return new Promise((resolve) => {
-      console.log(`sleeping ${ms}`);
+      this.logService.debug("Main", `sleeping ${ms}`);
       setTimeout(resolve, ms);
     });
   }

@@ -5,41 +5,44 @@ import { DtoSyncParam } from "../../../../../common/dto";
 import { CatalogType } from "../../../../../common/enums";
 import { ProgressCallback } from "../../../../../common/ipc-params";
 import { DatabaseSchema } from "../../../../../main/database/schema";
-import INFRATOKENS, { IConfigurationService, IDatabaseService } from "../../../../../main/services/infra/interfaces";
+import { IConfigurationService, IDatabaseService, ILogService } from "../../../../../main/services/infra/interfaces";
 import { runSerial } from "../../../../../main/services/infra/util";
-import ADAPTTOKENS, { ICatalogAdapter } from "../../adapt/interface";
-import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
+import { ICatalogAdapter } from "../../adapt/interface";
+import { IScryfallClient } from "../../client/interfaces";
 import { ScryfallCatalog } from "../../types";
 import { ICatalogSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
+import { INFRASTRUCTURE, SCRYFALL } from "../../../service.tokens";
 
 type SyncSingleCatalogParameter = {
-  catalogType: CatalogType,
-  progressCallback: ProgressCallback
+  catalogType: CatalogType;
+  progressCallback: ProgressCallback;
 };
 
 @injectable()
 export class CatalogSyncService extends BaseSyncService implements ICatalogSyncService {
-
   //#region private readonly fields -------------------------------------------
   private readonly catalogAdapter: ICatalogAdapter;
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
   public constructor(
-    @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
-    @inject(INFRATOKENS.ConfigurationService) configurationService: IConfigurationService,
-    @inject(CLIENTTOKENS.ScryfallClient) scryfallclient: IScryfallClient,
-    @inject(ADAPTTOKENS.CatalogAdapter) catalogAdapter: ICatalogAdapter)
-  {
-    super(databaseService, configurationService, scryfallclient);
+    @inject(INFRASTRUCTURE.DatabaseService) databaseService: IDatabaseService,
+    @inject(INFRASTRUCTURE.ConfigurationService) configurationService: IConfigurationService,
+    @inject(INFRASTRUCTURE.LogService) logService: ILogService,
+    @inject(SCRYFALL.ScryfallClient) scryfallclient: IScryfallClient,
+    @inject(SCRYFALL.CatalogAdapter) catalogAdapter: ICatalogAdapter
+  ) {
+    super(databaseService, configurationService, logService, scryfallclient);
     this.catalogAdapter = catalogAdapter;
   }
   //#endregion
 
   //#region ICatalogSyncService methods ---------------------------------------
   public override async sync(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void> {
-    const serialExecutionArray = syncParam.catalogTypesToSync.map<SyncSingleCatalogParameter>((catalog: CatalogType) => { return { catalogType: catalog, progressCallback: progressCallback }; });
+    const serialExecutionArray = syncParam.catalogTypesToSync.map<SyncSingleCatalogParameter>((catalog: CatalogType) => {
+      return { catalogType: catalog, progressCallback: progressCallback };
+    });
     await runSerial<SyncSingleCatalogParameter>(serialExecutionArray, this.syncSingleCatalog.bind(this));
     return Promise.resolve();
   }

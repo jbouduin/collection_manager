@@ -1,6 +1,7 @@
 import { ColumnDefinitionBuilder, Kysely } from "kysely";
 import { CreateTableOptions, IBaseMigration, createTable } from "../base-migration";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export class V0_1_0_OwnedCards implements IBaseMigration {
   get keyName(): string {
     return "0009: v.0.1.0.OwnedCard";

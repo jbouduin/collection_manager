@@ -1,13 +1,13 @@
 import { InsertResult, Selectable, Transaction, UpdateResult } from "kysely";
 import { inject, injectable } from "tsyringe";
-
 import { DtoSyncParam } from "../../../../../common/dto";
 import { ProgressCallback } from "../../../../../common/ipc-params";
 import { runSerial } from "../../../../../main/services/infra/util";
 import { CardSymbolTable, DatabaseSchema } from "../../../../database/schema";
-import INFRATOKENS, { IConfigurationService, IDatabaseService, IImageCacheService } from "../../../infra/interfaces";
-import ADAPTTOKENS, { ICardSymbolAdapter, ICardSymbolAlternativeAdapter, ICardSymbolColorMapAdapter } from "../../adapt/interface";
-import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
+import { IConfigurationService, IDatabaseService, IImageCacheService, ILogService } from "../../../infra/interfaces";
+import { INFRASTRUCTURE, SCRYFALL } from "../../../service.tokens";
+import { ICardSymbolAdapter, ICardSymbolAlternativeAdapter, ICardSymbolColorMapAdapter } from "../../adapt/interface";
+import { IScryfallClient } from "../../client/interfaces";
 import { ScryfallCardSymbol } from "../../types/card-symbol/scryfall-card-symbol";
 import { ICardSymbolSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
@@ -15,7 +15,6 @@ import { BaseSyncService } from "./base-sync.service";
 
 @injectable()
 export class CardSymbolSyncService extends BaseSyncService implements ICardSymbolSyncService {
-
   //#region private readonly fields -------------------------------------------
   private readonly imageCacheService: IImageCacheService;
   private readonly cardSymbolAdapter: ICardSymbolAdapter;
@@ -25,14 +24,16 @@ export class CardSymbolSyncService extends BaseSyncService implements ICardSymbo
 
   //#region Constructor & C° --------------------------------------------------
   public constructor(
-    @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
-    @inject(INFRATOKENS.ConfigurationService) configurationService: IConfigurationService,
-    @inject(INFRATOKENS.ImageCacheService) imageCacheService: IImageCacheService,
-    @inject(CLIENTTOKENS.ScryfallClient) scryfallclient: IScryfallClient,
-    @inject(ADAPTTOKENS.CardSymbolAdapter) cardSymbolAdapter: ICardSymbolAdapter,
-    @inject(ADAPTTOKENS.CardSymbolAlternativeAdapter) cardSymbolAlternativeAdapter: ICardSymbolAlternativeAdapter,
-    @inject(ADAPTTOKENS.CardSymbolColorMapAdapter) cardSymbolColorMapAdapter: ICardSymbolColorMapAdapter) {
-    super(databaseService, configurationService, scryfallclient);
+    @inject(INFRASTRUCTURE.DatabaseService) databaseService: IDatabaseService,
+    @inject(INFRASTRUCTURE.ConfigurationService) configurationService: IConfigurationService,
+    @inject(INFRASTRUCTURE.ImageCacheService) imageCacheService: IImageCacheService,
+    @inject(INFRASTRUCTURE.LogService) logService: ILogService,
+    @inject(SCRYFALL.ScryfallClient) scryfallclient: IScryfallClient,
+    @inject(SCRYFALL.CardSymbolAdapter) cardSymbolAdapter: ICardSymbolAdapter,
+    @inject(SCRYFALL.CardSymbolAlternativeAdapter) cardSymbolAlternativeAdapter: ICardSymbolAlternativeAdapter,
+    @inject(SCRYFALL.CardSymbolColorMapAdapter) cardSymbolColorMapAdapter: ICardSymbolColorMapAdapter
+  ) {
+    super(databaseService, configurationService, logService, scryfallclient);
     this.imageCacheService = imageCacheService;
     this.cardSymbolAdapter = cardSymbolAdapter;
     this.cardSymbolAlternativeAdapter = cardSymbolAlternativeAdapter;
@@ -48,9 +49,12 @@ export class CardSymbolSyncService extends BaseSyncService implements ICardSymbo
         this.dumpScryFallData("card-symbols.json", all);
         this.processSync(all);
       })
-      .then(async () => await this.database.selectFrom("card_symbol").selectAll().execute())
+      .then(async () => await this.database
+        .selectFrom("card_symbol")
+        .selectAll()
+        .execute())
       .then(async (allCardSymbols: Array<Selectable<CardSymbolTable>>) => {
-        console.log((`Saved ${allCardSymbols.length} card symbols`));
+        this.logService.debug("Main", `Saved ${allCardSymbols.length} card symbols`);
         progressCallback(`Saved ${allCardSymbols.length} card symbols`);
         let result = Promise.resolve();
         allCardSymbols.forEach(async (cardSymbol: Selectable<CardSymbolTable>) => {
@@ -77,28 +81,31 @@ export class CardSymbolSyncService extends BaseSyncService implements ICardSymbo
           );
 
           return await insertOrUpdate
-            .then(async () => symbol.colors?.length > 0 ?
-              await super.genericDeleteAndRecreate(
-                trx,
-                "card_symbol_color_map",
-                (eb) => eb("card_symbol_color_map.card_symbol_id", "=", symbol.symbol),
-                this.cardSymbolColorMapAdapter,
-                { cardSymbolId: symbol.symbol, colorIds: symbol.colors }
-              ) :
-              Promise.resolve()
-            )
-            .then(async () => symbol.gatherer_alternates?.length > 0 ?
-              await super.genericDeleteAndRecreate(
-                trx,
-                "card_symbol_alternative",
-                (eb) => eb("card_symbol_alternative.card_symbol_id", "=", symbol.symbol),
-                this.cardSymbolAlternativeAdapter,
-                { cardSymbolId: symbol.symbol, alternatives: symbol.gatherer_alternates }
-              ) :
-              Promise.resolve()
-            )
+            .then(async () => {
+              return symbol.colors?.length > 0
+                ? await super.genericDeleteAndRecreate(
+                  trx,
+                  "card_symbol_color_map",
+                  (eb) => eb("card_symbol_color_map.card_symbol_id", "=", symbol.symbol),
+                  this.cardSymbolColorMapAdapter,
+                  { cardSymbolId: symbol.symbol, colorIds: symbol.colors }
+                )
+                : Promise.resolve();
+            })
+            .then(async () => {
+              return symbol.gatherer_alternates?.length > 0
+                ? await super.genericDeleteAndRecreate(
+                  trx,
+                  "card_symbol_alternative",
+                  (eb) => eb("card_symbol_alternative.card_symbol_id", "=", symbol.symbol),
+                  this.cardSymbolAlternativeAdapter,
+                  { cardSymbolId: symbol.symbol, alternatives: symbol.gatherer_alternates }
+                )
+                : Promise.resolve();
+            })
             .then(() => Promise.resolve());
-        });
+        }
+      );
     });
   }
   //#endregion

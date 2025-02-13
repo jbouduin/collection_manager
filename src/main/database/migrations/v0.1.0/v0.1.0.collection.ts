@@ -2,6 +2,7 @@ import { ColumnDefinitionBuilder, InsertResult, Kysely } from "kysely";
 import { CreateTableOptions, IBaseMigration, createTable } from "../base-migration";
 import { sqliteUTCTimeStamp } from "../../../../common/util";
 
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 export class V0_1_0_Collection implements IBaseMigration {
   get keyName(): string {
     return "0008: v.0.1.0.Collection";
@@ -13,7 +14,7 @@ export class V0_1_0_Collection implements IBaseMigration {
       .then(() => Promise.resolve());
   }
   down(db: Kysely<any>): Promise<void> {
-    return db.schema.dropTable("collection").execute()
+    return db.schema.dropTable("collection").execute();
   }
 }
 

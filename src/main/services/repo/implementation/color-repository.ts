@@ -1,14 +1,17 @@
 import { inject, injectable } from "tsyringe";
-
 import { ColorDto } from "../../../../common/dto";
-import INFRATOKENS, { IDatabaseService } from "../../infra/interfaces";
+import { IDatabaseService, ILogService } from "../../infra/interfaces";
 import { IColorRepository } from "../interfaces";
 import { BaseRepository } from "./base.repository";
+import { INFRASTRUCTURE } from "../../service.tokens";
 
 @injectable()
 export class ColorRepository extends BaseRepository implements IColorRepository {
-  public constructor(@inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService) {
-    super(databaseService);
+  public constructor(
+    @inject(INFRASTRUCTURE.DatabaseService) databaseService: IDatabaseService,
+    @inject(INFRASTRUCTURE.LogService) logService: ILogService
+  ) {
+    super(databaseService, logService);
   }
 
   getAll(): Promise<Array<ColorDto>> {

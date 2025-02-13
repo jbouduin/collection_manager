@@ -1,16 +1,19 @@
 import { DeleteResult } from "kysely";
 import { ICollectionRepository } from "../interfaces/collection.repository";
-
 import { DtoCollection, NewCollection, UpdateCollection } from "../../../../common/dto";
 import { BaseRepository } from "./base.repository";
 import { inject, injectable } from "tsyringe";
-import INFRATOKENS, { IDatabaseService } from "../../infra/interfaces";
+import { IDatabaseService, ILogService } from "../../infra/interfaces";
+import { INFRASTRUCTURE } from "../../service.tokens";
 
 @injectable()
 export class CollectionRepository extends BaseRepository implements ICollectionRepository {
   //#region Constructor -------------------------------------------------------
-  public constructor(@inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService) {
-    super(databaseService);
+  public constructor(
+    @inject(INFRASTRUCTURE.DatabaseService) databaseService: IDatabaseService,
+    @inject(INFRASTRUCTURE.LogService) logService: ILogService
+  ) {
+    super(databaseService, logService);
   }
   //#endregion
 

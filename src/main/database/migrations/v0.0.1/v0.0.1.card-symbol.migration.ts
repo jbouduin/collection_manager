@@ -1,4 +1,4 @@
-/* eslint-disable  @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any, @stylistic/newline-per-chained-call */
 import { ColumnDefinitionBuilder, Kysely } from "kysely";
 
 import { IBaseMigration, CreateTableOptions, createTable } from "../base-migration";

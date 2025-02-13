@@ -1,21 +1,24 @@
 import * as fs from "fs";
 import * as helpers from "kysely/helpers/sqlite";
 import { inject, injectable } from "tsyringe";
-
 import { DtoCard, DtoCardColor, DtoCardImageData, DtoCardface, DtoCardfaceColor, DtoOracle } from "../../../../common/dto";
 import { CardQueryOptions } from "../../../../common/ipc-params/query/card-query.options";
 import { cardColorMapTableFields, cardTableFields, cardfaceColorMapTableFields, cardfaceTableFields } from "../../../../main/database/schema/card/table-fields.constants";
 import { oracleTableFields } from "../../../../main/database/schema/oracle/table-field.constants";
-import INFRATOKENS, { IDatabaseService } from "../../infra/interfaces";
+import { IDatabaseService, ILogService } from "../../infra/interfaces";
 import { ICardRepository } from "../interfaces";
 import { BaseRepository } from "./base.repository";
+import { INFRASTRUCTURE } from "../../service.tokens";
 
 
 @injectable()
 export class CardRepository extends BaseRepository implements ICardRepository {
   //#region Constructor & C° --------------------------------------------------
-  public constructor(@inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService) {
-    super(databaseService);
+  public constructor(
+    @inject(INFRASTRUCTURE.DatabaseService) databaseService: IDatabaseService,
+    @inject(INFRASTRUCTURE.LogService) logService: ILogService
+  ) {
+    super(databaseService, logService);
   }
   //#endregion
 

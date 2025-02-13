@@ -4,17 +4,6 @@ export * from "./image-cache.service";
 export * from "./ipc-dispatcher.service";
 export * from "./ipc-query.service";
 export * from "./ipc-sync.service";
+export * from "./result.factory";
 export * from "./window.service";
-
-const INFRATOKENS = Object.freeze({
-  ConfigurationService: "ConfigurationService",
-  DatabaseService: "DatabaseService",
-  ImageCacheService: "ImageCacheService",
-  IpcDispatcherService: "IpcDispatcherService",
-  IpcPostService: "IpcPostService",
-  IpcQueryService: "IpcQueryService",
-  IpcSyncService: "IIpcSyncService",
-  WindowService: "WindowService"
-});
-
-export default INFRATOKENS;
+export * from "./log.service";

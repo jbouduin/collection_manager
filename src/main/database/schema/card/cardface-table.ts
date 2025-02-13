@@ -39,7 +39,7 @@ export interface CardfaceTable {
   /**
    * The Oracle ID of this particular face, if the card is reversible.
    */
-  oracle_id?: ColumnType<string , string , undefined>;
+  oracle_id?: ColumnType<string, string, undefined>;
   /**
    * This face’s power, if any.
    * Note that some cards have powers that are not numeric, such as *.

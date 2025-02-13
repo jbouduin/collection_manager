@@ -1,20 +1,20 @@
 import { DeleteResult, ExpressionOrFactory, InsertResult, Selectable, SqlBool, Transaction, UpdateResult } from "kysely";
 import { inject, injectable } from "tsyringe";
-
 import { DtoSyncParam } from "../../../../../common/dto";
 import { ProgressCallback } from "../../../../../common/ipc-params";
 import { runSerial } from "../../../../../main/services/infra/util";
 import { CardTable, DatabaseSchema } from "../../../../database/schema";
-import INFRATOKENS, { IConfigurationService, IDatabaseService } from "../../../infra/interfaces";
-import ADAPTTOKENS, { IOracleRulingAdapter, IOracleRulingLineAdapter } from "../../adapt/interface";
-import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
+import { IConfigurationService, IDatabaseService, ILogService } from "../../../infra/interfaces";
+import { INFRASTRUCTURE, SCRYFALL } from "../../../service.tokens";
+import { IOracleRulingAdapter, IOracleRulingLineAdapter } from "../../adapt/interface";
+import { IScryfallClient } from "../../client/interfaces";
 import { ScryfallRuling } from "../../types";
 import { IRulingSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
+import { logCompilable } from "./log-compilable";
 
 @injectable()
 export class RulingSyncService extends BaseSyncService implements IRulingSyncService {
-
   //#region private readonly fields -------------------------------------------
   private readonly rulingLineAdapter: IOracleRulingLineAdapter;
   private readonly rulingAdapter: IOracleRulingAdapter;
@@ -22,12 +22,14 @@ export class RulingSyncService extends BaseSyncService implements IRulingSyncSer
 
   //#region Constructor & C° --------------------------------------------------
   public constructor(
-    @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
-    @inject(INFRATOKENS.ConfigurationService) configurationService: IConfigurationService,
-    @inject(CLIENTTOKENS.ScryfallClient) scryfallclient: IScryfallClient,
-    @inject(ADAPTTOKENS.OracleRulingLineAdapter) rulingLineAdapter: IOracleRulingLineAdapter,
-    @inject(ADAPTTOKENS.OracleRulingAdapter) rulingAdapter: IOracleRulingAdapter) {
-    super(databaseService, configurationService, scryfallclient);
+    @inject(INFRASTRUCTURE.DatabaseService) databaseService: IDatabaseService,
+    @inject(INFRASTRUCTURE.ConfigurationService) configurationService: IConfigurationService,
+    @inject(INFRASTRUCTURE.LogService) logService: ILogService,
+    @inject(SCRYFALL.ScryfallClient) scryfallclient: IScryfallClient,
+    @inject(SCRYFALL.OracleRulingLineAdapter) rulingLineAdapter: IOracleRulingLineAdapter,
+    @inject(SCRYFALL.OracleRulingAdapter) rulingAdapter: IOracleRulingAdapter
+  ) {
+    super(databaseService, configurationService, logService, scryfallclient);
     this.rulingLineAdapter = rulingLineAdapter;
     this.rulingAdapter = rulingAdapter;
   }
@@ -42,7 +44,7 @@ export class RulingSyncService extends BaseSyncService implements IRulingSyncSer
       .selectAll("card")
       .where("card.oracle_id", "is not", null)
       .groupBy("card.oracle_id")
-      .$call(this.logCompilable)
+      .$call((q) => logCompilable(this.logService, q))
       .execute();
     return runSerial<Selectable<CardTable>>(
       cards,
@@ -70,7 +72,7 @@ export class RulingSyncService extends BaseSyncService implements IRulingSyncSer
         }
       });
       if (groupByOracleid.size > 1) {
-        console.log("We have an issue here! More then one oracle id found for the same card");
+        this.logService.error("Main", `We have an issue here! More then one oracle id found for the card with id ${cardId}`);
       }
       return this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
         for (const oracleId of groupByOracleid.keys()) {

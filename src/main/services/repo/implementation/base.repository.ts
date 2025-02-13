@@ -1,24 +1,26 @@
-import { Compilable, Kysely } from "kysely";
-import { inject, injectable } from "tsyringe";
-
+import { Kysely } from "kysely";
 import { DatabaseSchema } from "../../../database/schema";
-import INFRATOKENS, { IDatabaseService } from "../../infra/interfaces";
+import { IDatabaseService, ILogService } from "../../infra/interfaces";
 
-
-@injectable()
-export class BaseRepository {
+export abstract class BaseRepository {
+  //#region private fields ----------------------------------------------------
   private readonly databaseService: IDatabaseService;
+  //#endregion
 
+  //#region protected fields --------------------------------------------------
+  protected readonly logService: ILogService;
+  //#endregion
+
+  //#region protected properties ----------------------------------------------
   protected get database(): Kysely<DatabaseSchema> {
     return this.databaseService.database;
   }
+  //#endregion
 
-  public constructor(@inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService) {
+  //#region Constructor & C° --------------------------------------------------
+  public constructor(databaseService: IDatabaseService, logService: ILogService) {
     this.databaseService = databaseService;
+    this.logService = logService;
   }
-
-  protected logCompilable<T extends Compilable>(compilable: T): T {
-    console.log(compilable.compile());
-    return compilable;
-  }
+  //#endregion
 }

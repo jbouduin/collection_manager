@@ -20,11 +20,11 @@ export class SqliteKyselyPlugin implements KyselyPlugin {
   private processAny(obj: Record<string, any>): Record<string, any> {
     for (const key in obj) {
       // Remark: we'll have to do it like this, until we find another way to identify date and boolean fields
-      if (key.endsWith("_at") && obj[key])
+      if (key.endsWith("_at") && obj[key]) {
         obj[key] = new Date(obj[key] as string);
-      if (key.startsWith("is_"))
+      } else if (key.startsWith("is_")) {
         obj[key] = obj[key] as number > 0 ? true : false;
-      if (typeof obj[key] == "object") {
+      } else if (typeof obj[key] == "object") {
         obj[key] = this.processAny(obj[key]);
       }
     }

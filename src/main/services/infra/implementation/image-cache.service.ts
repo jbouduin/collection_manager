@@ -4,12 +4,12 @@ import * as fs from "fs";
 import { Selectable } from "kysely";
 import * as path from "path";
 import { inject, injectable } from "tsyringe";
-
 import { DtoCardImageData } from "../../../../common/dto";
 import { ProgressCallback } from "../../../../common/ipc-params";
 import { CardSetTable, CardSymbolTable } from "../../../../main/database/schema";
-import SCRYTOKENS, { IScryfallClient } from "../../scryfall/client/interfaces";
-import INFRATOKENS, { IConfigurationService, IImageCacheService } from "../interfaces";
+import { IScryfallClient } from "../../scryfall/client/interfaces";
+import { IConfigurationService, IImageCacheService, ILogService } from "../interfaces";
+import { SCRYFALL, INFRASTRUCTURE } from "../../service.tokens";
 
 
 @injectable()
@@ -17,15 +17,18 @@ export class ImageCacheService implements IImageCacheService {
   //#region Private readonly fields -------------------------------------------
   private readonly configurationService: IConfigurationService;
   private readonly apiClient: IScryfallClient;
+  private readonly logService: ILogService;
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
   public constructor(
-    @inject(INFRATOKENS.ConfigurationService) configurationService: IConfigurationService,
-    @inject(SCRYTOKENS.ScryfallClient) apiClient: IScryfallClient
+    @inject(INFRASTRUCTURE.ConfigurationService) configurationService: IConfigurationService,
+    @inject(SCRYFALL.ScryfallClient) apiClient: IScryfallClient,
+    @inject(INFRASTRUCTURE.LogService) logService: ILogService
   ) {
     this.configurationService = configurationService;
     this.apiClient = apiClient;
+    this.logService = logService;
   }
   //#endregion
 
@@ -47,7 +50,7 @@ export class ImageCacheService implements IImageCacheService {
         const asString = enc.decode(arrayBuffer);
         return fs.promises.writeFile(this.pathToCardSetSvg(cardSet), this.hackCardSetSvg(asString));
       })
-      .catch((reason) => console.log(`failed ${cardSet.name}`, reason));
+      .catch((reason) => this.logService.error("Main", `failed ${cardSet.name}`, reason));
   }
 
   public deleteCachedCardImage(card: DtoCardImageData): void {

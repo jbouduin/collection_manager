@@ -1,9 +1,9 @@
 
-/* eslint-disable  @typescript-eslint/no-explicit-any */
 import { ColumnDefinitionBuilder, Kysely } from "kysely";
 
 import { IBaseMigration, CreateTableOptions, createTable } from "../base-migration";
 
+/* eslint-disable  @typescript-eslint/no-explicit-any, @stylistic/newline-per-chained-call */
 export class V0_0_1_Ruling_Migration implements IBaseMigration {
   public get keyName(): string {
     return "0007: v.0.0.1.Oracle";
@@ -52,7 +52,6 @@ async function createV0_0_1_RulingLine(db: Kysely<any>): Promise<void> {
 }
 
 async function createV0_0_1_Oracle(db: Kysely<any>): Promise<void> {
-  console.log("oracle");
   const options: CreateTableOptions = {
     isSynced: true,
     tableName: "oracle",
@@ -70,7 +69,6 @@ async function createV0_0_1_Oracle(db: Kysely<any>): Promise<void> {
 }
 
 async function createV0_0_1_OracleLegality(db: Kysely<any>): Promise<void> {
-  console.log("oracle_legality");
   const options: CreateTableOptions = {
     isSynced: true,
     tableName: "oracle_legality",
@@ -87,7 +85,6 @@ async function createV0_0_1_OracleLegality(db: Kysely<any>): Promise<void> {
 }
 
 async function createV0_0_1_OracleKeyword(db: Kysely<any>): Promise<void> {
-  console.log("oracle_keyword");
   return db.schema.createTable("oracle_keyword")
     .addColumn("oracle_id", "text", (col: ColumnDefinitionBuilder) => col.notNull())
     .addColumn("keyword", "text", (col: ColumnDefinitionBuilder) => col.notNull())

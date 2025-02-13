@@ -4,9 +4,10 @@ import { Selectable } from "kysely";
 import { DtoCardSymbol, DtoCardSymbolAlternative, DtoCardSymbolColorMap } from "../../../../common/dto";
 import { cardSymbolAlternativeTableFields, cardSymbolColorMapTableFields, cardSymbolTableFields } from "../../../../main/database/schema/card-symbol/table-field.constants";
 import { CardSymbolTable } from "../../../database/schema";
-import INFRATOKENS, { IDatabaseService, IImageCacheService } from "../../infra/interfaces";
+import { IDatabaseService, IImageCacheService, ILogService } from "../../infra/interfaces";
 import { ICardSymbolRepository } from "../interfaces";
 import { BaseRepository } from "./base.repository";
+import { INFRASTRUCTURE } from "../../service.tokens";
 
 
 @injectable()
@@ -17,9 +18,11 @@ export class CardSymbolRepository extends BaseRepository implements ICardSymbolR
 
   //#region Constructor & C° --------------------------------------------------
   public constructor(
-    @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
-    @inject(INFRATOKENS.ImageCacheService) imageCacheService: IImageCacheService) {
-    super(databaseService);
+    @inject(INFRASTRUCTURE.DatabaseService) databaseService: IDatabaseService,
+    @inject(INFRASTRUCTURE.ImageCacheService) imageCacheService: IImageCacheService,
+    @inject(INFRASTRUCTURE.LogService) logService: ILogService
+  ) {
+    super(databaseService, logService);
     this.imageCacheService = imageCacheService;
   }
   //#endregion
@@ -53,10 +56,10 @@ export class CardSymbolRepository extends BaseRepository implements ICardSymbolR
       .selectFrom("card_symbol")
       .selectAll()
       .execute()
-      .then(((cardSymbols: Array<Selectable<CardSymbolTable>>) => {
+      .then((cardSymbols: Array<Selectable<CardSymbolTable>>) => {
         const result = new Map<string, string>();
         cardSymbols.forEach((cardSymbol: Selectable<CardSymbolTable>) => result.set(cardSymbol.id, this.imageCacheService.getCardSymbolSvg(cardSymbol)));
         return result;
-      }));
+      });
   }
 }

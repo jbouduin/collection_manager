@@ -1,11 +1,10 @@
 import { container, inject, singleton } from "tsyringe";
-
 import { BrowserWindow } from "electron";
 import { DtoSyncParam } from "../../../../common/dto";
-import SYNCTOKENS from "../../scryfall";
-import INFRATOKENS, { IIpcSyncService, IWindowService } from "../interfaces";
+import { IIpcSyncService, IWindowService } from "../interfaces";
 import { runSerial } from "../util";
 import { IBaseSyncService } from "../../scryfall/sync/interface/base-sync.service";
+import { INFRASTRUCTURE, SCRYFALL } from "../../service.tokens";
 
 
 interface SyncTaskParam {
@@ -23,7 +22,7 @@ export class IpcSyncService implements IIpcSyncService {
   //#endregion
 
   //#region Constructor -------------------------------------------------------
-  public constructor(@inject(INFRATOKENS.WindowService) windowService: IWindowService) {
+  public constructor(@inject(INFRASTRUCTURE.WindowService) windowService: IWindowService) {
     this.windowService = windowService;
   }
   //#endregion
@@ -34,7 +33,7 @@ export class IpcSyncService implements IIpcSyncService {
     if (syncParam.cardSyncType != "none") {
       taskParams.push({
         displayName: "Cards",
-        serviceToken: SYNCTOKENS.CardSyncService,
+        serviceToken: SCRYFALL.CardSyncService,
         syncParam: syncParam,
         browserWindow: browserWindow
       });
@@ -42,7 +41,7 @@ export class IpcSyncService implements IIpcSyncService {
     if (syncParam.rulingSyncType != "none") {
       taskParams.push({
         displayName: "Rulings",
-        serviceToken: SYNCTOKENS.RulingSyncService,
+        serviceToken: SCRYFALL.RulingSyncService,
         syncParam: syncParam,
         browserWindow: browserWindow
       });
@@ -50,7 +49,7 @@ export class IpcSyncService implements IIpcSyncService {
     if (syncParam.syncCardSymbols) {
       taskParams.push({
         displayName: "CardSymbol",
-        serviceToken: SYNCTOKENS.CardSymbolSyncService,
+        serviceToken: SCRYFALL.CardSymbolSyncService,
         syncParam: syncParam,
         browserWindow: browserWindow
       });
@@ -58,7 +57,7 @@ export class IpcSyncService implements IIpcSyncService {
     if (syncParam.syncCardSets) {
       taskParams.push({
         displayName: "CardSets",
-        serviceToken: SYNCTOKENS.CardSetSyncService,
+        serviceToken: SCRYFALL.CardSetSyncService,
         syncParam: syncParam,
         browserWindow: browserWindow
       });
@@ -66,7 +65,7 @@ export class IpcSyncService implements IIpcSyncService {
     if (syncParam.catalogTypesToSync.length > 0) {
       taskParams.push({
         displayName: "Catalog",
-        serviceToken: SYNCTOKENS.CatalogSyncService,
+        serviceToken: SCRYFALL.CatalogSyncService,
         syncParam: syncParam,
         browserWindow: browserWindow
       });

@@ -1,12 +1,12 @@
 import { inject, injectable } from "tsyringe";
 import * as helpers from "kysely/helpers/sqlite";
-
 import { DtoCardSet, DtoCardSetDetails, DtoCardSetLanguage } from "../../../../common/dto";
-import INFRATOKENS, { IDatabaseService, IImageCacheService } from "../../infra/interfaces";
+import { IDatabaseService, IImageCacheService, ILogService } from "../../infra/interfaces";
 import { ICardSetRepository } from "../interfaces";
 import { BaseRepository } from "./base.repository";
 import { cardSetTableFields } from "../../../database/schema/card/table-fields.constants";
 import { sql } from "kysely";
+import { INFRASTRUCTURE } from "../../service.tokens";
 
 @injectable()
 export class CardSetRepository extends BaseRepository implements ICardSetRepository {
@@ -16,9 +16,11 @@ export class CardSetRepository extends BaseRepository implements ICardSetReposit
 
   //#region Constructor & C° --------------------------------------------------
   public constructor(
-    @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
-    @inject(INFRATOKENS.ImageCacheService) imageCacheService: IImageCacheService) {
-    super(databaseService);
+    @inject(INFRASTRUCTURE.DatabaseService) databaseService: IDatabaseService,
+    @inject(INFRASTRUCTURE.ImageCacheService) imageCacheService: IImageCacheService,
+    @inject(INFRASTRUCTURE.LogService) logService: ILogService
+  ) {
+    super(databaseService, logService);
     this.imageCacheService = imageCacheService;
   }
   //#endregion

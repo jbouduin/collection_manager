@@ -8,5 +8,5 @@ export interface DtoCardImageData {
   setCode: string;
   language: string;
   imageType: ImageSize;
-  side: CardSide
+  side: CardSide;
 }

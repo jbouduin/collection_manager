@@ -1,14 +1,17 @@
 import { inject, injectable } from "tsyringe";
-
 import { DtoLegality, DtoRulingLine } from "../../../../common/dto";
-import INFRATOKENS, { IDatabaseService } from "../../infra/interfaces";
+import { IDatabaseService, ILogService } from "../../infra/interfaces";
 import { IOracleRepository } from "../interfaces";
 import { BaseRepository } from "./base.repository";
+import { INFRASTRUCTURE } from "../../service.tokens";
 
 @injectable()
 export class OracleRepository extends BaseRepository implements IOracleRepository {
-  public constructor(@inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService) {
-    super(databaseService);
+  public constructor(
+    @inject(INFRASTRUCTURE.DatabaseService) databaseService: IDatabaseService,
+    @inject(INFRASTRUCTURE.LogService) logService: ILogService
+  ) {
+    super(databaseService, logService);
   }
 
   public async getByCardId(cardId: string): Promise<Array<DtoRulingLine>> {

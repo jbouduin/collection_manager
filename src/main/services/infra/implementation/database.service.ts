@@ -10,7 +10,6 @@ import { SqliteKyselyPlugin } from "./sqlite.kysely.plugin";
 
 @singleton()
 export class DatabaseService implements IDatabaseService {
-
   //#region private fields ----------------------------------------------------
   private _database: Kysely<DatabaseSchema>;
   private configurationService: IConfigurationService;
@@ -46,15 +45,10 @@ export class DatabaseService implements IDatabaseService {
       database: new SQLite(this.configurationService.dataBaseFilePath)
     });
     const connection = new Kysely<DatabaseSchema>({
-      dialect: dialect,
+      dialect: dialect
     });
 
-    const migrator = new Migrator(
-      {
-        db: connection,
-        provider: migrationProvider
-      }
-    );
+    const migrator = new Migrator({ db: connection, provider: migrationProvider });
 
     const migrationsToExecute = (await migrator.getMigrations()).filter((migration: MigrationInfo) => !migration.executedAt);
 
@@ -68,7 +62,8 @@ export class DatabaseService implements IDatabaseService {
               throw migrationResultSet.error;
             }
           });
-      })
+      }
+    )
       .then(() => this);
   }
   //#endregion

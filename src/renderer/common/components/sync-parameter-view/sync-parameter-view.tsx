@@ -1,13 +1,11 @@
 import { Checkbox, Divider, FormGroup, H4, HTMLSelect, HTMLTable, NumericInput, SectionCard } from "@blueprintjs/core";
 import * as React from "react";
-
 import { CardSyncType, CardSyncTypeDisplayValue, RulingSyncType, RulingSyncTypeDisplayValue, TimespanUnit, TimespanUnitDisplayValue } from "../../../../common/dto";
 import { CatalogType, CatalogTypeDisplayValue, ImageStatus, ImageStatusDisplayValue } from "../../../../common/enums";
 import { displayValueMapToSelectOptions, handleBooleanChange, handleValueChange } from "../../utils";
 import { SyncParameterViewProps } from "./sync-parameter-view.props";
 
 export function SyncParameterView(props: SyncParameterViewProps) {
-
   //#region Main --------------------------------------------------------------
   return (
     <SectionCard padded={false} >
@@ -15,14 +13,14 @@ export function SyncParameterView(props: SyncParameterViewProps) {
       <FormGroup label="Cards" labelFor="card-sync-type">
         <HTMLSelect
           id="card-sync-type"
-          options={displayValueMapToSelectOptions(CardSyncTypeDisplayValue)}
-          value={props.syncParam.cardSyncType}
           onChange={
             handleValueChange((value: CardSyncType) => {
               props.syncParam.cardSyncType = value;
               props.onSyncParamChanged(props.syncParam);
             })
           }
+          options={displayValueMapToSelectOptions(CardSyncTypeDisplayValue)}
+          value={props.syncParam.cardSyncType}
         />
       </FormGroup>
 
@@ -42,9 +40,6 @@ export function SyncParameterView(props: SyncParameterViewProps) {
         <FormGroup key="sync-by-last-sync">
           <div style={{ display: "flex", flexDirection: "row" }}>
             <NumericInput
-              style={{ maxWidth: "50px", textAlign: "right" }}
-              selectAllOnFocus={true}
-              value={props.syncParam.syncCardsSyncedBeforeNumber}
               allowNumericCharactersOnly={true}
               buttonPosition="none"
               min={0}
@@ -54,16 +49,19 @@ export function SyncParameterView(props: SyncParameterViewProps) {
                   props.onSyncParamChanged(props.syncParam);
                 }
               }
+              selectAllOnFocus={true}
+              style={{ maxWidth: "50px", textAlign: "right" }}
+              value={props.syncParam.syncCardsSyncedBeforeNumber}
             />
             <HTMLSelect
-              options={displayValueMapToSelectOptions(TimespanUnitDisplayValue)}
-              value={props.syncParam.syncCardsSyncedBeforeUnit}
               onChange={
                 handleValueChange((value: TimespanUnit) => {
                   props.syncParam.syncCardsSyncedBeforeUnit = value;
                   props.onSyncParamChanged(props.syncParam);
                 })
               }
+              options={displayValueMapToSelectOptions(TimespanUnitDisplayValue)}
+              value={props.syncParam.syncCardsSyncedBeforeUnit}
             />
           </div>
         </FormGroup>
@@ -72,14 +70,14 @@ export function SyncParameterView(props: SyncParameterViewProps) {
       <FormGroup label="Rulings" labelFor="rulings-sync-type">
         <HTMLSelect
           id="rulings-sync-type"
-          options={displayValueMapToSelectOptions(RulingSyncTypeDisplayValue)}
-          value={props.syncParam.rulingSyncType}
           onChange={
             handleValueChange((value: RulingSyncType) => {
               props.syncParam.rulingSyncType = value;
               props.onSyncParamChanged(props.syncParam);
             })
           }
+          options={displayValueMapToSelectOptions(RulingSyncTypeDisplayValue)}
+          value={props.syncParam.rulingSyncType}
         />
       </FormGroup>
 
@@ -89,9 +87,9 @@ export function SyncParameterView(props: SyncParameterViewProps) {
       {/* <FormGroup label="Master data" key="master-data"> */}
       {/* <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}> */}
       <Checkbox
+        checked={props.syncParam.syncCardSets}
         key="card-sets"
         label="Card set data"
-        checked={props.syncParam.syncCardSets}
         onChange={
           handleBooleanChange((value: boolean) => {
             props.syncParam.syncCardSets = value;
@@ -100,9 +98,9 @@ export function SyncParameterView(props: SyncParameterViewProps) {
         }
       />
       <Checkbox
+        checked={props.syncParam.syncCardSymbols}
         key="card-symbols"
         label="Card symbols"
-        checked={props.syncParam.syncCardSymbols}
         onChange={
           handleBooleanChange((value: boolean) => {
             props.syncParam.syncCardSymbols = value;
@@ -110,7 +108,12 @@ export function SyncParameterView(props: SyncParameterViewProps) {
           })
         }
       />
-      <HTMLTable compact={true} bordered={false} width="100%" key="catalogs">
+      <HTMLTable
+        bordered={false}
+        compact={true}
+        key="catalogs"
+        width="100%"
+      >
         <thead>
           <tr><td colSpan={3} style={{ paddingLeft: "0px" }}>Catalogs</td></tr>
         </thead>
@@ -133,32 +136,27 @@ export function SyncParameterView(props: SyncParameterViewProps) {
       if (idx % 3 == 0) {
         currentRow = new Array<React.JSX.Element>();
       }
-      currentRow.push(
-        (
-          <td style={{paddingLeft: "0px"}} key={`cell-${key}`}>
-
-            <Checkbox
-              key={key}
-              label={displayValue}
-              checked={props.syncParam.getCatalogToSync(key)}
-              onChange={
-                handleBooleanChange((value: boolean) => {
-                  props.syncParam.setCatalogToSync(key, value);
-                  props.onSyncParamChanged(props.syncParam);
-                })
-              }
-              />
-          </td>
-        )
-      );
+      currentRow.push((
+        <td key={`cell-${key}`} style={{ paddingLeft: "0px" }} >
+          <Checkbox
+            checked={props.syncParam.getCatalogToSync(key)}
+            key={key}
+            label={displayValue}
+            onChange={
+              handleBooleanChange((value: boolean) => {
+                props.syncParam.setCatalogToSync(key, value);
+                props.onSyncParamChanged(props.syncParam);
+              })
+            }
+          />
+        </td>
+      ));
       if (idx % 3 == 1) {
-        table.push(
-          (
-            <tr key={`row-${idx}`}>
-              {currentRow}
-            </tr>
-          )
-        );
+        table.push((
+          <tr key={`row-${idx}`}>
+            {currentRow}
+          </tr>
+        ));
       }
       idx = idx + 1;
     });
@@ -168,22 +166,19 @@ export function SyncParameterView(props: SyncParameterViewProps) {
   function renderImageStatus(): Array<React.JSX.Element> {
     const result = new Array<React.JSX.Element>();
     ImageStatusDisplayValue.forEach((displayValue: string, key: ImageStatus) => {
-
-      result.push(
-        (
-          <Checkbox
-            key={key}
-            label={displayValue}
-            checked={props.syncParam.getCardImageStatusToSync(key)}
-            onChange={
-              handleBooleanChange((value: boolean) => {
-                props.syncParam.setCardImageStatusToSync(key, value);
-                props.onSyncParamChanged(props.syncParam);
-              })
-            }
-          />
-        )
-      );
+      result.push((
+        <Checkbox
+          checked={props.syncParam.getCardImageStatusToSync(key)}
+          key={key}
+          label={displayValue}
+          onChange={
+            handleBooleanChange((value: boolean) => {
+              props.syncParam.setCardImageStatusToSync(key, value);
+              props.onSyncParamChanged(props.syncParam);
+            })
+          }
+        />
+      ));
     });
     return result;
   }

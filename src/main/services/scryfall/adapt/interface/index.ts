@@ -11,7 +11,7 @@ import { ITableAdapter } from "./table.adapter";
 
 
 export type ICardSetAdapter = ITableAdapter<"card_set", ScryfallCardSet>;
-export type ICatalogAdapter = ITableAdapter<"catalog_item",CatalogAdapterParam>;
+export type ICatalogAdapter = ITableAdapter<"catalog_item", CatalogAdapterParam>;
 export type ICardSymbolAdapter = ITableAdapter<"card_symbol", ScryfallCardSymbol>;
 export type ICardSymbolAlternativeAdapter = ITableAdapter<"card_symbol_alternative", CardSymbolAlternativeAdapterParam>;
 export type ICardSymbolColorMapAdapter = ITableAdapter<"card_symbol_color_map", CardSymbolColorMapAdapterParam>;

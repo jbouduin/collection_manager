@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 enum ECardFrameEffect {
   legendary,
   miracle,
@@ -21,7 +22,7 @@ enum ECardFrameEffect {
   shatteredglass,
   convertdfc,
   fandfc,
-  upsidedowndfc,
+  upsidedowndfc
 }
 
 export type CardFrameEffect = keyof typeof ECardFrameEffect;

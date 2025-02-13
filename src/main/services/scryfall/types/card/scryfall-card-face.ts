@@ -1,15 +1,14 @@
 import { CardLayout, MTGColor } from "../../../../../common/enums";
 
 export interface ScryfallCardface {
-
   /**
    * The colors in this card’s color indicator, if any. A null value for this field indicates the card does not have one.
    */
-  color_indicator ?: Array<MTGColor>;
+  color_indicator?: Array<MTGColor>;
   /**
    * Nullable 	The mana cost for this card. This value will be any empty string "" if the cost is absent. Remember that per the game rules, a missing mana cost and a mana cost of {0} are different  Multi-faced cards will report this value in card faces.
    */
-  mana_cost ?: string;
+  mana_cost?: string;
   /**
    * The name of this card.
    */
@@ -22,17 +21,14 @@ export interface ScryfallCardface {
    * The Oracle text for this card, if any.
    */
   oracle_text: string;
-
   /**
    * This card’s hand modifier, if it is Vanguard card. This value will contain a delta, such as -1.
    */
-   hand_modifier?: string;
-
+  hand_modifier?: string;
   /**
    * This card’s life modifier, if it is Vanguard card. This value will contain a delta, such as +2.
    */
   life_modifier?: string;
-
   /**
    * This card's defense, if any.
    */
@@ -50,8 +46,8 @@ export interface ScryfallCardface {
    */
   toughness?: string;
   /**
-     * The just-for-fun name printed on the card (such as for Godzilla series cards).
-     */
+   * The just-for-fun name printed on the card (such as for Godzilla series cards).
+   */
   flavor_name?: string;
   /**
    * The flavor text, if any.
@@ -73,8 +69,6 @@ export interface ScryfallCardface {
    * The localized type line printed on this card, if any.
    */
   printed_type_line?: string;
-
-  // following are cardfaceonly
   /**
    * The name of the illustrator of this card face. Newly spoiled cards may not have this field yet.
    */
@@ -92,10 +86,9 @@ export interface ScryfallCardface {
    */
   illustration_id?: string;
   /**
-     * This card’s colors, if the overall card has colors defined by the rules. Otherwise the colors will be on the card_faces objects.
-     */
+   * This card’s colors, if the overall card has colors defined by the rules. Otherwise the colors will be on the card_faces objects.
+   */
   colors: Array<MTGColor>;
-
   /**
    * The card’s mana value. Note that some funny cards have fractional mana costs.
    *

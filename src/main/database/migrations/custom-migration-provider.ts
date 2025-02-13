@@ -6,7 +6,6 @@ import MIGRATOKENS from "./migration.tokens";
 
 @injectable()
 export class CustomMigrationProvider implements MigrationProvider {
-
   private allMigrations: Array<IBaseMigration>;
 
   public constructor(@injectAll(MIGRATOKENS.Migration) allMigrations: Array<IBaseMigration>) {

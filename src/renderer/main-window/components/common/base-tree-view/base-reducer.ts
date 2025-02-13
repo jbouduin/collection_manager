@@ -1,18 +1,18 @@
 import { Tree, TreeNodeInfo } from "@blueprintjs/core";
-import * as _ from "lodash";
 import { NodePath, TreeAction } from "./types";
+import { cloneDeep } from "lodash";
 
 export function BaseReducer(state: Array<TreeNodeInfo>, action: TreeAction) {
-  const newState = _.cloneDeep(state);
+  const newState = cloneDeep(state);
   switch (action.type) {
     case "DESELECT_ALL":
-      forEachNode(newState, node => (node.isSelected = false));
+      forEachNode(newState, (node: TreeNodeInfo) => node.isSelected = false);
       return newState;
     case "SET_IS_EXPANDED":
-      forNodeAtPath(newState, action.payload.path, node => (node.isExpanded = action.payload.isExpanded));
+      forNodeAtPath(newState, action.payload.path, (node: TreeNodeInfo) => node.isExpanded = action.payload.isExpanded);
       return newState;
     case "SET_IS_SELECTED":
-      forNodeAtPath(newState, action.payload.path, node => (node.isSelected = action.payload.isSelected));
+      forNodeAtPath(newState, action.payload.path, (node: TreeNodeInfo) => node.isSelected = action.payload.isSelected);
       return newState;
     case "FILTER":
       return action.payload;
@@ -25,7 +25,7 @@ function forEachNode(nodes: Array<TreeNodeInfo> | undefined, callback: (node: Tr
   if (!nodes) {
     return;
   }
-  for (const node of nodes as Array<TreeNodeInfo>) {
+  for (const node of nodes) {
     callback(node);
     forEachNode(node.childNodes, callback);
   }

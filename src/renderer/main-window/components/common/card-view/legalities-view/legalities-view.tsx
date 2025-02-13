@@ -1,13 +1,11 @@
 import { HTMLTable, Intent, Tag } from "@blueprintjs/core";
 import * as React from "react";
-
-import { LegalityQueryOptions, QueryParam } from "../../../../../../common/ipc-params";
 import { DtoLegality } from "../../../../../../common/dto";
+import { LegalityQueryOptions, QueryParam } from "../../../../../../common/ipc-params";
 import { LegalitiesViewProps } from "./legalities-view.props";
 
+// LATER if token, art_serie, futurue release etc : just display text that this card is not to be used for deck building
 export function LegalitiesView(props: LegalitiesViewProps) {
-
-  // LATER if token, art_serie, futurue release etc : just display text that this card is not to be used for deck building
   //#region State -------------------------------------------------------------
   const [legalities, setLegalities] = React.useState(new Array<DtoLegality>());
   //#endregion
@@ -22,7 +20,7 @@ export function LegalitiesView(props: LegalitiesViewProps) {
             oracleId: props.oracleId
           }
         };
-        window.ipc.query(rulingQueryParam)
+        void window.ipc.query(rulingQueryParam)
           .then((queryResult: Array<DtoLegality>) => setLegalities(queryResult));
       } else {
         setLegalities(new Array<DtoLegality>());
@@ -34,7 +32,11 @@ export function LegalitiesView(props: LegalitiesViewProps) {
 
   //#region Main --------------------------------------------------------------
   return (
-    <HTMLTable compact={true} bordered={false} width="100%">
+    <HTMLTable
+      bordered={false}
+      compact={true}
+      width="100%"
+    >
       <tbody>
         {
           getTable()

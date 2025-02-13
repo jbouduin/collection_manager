@@ -51,9 +51,9 @@ async function populateV0_0_1_Language(db: Kysely<any>): Promise<Array<InsertRes
   values.push({ created_at: sqliteUTCTimeStamp, modified_at: sqliteUTCTimeStamp, id: "zht", sequence: 10, printed_code: "CT", display_text: "Traditinal Chinese", button_text: "漢語" });
   values.push({ created_at: sqliteUTCTimeStamp, modified_at: sqliteUTCTimeStamp, id: "he", sequence: 11, display_text: "Hebrew" });
   values.push({ created_at: sqliteUTCTimeStamp, modified_at: sqliteUTCTimeStamp, id: "la", sequence: 12, display_text: "Latin" });
-  values.push({ created_at: sqliteUTCTimeStamp, modified_at: sqliteUTCTimeStamp, id: "grc", sequence: 13, display_text: "Ancient Greek", });
-  values.push({ created_at: sqliteUTCTimeStamp, modified_at: sqliteUTCTimeStamp, id: "ar", sequence: 14, display_text: "Arabic", });
-  values.push({ created_at: sqliteUTCTimeStamp, modified_at: sqliteUTCTimeStamp, id: "sa", sequence: 15, display_text: "Sanskrit", });
+  values.push({ created_at: sqliteUTCTimeStamp, modified_at: sqliteUTCTimeStamp, id: "grc", sequence: 13, display_text: "Ancient Greek" });
+  values.push({ created_at: sqliteUTCTimeStamp, modified_at: sqliteUTCTimeStamp, id: "ar", sequence: 14, display_text: "Arabic" });
+  values.push({ created_at: sqliteUTCTimeStamp, modified_at: sqliteUTCTimeStamp, id: "sa", sequence: 15, display_text: "Sanskrit" });
   values.push({ created_at: sqliteUTCTimeStamp, modified_at: sqliteUTCTimeStamp, id: "ph", sequence: 16, printed_code: "PH", display_text: "Phyrexian" });
 
   return db.insertInto("language")

@@ -89,7 +89,6 @@ export class RulingSyncService extends BaseSyncService implements IRulingSyncSer
   }
 
   private async syncRulingForSingleOracleId(trx: Transaction<DatabaseSchema>, oracleId: string, rulings: Array<ScryfallRuling>): Promise<InsertResult | void> {
-
     const rulingFilter: ExpressionOrFactory<DatabaseSchema, "oracle_ruling", SqlBool> = (eb) => eb("oracle_ruling.oracle_id", "=", oracleId);
     const existingRulingPromise = trx
       .selectFrom("oracle_ruling")
@@ -114,7 +113,8 @@ export class RulingSyncService extends BaseSyncService implements IRulingSyncSer
 
     const deleteLinesPromise: Promise<Array<DeleteResult>> = insertOrUpdateRulingPromise.then(() => {
       const rulingLineFilter: ExpressionOrFactory<DatabaseSchema, "oracle_ruling_line", SqlBool> = (eb) => eb("oracle_ruling_line.oracle_id", "=", oracleId);
-      return trx.deleteFrom("oracle_ruling_line").where(rulingLineFilter).execute();
+      return trx.deleteFrom("oracle_ruling_line").where(rulingLineFilter)
+        .execute();
     });
 
     if (rulings.length > 0) {

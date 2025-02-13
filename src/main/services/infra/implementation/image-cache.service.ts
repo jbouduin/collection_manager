@@ -14,7 +14,6 @@ import INFRATOKENS, { IConfigurationService, IImageCacheService } from "../inter
 
 @injectable()
 export class ImageCacheService implements IImageCacheService {
-
   //#region Private readonly fields -------------------------------------------
   private readonly configurationService: IConfigurationService;
   private readonly apiClient: IScryfallClient;
@@ -23,7 +22,8 @@ export class ImageCacheService implements IImageCacheService {
   //#region Constructor & C° --------------------------------------------------
   public constructor(
     @inject(INFRATOKENS.ConfigurationService) configurationService: IConfigurationService,
-    @inject(SCRYTOKENS.ScryfallClient) apiClient: IScryfallClient) {
+    @inject(SCRYTOKENS.ScryfallClient) apiClient: IScryfallClient
+  ) {
     this.configurationService = configurationService;
     this.apiClient = apiClient;
   }

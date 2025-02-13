@@ -10,5 +10,5 @@ export type QueryOptions = CardQueryOptions | RulingQueryOptions | LegalityQuery
 
 export interface QueryParam<T extends QueryOptions> {
   type: QueryType;
-  options: T
+  options: T;
 }

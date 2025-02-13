@@ -18,9 +18,9 @@ export class CardViewmodel {
   }
 
   public get cardName(): string {
-    return this._dtoCard.layout != "reversible_card" ?
-      this.joinMultiCardFaceData(this._dtoCard.oracle.map((oracle: DtoOracle) => oracle.oracle_name)) :
-      this.joinMultiCardFaceData(this._dtoCard.cardfaces.map((cardface: DtoCardface) => cardface.oracle.oracle_name));
+    return this._dtoCard.layout != "reversible_card"
+      ? this.joinMultiCardFaceData(this._dtoCard.oracle.map((oracle: DtoOracle) => oracle.oracle_name))
+      : this.joinMultiCardFaceData(this._dtoCard.cardfaces.map((cardface: DtoCardface) => cardface.oracle.oracle_name));
   }
 
   public get cardPower(): string {
@@ -114,8 +114,7 @@ export class CardViewmodel {
     });
     if (result.length == 1 && result[0] == "//") {
       result.pop();
-    }
-    else if (result[0] == "//") {
+    } else if (result[0] == "//") {
       result.splice(0, 0, "-");
     } else if (result[result.length - 1] == "//") {
       result.push("-");
@@ -126,7 +125,10 @@ export class CardViewmodel {
   private convertManaCost(manaCost: string): Array<string> {
     const splittedCellValue = manaCost.split("}");
     splittedCellValue.pop();
-    return splittedCellValue.map((s: string, i: number) => i < splittedCellValue.length ? s + "}" : s);
+    return splittedCellValue.map((s: string, i: number) => {
+      /* es-lint-disable-next-line @stylistic/operator-linebreak */
+      return i < splittedCellValue.length ? s + "}" : s;
+    });
   }
   //#endregion
 
@@ -146,7 +148,10 @@ export class CardViewmodel {
       return "";
     } else {
       return data
-        .map((d: string) => d == null || d == undefined ? "-" : d)
+        .map((d: string) => {
+          /* es-lint-disable-next-line @stylistic/operator-linebreak */
+          return d == null || d == undefined ? "-" : d;
+        })
         .join(" // ");
     }
   }

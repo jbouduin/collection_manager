@@ -1,13 +1,11 @@
 import { Button, ButtonGroup, IconName, InputGroup, Menu, MenuDivider, MenuItem, Popover } from "@blueprintjs/core";
 import * as React from "react";
-
 import { CardSetType, CardSetTypeDisplayValue } from "../../../../../../../../common/enums";
 import { HeaderViewProps } from "./header-view-props";
 
 type PopoverKey = "card-set-group-by-menu" | "card-set-sort-menu" | "card-set-type-filter-menu";
 
 export function HeaderView(props: HeaderViewProps) {
-
   //#region State -------------------------------------------------------------
   const [textFilterValue, setTextFilterValue] = React.useState<string>(null);
   //#endregion
@@ -36,12 +34,12 @@ export function HeaderView(props: HeaderViewProps) {
 
   //#region Main --------------------------------------------------------------
   return (
-    <ButtonGroup minimal={true} fill={true}>
+    <ButtonGroup fill={true} minimal={true} >
       <InputGroup
+        fill={true}
         leftIcon="filter"
         onChange={handleTextFilterChanged}
         placeholder="Text Filter..."
-        fill={true}
       />
       {
         buildPopover("card-set-group-by-menu", "diagram-tree")
@@ -59,18 +57,20 @@ export function HeaderView(props: HeaderViewProps) {
   //#region Auxiliary methods -------------------------------------------------
   function buildPopover(key: PopoverKey, icon: IconName): React.JSX.Element {
     return (
-      <Popover key={key}
+      <Popover
         canEscapeKeyClose={true}
+        content={buildMenu(key)}
         inheritDarkTheme={true}
         interactionKind="hover"
+        key={key}
         minimal={false}
         modifiers={
           { arrow: { enabled: false } }
         }
-        content={buildMenu(key)}
         openOnTargetFocus={false}
         placement="bottom-end"
-        usePortal={false}>
+        usePortal={false}
+      >
         <Button icon={icon} />
       </Popover>
     );
@@ -92,10 +92,30 @@ export function HeaderView(props: HeaderViewProps) {
   function buildGroupByMenu(): React.JSX.Element {
     return (
       <Menu small={true}>
-        <MenuItem text="Parent" selected={props.cardSetGroupBy == "parent"} roleStructure="listoption" onClick={() => props.onCardSetGroupByChanged("parent")} />
-        <MenuItem text="Block" selected={props.cardSetGroupBy == "block"} roleStructure="listoption" onClick={() => props.onCardSetGroupByChanged("block")} />
-        <MenuItem text="Set-type" selected={props.cardSetGroupBy == "setType"} roleStructure="listoption" onClick={() => props.onCardSetGroupByChanged("setType")} />
-        <MenuItem text="No grouping (slow!)" selected={props.cardSetGroupBy == "none"} roleStructure="listoption" onClick={() => props.onCardSetGroupByChanged("none")} />
+        <MenuItem
+          onClick={() => props.onCardSetGroupByChanged("parent")}
+          roleStructure="listoption"
+          selected={props.cardSetGroupBy == "parent"}
+          text="Parent"
+        />
+        <MenuItem
+          onClick={() => props.onCardSetGroupByChanged("block")}
+          roleStructure="listoption"
+          selected={props.cardSetGroupBy == "block"}
+          text="Block"
+        />
+        <MenuItem
+          onClick={() => props.onCardSetGroupByChanged("setType")}
+          roleStructure="listoption"
+          selected={props.cardSetGroupBy == "setType"}
+          text="Set-type"
+        />
+        <MenuItem
+          onClick={() => props.onCardSetGroupByChanged("none")}
+          roleStructure="listoption"
+          selected={props.cardSetGroupBy == "none"}
+          text="No grouping (slow!)"
+        />
       </Menu>
     );
   }
@@ -103,11 +123,31 @@ export function HeaderView(props: HeaderViewProps) {
   function buildSortMenu(): React.JSX.Element {
     return (
       <Menu small={true}>
-        <MenuItem text="Release date ascending" selected={props.cardSetSort == "releaseDateAscending"} roleStructure="listoption" onClick={() => props.onCardSetSortChanged("releaseDateAscending")} />
-        <MenuItem text="Release date descending" selected={props.cardSetSort == "releaseDateDescending"} roleStructure="listoption" onClick={() => props.onCardSetSortChanged("releaseDateDescending")} />
+        <MenuItem
+          onClick={() => props.onCardSetSortChanged("releaseDateAscending")}
+          roleStructure="listoption"
+          selected={props.cardSetSort == "releaseDateAscending"}
+          text="Release date ascending"
+        />
+        <MenuItem
+          onClick={() => props.onCardSetSortChanged("releaseDateDescending")}
+          roleStructure="listoption"
+          selected={props.cardSetSort == "releaseDateDescending"}
+          text="Release date descending"
+        />
         <MenuDivider />
-        <MenuItem text="Alfabetically ascending" selected={props.cardSetSort == "alphabeticallyAscending"} roleStructure="listoption" onClick={() => props.onCardSetSortChanged("alphabeticallyAscending")} />
-        <MenuItem text="Alfabetically descending" selected={props.cardSetSort == "alphabeticallyDescending"} roleStructure="listoption" onClick={() => props.onCardSetSortChanged("alphabeticallyDescending")} />
+        <MenuItem
+          onClick={() => props.onCardSetSortChanged("alphabeticallyAscending")}
+          roleStructure="listoption"
+          selected={props.cardSetSort == "alphabeticallyAscending"}
+          text="Alfabetically ascending"
+        />
+        <MenuItem
+          onClick={() => props.onCardSetSortChanged("alphabeticallyDescending")}
+          roleStructure="listoption"
+          selected={props.cardSetSort == "alphabeticallyDescending"}
+          text="Alfabetically descending"
+        />
       </Menu>
     );
   }
@@ -144,12 +184,14 @@ export function HeaderView(props: HeaderViewProps) {
     );
   }
 
-  function buildTypeFilterMenuItem(setType: CardSetType): React.JSX.Element{
-    return(
+  function buildTypeFilterMenuItem(setType: CardSetType): React.JSX.Element {
+    return (
       <MenuItem
+        onClick={() => props.onCardSetTypeFilterChanged(setType)}
+        roleStructure="listoption"
+        selected={props.cardSetTypeFilter.indexOf(setType) >= 0}
         text={CardSetTypeDisplayValue.get(setType)}
-        selected={props.cardSetTypeFilter.indexOf(setType) >= 0} roleStructure="listoption"
-        onClick={() => props.onCardSetTypeFilterChanged(setType)} />
+      />
     );
   }
   //#endregion

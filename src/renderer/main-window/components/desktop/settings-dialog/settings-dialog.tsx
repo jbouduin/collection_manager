@@ -1,16 +1,14 @@
 import { Classes, Dialog } from "@blueprintjs/core";
 import * as React from "react";
-
+import { DtoRendererConfiguration } from "../../../../../common/dto";
 import { DtoConfiguration } from "../../../../../common/dto/configuration/configuration.dto";
 import { QueryParam } from "../../../../../common/ipc-params";
+import { BaseDialogProps } from "../../../../common/components/base-dialog-props";
 import { ConfigurationWrapper } from "../../../../common/components/configuration/configuration-wrapper/configuration-wrapper";
 import { ConfigurationViewModel } from "../../../../common/viewmodels/configuration/configuration.viewmodel";
-import { BaseDialogProps } from "../../../../common/components/base-dialog-props";
 import { ConfigurationContext } from "../../context";
-import { DtoRendererConfiguration } from "../../../../../common/dto";
 
 export function SettingsDialog(props: BaseDialogProps) {
-
   //#region State -----------------------------------------------------------------------
   const [configuration, setConfiguration] = React.useState<ConfigurationViewModel>(undefined);
   //#endregion
@@ -22,7 +20,7 @@ export function SettingsDialog(props: BaseDialogProps) {
         type: "Configuration",
         options: null
       };
-      window.ipc.query(queryParam)
+      void window.ipc.query(queryParam)
         .then((configuration: DtoConfiguration) => setConfiguration(new ConfigurationViewModel(configuration, false)));
     },
     [props.isOpen]
@@ -35,19 +33,20 @@ export function SettingsDialog(props: BaseDialogProps) {
       {
         (rendererConfiguration: DtoRendererConfiguration) => (
           <Dialog
+            canEscapeKeyClose={true}
+            className={rendererConfiguration.useDarkTheme ? Classes.DARK : ""}
+            isCloseButtonShown={true}
             isOpen={props.isOpen}
             onClose={() => props.onDialogClose()}
             shouldReturnFocusOnClose={true}
-            canEscapeKeyClose={true}
-            isCloseButtonShown={true}
+            style={{ minWidth: "800px" }}
             title="Settings"
-            className={rendererConfiguration.useDarkTheme ? Classes.DARK : ""}
-            style={{"minWidth": "800px"}}
           >
             <ConfigurationWrapper
               configuration={configuration}
               onCancel={() => props.onDialogClose()}
-              onSave={() => props.onDialogClose()}/>
+              onSave={() => props.onDialogClose()}
+            />
           </Dialog>
         )
       }

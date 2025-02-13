@@ -13,7 +13,6 @@ import { V0_0_1_Set_Migration } from "./v0.0.1.set.migration";
 
 
 export class V0_0_1_Di {
-
   public static registerMigrations(container: DependencyContainer): DependencyContainer {
     container.register<IBaseMigration>(MIGRATOKENS.Migration, { useClass: V0_0_1_Card_Migration }, { lifecycle: Lifecycle.ResolutionScoped });
     container.register<IBaseMigration>(MIGRATOKENS.Migration, { useClass: V0_0_1_Catalog_Migration }, { lifecycle: Lifecycle.ResolutionScoped });

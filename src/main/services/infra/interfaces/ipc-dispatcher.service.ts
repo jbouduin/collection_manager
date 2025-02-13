@@ -1,3 +1,3 @@
 export interface IIpcDispatcherService {
-  Initialize(): IIpcDispatcherService
+  Initialize(): IIpcDispatcherService;
 }

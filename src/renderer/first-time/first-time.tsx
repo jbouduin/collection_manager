@@ -1,8 +1,5 @@
-import "../main-window/App.css";
-
 import { BlueprintProvider, FocusStyleManager } from "@blueprintjs/core";
 import * as React from "react";
-
 import { createRoot } from "react-dom/client";
 import { DtoConfiguration } from "../../common/dto/configuration/configuration.dto";
 import { QueryParam } from "../../common/ipc-params";
@@ -12,24 +9,23 @@ import { FirstTimeView } from "./first-time-view/first-time-view";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
-(async () => {
-  // Wait until CSS is loaded before rendering components because some of them (like Table)
-  // rely on those styles to take accurate DOM measurements.
-  // TODO await import("./App.css");
+void (async () => {
+  await import("../main-window/App.css");
   let configurationViewmodel: ConfigurationViewModel;
   const queryParam: QueryParam<null> = {
     type: "Configuration",
     options: null
   };
   // Go to main to ask for the factory default
-  window.ipc.query(queryParam)
-    .then((configuration: DtoConfiguration) => configurationViewmodel = new ConfigurationViewModel( configuration, true))
+  await window.ipc.query(queryParam)
+    .then((configuration: DtoConfiguration) => configurationViewmodel = new ConfigurationViewModel(configuration, true))
     .then(() => {
-      const container = document.getElementById("root") as HTMLElement;
+      const container = document.getElementById("root");
       const root = createRoot(container);
+      /* eslint-disable @stylistic/function-paren-newline */
       root.render(
         <BlueprintProvider>
-          <FirstTimeView  configuration={configurationViewmodel} className={configurationViewmodel.theme} />
+          <FirstTimeView className={configurationViewmodel.theme} configuration={configurationViewmodel} />
         </BlueprintProvider>
       );
     });

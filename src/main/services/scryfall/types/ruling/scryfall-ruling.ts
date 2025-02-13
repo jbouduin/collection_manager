@@ -1,6 +1,6 @@
 import { RulingSource } from "../../../../../common/enums";
 
-export interface ScryfallRuling  {
+export interface ScryfallRuling {
   /**
    * The Oracle ID of the card this ruling is associated with.
    *

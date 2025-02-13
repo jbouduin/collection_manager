@@ -6,7 +6,6 @@ import { NodePath } from "./types";
 import classNames from "classnames";
 
 export function BaseTreeView<TData, TFilter>(props: BaseTreeViewProps<TData, TFilter>) {
-
   //#region State -------------------------------------------------------------
   const [nodes, dispatch] = React.useReducer(BaseReducer, undefined);
   //#endregion
@@ -30,18 +29,18 @@ export function BaseTreeView<TData, TFilter>(props: BaseTreeViewProps<TData, TFi
       dispatch({ type: "DESELECT_ALL" });
       dispatch({
         payload: { path: nodePath, isSelected: originallySelected == null ? true : !originallySelected },
-        type: "SET_IS_SELECTED",
+        type: "SET_IS_SELECTED"
       });
       props.onDataSelected(getTreeNodeItemsRecursive<TData>(node, null));
     },
-    [],
+    []
   );
 
   const handleNodeCollapse = React.useCallback(
     (_node: TreeNodeInfo<TData>, nodePath: NodePath) => {
       dispatch({
         payload: { path: nodePath, isExpanded: false },
-        type: "SET_IS_EXPANDED",
+        type: "SET_IS_EXPANDED"
       });
     },
     []
@@ -51,7 +50,7 @@ export function BaseTreeView<TData, TFilter>(props: BaseTreeViewProps<TData, TFi
     (_node: TreeNodeInfo<TData>, nodePath: NodePath) => {
       dispatch({
         payload: { path: nodePath, isExpanded: true },
-        type: "SET_IS_EXPANDED",
+        type: "SET_IS_EXPANDED"
       });
     },
     []
@@ -62,12 +61,12 @@ export function BaseTreeView<TData, TFilter>(props: BaseTreeViewProps<TData, TFi
   return (
     <>
       <Tree
+        className={classNames(Classes.ELEVATION_0, "card-set-tree")}
         compact={true}
         contents={nodes}
         onNodeClick={handleNodeClick}
         onNodeCollapse={handleNodeCollapse}
         onNodeExpand={handleNodeExpand}
-        className={classNames(Classes.ELEVATION_0, "card-set-tree")}
       />
     </>
   );

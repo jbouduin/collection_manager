@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 enum EGameFormat {
   standard,
   future,
@@ -18,7 +19,7 @@ enum EGameFormat {
   paupercommander,
   duel,
   premodern,
-  oldschool,
+  oldschool
 }
 
 export type GameFormat = keyof typeof EGameFormat;

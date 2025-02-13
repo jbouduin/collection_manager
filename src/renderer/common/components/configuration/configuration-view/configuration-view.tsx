@@ -20,30 +20,56 @@ export function ConfigurationView(props: ConfigurationViewProps) {
     <DialogBody>
       <Tabs animate={true} defaultSelectedTabId="basic" renderActiveTabPanelOnly={true}>
         <Tab
-          title="Basic"
-          key="basic"
           id="basic"
+          key="basic"
           panel={
             <DataConfigurationView
               configuration={props.configuration.dataConfigurationViewmodel}
               onConfigurationChanged={onDataConfigurationChanged}
             />
           }
+          title="Basic"
         />
-        <Tab title="Database view defaults"
-          key="database-view"
+        <Tab
           id="database-view"
+          key="database-view"
           panel={
             <DatabaseViewConfigurationView
               configuration={props.configuration.databaseViewConfigurationViewmodel}
               onConfigurationChanged={onDatabaseViewTreeConfigurationChanged}
             />
           }
+          title="Database view defaults"
         />
-        <Tab title="Collection view defaults" key="collection-view" id="collection-view" panel={<p>coming soon</p>} />
-        <Tab title="Deck view defaults" key="deck-view" id="deck-view" panel={<p>coming soon</p>} />
-        <Tab title="Synchronize at startup" key="sync-at-startup" id="sync-at-startup" panel={<SyncParameterView syncParam={props.configuration.syncParamViewmodel} onSyncParamChanged={onSyncParamChanged} />} />
-        <Tab title="Advanced" key="advanced" id="advanced" panel={<p>comes soon</p>} />
+        <Tab
+          id="collection-view"
+          key="collection-view"
+          panel={<p>coming soon</p>}
+          title="Collection view defaults"
+        />
+        <Tab
+          id="deck-view"
+          key="deck-view"
+          panel={<p>coming soon</p>}
+          title="Deck view defaults"
+        />
+        <Tab
+          id="sync-at-startup"
+          key="sync-at-startup"
+          panel={
+            <SyncParameterView
+              onSyncParamChanged={onSyncParamChanged}
+              syncParam={props.configuration.syncParamViewmodel}
+            />
+          }
+          title="Synchronize at startup"
+        />
+        <Tab
+          id="advanced"
+          key="advanced"
+          panel={<p>comes soon</p>}
+          title="Advanced"
+        />
       </Tabs>
     </DialogBody>
   );

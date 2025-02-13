@@ -30,7 +30,8 @@ export class CatalogSyncService extends BaseSyncService implements ICatalogSyncS
     @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
     @inject(INFRATOKENS.ConfigurationService) configurationService: IConfigurationService,
     @inject(CLIENTTOKENS.ScryfallClient) scryfallclient: IScryfallClient,
-    @inject(ADAPTTOKENS.CatalogAdapter) catalogAdapter: ICatalogAdapter) {
+    @inject(ADAPTTOKENS.CatalogAdapter) catalogAdapter: ICatalogAdapter)
+  {
     super(databaseService, configurationService, scryfallclient);
     this.catalogAdapter = catalogAdapter;
   }
@@ -40,6 +41,7 @@ export class CatalogSyncService extends BaseSyncService implements ICatalogSyncS
   public override async sync(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void> {
     const serialExecutionArray = syncParam.catalogTypesToSync.map<SyncSingleCatalogParameter>((catalog: CatalogType) => { return { catalogType: catalog, progressCallback: progressCallback }; });
     await runSerial<SyncSingleCatalogParameter>(serialExecutionArray, this.syncSingleCatalog.bind(this));
+    return Promise.resolve();
   }
   //#endregion
 
@@ -112,8 +114,11 @@ export class CatalogSyncService extends BaseSyncService implements ICatalogSyncS
       parameter.progressCallback(`Saving ${catalog.total_values} items for catalog '${parameter.catalogType}'`);
     }
     return await this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
-      await trx.deleteFrom("catalog_item").where("catalog_item.catalog_name", "=", parameter.catalogType).execute();
-      await trx.insertInto("catalog_item")
+      await trx
+        .deleteFrom("catalog_item").where("catalog_item.catalog_name", "=", parameter.catalogType)
+        .execute();
+      await trx
+        .insertInto("catalog_item")
         .values(catalog.data.map((item: string) => this.catalogAdapter.toInsert({ catalogType: parameter.catalogType, item: item })))
         .executeTakeFirstOrThrow();
     });

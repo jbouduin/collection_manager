@@ -44,5 +44,4 @@ export class CardSymbolAdapter implements ICardSymbolAdapter {
       is_transposable: scryfallBooleanToNumber(cardSymbol.transposable)
     };
   }
-
 }

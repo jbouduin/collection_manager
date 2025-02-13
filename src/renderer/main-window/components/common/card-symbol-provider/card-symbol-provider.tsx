@@ -1,13 +1,10 @@
 import * as React from "react";
-
 import { CardSymbolProviderProps } from "./card-symbol-provider.props";
 import { SvgProvider } from "../svg-provider/svg-provider";
 import { CardSymbolContext } from "../../context";
 
 export function CardSymbolProvider(props: CardSymbolProviderProps) {
-
-  //#region Main --------------------------------------------------------------
-  console.log("in CardSymbolProvider function");
+  //#region Rendering ---------------------------------------------------------
   return (
     <>
       <CardSymbolContext.Consumer>
@@ -24,9 +21,8 @@ export function CardSymbolProvider(props: CardSymbolProviderProps) {
                     } else {
                       const symbolSvg = symbols.get(cardSymbol);
                       if (symbolSvg) {
-                        return (<SvgProvider svg={symbolSvg} className={props.className} key={`s-${idx}`} />);
+                        return (<SvgProvider className={props.className} key={`s-${idx}`} svg={symbolSvg} />);
                       } else {
-                        console.log(`no cached svg for "${cardSymbol}"`);
                         return;
                       }
                     }

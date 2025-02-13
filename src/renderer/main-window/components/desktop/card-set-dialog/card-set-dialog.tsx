@@ -1,17 +1,14 @@
 import { AnchorButton, Button, Classes, Dialog, DialogBody, DialogFooter, HTMLTable, Icon, Tab, Tabs } from "@blueprintjs/core";
 import * as React from "react";
-
 import { DtoCardSetDetails, DtoCardSetLanguage, DtoLanguage, DtoRendererConfiguration } from "../../../../../common/dto";
 import { CardSetDetailsQueryOptions, QueryParam } from "../../../../../common/ipc-params";
 import { CardSetDetailsViewmodel } from "../../../viewmodels/card-set/card-set-details.viewmodel";
-import { LanguagesContext, ConfigurationContext } from "../../context";
 import { SvgProvider } from "../../common/svg-provider/svg-provider";
+import { ConfigurationContext, LanguagesContext } from "../../context";
 import { CardSetDialogProps } from "./card-set-dialog.props";
 
 
 export function CardSetDialog(props: CardSetDialogProps) {
-  console.log("cardsetdialog function");
-
   //#region State -------------------------------------------------------------
   const [cardSetDetails, setCardSetDetails] = React.useState<CardSetDetailsViewmodel>(undefined);
   //#endregion
@@ -24,7 +21,7 @@ export function CardSetDialog(props: CardSetDialogProps) {
           type: "CardSetDetails",
           options: { cardSetId: props.cardSetId }
         };
-        window.ipc
+        void window.ipc
           .query(setDetailQueryParam)
           .then((cardSetDetails: DtoCardSetDetails) => {
             setCardSetDetails(new CardSetDetailsViewmodel(cardSetDetails));
@@ -44,13 +41,14 @@ export function CardSetDialog(props: CardSetDialogProps) {
           {
             (configuration: DtoRendererConfiguration) => (
               <Dialog
+                canEscapeKeyClose={true}
+                className={configuration.useDarkTheme ? Classes.DARK : ""}
+                isCloseButtonShown={true}
                 isOpen={props.isOpen}
                 onClose={props.onDialogClose}
                 shouldReturnFocusOnClose={true}
-                canEscapeKeyClose={true}
-                isCloseButtonShown={true}
                 title={renderTitle()}
-                className={configuration.useDarkTheme ? Classes.DARK: ""}>
+              >
                 <DialogBody>
                   {
                     renderBody()
@@ -81,10 +79,11 @@ export function CardSetDialog(props: CardSetDialogProps) {
       <>
         <Button onClick={props.onDialogClose}>Close</Button>
         <AnchorButton
-          intent="primary"
-          href={cardSetDetails.scryFallUri} text="View on Scryfall"
-          target="_blank"
+          href={cardSetDetails.scryFallUri}
           icon="share"
+          intent="primary"
+          target="_blank"
+          text="View on Scryfall"
         />
       </>
     );
@@ -95,7 +94,12 @@ export function CardSetDialog(props: CardSetDialogProps) {
       <LanguagesContext.Consumer>
         {
           (languages: Array<DtoLanguage>) => (
-            <Tabs animate={true} id="set-detail-tabs" defaultSelectedTabId="core-details" renderActiveTabPanelOnly={true}>
+            <Tabs
+              animate={true}
+              defaultSelectedTabId="core-details"
+              id="set-detail-tabs"
+              renderActiveTabPanelOnly={true}
+            >
               <Tab id="core-details" panel={renderMainPropertiesTable(languages)} title="Main properties" />
               {
                 cardSetDetails.isMultiLanguage &&
@@ -111,7 +115,12 @@ export function CardSetDialog(props: CardSetDialogProps) {
 
   function renderMainPropertiesTable(languages: Array<DtoLanguage>): React.JSX.Element {
     return (
-      <HTMLTable compact={true} bordered={false} border={0} width="100%">
+      <HTMLTable
+        border={0}
+        bordered={false}
+        compact={true}
+        width="100%"
+      >
         <tbody>
           {
             renderMainPropertiesTableLines(languages)
@@ -133,8 +142,8 @@ export function CardSetDialog(props: CardSetDialogProps) {
       <tr>
         <td style={{ paddingLeft: "0px" }}>Type:</td>
         <td style={{ paddingLeft: "0px" }}>{cardSetDetails.cardSetType}</td>
-      </tr>)
-    );
+      </tr>
+    ));
     table.push((
       <tr>
         <td style={{ paddingLeft: "0px" }}>Block:</td>
@@ -155,7 +164,7 @@ export function CardSetDialog(props: CardSetDialogProps) {
     ));
     table.push((
       <tr>
-      <td style={{ paddingLeft: "0px" }}>Last synchronization:</td>
+        <td style={{ paddingLeft: "0px" }}>Last synchronization:</td>
         <td style={{ paddingLeft: "0px" }}>{cardSetDetails.lastFullSynchronizationString}</td>
       </tr>
     ));
@@ -184,7 +193,7 @@ export function CardSetDialog(props: CardSetDialogProps) {
 
   function renderOtherPropertiesTable(): React.JSX.Element {
     return (
-      <HTMLTable compact={true} bordered={false} width="100%">
+      <HTMLTable bordered={false} compact={true} width="100%">
         <tbody>
           {
             renderOtherPropertiesTableLines()
@@ -196,36 +205,33 @@ export function CardSetDialog(props: CardSetDialogProps) {
 
   function renderOtherPropertiesTableLines(): Array<React.JSX.Element> {
     const table = new Array<React.JSX.Element>();
-    table.push(
-      (
-        <tr>
-          <td style={{ paddingLeft: "0px" }}>Foil only set:</td>
-          <td style={{ paddingLeft: "0px" }}>
-            {cardSetDetails.foilOnly && <Icon icon="tick" intent="success" />}
-            {!cardSetDetails.foilOnly && <Icon icon="cross" intent="danger" />}
-          </td>
-        </tr>
-      ));
-    table.push(
-      (
-        <tr>
-          <td style={{ paddingLeft: "0px" }}>Non-Foil only set:</td>
-          <td style={{ paddingLeft: "0px" }}>
-            {cardSetDetails.nonFoilOnly && <Icon icon="tick" intent="success" />}
-            {!cardSetDetails.nonFoilOnly && <Icon icon="cross" intent="danger" />}
-          </td>
-        </tr>
-      ));
-    table.push(
-      (
-        <tr>
-          <td style={{ paddingLeft: "0px" }}>Digital:</td>
-          <td style={{ paddingLeft: "0px" }}>
-            {cardSetDetails.digital && <Icon icon="tick" intent="success" />}
-            {!cardSetDetails.digital && <Icon icon="cross" intent="danger" />}
-          </td>
-        </tr>
-      ));
+    table.push((
+      <tr>
+        <td style={{ paddingLeft: "0px" }}>Foil only set:</td>
+        <td style={{ paddingLeft: "0px" }}>
+          {cardSetDetails.foilOnly && <Icon icon="tick" intent="success" />}
+          {!cardSetDetails.foilOnly && <Icon icon="cross" intent="danger" />}
+        </td>
+      </tr>
+    ));
+    table.push((
+      <tr>
+        <td style={{ paddingLeft: "0px" }}>Non-Foil only set:</td>
+        <td style={{ paddingLeft: "0px" }}>
+          {cardSetDetails.nonFoilOnly && <Icon icon="tick" intent="success" />}
+          {!cardSetDetails.nonFoilOnly && <Icon icon="cross" intent="danger" />}
+        </td>
+      </tr>
+    ));
+    table.push((
+      <tr>
+        <td style={{ paddingLeft: "0px" }}>Digital:</td>
+        <td style={{ paddingLeft: "0px" }}>
+          {cardSetDetails.digital && <Icon icon="tick" intent="success" />}
+          {!cardSetDetails.digital && <Icon icon="cross" intent="danger" />}
+        </td>
+      </tr>
+    ));
     table.push((
       <tr>
         <td style={{ paddingLeft: "0px" }}>MTG Online code:</td>
@@ -249,7 +255,7 @@ export function CardSetDialog(props: CardSetDialogProps) {
 
   function renderLanguagePropertiesTable(languages: Array<DtoLanguage>): React.JSX.Element {
     return (
-      <HTMLTable compact={true} bordered={false} width="100%">
+      <HTMLTable bordered={false} compact={true} width="100%">
         <tbody>
           {
             renderLanguagePropertiesTableLines(languages)

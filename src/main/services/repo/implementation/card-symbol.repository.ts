@@ -1,6 +1,5 @@
 import * as helpers from "kysely/helpers/sqlite";
 import { inject, injectable } from "tsyringe";
-
 import { Selectable } from "kysely";
 import { DtoCardSymbol, DtoCardSymbolAlternative, DtoCardSymbolColorMap } from "../../../../common/dto";
 import { cardSymbolAlternativeTableFields, cardSymbolColorMapTableFields, cardSymbolTableFields } from "../../../../main/database/schema/card-symbol/table-field.constants";
@@ -10,10 +9,8 @@ import { ICardSymbolRepository } from "../interfaces";
 import { BaseRepository } from "./base.repository";
 
 
-
 @injectable()
 export class CardSymbolRepository extends BaseRepository implements ICardSymbolRepository {
-
   //#region Private readonly fields -------------------------------------------
   private imageCacheService: IImageCacheService;
   //#endregion
@@ -28,6 +25,7 @@ export class CardSymbolRepository extends BaseRepository implements ICardSymbolR
   //#endregion
 
   //#region ICardSymbolRepository methods -------------------------------------
+  /* eslint-disable @stylistic/function-paren-newline */
   public async getAll(): Promise<Array<DtoCardSymbol>> {
     return await this.database
       .selectFrom("card_symbol")
@@ -56,13 +54,9 @@ export class CardSymbolRepository extends BaseRepository implements ICardSymbolR
       .selectAll()
       .execute()
       .then(((cardSymbols: Array<Selectable<CardSymbolTable>>) => {
-      const result = new Map<string, string>();
-        cardSymbols.forEach((cardSymbol: Selectable<CardSymbolTable>) =>
-        result.set(cardSymbol.id, this.imageCacheService.getCardSymbolSvg(cardSymbol))
-      );
-      return result;
-    }));
+        const result = new Map<string, string>();
+        cardSymbols.forEach((cardSymbol: Selectable<CardSymbolTable>) => result.set(cardSymbol.id, this.imageCacheService.getCardSymbolSvg(cardSymbol)));
+        return result;
+      }));
   }
-
-
 }

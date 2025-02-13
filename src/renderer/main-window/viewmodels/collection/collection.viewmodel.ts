@@ -3,7 +3,6 @@ import { BaseViewmodel } from "../../../common/viewmodels/base.viewmodel";
 
 
 export class CollectionViewmodel extends BaseViewmodel<DtoCollection> {
-
   public get id(): number {
     return this._dto.id;
   }

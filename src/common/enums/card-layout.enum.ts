@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 enum ECardLayout {
   normal,
   split,
@@ -22,7 +23,7 @@ enum ECardLayout {
   augment,
   host,
   art_series,
-  reversible_card,
+  reversible_card
 }
 
 export type CardLayout = keyof typeof ECardLayout;

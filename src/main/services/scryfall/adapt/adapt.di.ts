@@ -25,12 +25,11 @@ import ADAPTTOKENS, {
   ICardfaceAdapter, ICardfaceColorMapAdapter, ICatalogAdapter,
   IOracleAdapter, IOracleKeywordAdapter,
   IOracleLegalityAdapter,
-  IOracleRulingAdapter, IOracleRulingLineAdapter,
+  IOracleRulingAdapter, IOracleRulingLineAdapter
 } from "./interface";
 
 
 export class AdaptDi {
-
   public static registerAdapters() {
     container.register<ICardCardMapAdapter>(ADAPTTOKENS.CardCardMapAdapter, { useClass: CardCardMapAdapter });
     container.register<ICardGameAdapter>(ADAPTTOKENS.CardGameAdapter, { useClass: CardGameAdapter });

@@ -13,7 +13,6 @@ export class V0_1_0_OwnedCards implements IBaseMigration {
   down(db: Kysely<any>): Promise<void> {
     return db.schema.dropTable("owned_card").execute();
   }
-
 }
 
 function createV0_1_0_OwnedCard(db: Kysely<any>): Promise<void> {
@@ -25,8 +24,8 @@ function createV0_1_0_OwnedCard(db: Kysely<any>): Promise<void> {
       { columnName: "card_id", dataType: "text", callback: (col: ColumnDefinitionBuilder) => col.notNull() },
       { columnName: "collection_id", dataType: "integer", callback: (col: ColumnDefinitionBuilder) => col.notNull() }
     ]
-  }
-  return createTable(db,options)
+  };
+  return createTable(db, options)
     .addColumn("foiled", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
     .addColumn("non_foiled", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
     .addColumn("comments", "text")

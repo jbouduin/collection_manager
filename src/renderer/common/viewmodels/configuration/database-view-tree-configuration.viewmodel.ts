@@ -2,8 +2,7 @@ import { DtoDatabaseTreeViewConfiguration } from "../../../../common/dto";
 import { CardSetGroupBy, CardSetSort, CardSetType } from "../../../../common/enums";
 import { BaseViewmodel } from "../base.viewmodel";
 
-export class DatabaseViewTreeConfigurationViewmodel extends BaseViewmodel < DtoDatabaseTreeViewConfiguration > {
-
+export class DatabaseViewTreeConfigurationViewmodel extends BaseViewmodel<DtoDatabaseTreeViewConfiguration> {
   //#region Getters/Setters ---------------------------------------------------
   public get cardSetSort(): CardSetSort {
     return this._dto.cardSetSort;

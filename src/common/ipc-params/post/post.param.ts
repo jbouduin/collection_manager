@@ -5,5 +5,5 @@ export type PostData = DtoConfiguration;
 
 export interface PostParam<T extends object> {
   type: PostType;
-  data: T
+  data: T;
 }

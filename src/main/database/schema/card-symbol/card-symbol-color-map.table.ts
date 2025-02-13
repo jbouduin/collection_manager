@@ -3,7 +3,7 @@ import { ColumnType } from "kysely";
 import { MTGColor } from "../../../../common/enums";
 
 export interface CardSymbolColorMapTable {
-  /***
+  /**
    * The plaintext symbol. Often surrounded with curly braces {}. Note that not all symbols are ASCII text (for example, {∞}).
    * Contains the property "symbol" as returned by scryfall
    * @example "{T}"

@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
-
 import { DtoRendererConfiguration } from "../../../../../../common/dto";
 import { CardSetViewmodel, CardViewmodel } from "../../../../viewmodels";
 import { CardView } from "../../../common/card-view/card-view";
@@ -12,8 +11,6 @@ import { LeftPanel } from "./left-panel/left-panel";
 
 
 export function DatabaseView(props: DatabaseViewProps) {
-  console.log("in databaseview function");
-
   //#region State -------------------------------------------------------------
   const initialState: DatabaseViewState = {};
   const [state, setState] = React.useState(initialState);
@@ -39,16 +36,16 @@ export function DatabaseView(props: DatabaseViewProps) {
               <Panel defaultSize={20}>
                 <LeftPanel
                   configuration={configuration.databaseViewTreeConfiguration}
+                  onCardSetDialog={props.onCardSetDialog}
                   onSetsSelected={onCardSetsSelected}
                   onSynchronizeSet={props.onSynchronizeSet}
-                  onCardSetDialog={props.onCardSetDialog}
                 />
               </Panel>
               <PanelResizeHandle />
               <Panel>
                 <CenterPanel
-                  selectedSets={state.selectedSets}
                   onCardsSelected={onCardSelected}
+                  selectedSets={state.selectedSets}
                 />
               </Panel>
               <PanelResizeHandle />

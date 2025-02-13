@@ -1,5 +1,4 @@
 import { Props } from "@blueprintjs/core";
-
 import { DtoDatabaseTreeViewConfiguration } from "../../../../../../../common/dto";
 import { CardSetViewmodel } from "../../../../../viewmodels";
 

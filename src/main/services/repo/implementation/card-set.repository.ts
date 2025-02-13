@@ -10,7 +10,6 @@ import { sql } from "kysely";
 
 @injectable()
 export class CardSetRepository extends BaseRepository implements ICardSetRepository {
-
   //#region private readonly fields -------------------------------------------
   private readonly imageCacheService: IImageCacheService;
   //#endregion
@@ -25,6 +24,7 @@ export class CardSetRepository extends BaseRepository implements ICardSetReposit
   //#endregion
 
   //#region ICardSetRepository methods ----------------------------------------
+  /* eslint-disable @stylistic/function-paren-newline */
   public getAll(): Promise<Array<DtoCardSet>> {
     return this.database
       .selectFrom("card_set")

@@ -1,8 +1,7 @@
 import * as fs from "fs";
 import { Compilable, ExpressionOrFactory, InsertResult, Kysely, SqlBool, Transaction, UpdateResult } from "kysely";
-import * as path from "path";
-
 import { ExtractTableAlias } from "kysely/dist/cjs/parser/table-parser";
+import * as path from "path";
 import { DtoSyncParam } from "../../../../../common/dto";
 import { ProgressCallback } from "../../../../../common/ipc-params";
 import { formatTimeStampedFileName } from "../../../../../common/util";
@@ -13,7 +12,7 @@ import { IScryfallClient } from "../../client/interfaces";
 import { IBaseSyncService } from "../interface/base-sync.service";
 import { GenericSyncTaskParameter } from "./generic-sync-task.parameter";
 
-// @injectable()
+
 export abstract class BaseSyncService implements IBaseSyncService {
   //#region private readonly fields -------------------------------------------
   private readonly databaseService: IDatabaseService;
@@ -66,7 +65,8 @@ export abstract class BaseSyncService implements IBaseSyncService {
     tableName: TB,
     filter: ExpressionOrFactory<DatabaseSchema, ExtractTableAlias<DatabaseSchema, TB>, SqlBool>,
     adapter: ITableAdapter<TB, S>,
-    scryfall: S): Promise<InsertResult | UpdateResult> {
+    scryfall: S): Promise<InsertResult | UpdateResult>
+  {
     const queryExisting = trx
       .selectFrom(tableName)
       .selectAll()
@@ -92,7 +92,10 @@ export abstract class BaseSyncService implements IBaseSyncService {
   }
 
   protected async serialGenericSingleSync<TB extends keyof DatabaseSchema, S>(
-    taskParameter: GenericSyncTaskParameter<TB, S>, _index: number, _total: number): Promise<void> {
+    taskParameter: GenericSyncTaskParameter<TB, S>,
+    _index: number,
+    _total: number): Promise<void>
+  {
     await this.genericSingleSync(taskParameter.trx, taskParameter.tableName, taskParameter.filter, taskParameter.adapter, taskParameter.scryfall);
   }
 
@@ -101,8 +104,8 @@ export abstract class BaseSyncService implements IBaseSyncService {
     tableName: TB,
     filter: ExpressionOrFactory<DatabaseSchema, ExtractTableAlias<DatabaseSchema, TB>, SqlBool>,
     adapter: ITableAdapter<TB, S>,
-    scryfall: S) {
-
+    scryfall: S)
+  {
     return trx
       .deleteFrom(tableName)
       .where(filter)
@@ -117,7 +120,10 @@ export abstract class BaseSyncService implements IBaseSyncService {
   }
 
   protected async serialGenericDeleteAndRecreate<TB extends keyof DatabaseSchema, S>(
-    taskParameter: GenericSyncTaskParameter<TB, S>, _index: number, _total: number): Promise<void> {
+    taskParameter: GenericSyncTaskParameter<TB, S>,
+    _index: number,
+    _total: number): Promise<void>
+  {
     await this.genericDeleteAndRecreate(taskParameter.trx, taskParameter.tableName, taskParameter.filter, taskParameter.adapter, taskParameter.scryfall);
   }
 }

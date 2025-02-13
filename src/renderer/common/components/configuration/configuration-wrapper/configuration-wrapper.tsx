@@ -28,8 +28,7 @@ export function ConfigurationWrapper(props: ConfigurationWrapperProps) {
         data: toSave.dto
       };
       // check how to activate renderer settings immediately after saving
-      window.ipc.post(params).then(() => props.onSave());
-
+      void window.ipc.post(params).then(() => props.onSave());
     },
     []
   );
@@ -47,8 +46,8 @@ export function ConfigurationWrapper(props: ConfigurationWrapperProps) {
           />
           <FooterView
             configuration={configuration}
-            onSave={onSave}
             onCancel={() => props.onCancel()}
+            onSave={onSave}
           />
         </>
       }

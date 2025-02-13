@@ -3,5 +3,5 @@ import { CardQueryOptions } from "../../../../common/ipc-params/query/card-query
 
 export interface ICardRepository {
   getCardImageData(cardId: string): Promise<DtoCardImageData>;
-  getCards(options: CardQueryOptions): Promise<Array<DtoCard>>
+  getCards(options: CardQueryOptions): Promise<Array<DtoCard>>;
 }

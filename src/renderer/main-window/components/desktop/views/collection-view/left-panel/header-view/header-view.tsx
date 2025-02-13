@@ -1,41 +1,58 @@
-import { Button, ButtonGroup, IconName, Menu, MenuItem, Popover } from "@blueprintjs/core";
-import { HeaderViewProps } from "./header-view.props";
+import { Button, ButtonGroup, Menu, MenuItem, Popover } from "@blueprintjs/core";
 import * as React from "react";
+import { HeaderViewProps } from "./header-view.props";
 
-type PopoverKey = "add_menu" | "edit_menu" | "delete_menu";
+// type PopoverKey = "add_menu" | "edit_menu" | "delete_menu";
 
 export function HeaderView(props: HeaderViewProps) {
-  console.log("in headerview function", props)
   //#region Main --------------------------------------------------------------
   return (
-    <ButtonGroup minimal={true} fill={true}>
-      <Popover key="add_menu"
+    <ButtonGroup fill={true} minimal={true}>
+      <Popover
         canEscapeKeyClose={true}
+        content={
+          <Menu small={true}>
+            <MenuItem
+              disabled={!props.canAddFolder}
+              onClick={() => props.onAddFolder()}
+              roleStructure="menuitem"
+              text="Create Folder"
+            />
+            <MenuItem
+              disabled={!props.canAddCollection}
+              onClick={() => props.onAddCollection()}
+              roleStructure="menuitem"
+              text="Create Collection"
+            />
+          </Menu>
+        }
         inheritDarkTheme={true}
         interactionKind="hover"
+        key="add_menu"
         minimal={false}
         modifiers={
           { arrow: { enabled: false } }
         }
-        content={
-          <Menu small={true}>
-            <MenuItem text="Create Folder" roleStructure="menuitem" onClick={() => props.onAddFolder()} disabled={!props.canAddFolder} />
-            <MenuItem text="Create Collection" roleStructure="menuitem" onClick={() => props.onAddCollection()} disabled={!props.canAddCollection} />
-          </Menu>
-        }
         openOnTargetFocus={false}
         placement="bottom-end"
-        usePortal={false}>
-        <Button icon="add" disabled={!props.canAddCollection && !props.canAddFolder} />
+        usePortal={false}
+      >
+        <Button
+          disabled={!props.canAddCollection && !props.canAddFolder}
+          icon="add"
+        />
       </Popover>
-      <Button icon="edit" onClick={() => props.onEdit()} disabled={!props.canEdit} />
-      <Button icon="delete" onClick={() => props.onDelete()} disabled={!props.canDelete} />
-
+      <Button
+        disabled={!props.canEdit}
+        icon="edit"
+        onClick={() => props.onEdit()}
+      />
+      <Button
+        disabled={!props.canDelete}
+        icon="delete"
+        onClick={() => props.onDelete()}
+      />
     </ButtonGroup>
   );
   //#endregion
-
-  //#region Auxiliary methods -------------------------------------------------
-  //#endregion
-
 }

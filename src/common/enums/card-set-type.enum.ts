@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 enum ECardSetType {
 
   /** A yearly Magic core set (Tenth Edition, etc) */
@@ -67,7 +68,7 @@ enum ECardSetType {
   memorabilia,
 
   /** A set that contains minigame card inserts from booster packs */
-  minigame,
+  minigame
 }
 
 export type CardSetType = keyof typeof ECardSetType;

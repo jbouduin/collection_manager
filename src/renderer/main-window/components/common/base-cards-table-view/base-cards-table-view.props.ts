@@ -1,7 +1,5 @@
 import { Props } from "@blueprintjs/core";
-
-import { CardSetViewmodel, CardViewmodel } from "../../../viewmodels";
-import { Column, ColumnProps } from "@blueprintjs/table";
+import { ColumnProps } from "@blueprintjs/table";
 
 
 export interface BaseCardsTableViewProps<T> extends Props {

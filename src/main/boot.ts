@@ -9,7 +9,6 @@ import { DtoSyncParam } from "../common/dto";
 
 
 export async function bootFunction(splashWindow: BrowserWindow, syncParam: DtoSyncParam): Promise<void> {
-
   const migrationContainer = MigrationDi.registerMigrations();
   await container.resolve<IDatabaseService>(INFRATOKENS.DatabaseService)
     .migrateToLatest(
@@ -17,14 +16,11 @@ export async function bootFunction(splashWindow: BrowserWindow, syncParam: DtoSy
       (label: string) => {
         console.log(label);
         splashWindow.webContents.send("splash", label);
-      }
-    )
+      })
     .then((service: IDatabaseService) => service.connect())
     .then(() => migrationContainer.dispose())
     .then(async () => await container
       .resolve<IIpcSyncService>(INFRATOKENS.IpcSyncService)
-      .handle(syncParam, splashWindow)
-    )
+      .handle(syncParam, splashWindow))
     .then(() => splashWindow.webContents.send("splash", "loading main program"));
-
 }

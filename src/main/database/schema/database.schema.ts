@@ -5,10 +5,8 @@ import {
   CardSetTable, CatalogItemTable, ColorTable, LanguageTable,
   CardSymbolAlternativeTable, CardSymbolColorMapTable, CardSymbolTable,
   CardColorMapTable,
-  CollectionTable,  OwnedCardTable
+  CollectionTable, OwnedCardTable
 } from ".";
-
-
 
 
 export interface DatabaseSchema {
@@ -33,7 +31,7 @@ export interface DatabaseSchema {
   //#region master data -------------------------------------------------------
   card_set: CardSetTable;
   catalog_item: CatalogItemTable;
-  color: ColorTable,
+  color: ColorTable;
   language: LanguageTable;
   //#endregion
 

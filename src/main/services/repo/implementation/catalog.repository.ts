@@ -9,7 +9,6 @@ import { BaseRepository } from "./base.repository";
 
 @injectable()
 export class CatalogRepository extends BaseRepository implements ICatalogRepository {
-
   public constructor(@inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService) {
     super(databaseService);
   }
@@ -21,6 +20,4 @@ export class CatalogRepository extends BaseRepository implements ICatalogReposit
       .where("catalog_item.catalog_name", "=", name)
       .execute();
   }
-
-
 }

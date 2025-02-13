@@ -2,7 +2,6 @@ import { DtoDataConfiguration } from "../../../../common/dto";
 import { BaseViewmodel } from "../base.viewmodel";
 
 export class DataConfigurationViewmodel extends BaseViewmodel<DtoDataConfiguration> {
-
   //#region Getters/Setters ---------------------------------------------------
   public get cacheDirectory(): string {
     return this._dto.cacheDirectory;

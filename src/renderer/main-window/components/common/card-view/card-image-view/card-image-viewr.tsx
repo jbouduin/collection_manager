@@ -1,15 +1,13 @@
-import * as React from "react";
-import { CardImageViewProps } from "./card-image-view.props";
-
 import { Button, SectionCard } from "@blueprintjs/core";
 import classNames from "classnames";
+import * as React from "react";
+import { CardImageViewProps } from "./card-image-view.props";
 import { CardImageViewState } from "./card-image-view.state";
 
 
 export function CardImageView(props: CardImageViewProps) {
-
   //#region State -------------------------------------------------------------
-  const [cardImageState, setCardImageState] = React.useState<CardImageViewState>({currentDisplayedSide: "front", rotationClass:""});
+  const [cardImageState, setCardImageState] = React.useState<CardImageViewState>({ currentDisplayedSide: "front", rotationClass: "" });
   //#endregion
 
   //#region Event handling ----------------------------------------------------
@@ -50,28 +48,26 @@ export function CardImageView(props: CardImageViewProps) {
   //#region effect ------------------------------------------------------------
   React.useEffect(
     () => {
-      setCardImageState(
-        {
-          currentDisplayedSide: "front",
-          rotationClass: props.card.cardLayout == "split" || props.card.cardLayout == "planar" ? "rotate-90" : ""
-        }
-      );
+      setCardImageState({
+        currentDisplayedSide: "front",
+        rotationClass: props.card.cardLayout == "split" || props.card.cardLayout == "planar" ? "rotate-90" : ""
+      });
     },
     [props.card]
   );
   //#endregion
 
-  //#region Main --------------------------------------------------------------
+  //#region Rendering ---------------------------------------------------------
   return (
     <>
       {
         props.card &&
-        <SectionCard style={{ "display": "flex", "flexFlow": "column"}} className="card-view-section-card" padded={false}>
+        <SectionCard className="card-view-section-card" padded={false} style={{ display: "flex", flexFlow: "column" }} >
           <img
             className={classNames(cardImageState.rotationClass == "rotate-90" ? "card-image-landscape" : "card-image-portrait", "card-image", cardImageState.rotationClass)}
             src={`cached-image://${props.card.cardId}/?size=normal&side=${cardImageState.currentDisplayedSide}`}
           />
-            <div style={{ "display": "flex", "flexFlow": "row", "justifyContent": "center", "margin": "5px" }}>
+          <div style={{ display: "flex", flexFlow: "row", justifyContent: "center", margin: "5px" }}>
             {
               renderButtons()
             }
@@ -80,9 +76,7 @@ export function CardImageView(props: CardImageViewProps) {
       }
     </>
   );
-  //#endregion
 
-  //#region Auxiliary render methods ----------------------------------------------------
   function renderButtons(): Array<React.JSX.Element> {
     const result = new Array<React.JSX.Element>();
     result.push((

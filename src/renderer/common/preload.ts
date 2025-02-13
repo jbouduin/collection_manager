@@ -20,7 +20,7 @@ const ipc = {
   onProgress: (callback: (status: string) => void) => {
     // to avoid memory leaks and as only the splash screen is listening to it
     ipcRenderer.removeAllListeners("splash");
-    ipcRenderer.on("splash", (_event, value) => callback(value));
+    ipcRenderer.on("splash", (_event, value) => callback(value as string));
   },
   onEndProgress: (callback: () => void) => ipcRenderer.once("splash-end", () => {
     ipcRenderer.removeAllListeners("splash");

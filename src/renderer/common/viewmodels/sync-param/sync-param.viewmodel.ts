@@ -4,7 +4,6 @@ import { BaseViewmodel } from "../base.viewmodel";
 
 
 export class SyncParamViewmodel extends BaseViewmodel<DtoSyncParam> {
-
   //#region Getters/Setters ---------------------------------------------------
   public get cardSyncType(): CardSyncType {
     return this._dto.cardSyncType;

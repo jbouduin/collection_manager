@@ -2,7 +2,7 @@ import { InsertExpression } from "kysely/dist/cjs/parser/insert-values-parser";
 import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser";
 
 import { DatabaseSchema } from "../../../../../main/database/schema";
-import { IOracleAdapter, } from "../interface";
+import { IOracleAdapter } from "../interface";
 import { OracleAdapterParameter } from "../interface/param";
 import { sqliteUTCTimeStamp } from "../../../../../common/util";
 
@@ -51,5 +51,4 @@ export class OracleAdapter implements IOracleAdapter {
       };
     }
   }
-
 }

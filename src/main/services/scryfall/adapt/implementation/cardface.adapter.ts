@@ -7,7 +7,6 @@ import { CardFaceAdapterParameter } from "../interface/param";
 import { ScryfallCard, ScryfallCardface } from "../../types";
 
 export class CardfaceAdapter implements ICardfaceAdapter {
-
   //#region ICardFaceAdapter methods ------------------------------------------
   public toInsert(scryfall: CardFaceAdapterParameter): InsertExpression<DatabaseSchema, "cardface"> {
     if (scryfall.scryfallCardfaces) {
@@ -49,7 +48,7 @@ export class CardfaceAdapter implements ICardfaceAdapter {
 
   private toInsertMultipleCardFaces(cardId: string, cardfaces: Array<ScryfallCardface>): InsertExpression<DatabaseSchema, "cardface"> {
     const result = new Array<InsertExpression<DatabaseSchema, "cardface">>();
-    cardfaces.map((cardface: ScryfallCardface, idx: number) =>
+    cardfaces.map((cardface: ScryfallCardface, idx: number) => {
       result.push({
         card_id: cardId,
         sequence: idx,
@@ -65,15 +64,17 @@ export class CardfaceAdapter implements ICardfaceAdapter {
         mana_cost: cardface.mana_cost,
         oracle_id: cardface.oracle_id,
         power: cardface.power,
-        // for "en" scryfall does not return printed fields so we use the name
-        // for split in other languages printed_name is wrong also
+        /*
+         *  for "en" scryfall does not return printed fields so we use the name
+         * for split in other languages printed_name is wrong also
+         */
         printed_name: cardface.printed_name ?? cardface.name,
         printed_text: cardface.printed_text ?? cardface.oracle_text,
         printed_type_line: cardface.printed_type_line ?? cardface.type_line,
         toughness: cardface.toughness,
         watermark: cardface.watermark
-      })
-    );
+      });
+    });
     return result;
   }
   //#endregion

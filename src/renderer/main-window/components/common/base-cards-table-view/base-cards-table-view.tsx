@@ -30,11 +30,11 @@ export function BaseCardsTableView<T>(props: BaseCardsTableViewProps<T>) {
   return (
     <div className="cards-table-wrapper">
       <Table2
+        children={props.columnDefinitions}
         numRows={props.data?.length ?? 0}
-        selectionModes={SelectionModes.ROWS_AND_CELLS}
         onSelection={onSelection}
         selectedRegionTransform={selectedRegionTransform}
-        children={props.columnDefinitions}
+        selectionModes={SelectionModes.ROWS_AND_CELLS}
       />
     </div>
   );

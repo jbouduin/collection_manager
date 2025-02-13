@@ -1,4 +1,4 @@
-import "./splash-window.css";
+// import "./splash-window.css";
 
 import * as React from "react";
 
@@ -9,12 +9,15 @@ import { SplashContent } from "../common/components/splash/splash-contents";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
-(async () => {
-  // Wait until CSS is loaded before rendering components because some of them (like Table)
-  // rely on those styles to take accurate DOM measurements.
-  // TODO await import("./App.css");
-  const container = document.getElementById("root") as HTMLElement;
+void (async () => {
+  /*
+   * Wait until CSS is loaded before rendering components because some of them (like Table)
+   * rely on those styles to take accurate DOM measurements.
+   */
+  await import("./splash-window.css");
+  const container = document.getElementById("root");
   const root = createRoot(container);
+  /* eslint-disable @stylistic/function-paren-newline */
   root.render(
     <BlueprintProvider>
       <SplashContent />

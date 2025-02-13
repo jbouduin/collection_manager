@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 enum ECardRarity {
   common,
   uncommon,
   rare,
   special,
   mythic,
-  bonus,
+  bonus
 }
 
 export type CardRarity = keyof typeof ECardRarity;

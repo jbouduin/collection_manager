@@ -16,7 +16,6 @@ declare const SPLASH_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
 @injectable()
 export class WindowService implements IWindowService {
-
   //#region private fields ----------------------------------------------------
   private _mainWindow: BrowserWindow;
   //#endregion
@@ -41,17 +40,15 @@ export class WindowService implements IWindowService {
 
     splashWindow.on("show", async () => {
       await bootFunction(splashWindow, syncParam)
-        .then(
-          () => {
-            this.createMainWindow();
-            this._mainWindow.on("ready-to-show", () => {
-              this._mainWindow.show();
-              if (!splashWindow.isDestroyed()) {
-                splashWindow.close();
-              }
-            });
-          }
-        )
+        .then(() => {
+          this.createMainWindow();
+          this._mainWindow.on("ready-to-show", () => {
+            this._mainWindow.show();
+            if (!splashWindow.isDestroyed()) {
+              splashWindow.close();
+            }
+          });
+        })
         .catch((reason: Error) => {
           splashWindow.hide();
           dialog.showErrorBox(`Error:" ${reason.message}`, reason.stack);
@@ -81,7 +78,7 @@ export class WindowService implements IWindowService {
       width: 800,
       // TODO icon: "/resources/icons/collection_manager_512",
       webPreferences: {
-        preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+        preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY
       },
       show: false
     });
@@ -99,11 +96,11 @@ export class WindowService implements IWindowService {
       height: 506,
       width: 900,
       webPreferences: {
-        preload: SPLASH_WINDOW_PRELOAD_WEBPACK_ENTRY,
+        preload: SPLASH_WINDOW_PRELOAD_WEBPACK_ENTRY
       },
       show: false,
       alwaysOnTop: true,
-      frame: false,
+      frame: false
     });
     splashWindow.loadURL(SPLASH_WINDOW_WEBPACK_ENTRY);
     return splashWindow;
@@ -126,7 +123,7 @@ export class WindowService implements IWindowService {
 
   private firstUseSyncParam(): DtoSyncParam {
     const result: DtoSyncParam = {
-      catalogTypesToSync: ["AbilityWords", "LandTypes", "ArtifactTypes"],  // add more catalogs when we need them to search
+      catalogTypesToSync: ["AbilityWords", "LandTypes", "ArtifactTypes"], // add more catalogs when we need them to search
       syncCardSymbols: true,
       syncCardSets: true,
       rulingSyncType: "none",
@@ -141,6 +138,4 @@ export class WindowService implements IWindowService {
     return result;
   }
   //#endregion
-
-
 }

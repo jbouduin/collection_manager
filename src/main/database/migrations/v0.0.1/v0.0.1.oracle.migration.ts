@@ -28,16 +28,18 @@ async function createV0_0_1_Ruling(db: Kysely<any>): Promise<void> {
     isSynced: true,
     tableName: "oracle_ruling",
     primaryKeyType: "custom",
-    primaryKey: [
-      { columnName: "oracle_id", dataType: "text", callback: (col: ColumnDefinitionBuilder) => col.notNull() }
-    ]
+    primaryKey: [{ columnName: "oracle_id", dataType: "text", callback: (col: ColumnDefinitionBuilder) => col.notNull() }]
   };
   return createTable(db, options).execute();
 }
 
 async function createV0_0_1_RulingLine(db: Kysely<any>): Promise<void> {
   return db.schema.createTable("oracle_ruling_line")
-    .addColumn("oracle_id", "text", (col: ColumnDefinitionBuilder) => col.references("oracle_ruling.oracle_id").onDelete("cascade").notNull())
+    .addColumn(
+      "oracle_id",
+      "text",
+      (col: ColumnDefinitionBuilder) => col.references("oracle_ruling.oracle_id").onDelete("cascade").notNull()
+    )
     .addColumn("source", "text", (col: ColumnDefinitionBuilder) => col.notNull())
     .addColumn("published_at", "text", (col: ColumnDefinitionBuilder) => col.notNull())
     .addColumn("comments", "text", (col: ColumnDefinitionBuilder) => col.notNull())
@@ -46,8 +48,7 @@ async function createV0_0_1_RulingLine(db: Kysely<any>): Promise<void> {
       .createIndex("ruling_line_oracle_id_idx")
       .on("oracle_ruling_line")
       .column("oracle_id")
-      .execute()
-    );
+      .execute());
 }
 
 async function createV0_0_1_Oracle(db: Kysely<any>): Promise<void> {

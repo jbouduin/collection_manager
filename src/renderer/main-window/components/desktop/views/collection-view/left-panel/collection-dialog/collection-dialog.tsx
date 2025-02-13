@@ -1,15 +1,13 @@
-import * as React from "react";
-
-import { CollectionDialogProps } from "./collection-dialog.props";
-import { CollectionViewmodel } from "../../../../../../viewmodels/collection/collection.viewmodel";
-import { DtoRendererConfiguration } from "../../../../../../../../common/dto";
 import { Button, Classes, Dialog, DialogBody, DialogFooter, FormGroup, IconName, InputGroup, SectionCard, TextArea } from "@blueprintjs/core";
-import { ConfigurationContext } from "../../../../../../components/context";
-import { handleStringChange } from "../../../../../../../common/utils";
 import { cloneDeep } from "lodash";
+import * as React from "react";
+import { DtoRendererConfiguration } from "../../../../../../../../common/dto";
+import { handleStringChange } from "../../../../../../../common/utils";
+import { ConfigurationContext } from "../../../../../../components/context";
+import { CollectionViewmodel } from "../../../../../../viewmodels/collection/collection.viewmodel";
+import { CollectionDialogProps } from "./collection-dialog.props";
 
 export function CollectionDialog(props: CollectionDialogProps) {
-
   //#region State -------------------------------------------------------------
   const [collection, setCollection] = React.useState<CollectionViewmodel>(props.collection);
   //#endregion
@@ -18,14 +16,11 @@ export function CollectionDialog(props: CollectionDialogProps) {
   React.useEffect(
     () => {
       if (props.collection) {
-        console.log("effect", props.collection)
-        setCollection(props.collection)
+        setCollection(props.collection);
       }
     },
     [props.collection]
-  )
-
-
+  );
   //#endregion
 
   //#region Main --------------------------------------------------------------
@@ -34,10 +29,10 @@ export function CollectionDialog(props: CollectionDialogProps) {
       {
         (configuration: DtoRendererConfiguration) => (
           <Dialog
-            icon={getIconName()}
-            title={getTitle()}
-            isOpen={props.isOpen}
             className={configuration.useDarkTheme ? Classes.DARK : ""}
+            icon={getIconName()}
+            isOpen={props.isOpen}
+            title={getTitle()}
           >
             <DialogBody>
               {collection && renderForm()}
@@ -54,8 +49,19 @@ export function CollectionDialog(props: CollectionDialogProps) {
   function renderActions(): React.JSX.Element {
     return (
       <>
-        <Button icon="floppy-disk" disabled={collection?.hasChanges ? false : true} onClick={() => props.onSave(collection)}>Save</Button>
-        <Button icon="cross" onClick={props.onCancel}>Cancel</Button>
+        <Button
+          disabled={collection?.hasChanges ? false : true}
+          icon="floppy-disk"
+          onClick={() => props.onSave(collection)}
+        >
+          Save
+        </Button>
+        <Button
+          icon="cross"
+          onClick={props.onCancel}
+        >
+          Cancel
+        </Button>
       </>
     );
   }
@@ -63,13 +69,16 @@ export function CollectionDialog(props: CollectionDialogProps) {
   function renderForm(): React.JSX.Element {
     return (
       <SectionCard padded={false}>
-        <FormGroup label="Name" labelInfo="required" labelFor="collection-name" key="collection-name">
+        <FormGroup
+          key="collection-name"
+          label="Name"
+          labelFor="collection-name"
+          labelInfo="required"
+        >
           <InputGroup
             id="collection-name"
             inputMode="text"
-            value={collection.name}
             // rightElement={<Icon icon="folder-open" />}
-            small={true}
             onChange={
               handleStringChange((value: string) => {
                 const newViewmodel = cloneDeep(collection);
@@ -77,18 +86,25 @@ export function CollectionDialog(props: CollectionDialogProps) {
                 setCollection(newViewmodel);
               })
             }
+            small={true}
+            value={collection.name}
           />
         </FormGroup>
-        <FormGroup label="Description" labelFor="collection-description" key="collection-description">
+        <FormGroup
+          key="collection-description"
+          label="Description"
+          labelFor="collection-description"
+        >
           <TextArea
-            fill={true}
             autoResize={true}
+            fill={true}
             onChange={handleStringChange((value: string) => {
               const newViewmodel = cloneDeep(collection);
               newViewmodel.description = value;
               setCollection(newViewmodel);
             })}
-            value={collection.description ?? ""} />
+            value={collection.description ?? ""}
+          />
         </FormGroup>
       </SectionCard>
     );
@@ -103,7 +119,7 @@ export function CollectionDialog(props: CollectionDialogProps) {
           return "folder-close";
         }
       } else {
-        return "document"
+        return "document";
       }
     } else {
       return undefined;

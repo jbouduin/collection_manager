@@ -13,7 +13,6 @@ import { CollectionRepository } from "./implementation/collection.repository";
 
 
 export class RepositoryDi {
-
   public static registerRepositories() {
     container.register<ICardSetRepository>(REPOTOKENS.CardSetRepository, { useClass: CardSetRepository });
     container.register<ICardRepository>(REPOTOKENS.CardRepository, { useClass: CardRepository });

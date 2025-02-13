@@ -11,7 +11,7 @@ export function cardSetNameRenderer<T>(data: Array<T>, cardSets: Array<CardSetVi
   return (row: number) => {
     const set = cardSets.find((s: CardSetViewmodel) => s.id == idExtractor(data[row]));
     return (<Cell>{set?.cardSetName} </Cell>);
-  }
+  };
 }
 
 export function symbolRenderer<T>(data: Array<T>, valueCallBack: (card: T) => Array<string>): CellRenderer {

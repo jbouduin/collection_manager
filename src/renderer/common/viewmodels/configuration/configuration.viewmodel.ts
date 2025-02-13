@@ -7,7 +7,6 @@ import { DatabaseViewTreeConfigurationViewmodel } from "./database-view-tree-con
 import { DataConfigurationViewmodel } from "./data-configuration.viewmodel";
 
 export class ConfigurationViewModel extends BaseViewmodel<DtoConfiguration> {
-
   //#region private fields ----------------------------------------------------
   private _syncParamViewmodel: SyncParamViewmodel;
   private _databaseViewTreeConfigurationViewmodel: DatabaseViewTreeConfigurationViewmodel;
@@ -64,8 +63,5 @@ export class ConfigurationViewModel extends BaseViewmodel<DtoConfiguration> {
     this._databaseViewTreeConfigurationViewmodel = new DatabaseViewTreeConfigurationViewmodel(dtoConfiguration.rendererConfiguration.databaseViewTreeConfiguration);
     this._dataConfigurationViewmodel = new DataConfigurationViewmodel(dtoConfiguration.dataConfiguration);
   }
-  //#endregion
-
-  //#region Public methods ----------------------------------------------------
   //#endregion
 }

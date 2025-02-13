@@ -103,9 +103,8 @@ export class ScryfallClient implements IScryfallClient {
       }
     );
     return result;
-
-
   }
+
   public async getCardSets(progressCallback: ProgressCallback): Promise<Array<ScryfallCardSet>> {
     progressCallback("Fetching card set data from Scryfall");
     const uri = `${this.scryfallConfiguration.scryfallApiRoot}/${this.scryfallConfiguration.scryfallEndpoints["cardSet"]}`;
@@ -145,13 +144,13 @@ export class ScryfallClient implements IScryfallClient {
     const now = Date.now();
     const sleepTime = this.nextQuery - now;
     this.nextQuery = now + this.scryfallConfiguration.minimumRequestTimeout;
-    console.log(`POST ${uri} - body\n${JSON.stringify(body,null, 2)}`);
+    console.log(`POST ${uri} - body\n${JSON.stringify(body, null, 2)}`);
     return await this
       .sleep(sleepTime)
       .then(() => fetch(uri, {
         method: "POST",
         headers: {
-          "Accept": "application/json",
+          Accept: "application/json",
           "Content-Type": "application/json"
         },
         body: body
@@ -163,7 +162,7 @@ export class ScryfallClient implements IScryfallClient {
   }
 
   private async sleep(ms: number): Promise<void> {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       console.log(`sleeping ${ms}`);
       setTimeout(resolve, ms);
     });
@@ -172,7 +171,7 @@ export class ScryfallClient implements IScryfallClient {
   private async fetchList<T extends object>(uri: string | URL, previousPages: Array<T>, progressCallback?: ProgressCallback): Promise<Array<T>> {
     return this.tryFetch(uri)
       .then(async (response: Response) => {
-        const fetchedList = ((await response.json()) as ScryfallList<T>);
+        const fetchedList = (await response.json()) as ScryfallList<T>;
         previousPages.push(...fetchedList.data);
         if (fetchedList.has_more && fetchedList.next_page) {
           return this.fetchList(fetchedList.next_page, previousPages, progressCallback);
@@ -195,5 +194,4 @@ export class ScryfallClient implements IScryfallClient {
     return result;
   }
   //#endregion
-
 }

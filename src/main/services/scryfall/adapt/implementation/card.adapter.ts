@@ -28,7 +28,7 @@ export class CardAdapter implements ICardAdapter {
       frame: scryfall.frame,
       is_full_art: scryfallBooleanToNumber(scryfall.full_art),
       rarity: scryfall.rarity,
-      released_at: scryfallDateToIsoString( scryfall.released_at),
+      released_at: scryfallDateToIsoString(scryfall.released_at),
       is_reprint: scryfallBooleanToNumber(scryfall.reprint),
       set_id: scryfall.set_id,
       is_oversized: scryfallBooleanToNumber(scryfall.oversized),

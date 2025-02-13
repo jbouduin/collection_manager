@@ -2,12 +2,9 @@ import { Card, Classes } from "@blueprintjs/core";
 import classNames from "classnames";
 import { clone } from "lodash";
 import * as React from "react";
-
 import { DtoSyncParam } from "../../../../common/dto";
 import { CardSetViewmodel } from "../../viewmodels";
-import { CardSetContext, CardSymbolContext, LanguagesContext, ConfigurationContext } from "../context";
-import { CollectionView } from "./views/collection-view/collection-view";
-import { DeckView } from "./views/deck-view/deck-view";
+import { CardSetContext, CardSymbolContext, ConfigurationContext, LanguagesContext } from "../context";
 import { ButtonBar } from "./button-bar/button-bar";
 import { CardSetDialog } from "./card-set-dialog/card-set-dialog";
 import { EDesktopView } from "./desktop-view.enum";
@@ -16,14 +13,11 @@ import { DesktopState } from "./desktop.state";
 import { SettingsDialog } from "./settings-dialog/settings-dialog";
 import { SplashScreen } from "./splash-screen/splash-screen";
 import { SyncDialog } from "./sync-dialog/sync-dialog";
+import { CollectionView } from "./views/collection-view/collection-view";
 import { DatabaseView } from "./views/database-view/database-view";
-
-// import logo from "./logo.png";
-
+import { DeckView } from "./views/deck-view/deck-view";
 
 export function Desktop(props: DesktopProps) {
-  console.log("in desktop function");
-
   //#region State -------------------------------------------------------------
   const initialState: DesktopState = {
     currentView: EDesktopView.Database,
@@ -89,7 +83,7 @@ export function Desktop(props: DesktopProps) {
       cardSetCodeToSyncCardsFor: code,
       changedImageStatusAction: "delete"
     };
-    window.ipc.sync(params);
+    void window.ipc.sync(params);
   }
 
   function synchronizeCollection(ids: Array<string>): void {
@@ -110,12 +104,12 @@ export function Desktop(props: DesktopProps) {
       cardSetCodeToSyncCardsFor: undefined,
       changedImageStatusAction: "delete"
     };
-    window.ipc.sync(params);
+    void window.ipc.sync(params);
   }
 
   function startSync(syncParam: DtoSyncParam): void {
     setSplashScreenOpen(true);
-    window.ipc.sync(syncParam);
+    void window.ipc.sync(syncParam);
   }
   //#endregion
 
@@ -125,16 +119,17 @@ export function Desktop(props: DesktopProps) {
       <LanguagesContext.Provider value={props.languages}>
         <CardSymbolContext.Provider value={props.symbolSvgs}>
           <CardSetContext.Provider value={props.cardSets}>
-            <Card className={classNames(props.configuration.useDarkTheme ? Classes.DARK: "", "desktop-wrapper")}>
+            <Card className={classNames(props.configuration.useDarkTheme ? Classes.DARK : "", "desktop-wrapper")}>
               <ButtonBar
+                currentView={desktopState.currentView}
                 onDesktopViewSelectionClick={onDesktopViewSelectionClick}
                 onSettingsMenuClick={() => setSettingsDialogOpen(true)}
                 onSyncMenuClick={() => setSyncDialogOpen(true)}
-                currentView={desktopState.currentView}></ButtonBar>
+              />
               <div className="main-panel">
                 {
                   desktopState.currentView == EDesktopView.Database &&
-                  <DatabaseView onSynchronizeSet={synchronizeSet} onCardSetDialog={(cardSet: CardSetViewmodel) => setCardSetDialogOpen(true, cardSet)}/>
+                  <DatabaseView onCardSetDialog={(cardSet: CardSetViewmodel) => setCardSetDialogOpen(true, cardSet)} onSynchronizeSet={synchronizeSet} />
                 }
                 {
                   desktopState.currentView == EDesktopView.Collection &&
@@ -146,10 +141,25 @@ export function Desktop(props: DesktopProps) {
                 }
               </div>
             </Card>
-            <SettingsDialog isOpen={desktopState.settingsDialogOpen} onDialogClose={() => setSettingsDialogOpen(false)} />
-            <SyncDialog isOpen={desktopState.syncDialogOpen} onDialogClose={() => setSyncDialogOpen(false)} onOkClick={startSync} />
-            <SplashScreen isOpen={desktopState.splashScreenOpen} onDialogClose={() => setSplashScreenOpen(false)} />
-            <CardSetDialog isOpen={desktopState.cardSetDialogOpen} onDialogClose={() => setCardSetDialogOpen(false)} cardSetId={desktopState.cardSet?.id} cardSetSvg={desktopState.cardSet?.cardSetSvg} />
+            <SettingsDialog
+              isOpen={desktopState.settingsDialogOpen}
+              onDialogClose={() => setSettingsDialogOpen(false)}
+            />
+            <SyncDialog
+              isOpen={desktopState.syncDialogOpen}
+              onDialogClose={() => setSyncDialogOpen(false)}
+              onOkClick={startSync}
+            />
+            <SplashScreen
+              isOpen={desktopState.splashScreenOpen}
+              onDialogClose={() => setSplashScreenOpen(false)}
+            />
+            <CardSetDialog
+              cardSetId={desktopState.cardSet?.id}
+              cardSetSvg={desktopState.cardSet?.cardSetSvg}
+              isOpen={desktopState.cardSetDialogOpen}
+              onDialogClose={() => setCardSetDialogOpen(false)}
+            />
           </CardSetContext.Provider>
         </CardSymbolContext.Provider>
       </LanguagesContext.Provider>

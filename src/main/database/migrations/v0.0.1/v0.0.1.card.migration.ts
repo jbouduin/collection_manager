@@ -137,8 +137,10 @@ async function createV0_0_1_CardFaceColorMap(db: Kysely<any>): Promise<void> {
     .addColumn("color_type", "text", (col: ColumnDefinitionBuilder) => col.notNull())
     .addColumn("color_id", "text", (col: ColumnDefinitionBuilder) => col.references("color.id").onDelete("cascade").notNull())
     .addForeignKeyConstraint(
-      "FK_cardface_color_map_cardface", ["card_id", "sequence"],
-      "cardface", ["card_id", "sequence"],
+      "FK_cardface_color_map_cardface",
+      ["card_id", "sequence"],
+      "cardface",
+      ["card_id", "sequence"],
       (cb) => cb.onDelete("cascade"))
     .addPrimaryKeyConstraint("CARDFACE_COLOR_MAP_PK", ["card_id", "sequence", "color_type", "color_id"])
     .execute()
@@ -153,7 +155,11 @@ async function createV0_0_1_CardFaceColorMap(db: Kysely<any>): Promise<void> {
 async function createV0_0_1_CardCardMap(db: Kysely<any>): Promise<void> {
   console.log("card_card_map");
   return db.schema.createTable("card_card_map")
-    .addColumn("card_id", "text", (col: ColumnDefinitionBuilder) => col.references("card.id").onDelete("cascade").notNull())
+    .addColumn(
+      "card_id",
+      "text",
+      (col: ColumnDefinitionBuilder) => col.references("card.id").onDelete("cascade").notNull()
+    )
     .addColumn("related_card_id", "text", (col: ColumnDefinitionBuilder) => col.notNull())
     .addColumn("component", "text", (col: ColumnDefinitionBuilder) => col.notNull())
     .addPrimaryKeyConstraint("CARD_CARD_MAP_PK", ["card_id", "related_card_id", "component"])

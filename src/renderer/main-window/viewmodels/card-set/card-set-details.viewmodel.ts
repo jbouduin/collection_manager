@@ -21,9 +21,9 @@ export class CardSetDetailsViewmodel {
   }
 
   public get lastFullSynchronizationString(): string {
-    return this._dtoCardSet.last_full_synchronization_at ?
-      this._dtoCardSet.last_full_synchronization_at.toLocaleString() :
-      "Never";
+    return this._dtoCardSet.last_full_synchronization_at
+      ? this._dtoCardSet.last_full_synchronization_at.toLocaleString()
+      : "Never";
   }
 
   public get numberOfPrintedCards(): number {
@@ -64,7 +64,7 @@ export class CardSetDetailsViewmodel {
   }
 
   public get digital(): boolean {
-    return this._dtoCardSet.is_digital ;
+    return this._dtoCardSet.is_digital;
   }
 
   public get mtgOnlineCode(): string {
@@ -89,8 +89,7 @@ export class CardSetDetailsViewmodel {
   //#region Public methods ----------------------------------------------------
   public getLanguagesOfSet(languages: Array<DtoLanguage>): string {
     return this._dtoCardSet.languages
-      .map((language: DtoCardSetLanguage) =>
-        languages.find((dtoLanguage: DtoLanguage) => dtoLanguage.id == language.lang).button_text)
+      .map((language: DtoCardSetLanguage) => languages.find((dtoLanguage: DtoLanguage) => dtoLanguage.id == language.lang).button_text)
       .join(", ");
   }
   //#endregion

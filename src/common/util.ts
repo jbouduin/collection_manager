@@ -31,7 +31,7 @@ export function formatTimeStampedFileName(fileName: string) {
     date.getHours(),
     date.getMinutes(),
     date.getSeconds()
-  ].map((n:number) => n.toString().padStart(2, "0")).join("-");
+  ].map((n: number) => n.toString().padStart(2, "0")).join("-");
   return `${datePart}.${timePart}.${fileName}`;
 }
 

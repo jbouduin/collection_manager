@@ -8,7 +8,6 @@ import { ScryfallEndpoint } from "../../scryfall";
 import { IConfigurationService } from "../interfaces";
 
 export class ConfigurationService implements IConfigurationService {
-
   //#region Private fields ----------------------------------------------------
   private configFilePath: string;
   private _configuration: DtoConfiguration;
@@ -50,8 +49,7 @@ export class ConfigurationService implements IConfigurationService {
     if (fs.existsSync(this.configFilePath)) {
       this._configuration = JSON.parse(fs.readFileSync(this.configFilePath, "utf-8"));
       this._isFirstUsage = false;
-    }
-    else {
+    } else {
       this._configuration = this.createFactoryDefault(appDirectory, homeDirectory, useDarkTheme);
       this._isFirstUsage = true;
     }
@@ -74,10 +72,10 @@ export class ConfigurationService implements IConfigurationService {
       dataConfiguration: {
         rootDataDirectory: path.join(homeDirectory, "collection-manager"),
         cacheDirectory: path.join(appDirectory, ".cache"),
-        databaseName: "magic-db.sqlite",
-        },
+        databaseName: "magic-db.sqlite"
+      },
       syncAtStartupConfiguration: this.createSyncAtStartupFactoryDefault(),
-      rendererConfiguration: this.createRendererConfigurationFactoryDefault(useDarkTheme)        ,
+      rendererConfiguration: this.createRendererConfigurationFactoryDefault(useDarkTheme),
       scryfallConfiguration: this.createScryFallFactoryDefault()
     };
     return result;
@@ -85,33 +83,33 @@ export class ConfigurationService implements IConfigurationService {
 
   private createScryFallFactoryDefault(): DtoScryfallConfiguration {
     const catalogPaths: Record<CatalogType, string> = {
-      "AbilityWords": "ability-words",
-      "ArtifactTypes": "artifact-types",
-      "ArtistNames": "artist-names",
-      "CardNames": "card-names",
-      "CreatureTypes": "creature-types",
-      "EnchantmentTypes": "enchantment-types",
-      "KeywordAbilities": "keyword-abilities",
-      "KeywordActions": "keyword-actions",
-      "LandTypes": "land-types",
-      "Loyalties": "loyalties",
-      "PlaneswalkerTypes": "planeswalker-types",
-      "Powers": "powers",
-      "SpellTypes": "spell-types",
-      "Supertypes": "super-types",
-      "Toughnesses": "toughnesses",
-      "Watermarks": "watermarks",
-      "WordBank": "word-bank"
+      AbilityWords: "ability-words",
+      ArtifactTypes: "artifact-types",
+      ArtistNames: "artist-names",
+      CardNames: "card-names",
+      CreatureTypes: "creature-types",
+      EnchantmentTypes: "enchantment-types",
+      KeywordAbilities: "keyword-abilities",
+      KeywordActions: "keyword-actions",
+      LandTypes: "land-types",
+      Loyalties: "loyalties",
+      PlaneswalkerTypes: "planeswalker-types",
+      Powers: "powers",
+      SpellTypes: "spell-types",
+      Supertypes: "super-types",
+      Toughnesses: "toughnesses",
+      Watermarks: "watermarks",
+      WordBank: "word-bank"
     };
 
     const endpoints: Record<ScryfallEndpoint, string> = {
-      "cards": "card/:id",
-      "cardSet": "sets",
-      "cardSymbol": "symbology",
-      "catalog": "catalog",
-      "collection": "cards/collection",
-      "ruling": "cards/:id/rulings",
-      "search": "cards/search"
+      cards: "card/:id",
+      cardSet: "sets",
+      cardSymbol: "symbology",
+      catalog: "catalog",
+      collection: "cards/collection",
+      ruling: "cards/:id/rulings",
+      search: "cards/search"
     };
 
     const result: DtoScryfallConfiguration = {

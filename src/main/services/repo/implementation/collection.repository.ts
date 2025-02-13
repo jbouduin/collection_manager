@@ -8,7 +8,6 @@ import INFRATOKENS, { IDatabaseService } from "../../infra/interfaces";
 
 @injectable()
 export class CollectionRepository extends BaseRepository implements ICollectionRepository {
-
   //#region Constructor -------------------------------------------------------
   public constructor(@inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService) {
     super(databaseService);
@@ -23,15 +22,15 @@ export class CollectionRepository extends BaseRepository implements ICollectionR
       .execute();
   }
 
-  public create(collection: NewCollection): Promise<DtoCollection> {
+  public create(_collection: NewCollection): Promise<DtoCollection> {
     throw new Error("Method not implemented.");
   }
 
-  public delete(id: number): Promise<DeleteResult> {
+  public delete(_id: number): Promise<DeleteResult> {
     throw new Error("Method not implemented.");
   }
 
-  update(collection: UpdateCollection): Promise<DtoCollection> {
+  public update(_collection: UpdateCollection): Promise<DtoCollection> {
     throw new Error("Method not implemented.");
   }
   //#endregion

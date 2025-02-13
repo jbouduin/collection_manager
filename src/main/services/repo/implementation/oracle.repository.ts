@@ -7,7 +7,6 @@ import { BaseRepository } from "./base.repository";
 
 @injectable()
 export class OracleRepository extends BaseRepository implements IOracleRepository {
-
   public constructor(@inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService) {
     super(databaseService);
   }

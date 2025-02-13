@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 enum EGame {
   paper,
   arena,
-  mtgo,
+  mtgo
 }
 
 export type Game = keyof typeof EGame;

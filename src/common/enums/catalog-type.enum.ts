@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 enum ECatalogType {
   AbilityWords,
   ArtifactTypes,
@@ -21,7 +22,7 @@ enum ECatalogType {
 export type CatalogType = keyof typeof ECatalogType;
 
 export const AllCatalogTypes: Array<CatalogType> = Object.keys(ECatalogType)
-  .filter(prop => isNaN(parseInt(prop))) as Array<CatalogType>;
+  .filter((prop) => isNaN(parseInt(prop))) as Array<CatalogType>;
 
 export const CatalogTypeDisplayValue = new Map<CatalogType, string>([
   ["AbilityWords", "Abilities"],

@@ -1,4 +1,4 @@
-import { Button, Card, Props } from "@blueprintjs/core";
+import { Button, Card } from "@blueprintjs/core";
 import * as React from "react";
 import { DeckViewProps } from "./deck-view.props";
 
@@ -91,5 +91,4 @@ export function DeckView(props: DeckViewProps) {
     ];
   }
   //#endregion
-
 }

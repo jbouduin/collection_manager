@@ -16,8 +16,6 @@ import { LegalitiesView } from "./legalities-view/legalities-view";
 
 
 export function CardView(props: CardViewProps) {
-  console.log("in cardview function");
-
   //#region State -------------------------------------------------------------
   const [cardViewState, setCardViewState] = React.useState<CardViewState>({ card: null, cardfaceSequence: 0 });
   //#endregion
@@ -26,7 +24,7 @@ export function CardView(props: CardViewProps) {
   React.useEffect(
     () => {
       if (props.cardId) {
-        loadCard(props.cardId);
+        void loadCard(props.cardId);
       }
     },
     [props.cardId]
@@ -38,7 +36,7 @@ export function CardView(props: CardViewProps) {
     <div className="card-view-wrapper">
       {
         cardViewState.card &&
-        <div style={{"minWidth": "410px"}}>
+        <div style={{ minWidth: "410px" }}>
           {renderTopSection()}
           {renderFacesSection()}
           {renderMoreSection()}
@@ -53,10 +51,10 @@ export function CardView(props: CardViewProps) {
   function renderTopSection(): React.JSX.Element {
     return (
       <Section
-        compact={true}
         collapsible={true}
-        title={<CardHeaderView card={cardViewState.card} />}
+        compact={true}
         rightElement={<CardSymbolProvider cardSymbols={cardViewState.card.cardManacost} className="mana-cost-image-in-title" />}
+        title={<CardHeaderView card={cardViewState.card} />}
       >
         {
           cardViewState.card.isMultipleLanguage &&
@@ -64,7 +62,7 @@ export function CardView(props: CardViewProps) {
             <LanguageButtonBar
               cardLanguages={cardViewState.card.otherCardLanguages}
               currentLanguage={cardViewState.card.cardLanguage}
-              onButtonClick={(language: DtoCardLanguage) => loadCard(language.id)}
+              onButtonClick={(language: DtoCardLanguage) => void loadCard(language.id)}
             />
           </SectionCard>
         }
@@ -78,16 +76,18 @@ export function CardView(props: CardViewProps) {
   function renderFacesSection(): Array<React.JSX.Element> {
     const result = new Array<React.JSX.Element>();
     result.push((
-      <CardfaceView key="face0"
+      <CardfaceView
         cardface={cardViewState.card.getCardface(0)}
+        key="face0"
         oracle={cardViewState.card.getOracle(0) ?? cardViewState.card.getCardface(0).oracle}
       />
     ));
     const otherFace = cardViewState.card.getCardface(1);
     if (otherFace) {
       result.push((
-        <CardfaceView key="face1"
+        <CardfaceView
           cardface={otherFace}
+          key="face1"
           oracle={cardViewState.card.getOracle(1) ?? cardViewState.card.getCardface(1).oracle}
         />
       ));
@@ -98,21 +98,26 @@ export function CardView(props: CardViewProps) {
   function renderMoreSection(): React.JSX.Element {
     return (
       <Section
-        compact={true}
         collapsible={true}
-        title={<div><H5 style={{ "marginBottom": "0px" }}>More</H5></div>}
+        compact={true}
+        title={<div><H5 style={{ marginBottom: "0px" }}>More</H5></div>}
       >
         <SectionCard className="card-view-section-card" >
-          <Tabs animate={true} id="card-detail-tabs" defaultSelectedTabId="Rulings" renderActiveTabPanelOnly={true}>
+          <Tabs
+            animate={true}
+            defaultSelectedTabId="Rulings"
+            id="card-detail-tabs"
+            renderActiveTabPanelOnly={true}
+          >
             <Tab
               id="Rulings"
-              title="Rulings"
               panel={<CardRulingsView card={cardViewState.card} />}
+              title="Rulings"
             />
             <Tab
               id="Legality"
-              title="Legality"
               panel={<LegalitiesView oracleId={cardViewState.card.oracleId} />}
+              title="Legality"
             />
           </Tabs>
         </SectionCard>
@@ -131,17 +136,10 @@ export function CardView(props: CardViewProps) {
           setIds: null
         }
       };
-      window.ipc
+      await window.ipc
         .query(cardQueryParam)
-        .then((cardResult: Array<DtoCard>) =>
-          setCardViewState(
-            {
-              card: new CardViewmodel(cardResult[0]),
-              cardfaceSequence: 0
-            })
-        );
-    }
-    else {
+        .then((cardResult: Array<DtoCard>) => setCardViewState({ card: new CardViewmodel(cardResult[0]), cardfaceSequence: 0 }));
+    } else {
       setCardViewState(undefined);
     }
   }

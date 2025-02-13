@@ -10,10 +10,10 @@ export class CardfaceViewmodel {
 
   //#region Public getters -----------------------------------------------------
   public get printedName(): string {
-    //here we have a data quality issue with non english split cards
-    return this._dtoCardface.printed_name.indexOf(" // ") >= 0 ?
-      this._dtoCardface.face_name :
-      this._dtoCardface.printed_name;
+    // here we have a data quality issue with non english split cards
+    return this._dtoCardface.printed_name.indexOf(" // ") >= 0
+      ? this._dtoCardface.face_name
+      : this._dtoCardface.printed_name;
   }
 
   public get printedTypeLine(): string {
@@ -59,7 +59,10 @@ export class CardfaceViewmodel {
   private convertManaCost(manaCost: string): Array<string> {
     const splittedCellValue = manaCost.split("}");
     splittedCellValue.pop();
-    return splittedCellValue.map((s: string, i: number) => i < splittedCellValue.length ? s + "}" : s);
+    return splittedCellValue.map((s: string, i: number) => {
+      /* es-lint-disable-next-line @stylistic/operator-linebreak */
+      return i < splittedCellValue.length ? s + "}" : s;
+    });
   }
   //#endregion
 }

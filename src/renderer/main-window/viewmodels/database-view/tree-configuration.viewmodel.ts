@@ -2,7 +2,6 @@ import { DtoDatabaseTreeViewConfiguration } from "../../../../common/dto";
 import { DatabaseViewTreeConfigurationViewmodel } from "../../../common/viewmodels/configuration/database-view-tree-configuration.viewmodel";
 
 export class TreeConfigurationViewmodel extends DatabaseViewTreeConfigurationViewmodel {
-
   //#region private fields ----------------------------------------------------
   private _cardSetFilterValue: string;
   //#endregion
@@ -23,6 +22,4 @@ export class TreeConfigurationViewmodel extends DatabaseViewTreeConfigurationVie
     this._cardSetFilterValue = null;
   }
   //#endregion
-
-
 }

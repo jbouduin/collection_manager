@@ -1,7 +1,6 @@
 import { TreeNodeInfo } from "@blueprintjs/core";
 import { cloneDeep } from "lodash";
 import * as React from "react";
-
 import { DtoCollection } from "../../../../../../../common/dto";
 import { QueryParam } from "../../../../../../../common/ipc-params";
 import { BaseTreeView } from "../../../../../components/common/base-tree-view/base-tree-view";
@@ -13,20 +12,16 @@ import { LeftPanelProps } from "./left-panel.props";
 import { DialogData } from "./dialog-data";
 
 
-
 export function LeftPanel(props: LeftPanelProps) {
-
-  console.log("in function LeftPanel");
+  //#region State -----------------------------------------------------------
   const [collections, setCollections] = React.useState<Array<CollectionViewmodel>>(new Array<CollectionViewmodel>());
-  // const [dialogIsOpen, setDialogIsOpen] = React.useState(false);
-  // const [selectedCollection, setSelectedCollection] = React.useState<CollectionViewmodel>(undefined);
-  // const [previousSelectedCollection, setPreviousSelectedCollection] = React.useState<CollectionViewmodel>(undefined);
   const [dialogData, setDialogData] = React.useState<DialogData>({
     selectedCollection: undefined,
     previousSelectedCollection: undefined,
     dialogIsOpen: false,
     dialogAction: "none"
   });
+  //#endregion
 
   React.useEffect(
     () => {
@@ -34,18 +29,17 @@ export function LeftPanel(props: LeftPanelProps) {
         type: "Collection",
         options: null
       };
-      console.log("querying backend");
-      window.ipc.query(queryCollections)
+      void window.ipc.query(queryCollections)
         .then((result: Array<DtoCollection>) => setCollections(result.map((collection: DtoCollection) => new CollectionViewmodel(collection))));
     },
     [props]
-  )
+  );
 
   function applyFilterProps(data: Array<CollectionViewmodel>, _filterProps: TreeConfigurationViewmodel): Array<CollectionViewmodel> {
     return data;
   }
 
-  function buildTree(data: CollectionViewmodel[], __filterProps: TreeConfigurationViewmodel): TreeNodeInfo<string | CollectionViewmodel>[] {
+  function buildTree(data: Array<CollectionViewmodel>, __filterProps: TreeConfigurationViewmodel): Array<TreeNodeInfo<string | CollectionViewmodel>> {
     return buildTreeByParentRecursive(data, null);
   }
 
@@ -124,8 +118,10 @@ export function LeftPanel(props: LeftPanelProps) {
 
   function onDelete(): void {
     if (dialogData.selectedCollection && !dialogData.selectedCollection.isSystem) {
-      // TODO confirmation dialog
-      // TODO call backend to delete
+      /*
+       * TODO confirmation dialog
+       * TODO call backend to delete
+       */
       const newCollectionList = cloneDeep(collections);
       const indexOf = newCollectionList.findIndex((collection: CollectionViewmodel) => collection.id == dialogData.selectedCollection.id);
       newCollectionList.splice(indexOf, 1);
@@ -150,26 +146,26 @@ export function LeftPanel(props: LeftPanelProps) {
           canAddFolder={dialogData.selectedCollection ? dialogData.selectedCollection.isFolder : false}
           canDelete={dialogData.selectedCollection ? !dialogData.selectedCollection.isSystem : false}
           canEdit={dialogData.selectedCollection ? true : false}
-          onDelete={onDelete}
           onAddCollection={onAddCollection}
           onAddFolder={onAddFolder}
+          onDelete={onDelete}
           onEdit={onEdit}
         />
         <BaseTreeView<CollectionViewmodel, TreeConfigurationViewmodel>
-          data={collections}
-          onDataSelected={onCollectionSelected}
-          filterProps={undefined}
           applyFilterProps={applyFilterProps}
           buildTree={buildTree}
+          data={collections}
+          filterProps={undefined}
+          onDataSelected={onCollectionSelected}
         />
       </div>
       <CollectionDialog
-        dialogAction={dialogData.dialogAction}
         collection={dialogData.selectedCollection}
+        dialogAction={dialogData.dialogAction}
         isOpen={dialogData.dialogIsOpen}
-        onSave={onSave}
         onCancel={onCancelDialog}
-      ></CollectionDialog>
+        onSave={onSave}
+      />
     </>
   );
   //#endregion

@@ -3,12 +3,9 @@ import { ColumnType } from "kysely";
 import { CardLayout } from "../../../../common/enums";
 
 export interface CardfaceTable {
-
-
   card_id: ColumnType<string, string, never>;
   sequence: ColumnType<number, number, never>;
-  // put (oracle card name here in case of single face card
-  // otherwise put face name
+  // put (oracle card name here in case of single face card/ otherwise put face name
   face_name: ColumnType<string, string, never>;
   artist?: ColumnType<string, string | undefined>;
   cmc?: ColumnType<number, number | undefined>;
@@ -42,7 +39,7 @@ export interface CardfaceTable {
   /**
    * The Oracle ID of this particular face, if the card is reversible.
    */
-  oracle_id?: ColumnType<string | string | undefined>
+  oracle_id?: ColumnType<string , string , undefined>;
   /**
    * This face’s power, if any.
    * Note that some cards have powers that are not numeric, such as *.
@@ -61,5 +58,7 @@ export interface CardfaceTable {
   flavor_text?: ColumnType<string, string | undefined>;
 }
 
-// LATER store "hand_modfier?" (This card’s hand modifier, if it is Vanguard card. This value will contain a delta, such as -1.)
-// LATER store "life_modfier?" (This card’s life modifier, if it is Vanguard card. This value will contain a delta, such as +2.)
+/*
+ * LATER store "hand_modfier?" (This card’s hand modifier, if it is Vanguard card. This value will contain a delta, such as -1.)
+ *  LATER store "life_modfier?" (This card’s life modifier, if it is Vanguard card. This value will contain a delta, such as +2.)
+ */

@@ -13,10 +13,8 @@ import { BaseRepository } from "./base.repository";
 
 @injectable()
 export class CardRepository extends BaseRepository implements ICardRepository {
-
   //#region Constructor & C° --------------------------------------------------
-  public constructor(
-    @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService) {
+  public constructor(@inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService) {
     super(databaseService);
   }
   //#endregion
@@ -30,7 +28,7 @@ export class CardRepository extends BaseRepository implements ICardRepository {
         "card.collector_number as collectorNumber",
         "card.card_back_id as cardBackId",
         "card_set.code as setCode",
-        "card.lang as language",
+        "card.lang as language"
       ])
       .where("card.id", "=", cardId)
       .$castTo<DtoCardImageData>()
@@ -38,6 +36,7 @@ export class CardRepository extends BaseRepository implements ICardRepository {
       .executeTakeFirst();
   }
 
+  /* eslint-disable @stylistic/function-paren-newline */
   public async getCards(options: CardQueryOptions): Promise<Array<DtoCard>> {
     return await this.database
       .selectFrom("card")
@@ -80,11 +79,11 @@ export class CardRepository extends BaseRepository implements ICardRepository {
         ).as("languages"),
         helpers.jsonArrayFrom<DtoCardColor>(
           eb.selectFrom("card_color_map")
-          .innerJoin("color", "color.id", "card_color_map.color_id")
+            .innerJoin("color", "color.id", "card_color_map.color_id")
             .select([...cardColorMapTableFields, "color.mana_symbol"])
             .whereRef("card_color_map.card_id", "=", "card.id")
             .$castTo<DtoCardColor>()
-        ).as("cardColors"),
+        ).as("cardColors")
       ])
       .$if(options.setIds?.length > 0, (qb) => qb.where("card.set_id", "in", options.setIds))
       .$if(options.cardId !== null && options.cardId !== undefined, (qb) => qb.where("card.id", "=", options.cardId))

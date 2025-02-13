@@ -6,7 +6,7 @@ import { DatabaseSchema } from "../../../../database/schema";
 import { ICardColorMapAdapter } from "../interface";
 import { CardColorMapAdapterParameter } from "../interface/param";
 
-export class CardColorMapAdapter implements ICardColorMapAdapter{
+export class CardColorMapAdapter implements ICardColorMapAdapter {
   public toInsert(scryfall: CardColorMapAdapterParameter): InsertExpression<DatabaseSchema, "card_color_map"> {
     return scryfall.colors.map((color: MTGColor) => {
       return {
@@ -15,11 +15,9 @@ export class CardColorMapAdapter implements ICardColorMapAdapter{
         color_id: color
       };
     });
-
   }
 
   public toUpdate(_scryfall: CardColorMapAdapterParameter): UpdateObjectExpression<DatabaseSchema, "card_color_map"> {
     throw new Error("Method not supported.");
   }
-
 }

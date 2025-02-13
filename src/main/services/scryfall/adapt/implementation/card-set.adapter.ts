@@ -8,7 +8,6 @@ import { ICardSetAdapter } from "../interface";
 import { scryfallBooleanToNumber, scryfallDateToIsoString } from "./utils";
 
 export class CardSetAdapter implements ICardSetAdapter {
-
   //#region ICardSetAdapter ---------------------------------------------------
   public toInsert(scryfall: ScryfallCardSet): InsertExpression<DatabaseSchema, "card_set"> {
     const now = sqliteUTCTimeStamp;
@@ -20,7 +19,7 @@ export class CardSetAdapter implements ICardSetAdapter {
       block_code: scryfall.block_code,
       card_count: scryfall.card_count,
       code: scryfall.code,
-      is_digital: scryfallBooleanToNumber( scryfall.digital),
+      is_digital: scryfallBooleanToNumber(scryfall.digital),
       is_foil_only: scryfallBooleanToNumber(scryfall.foil_only),
       icon_svg_uri: scryfall.icon_svg_uri,
       mtgo_code: scryfall.mtgo_code,
@@ -37,14 +36,16 @@ export class CardSetAdapter implements ICardSetAdapter {
       uri: scryfall.uri,
       last_full_synchronization_at: null
     };
-  }  public toUpdate(scryfall: ScryfallCardSet): UpdateObjectExpression<DatabaseSchema, "card_set"> {
+  }
+
+  public toUpdate(scryfall: ScryfallCardSet): UpdateObjectExpression<DatabaseSchema, "card_set"> {
     return {
       arena_code: scryfall.arena_code,
       block: scryfall.block,
       block_code: scryfall.block_code,
       card_count: scryfall.card_count,
       is_digital: scryfallBooleanToNumber(scryfall.digital),
-      is_foil_only: scryfallBooleanToNumber(scryfall.foil_only ),
+      is_foil_only: scryfallBooleanToNumber(scryfall.foil_only),
       icon_svg_uri: scryfall.icon_svg_uri,
       mtgo_code: scryfall.mtgo_code,
       name: scryfall.name,
@@ -62,5 +63,4 @@ export class CardSetAdapter implements ICardSetAdapter {
     };
   }
   //#endregion
-
 }

@@ -9,7 +9,6 @@ import SYNCTOKENS, { ICardSetSyncService, ICardSyncService, ICatalogSyncService,
 
 
 export class SyncDi {
-
   public static registerSynchronizers() {
     container.register<ICardSetSyncService>(SYNCTOKENS.CardSetSyncService, { useClass: CardSetSyncService });
     container.register<ICardSyncService>(SYNCTOKENS.CardSyncService, { useClass: CardSyncService });

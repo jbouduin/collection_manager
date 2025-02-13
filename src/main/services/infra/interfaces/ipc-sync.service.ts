@@ -1,7 +1,7 @@
 import { BrowserWindow } from "electron";
 
-import { DtoSyncParam } from "../../../../common/dto";
+import { SyncParamDto } from "../../../../common/dto";
 
 export interface IIpcSyncService {
-  handle(syncParam: DtoSyncParam, browserWindow: BrowserWindow): Promise<void>;
+  handle(syncParam: SyncParamDto, browserWindow: BrowserWindow): Promise<void>;
 }

@@ -1,4 +1,4 @@
-import { DtoDatabaseTreeViewConfiguration } from "../../../../common/dto";
+import { DatabaseTreeViewConfigurationDto } from "../../../../common/dto";
 import { DatabaseViewTreeConfigurationViewmodel } from "../../../common/viewmodels/configuration/database-view-tree-configuration.viewmodel";
 
 export class TreeConfigurationViewmodel extends DatabaseViewTreeConfigurationViewmodel {
@@ -17,7 +17,7 @@ export class TreeConfigurationViewmodel extends DatabaseViewTreeConfigurationVie
   //#endregion
 
   //#region Constructor -------------------------------------------------------
-  public constructor(dto: DtoDatabaseTreeViewConfiguration) {
+  public constructor(dto: DatabaseTreeViewConfigurationDto) {
     super(dto);
     this._cardSetFilterValue = null;
   }

@@ -1,7 +1,6 @@
 import { cloneDeep } from "lodash";
 import * as React from "react";
-
-import { DtoConfiguration } from "../../../../../common/dto/configuration/configuration.dto";
+import { ConfigurationDto } from "../../../../../common/dto";
 import { PostParam } from "../../../../../common/ipc-params";
 import { ConfigurationViewModel } from "../../../../common/viewmodels/configuration/configuration.viewmodel";
 import { ConfigurationView } from "../configuration-view/configuration-view";
@@ -23,7 +22,7 @@ export function ConfigurationWrapper(props: ConfigurationWrapperProps) {
   //#region Event handling ----------------------------------------------------
   const onSave = React.useCallback(
     (toSave: ConfigurationViewModel) => {
-      const params: PostParam<DtoConfiguration> = {
+      const params: PostParam<ConfigurationDto> = {
         type: "Configuration",
         data: toSave.dto
       };

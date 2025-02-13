@@ -1,12 +1,12 @@
 import { Classes } from "@blueprintjs/core";
 
-import { DtoConfiguration } from "../../../../common/dto/configuration/configuration.dto";
+import { ConfigurationDto } from "../../../../common/dto";
 import { BaseViewmodel } from "../base.viewmodel";
 import { SyncParamViewmodel } from "../sync-param/sync-param.viewmodel";
 import { DatabaseViewTreeConfigurationViewmodel } from "./database-view-tree-configuration.viewmodel";
 import { DataConfigurationViewmodel } from "./data-configuration.viewmodel";
 
-export class ConfigurationViewModel extends BaseViewmodel<DtoConfiguration> {
+export class ConfigurationViewModel extends BaseViewmodel<ConfigurationDto> {
   //#region private fields ----------------------------------------------------
   private _syncParamViewmodel: SyncParamViewmodel;
   private _databaseViewTreeConfigurationViewmodel: DatabaseViewTreeConfigurationViewmodel;
@@ -56,7 +56,7 @@ export class ConfigurationViewModel extends BaseViewmodel<DtoConfiguration> {
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
-  public constructor(dtoConfiguration: DtoConfiguration, hasChanges: boolean) {
+  public constructor(dtoConfiguration: ConfigurationDto, hasChanges: boolean) {
     super(dtoConfiguration);
     this._hasChanges = hasChanges;
     this._syncParamViewmodel = new SyncParamViewmodel(dtoConfiguration.syncAtStartupConfiguration);

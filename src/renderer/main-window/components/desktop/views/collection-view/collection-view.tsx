@@ -2,7 +2,7 @@ import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import * as React from "react";
 import { CollectionViewProps } from "./collection-view.props";
 import { ConfigurationContext } from "../../../context";
-import { DtoRendererConfiguration } from "../../../../../../common/dto";
+import { RendererConfigurationDto } from "../../../../../../common/dto";
 import { LeftPanel } from "./left-panel/left-panel";
 import { CollectionViewmodel } from "../../../../viewmodels/collection/collection.viewmodel";
 
@@ -16,7 +16,7 @@ export function CollectionView(_props: CollectionViewProps) {
   return (
     <ConfigurationContext.Consumer>
       {
-        (_configuration: DtoRendererConfiguration) => (
+        (_configuration: RendererConfigurationDto) => (
           <>
             <PanelGroup direction="horizontal">
               <Panel defaultSize={20}>

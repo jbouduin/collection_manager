@@ -1,7 +1,7 @@
 import { BlueprintProvider, FocusStyleManager } from "@blueprintjs/core";
 import * as React from "react";
 import { createRoot } from "react-dom/client";
-import { DtoCardSet, DtoConfiguration, DtoLanguage } from "../../common/dto";
+import { DtoCardSet, ConfigurationDto, DtoLanguage } from "../../common/dto";
 import { QueryParam } from "../../common/ipc-params";
 import { Desktop } from "./components/desktop/desktop";
 import { DesktopProps } from "./components/desktop/desktop.props";
@@ -25,7 +25,7 @@ void (async () => {
   };
   /* eslint-disable @typescript-eslint/no-unsafe-return */
   await window.ipc.query({ type: "Configuration", options: null })
-    .then((configuration: DtoConfiguration) => desktopProps.configuration = configuration.rendererConfiguration)
+    .then((configuration: ConfigurationDto) => desktopProps.configuration = configuration.rendererConfiguration)
     .then(async () => window.ipc.query(cardSymbolQueryParam))
     .then((cachedSvgs: Map<string, string>) => {
       desktopProps.symbolSvgs = cachedSvgs;

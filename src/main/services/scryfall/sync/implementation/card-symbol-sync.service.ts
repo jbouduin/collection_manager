@@ -1,6 +1,6 @@
 import { InsertResult, Selectable, Transaction, UpdateResult } from "kysely";
 import { inject, injectable } from "tsyringe";
-import { DtoSyncParam } from "../../../../../common/dto";
+import { SyncParamDto } from "../../../../../common/dto";
 import { ProgressCallback } from "../../../../../common/ipc-params";
 import { runSerial } from "../../../../../main/services/infra/util";
 import { CardSymbolTable, DatabaseSchema } from "../../../../database/schema";
@@ -42,7 +42,7 @@ export class CardSymbolSyncService extends BaseSyncService implements ICardSymbo
   //#endregion
 
   //#region ICardSymbolSyncService methods ------------------------------------
-  public override async sync(_syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void> {
+  public override async sync(_syncParam: SyncParamDto, progressCallback: ProgressCallback): Promise<void> {
     progressCallback("Synchronizing card symbols");
     return await this.scryfallclient.getCardSymbols(progressCallback)
       .then(async (all: Array<ScryfallCardSymbol>) => {

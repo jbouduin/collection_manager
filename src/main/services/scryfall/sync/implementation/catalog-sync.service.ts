@@ -1,6 +1,6 @@
 import { Transaction } from "kysely";
 import { inject, injectable } from "tsyringe";
-import { DtoSyncParam } from "../../../../../common/dto";
+import { SyncParamDto } from "../../../../../common/dto";
 import { ProgressCallback } from "../../../../../common/ipc-params";
 import { CatalogType } from "../../../../../common/types";
 import { DatabaseSchema } from "../../../../../main/database/schema";
@@ -39,7 +39,7 @@ export class CatalogSyncService extends BaseSyncService implements ICatalogSyncS
   //#endregion
 
   //#region ICatalogSyncService methods ---------------------------------------
-  public override async sync(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void> {
+  public override async sync(syncParam: SyncParamDto, progressCallback: ProgressCallback): Promise<void> {
     const serialExecutionArray = syncParam.catalogTypesToSync.map<SyncSingleCatalogParameter>((catalog: CatalogType) => {
       return { catalogType: catalog, progressCallback: progressCallback };
     });

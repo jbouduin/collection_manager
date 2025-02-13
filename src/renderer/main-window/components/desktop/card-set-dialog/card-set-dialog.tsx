@@ -1,6 +1,6 @@
 import { AnchorButton, Button, Classes, Dialog, DialogBody, DialogFooter, HTMLTable, Icon, Tab, Tabs } from "@blueprintjs/core";
 import * as React from "react";
-import { DtoCardSetDetails, DtoCardSetLanguage, DtoLanguage, DtoRendererConfiguration } from "../../../../../common/dto";
+import { DtoCardSetDetails, DtoCardSetLanguage, DtoLanguage, RendererConfigurationDto } from "../../../../../common/dto";
 import { CardSetDetailsQueryOptions, QueryParam } from "../../../../../common/ipc-params";
 import { CardSetDetailsViewmodel } from "../../../viewmodels/card-set/card-set-details.viewmodel";
 import { SvgProvider } from "../../common/svg-provider/svg-provider";
@@ -44,7 +44,7 @@ export function CardSetDialog(props: CardSetDialogProps) {
         cardSetDetails &&
         <ConfigurationContext.Consumer>
           {
-            (configuration: DtoRendererConfiguration) => (
+            (configuration: RendererConfigurationDto) => (
               <Dialog
                 canEscapeKeyClose={true}
                 className={configuration.useDarkTheme ? Classes.DARK : ""}

@@ -1,6 +1,6 @@
 import { container, singleton } from "tsyringe";
 
-import { DtoConfiguration } from "../../../../common/dto/configuration/configuration.dto";
+import { ConfigurationDto } from "../../../../common/dto/infra/configuration.dto";
 import { PostData, PostParam } from "../../../../common/ipc-params";
 import { IConfigurationService } from "../interfaces";
 import { IIpcPostService } from "../interfaces/ipc-post.service";
@@ -15,7 +15,7 @@ export class IpcPostService implements IIpcPostService {
     switch (params.type) {
       case "Configuration":
         container.resolve<IConfigurationService>(INFRASTRUCTURE.ConfigurationService)
-          .saveConfiguration((params as PostParam<DtoConfiguration>).data);
+          .setSettings((params as PostParam<ConfigurationDto>).data);
         break;
     }
   }

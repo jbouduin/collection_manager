@@ -1,4 +1,4 @@
-import { CatalogType, ScryfallEndpoint } from "../../../common/types";
+import { CatalogType, ScryfallEndpoint } from "../../types";
 
 
 export interface DtoScryfallConfiguration {

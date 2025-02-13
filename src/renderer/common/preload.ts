@@ -2,7 +2,7 @@ import { contextBridge, ipcRenderer } from "electron";
 
 import { PostData, PostParam, QueryOptions, QueryParam } from "../../common/ipc-params";
 import { DarkmodeOption } from "../../common/ipc-params/darkmode.option";
-import { DtoSyncParam } from "../../common/dto";
+import { SyncParamDto } from "../../common/dto";
 import { IpcChannel, IpcRequest, IpcResponse } from "../../common/ipc";
 
 // define
@@ -17,7 +17,7 @@ const ipc = {
   data: (channel: IpcChannel, request: IpcRequest<unknown>) => ipcRenderer.invoke(channel, request) as Promise<IpcResponse<unknown>>,
   darkmode: (mode: DarkmodeOption) => ipcRenderer.invoke("darkmode", mode),
   query: (param: QueryParam<QueryOptions>) => ipcRenderer.invoke("query", param),
-  sync: (param: DtoSyncParam) => ipcRenderer.invoke("sync", param),
+  sync: (param: SyncParamDto) => ipcRenderer.invoke("sync", param),
   post: (param: PostParam<PostData>) => ipcRenderer.invoke("post", param),
   // FEATURE extended progress reporting with two progress bars
   onProgress: (callback: (status: string) => void) => {

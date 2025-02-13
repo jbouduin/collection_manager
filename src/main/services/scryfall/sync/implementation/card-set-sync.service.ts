@@ -1,6 +1,6 @@
 import { Selectable, Transaction } from "kysely";
 import { inject, injectable } from "tsyringe";
-import { DtoSyncParam } from "../../../../../common/dto";
+import { SyncParamDto } from "../../../../../common/dto";
 import { ProgressCallback } from "../../../../../common/ipc-params";
 import { runSerial } from "../../../../../main/services/infra/util";
 import { CardSetTable, DatabaseSchema } from "../../../../database/schema";
@@ -35,7 +35,7 @@ export class CardSetSyncService extends BaseSyncService implements ICardSetSyncS
   //#endregion
 
   //#region ICardSetSyncService methods ---------------------------------------
-  public override async sync(_syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void> {
+  public override async sync(_syncParam: SyncParamDto, progressCallback: ProgressCallback): Promise<void> {
     progressCallback("Synchronizing Card sets");
     return await this.scryfallclient.getCardSets(progressCallback)
       .then(async (sets: Array<ScryfallCardSet>) => {

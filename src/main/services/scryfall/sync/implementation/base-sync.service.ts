@@ -2,7 +2,7 @@ import * as fs from "fs";
 import { ExpressionOrFactory, InsertResult, Kysely, SqlBool, Transaction, UpdateResult } from "kysely";
 import { ExtractTableAlias } from "kysely/dist/cjs/parser/table-parser";
 import * as path from "path";
-import { DtoSyncParam } from "../../../../../common/dto";
+import { SyncParamDto } from "../../../../../common/dto";
 import { ProgressCallback } from "../../../../../common/ipc-params";
 import { formatTimeStampedFileName } from "../../../../../common/util";
 import { DatabaseSchema } from "../../../../database/schema";
@@ -46,13 +46,13 @@ export abstract class BaseSyncService implements IBaseSyncService {
   //#endregion
 
   //#region IBaseSyncService abstract methods ---------------------------------
-  public abstract sync(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void>;
+  public abstract sync(syncParam: SyncParamDto, progressCallback: ProgressCallback): Promise<void>;
   //#endregion
 
   //#region Protected auxiliary methods ---------------------------------------
   protected dumpScryFallData(unstampedFileName: string, data: unknown) {
     if (this.configurationService.configuration.scryfallConfiguration.dumpRetrievedData) {
-      const targetDir = path.join(this.configurationService.cacheDirectory, "json");
+      const targetDir = path.join(this.configurationService.configuration.dataConfiguration.cacheDirectory, "json");
       if (!fs.existsSync(targetDir)) {
         fs.mkdirSync(targetDir, { recursive: true });
       }

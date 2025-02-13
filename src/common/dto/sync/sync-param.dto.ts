@@ -1,6 +1,6 @@
 import { CatalogType, ImageStatus, ChangedImageStatusAction, CardSyncType, RulingSyncType, TimespanUnit } from "../../types";
 
-export interface DtoSyncParam {
+export interface SyncParamDto {
   /**
    * The catalogs to be synced
    */

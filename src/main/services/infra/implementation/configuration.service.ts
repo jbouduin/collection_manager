@@ -1,78 +1,94 @@
-import * as fs from "fs";
-import * as path from "path";
-import { DtoConfiguration, DtoRendererConfiguration, DtoScryfallConfiguration, DtoSyncParam } from "../../../../common/dto";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
+import { dirname, join } from "path";
+import { inject, singleton } from "tsyringe";
+import { ConfigurationDto, DtoScryfallConfiguration, RendererConfigurationDto, SyncParamDto } from "../../../../common/dto";
 import { CatalogType, ScryfallEndpoint } from "../../../../common/types";
-import { IConfigurationService } from "../interfaces";
+import { BaseService, IResult } from "../../base";
+import { INFRASTRUCTURE } from "../../service.tokens";
+import { IConfigurationService, ILogService, IResultFactory } from "../interfaces";
 
-export class ConfigurationService implements IConfigurationService {
+@singleton()
+export class ConfigurationService extends BaseService implements IConfigurationService {
   //#region Private fields ----------------------------------------------------
   private configFilePath: string;
-  private _configuration: DtoConfiguration;
+  private appDirectory: string;
+  private homeDirectory: string;
+  private useDarkTheme: boolean;
+  private _configuration: ConfigurationDto;
   private _isFirstUsage: boolean;
   //#endregion
 
   //#region IConfigurationService properties ----------------------------------
-  public get configuration(): DtoConfiguration {
+  public get configuration(): ConfigurationDto {
     return this._configuration;
-  }
-
-  public get cacheDirectory(): string {
-    return this._configuration.dataConfiguration.cacheDirectory;
   }
 
   public get isFirstUsage(): boolean {
     return this._isFirstUsage;
   }
+  //#endregion
 
-  public get dataBaseFilePath(): string {
-    return path.join(
-      this._configuration.dataConfiguration.rootDataDirectory,
-      this._configuration.dataConfiguration.databaseName
-    );
-  }
-
-  public get scryfallApiRoot(): string {
-    return this._configuration.scryfallConfiguration.scryfallApiRoot;
-  }
-
-  public get syncAtStartup(): DtoSyncParam {
-    return this._configuration.syncAtStartupConfiguration;
+  //#region Constructor & C° --------------------------------------------------
+  public constructor(
+    @inject(INFRASTRUCTURE.LogService) logService: ILogService,
+    @inject(INFRASTRUCTURE.ResultFacotry) resultFactory: IResultFactory
+  ) {
+    super(logService, resultFactory);
   }
   //#endregion
 
-  //#region IConfiguration methods --------------------------------------------
-  public loadConfiguration(appDirectory: string, homeDirectory: string, useDarkTheme: boolean): void {
-    this.configFilePath = path.join(appDirectory, "collection-manager.config.json");
-    if (fs.existsSync(this.configFilePath)) {
-      this._configuration = JSON.parse(fs.readFileSync(this.configFilePath, "utf-8")) as DtoConfiguration;
+  //#region ISettingsService methods ------------------------------------------
+  public loadSettings(appDirectory: string, homeDirectory: string, useDarkTheme: boolean): void {
+    this.appDirectory = appDirectory;
+    this.homeDirectory = homeDirectory;
+    this.useDarkTheme = useDarkTheme;
+    this.configFilePath = join(appDirectory, "collection-manager.config.json");
+    if (existsSync(this.configFilePath)) {
+      this._configuration = JSON.parse(readFileSync(this.configFilePath, "utf-8")) as ConfigurationDto;
       this._isFirstUsage = false;
     } else {
-      this._configuration = this.createFactoryDefault(appDirectory, homeDirectory, useDarkTheme);
+      this._configuration = this.createFactoryDefault();
       this._isFirstUsage = true;
     }
   }
+  //#endregion
 
-  public saveConfiguration(configuration: DtoConfiguration): boolean {
+  //#region Route callbacks ---------------------------------------------------
+  public getSettings(): Promise<IResult<ConfigurationDto>> {
+    return this.resultFactory.createSuccessResultPromise(this._configuration);
+  }
+
+  public getFactoryDefault(): Promise<IResult<ConfigurationDto>> {
+    return this.resultFactory.createSuccessResultPromise(this.createFactoryDefault());
+  }
+
+  public putSettings(configuration: ConfigurationDto): Promise<IResult<ConfigurationDto>> {
     // LATER Validation
-    this.createDirectoryIfNotExists(configuration.dataConfiguration.rootDataDirectory);
-    this.createDirectoryIfNotExists(configuration.dataConfiguration.cacheDirectory);
-    fs.writeFileSync(this.configFilePath, JSON.stringify(configuration, null, 2));
+    this.createDirectoryIfNotExists(dirname(this.configFilePath));
+    writeFileSync(this.configFilePath, JSON.stringify(configuration, null, 2));
     this._configuration = configuration;
     this._isFirstUsage = false;
-    return true;
+    return this.resultFactory.createSuccessResultPromise<ConfigurationDto>(configuration);
+  }
+
+  public setSettings(configuration: ConfigurationDto): Promise<IResult<ConfigurationDto>> {
+    writeFileSync(this.configFilePath, JSON.stringify(configuration, null, 2));
+    this._configuration = configuration;
+    this._isFirstUsage = false;
+    return this.resultFactory.createSuccessResultPromise<ConfigurationDto>(configuration);
   }
   //#endregion
 
   //#region Auxiliary factory default methods ---------------------------------
-  private createFactoryDefault(appDirectory: string, homeDirectory: string, useDarkTheme: boolean): DtoConfiguration {
-    const result: DtoConfiguration = {
+  private createFactoryDefault(): ConfigurationDto {
+    const result: ConfigurationDto = {
       dataConfiguration: {
-        rootDataDirectory: path.join(homeDirectory, "collection-manager"),
-        cacheDirectory: path.join(appDirectory, ".cache"),
+        rootDataDirectory: join(this.homeDirectory, "collection-manager"),
+        cacheDirectory: join(this.appDirectory, ".cache"),
         databaseName: "magic-db.sqlite"
       },
       syncAtStartupConfiguration: this.createSyncAtStartupFactoryDefault(),
-      rendererConfiguration: this.createRendererConfigurationFactoryDefault(useDarkTheme),
+      rendererConfiguration: this.createRendererConfigurationFactoryDefault(this.useDarkTheme),
       scryfallConfiguration: this.createScryFallFactoryDefault()
     };
     return result;
@@ -123,8 +139,8 @@ export class ConfigurationService implements IConfigurationService {
     return result;
   }
 
-  private createSyncAtStartupFactoryDefault(): DtoSyncParam {
-    const result: DtoSyncParam = {
+  private createSyncAtStartupFactoryDefault(): SyncParamDto {
+    const result: SyncParamDto = {
       catalogTypesToSync: [],
       syncCardSymbols: false,
       syncCardSets: false,
@@ -140,8 +156,8 @@ export class ConfigurationService implements IConfigurationService {
     return result;
   }
 
-  private createRendererConfigurationFactoryDefault(useDarkTheme: boolean): DtoRendererConfiguration {
-    const result: DtoRendererConfiguration = {
+  private createRendererConfigurationFactoryDefault(useDarkTheme: boolean): RendererConfigurationDto {
+    const result: RendererConfigurationDto = {
       useDarkTheme: useDarkTheme,
       databaseViewTreeConfiguration: {
         cardSetSort: "releaseDateDescending",
@@ -162,8 +178,8 @@ export class ConfigurationService implements IConfigurationService {
 
   //#region Auxiliary validation related methods ------------------------------
   private createDirectoryIfNotExists(directory: string): void {
-    if (!fs.existsSync(directory)) {
-      fs.mkdirSync(directory, { recursive: true });
+    if (!existsSync(directory)) {
+      mkdirSync(directory, { recursive: true });
     }
   }
   //#endregion

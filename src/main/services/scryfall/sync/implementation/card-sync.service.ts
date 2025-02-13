@@ -1,6 +1,6 @@
 import { DeleteResult, InsertResult, Transaction, UpdateResult, sql } from "kysely";
 import { inject, injectable } from "tsyringe";
-import { DtoCardImageData, DtoSyncParam, IdSelectResult } from "../../../../../common/dto";
+import { DtoCardImageData, SyncParamDto, IdSelectResult } from "../../../../../common/dto";
 import { ProgressCallback } from "../../../../../common/ipc-params";
 import { ChangedImageStatusAction, GameFormat, ImageStatus, MTGColor, MTGColorType, TimespanUnit } from "../../../../../common/types";
 import { isSingleCardFaceLayout, sqliteUTCTimeStamp } from "../../../../../common/util";
@@ -79,7 +79,7 @@ export class CardSyncService extends BaseSyncService implements ICardSyncService
   //#endregion
 
   //#region ICardSyncService methods ------------------------------------------
-  public override async sync(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void> {
+  public override async sync(syncParam: SyncParamDto, progressCallback: ProgressCallback): Promise<void> {
     return this.GetSyncData(syncParam, progressCallback)
       .then(async (presync: PreSyncSelectResult) => {
         this.dumpScryFallData("cards.json", presync.scryfallCards);
@@ -99,7 +99,7 @@ export class CardSyncService extends BaseSyncService implements ICardSyncService
   //#endregion
 
   //#region Presync auxiliary methods -----------------------------------------
-  private async GetSyncData(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<PreSyncSelectResult> {
+  private async GetSyncData(syncParam: SyncParamDto, progressCallback: ProgressCallback): Promise<PreSyncSelectResult> {
     let presyncResult: Promise<PreSyncSelectResult>;
     if (syncParam.cardSyncType == "byCardSet") {
       presyncResult = this.database.selectFrom("card")

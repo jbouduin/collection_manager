@@ -2,16 +2,16 @@ import { ipcMain, nativeTheme } from "electron";
 import { container, inject, singleton } from "tsyringe";
 
 import { DarkmodeOption } from "../../../../common/ipc-params";
-import { IIpcDispatcherService, IIpcQueryService, IIpcSyncService, IWindowService } from "../interfaces";
+import { IIpcDispatcherService, IIpcQueryService, IIpcSyncService, IWindowsService } from "../interfaces";
 import { IIpcPostService } from "../interfaces/ipc-post.service";
 import { INFRASTRUCTURE } from "../../service.tokens";
 
 @singleton()
 export class IpcDispatcherService implements IIpcDispatcherService{
 
-  private readonly windowService: IWindowService;
+  private readonly windowService: IWindowsService;
 
-  public constructor(@inject(INFRASTRUCTURE.WindowService) windowService: IWindowService) {
+  public constructor(@inject(INFRASTRUCTURE.WindowsService) windowService: IWindowsService) {
     this.windowService = windowService;
   }
 

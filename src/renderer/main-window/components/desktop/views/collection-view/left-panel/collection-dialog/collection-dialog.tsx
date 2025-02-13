@@ -1,7 +1,7 @@
 import { Button, Classes, Dialog, DialogBody, DialogFooter, FormGroup, IconName, InputGroup, SectionCard, TextArea } from "@blueprintjs/core";
 import { cloneDeep } from "lodash";
 import * as React from "react";
-import { DtoRendererConfiguration } from "../../../../../../../../common/dto";
+import { RendererConfigurationDto } from "../../../../../../../../common/dto";
 import { handleStringChange } from "../../../../../../../common/utils";
 import { ConfigurationContext } from "../../../../../../components/context";
 import { CollectionViewmodel } from "../../../../../../viewmodels/collection/collection.viewmodel";
@@ -27,7 +27,7 @@ export function CollectionDialog(props: CollectionDialogProps) {
   return (
     <ConfigurationContext.Consumer>
       {
-        (configuration: DtoRendererConfiguration) => (
+        (configuration: RendererConfigurationDto) => (
           <Dialog
             className={configuration.useDarkTheme ? Classes.DARK : ""}
             icon={getIconName()}

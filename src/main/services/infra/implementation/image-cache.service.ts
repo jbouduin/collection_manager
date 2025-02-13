@@ -103,7 +103,7 @@ export class ImageCacheService implements IImageCacheService {
 
   private pathToCardSymbolSvg(cardSymbol: Selectable<CardSymbolTable>): string {
     const fileName = new URL(cardSymbol.svg_uri).pathname.split("/").pop();
-    const dirName = path.join(this.configurationService.cacheDirectory, "cardsymbols");
+    const dirName = path.join(this.configurationService.configuration.dataConfiguration.cacheDirectory, "cardsymbols");
     if (!fs.existsSync(dirName)) {
       fs.mkdirSync(dirName, { recursive: true });
     }
@@ -115,10 +115,10 @@ export class ImageCacheService implements IImageCacheService {
     let dirName: string;
 
     if (card.side == "front" || (card.side == "back" && !card.cardBackId)) {
-      dirName = path.join(this.configurationService.cacheDirectory, "cards", card.setCode, card.language, card.imageType);
+      dirName = path.join(this.configurationService.configuration.dataConfiguration.cacheDirectory, "cards", card.setCode, card.language, card.imageType);
       fileName = `${card.collectorNumber.padStart(3, "0")}.${card.side}.jpg`;
     } else {
-      dirName = path.join(this.configurationService.cacheDirectory, "cards", "backsides");
+      dirName = path.join(this.configurationService.configuration.dataConfiguration.cacheDirectory, "cards", "backsides");
       fileName = `${card.cardBackId}.jpg`;
     }
 
@@ -130,7 +130,7 @@ export class ImageCacheService implements IImageCacheService {
 
   private pathToCardSetSvg(cardSet: Selectable<CardSetTable>): string {
     const fileName = `${cardSet.code}${path.extname(new URL(cardSet.icon_svg_uri).pathname.split("/").pop())}`;
-    const dirName = path.join(this.configurationService.cacheDirectory, "sets");
+    const dirName = path.join(this.configurationService.configuration.dataConfiguration.cacheDirectory, "sets");
     if (!fs.existsSync(dirName)) {
       fs.mkdirSync(dirName, { recursive: true });
     }

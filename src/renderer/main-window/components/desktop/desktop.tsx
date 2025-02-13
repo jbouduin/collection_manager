@@ -2,7 +2,7 @@ import { Card, Classes } from "@blueprintjs/core";
 import classNames from "classnames";
 import { clone } from "lodash";
 import * as React from "react";
-import { DtoSyncParam } from "../../../../common/dto";
+import { SyncParamDto } from "../../../../common/dto";
 import { CardSetViewmodel } from "../../viewmodels";
 import { CardSetContext, CardSymbolContext, ConfigurationContext, LanguagesContext } from "../context";
 import { ButtonBar } from "./button-bar/button-bar";
@@ -71,7 +71,7 @@ export function Desktop(props: DesktopProps) {
     newState.splashScreenOpen = true;
     setDesktopState(newState);
 
-    const params: DtoSyncParam = {
+    const params: SyncParamDto = {
       catalogTypesToSync: [],
       syncCardSymbols: false,
       syncCardSets: false,
@@ -92,7 +92,7 @@ export function Desktop(props: DesktopProps) {
     newState.splashScreenOpen = true;
     setDesktopState(newState);
 
-    const params: DtoSyncParam = {
+    const params: SyncParamDto = {
       catalogTypesToSync: [],
       syncCardSymbols: false,
       syncCardSets: false,
@@ -108,7 +108,7 @@ export function Desktop(props: DesktopProps) {
     void window.ipc.sync(params);
   }
 
-  function startSync(syncParam: DtoSyncParam): void {
+  function startSync(syncParam: SyncParamDto): void {
     setSplashScreenOpen(true);
     void window.ipc.sync(syncParam);
   }

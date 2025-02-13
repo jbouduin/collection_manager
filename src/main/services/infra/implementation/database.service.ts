@@ -31,7 +31,7 @@ export class DatabaseService implements IDatabaseService {
   //#region IDatabaseService methods ------------------------------------------
   public connect(): IDatabaseService {
     const dialect = new SqliteDialect({
-      database: new SQLite(this.configurationService.dataBaseFilePath)
+      database: new SQLite(this.configurationService.configuration.dataConfiguration.databaseName)
     });
     this._database = new Kysely<DatabaseSchema>({
       dialect: dialect,
@@ -42,7 +42,7 @@ export class DatabaseService implements IDatabaseService {
 
   public async migrateToLatest(migrationProvider: MigrationProvider, progressCallback: ProgressCallback): Promise<IDatabaseService> {
     const dialect = new SqliteDialect({
-      database: new SQLite(this.configurationService.dataBaseFilePath)
+      database: new SQLite(this.configurationService.configuration.dataConfiguration.databaseName)
     });
     const connection = new Kysely<DatabaseSchema>({
       dialect: dialect

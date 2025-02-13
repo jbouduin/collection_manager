@@ -1,8 +1,8 @@
-import { DtoDatabaseTreeViewConfiguration } from "../../../../common/dto";
+import { DatabaseTreeViewConfigurationDto } from "../../../../common/dto";
 import { CardSetGroupBy, CardSetSort, CardSetType } from "../../../../common/types";
 import { BaseViewmodel } from "../base.viewmodel";
 
-export class DatabaseViewTreeConfigurationViewmodel extends BaseViewmodel<DtoDatabaseTreeViewConfiguration> {
+export class DatabaseViewTreeConfigurationViewmodel extends BaseViewmodel<DatabaseTreeViewConfigurationDto> {
   //#region Getters/Setters ---------------------------------------------------
   public get cardSetSort(): CardSetSort {
     return this._dto.cardSetSort;
@@ -26,7 +26,7 @@ export class DatabaseViewTreeConfigurationViewmodel extends BaseViewmodel<DtoDat
   //#endregion
 
   //#region Constructor -------------------------------------------------------
-  public constructor(dtoConfiguration: DtoDatabaseTreeViewConfiguration) {
+  public constructor(dtoConfiguration: DatabaseTreeViewConfigurationDto) {
     super(dtoConfiguration);
   }
   //#endregion

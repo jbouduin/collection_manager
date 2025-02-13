@@ -1,6 +1,6 @@
 import { container, singleton } from "tsyringe";
 
-import { DtoRulingLine, DtoSyncParam } from "../../../../common/dto";
+import { DtoRulingLine, SyncParamDto } from "../../../../common/dto";
 import { AssetQueryOptions, CardSetDetailsQueryOptions, LegalityQueryOptions, QueryOptions, QueryParam, RulingQueryOptions } from "../../../../common/ipc-params";
 import { CardQueryOptions } from "../../../../common/ipc-params/query/card-query.options";
 import { ICardRepository, ICardSetRepository, ICardSymbolRepository, ICatalogRepository, IColorRepository, ILanguageRepository, IOracleRepository } from "../../repo/interfaces";
@@ -78,7 +78,7 @@ export class IpcQueryService implements IIpcQueryService {
     return oracleRepository.getByCardId(options.cardId)
       .then((queryResult: Array<DtoRulingLine>) => {
         if (queryResult.length == 0) {
-          const dtoSyncParam: DtoSyncParam = {
+          const dtoSyncParam: SyncParamDto = {
             catalogTypesToSync: [],
             syncCardSymbols: false,
             syncCardSets: false,

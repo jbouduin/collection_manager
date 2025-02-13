@@ -1,7 +1,7 @@
 import { Classes, Dialog } from "@blueprintjs/core";
 import * as React from "react";
-import { DtoRendererConfiguration } from "../../../../../common/dto";
-import { DtoConfiguration } from "../../../../../common/dto/configuration/configuration.dto";
+import { RendererConfigurationDto } from "../../../../../common/dto";
+import { ConfigurationDto } from "../../../../../common/dto/";
 import { QueryParam } from "../../../../../common/ipc-params";
 import { BaseDialogProps } from "../../../../common/components/base-dialog-props";
 import { ConfigurationWrapper } from "../../../../common/components/configuration/configuration-wrapper/configuration-wrapper";
@@ -21,7 +21,7 @@ export function SettingsDialog(props: BaseDialogProps) {
         options: null
       };
       void window.ipc.query(queryParam)
-        .then((configuration: DtoConfiguration) => setConfiguration(new ConfigurationViewModel(configuration, false)));
+        .then((configuration: ConfigurationDto) => setConfiguration(new ConfigurationViewModel(configuration, false)));
     },
     [props.isOpen]
   );
@@ -31,7 +31,7 @@ export function SettingsDialog(props: BaseDialogProps) {
   return (
     <ConfigurationContext.Consumer>
       {
-        (rendererConfiguration: DtoRendererConfiguration) => (
+        (rendererConfiguration: RendererConfigurationDto) => (
           <Dialog
             canEscapeKeyClose={true}
             className={rendererConfiguration.useDarkTheme ? Classes.DARK : ""}

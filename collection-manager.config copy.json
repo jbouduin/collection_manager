@@ -1,0 +1,71 @@
+{
+  "dataConfiguration": {
+    "rootDataDirectory": "C:\\data\\new-assistant\\database",
+    "cacheDirectory": "C:\\data\\new-assistant\\.cache",
+    "databaseName": "magic-db.sqlite"
+  },
+  "syncAtStartupConfiguration": {
+    "catalogTypesToSync": [
+      "ArtifactTypes",
+      "CreatureTypes",
+      "KeywordAbilities"
+    ],
+    "syncCardSymbols": false,
+    "syncCardSets": false,
+    "rulingSyncType": "none",
+    "cardSyncType": "none",
+    "cardSelectionToSync": [ ],
+    "cardImageStatusToSync": [ ],
+    "syncCardsSyncedBeforeNumber": 0,
+    "changedImageStatusAction": "delete"
+  },
+  "rendererConfiguration": {
+    "useDarkTheme": true,
+    "databaseViewTreeConfiguration": {
+      "cardSetSort": "releaseDateDescending",
+      "cardSetGroupBy": "parent",
+      "cardSetTypeFilter": [
+        "core",
+        "expansion",
+        "token",
+        "starter",
+        "duel_deck"
+      ]
+    }
+  },
+  "scryfallConfiguration": {
+    "cardBackRoot": "https://backs.scryfall.io",
+    "scryfallApiRoot": "https://api.scryfall.com",
+    "scryfallEndpoints": {
+      "cards": "cards/:id",
+      "search": "cards/search",
+      "cardSet": "sets",
+      "cardSymbol": "symbology",
+      "catalog": "catalog",
+      "ruling": "cards/:id/rulings",
+      "collection": "cards/collection"
+    },
+    "scryfallCatalogPaths": {
+      "AbilityWords": "ability-words",
+      "ArtifactTypes": "artifact-types",
+      "ArtistNames": "artist-names",
+      "CardNames": "card-names",
+      "CreatureTypes": "creature-types",
+      "EnchantmentTypes": "enchantment-types",
+      "KeywordAbilities": "keyword-abilities",
+      "KeywordActions": "keyword-actions",
+      "LandTypes": "land-types",
+      "Loyalties": "loyalties",
+      "PlaneswalkerTypes": "planeswalker-types",
+      "Powers": "powers",
+      "SpellTypes": "spell-types",
+      "Supertypes": "super-types",
+      "Toughnesses": "toughnesses",
+      "Watermarks": "watermarks",
+      "WordBank": "word-bank"
+    },
+    "minimumRequestTimeout": 60,
+    "dumpRetrievedData": true,
+    "collectionChunkSize": 50
+  }
+}

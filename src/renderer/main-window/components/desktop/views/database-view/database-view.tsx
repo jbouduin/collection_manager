@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
-import { DtoRendererConfiguration } from "../../../../../../common/dto";
+import { RendererConfigurationDto } from "../../../../../../common/dto";
 import { CardSetViewmodel, CardViewmodel } from "../../../../viewmodels";
 import { CardView } from "../../../common/card-view/card-view";
 import { ConfigurationContext } from "../../../context";
@@ -30,7 +30,7 @@ export function DatabaseView(props: DatabaseViewProps) {
   return (
     <ConfigurationContext.Consumer>
       {
-        (configuration: DtoRendererConfiguration) => (
+        (configuration: RendererConfigurationDto) => (
           <>
             <PanelGroup direction="horizontal">
               <Panel defaultSize={20}>

@@ -3,11 +3,11 @@ import { MigrationProvider } from "kysely";
 import { container } from "tsyringe";
 import { MigrationDi } from "./database/migrations/migrations.di";
 import { IDatabaseService, IIpcSyncService } from "./services/infra/interfaces";
-import { DtoSyncParam } from "../common/dto";
+import { SyncParamDto } from "../common/dto";
 import { INFRASTRUCTURE, DATABASE } from "./services/service.tokens";
 
 
-export async function bootFunction(splashWindow: BrowserWindow, syncParam: DtoSyncParam): Promise<void> {
+export async function bootFunction(splashWindow: BrowserWindow, syncParam: SyncParamDto): Promise<void> {
   const migrationContainer = MigrationDi.registerMigrations();
   await container.resolve<IDatabaseService>(INFRASTRUCTURE.DatabaseService)
     .migrateToLatest(

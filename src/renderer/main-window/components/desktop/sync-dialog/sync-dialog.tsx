@@ -1,7 +1,7 @@
 import { Button, Classes, Dialog, DialogBody, DialogFooter } from "@blueprintjs/core";
 import { cloneDeep } from "lodash";
 import * as React from "react";
-import { DtoRendererConfiguration } from "../../../../../common/dto";
+import { RendererConfigurationDto } from "../../../../../common/dto";
 import { SyncParameterView } from "../../../../common/components/sync-parameter-view/sync-parameter-view";
 import { SyncParamViewmodel } from "../../../../common/viewmodels/sync-param/sync-param.viewmodel";
 import { ConfigurationContext } from "../../context";
@@ -37,7 +37,7 @@ export function SyncDialog(props: SyncDialogProps) {
   return (
     <ConfigurationContext.Consumer>
       {
-        (configuration: DtoRendererConfiguration) => (
+        (configuration: RendererConfigurationDto) => (
           <Dialog
             canEscapeKeyClose={true}
             canOutsideClickClose={false}

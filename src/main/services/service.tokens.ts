@@ -1,4 +1,5 @@
 export const INFRASTRUCTURE = Object.freeze({
+  BootstrapService: "BootstrapService",
   ConfigurationService: "ConfigurationService",
   DatabaseService: "DatabaseService",
   ImageCacheService: "ImageCacheService",
@@ -7,7 +8,10 @@ export const INFRASTRUCTURE = Object.freeze({
   IpcQueryService: "IpcQueryService",
   IpcSyncService: "IIpcSyncService",
   LogService: "LogService",
-  WindowService: "WindowService"
+  ResultFacotry: "ResultFactory",
+  RouterService: "RouterService",
+  Router: "Router",
+  WindowsService: "WindowsService"
 });
 
 export const DATABASE = Object.freeze({

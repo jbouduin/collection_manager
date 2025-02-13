@@ -1,7 +1,7 @@
 import { container, inject, singleton } from "tsyringe";
 import { BrowserWindow } from "electron";
-import { DtoSyncParam } from "../../../../common/dto";
-import { IIpcSyncService, IWindowService } from "../interfaces";
+import { SyncParamDto } from "../../../../common/dto";
+import { IIpcSyncService, IWindowsService } from "../interfaces";
 import { runSerial } from "../util";
 import { IBaseSyncService } from "../../scryfall/sync/interface/base-sync.service";
 import { INFRASTRUCTURE, SCRYFALL } from "../../service.tokens";
@@ -10,7 +10,7 @@ import { INFRASTRUCTURE, SCRYFALL } from "../../service.tokens";
 interface SyncTaskParam {
   displayName: string;
   serviceToken: string;
-  syncParam: DtoSyncParam;
+  syncParam: SyncParamDto;
   browserWindow: BrowserWindow;
 }
 
@@ -18,17 +18,17 @@ interface SyncTaskParam {
 export class IpcSyncService implements IIpcSyncService {
 
   //#region private readonly fields -------------------------------------------
-  private readonly windowService: IWindowService;
+  private readonly windowService: IWindowsService;
   //#endregion
 
   //#region Constructor -------------------------------------------------------
-  public constructor(@inject(INFRASTRUCTURE.WindowService) windowService: IWindowService) {
+  public constructor(@inject(INFRASTRUCTURE.WindowsService) windowService: IWindowsService) {
     this.windowService = windowService;
   }
   //#endregion
 
   //#region IIpcSyncService methods -------------------------------------------
-  public async handle(syncParam: DtoSyncParam, browserWindow: BrowserWindow): Promise<void> {
+  public async handle(syncParam: SyncParamDto, browserWindow: BrowserWindow): Promise<void> {
     const taskParams = new Array<SyncTaskParam>();
     if (syncParam.cardSyncType != "none") {
       taskParams.push({

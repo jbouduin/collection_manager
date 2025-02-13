@@ -1,7 +1,7 @@
-import { DtoConfiguration } from "../../dto/configuration/configuration.dto";
+import { ConfigurationDto } from "../../dto";
 import { PostType } from "./post-type.enum";
 
-export type PostData = DtoConfiguration;
+export type PostData = ConfigurationDto;
 
 export interface PostParam<T extends object> {
   type: PostType;

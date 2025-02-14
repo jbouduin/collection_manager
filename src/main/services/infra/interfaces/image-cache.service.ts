@@ -1,7 +1,7 @@
 import { Selectable } from "kysely";
 import { CardSetTable, CardSymbolTable } from "../../../../main/database/schema";
 import { DtoCardImageData } from "../../../../common/dto";
-import { ProgressCallback } from "../../../../common/ipc-params";
+import { ProgressCallback } from "../../../../common/ipc";
 import { IResult } from "../../base";
 
 

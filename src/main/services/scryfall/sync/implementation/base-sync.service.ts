@@ -3,7 +3,7 @@ import { ExpressionOrFactory, InsertResult, Kysely, SqlBool, Transaction, Update
 import { ExtractTableAlias } from "kysely/dist/cjs/parser/table-parser";
 import * as path from "path";
 import { SyncParamDto } from "../../../../../common/dto";
-import { ProgressCallback } from "../../../../../common/ipc-params";
+import { ProgressCallback } from "../../../../../common/ipc";
 import { formatTimeStampedFileName } from "../../../../../common/util";
 import { DatabaseSchema } from "../../../../database/schema";
 import { IConfigurationService, IDatabaseService, ILogService } from "../../../infra/interfaces";

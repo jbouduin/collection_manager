@@ -1,7 +1,7 @@
 import { InsertResult, Selectable, Transaction, UpdateResult } from "kysely";
 import { inject, injectable } from "tsyringe";
 import { SyncParamDto } from "../../../../../common/dto";
-import { ProgressCallback } from "../../../../../common/ipc-params";
+import { ProgressCallback } from "../../../../../common/ipc";
 import { runSerial } from "../../../../../main/services/infra/util";
 import { CardSymbolTable, DatabaseSchema } from "../../../../database/schema";
 import { IConfigurationService, IDatabaseService, IImageCacheService, ILogService } from "../../../infra/interfaces";

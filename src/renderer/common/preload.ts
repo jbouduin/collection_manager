@@ -1,8 +1,6 @@
 import { contextBridge, ipcRenderer } from "electron";
 import { SyncParamDto } from "../../common/dto";
 import { IpcChannel, IpcRequest, IpcResponse } from "../../common/ipc";
-import { PostData, PostParam } from "../../common/ipc-params";
-import { DarkmodeOption } from "../../common/ipc-params/darkmode.option";
 
 // define
 const versions = {
@@ -14,9 +12,8 @@ const versions = {
 const ipc = {
   // Renderer to Main
   data: (channel: IpcChannel, request: IpcRequest<unknown>) => ipcRenderer.invoke(channel, request) as Promise<IpcResponse<unknown>>,
-  darkmode: (mode: DarkmodeOption) => ipcRenderer.invoke("darkmode", mode),
+
   sync: (param: SyncParamDto) => ipcRenderer.invoke("sync", param),
-  post: (param: PostParam<PostData>) => ipcRenderer.invoke("post", param),
   // FEATURE extended progress reporting with two progress bars
   onProgress: (callback: (status: string) => void) => {
     // to avoid memory leaks and as only the splash screen is listening to it

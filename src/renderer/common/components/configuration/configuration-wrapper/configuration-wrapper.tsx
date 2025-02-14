@@ -1,11 +1,10 @@
 import { cloneDeep } from "lodash";
 import * as React from "react";
-import { ConfigurationDto } from "../../../../../common/dto";
-import { PostParam } from "../../../../../common/ipc-params";
 import { ConfigurationViewModel } from "../../../../common/viewmodels/configuration/configuration.viewmodel";
 import { ConfigurationView } from "../configuration-view/configuration-view";
 import { FooterView } from "../footer-view/footer-view";
 import { ConfigurationWrapperProps } from "./configuration-wrapper.props";
+
 
 export function ConfigurationWrapper(props: ConfigurationWrapperProps) {
   //#region State -------------------------------------------------------------
@@ -16,20 +15,6 @@ export function ConfigurationWrapper(props: ConfigurationWrapperProps) {
   React.useEffect(
     () => setConfiguration(props.configuration),
     [props.configuration]
-  );
-  //#endregion
-
-  //#region Event handling ----------------------------------------------------
-  const onSave = React.useCallback(
-    (toSave: ConfigurationViewModel) => {
-      const params: PostParam<ConfigurationDto> = {
-        type: "Configuration",
-        data: toSave.dto
-      };
-      // check how to activate renderer settings immediately after saving
-      void window.ipc.post(params).then(() => props.onSave());
-    },
-    []
   );
   //#endregion
 
@@ -46,7 +31,7 @@ export function ConfigurationWrapper(props: ConfigurationWrapperProps) {
           <FooterView
             configuration={configuration}
             onCancel={() => props.onCancel()}
-            onSave={onSave}
+            onSave={() => props.onSave(configuration.dto)}
           />
         </>
       }

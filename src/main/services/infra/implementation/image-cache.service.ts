@@ -5,7 +5,7 @@ import { Selectable } from "kysely";
 import * as path from "path";
 import { inject, injectable } from "tsyringe";
 import { DtoCardImageData } from "../../../../common/dto";
-import { ProgressCallback } from "../../../../common/ipc-params";
+import { ProgressCallback } from "../../../../common/ipc";
 import { CardSetTable, CardSymbolTable } from "../../../../main/database/schema";
 import { IResult } from "../../base";
 import { IScryfallClient } from "../../scryfall/client/interfaces";

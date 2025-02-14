@@ -1,7 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import { DtoCardImageData } from "../../../../../common/dto";
 import { DtoScryfallConfiguration } from "../../../../../common/dto/infra/scryfall-configuration.dto";
-import { ProgressCallback } from "../../../../../common/ipc-params";
+import { ProgressCallback } from "../../../../../common/ipc";
 import { CatalogType } from "../../../../../common/types";
 import { IConfigurationService, ILogService } from "../../../../../main/services/infra/interfaces";
 import { runSerial } from "../../../../../main/services/infra/util";

@@ -1,4 +1,5 @@
 import { Classes, Dialog } from "@blueprintjs/core";
+import { noop } from "lodash";
 import * as React from "react";
 import { RendererConfigurationDto } from "../../../../../common/dto";
 import { ConfigurationDto } from "../../../../../common/dto/";
@@ -49,7 +50,14 @@ export function SettingsDialog(props: BaseDialogProps) {
             <ConfigurationWrapper
               configuration={configuration}
               onCancel={() => props.onDialogClose()}
-              onSave={() => props.onDialogClose()}
+              onSave={(toSave: ConfigurationDto) => {
+                void ipcProxyService
+                  .putData<ConfigurationDto, ConfigurationDto>("/configuration", toSave)
+                  .then(
+                    (_saved: ConfigurationDto) => props.onDialogClose(),
+                    noop
+                  );
+              }}
             />
           </Dialog>
         )

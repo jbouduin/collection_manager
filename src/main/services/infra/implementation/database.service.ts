@@ -1,7 +1,7 @@
 import SQLite from "better-sqlite3";
 import { Kysely, MigrationInfo, MigrationProvider, MigrationResultSet, Migrator, ParseJSONResultsPlugin, SqliteDialect } from "kysely";
 import { inject, singleton } from "tsyringe";
-import { ProgressCallback } from "../../../../common/ipc-params";
+import { ProgressCallback } from "../../../../common/ipc";
 import { DatabaseSchema } from "../../../database/schema";
 import { INFRASTRUCTURE } from "../../service.tokens";
 import { IConfigurationService, IDatabaseService } from "../interfaces";

@@ -1,7 +1,7 @@
 import { DeleteResult, InsertResult, Transaction, UpdateResult, sql } from "kysely";
 import { inject, injectable } from "tsyringe";
-import { DtoCardImageData, SyncParamDto, IdSelectResult } from "../../../../../common/dto";
-import { ProgressCallback } from "../../../../../common/ipc-params";
+import { DtoCardImageData, IdSelectResult, SyncParamDto } from "../../../../../common/dto";
+import { ProgressCallback } from "../../../../../common/ipc";
 import { ChangedImageStatusAction, GameFormat, ImageStatus, MTGColor, MTGColorType, TimespanUnit } from "../../../../../common/types";
 import { isSingleCardFaceLayout, sqliteUTCTimeStamp } from "../../../../../common/util";
 import { DatabaseSchema } from "../../../../../main/database/schema";

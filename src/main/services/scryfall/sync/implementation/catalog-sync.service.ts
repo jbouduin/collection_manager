@@ -1,7 +1,7 @@
 import { Transaction } from "kysely";
 import { inject, injectable } from "tsyringe";
 import { SyncParamDto } from "../../../../../common/dto";
-import { ProgressCallback } from "../../../../../common/ipc-params";
+import { ProgressCallback } from "../../../../../common/ipc";
 import { CatalogType } from "../../../../../common/types";
 import { DatabaseSchema } from "../../../../../main/database/schema";
 import { IConfigurationService, IDatabaseService, ILogService } from "../../../../../main/services/infra/interfaces";

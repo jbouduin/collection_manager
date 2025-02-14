@@ -43,7 +43,6 @@ void (async () => {
     .then((languages: Array<LanguageDto>) => desktopProps.languages = languages)
     /* eslint-disable @stylistic/function-paren-newline */
     .then(() => {
-      console.log(desktopProps);
       const container = document.getElementById("root");
       const root = createRoot(container);
       root.render(

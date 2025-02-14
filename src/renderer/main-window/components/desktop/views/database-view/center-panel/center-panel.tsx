@@ -28,7 +28,7 @@ export function CenterPanel(props: CenterPanelProps) {
           .then((cardResult: Array<CardDto>) => {
             setCards(cardResult
               .map((card: CardDto) => new CardViewmodel(card))
-              .sort((a: CardViewmodel, b: CardViewmodel) => a.collectorNumberSortValue.localeCompare(b.collectorNumberSortValue)))
+              .sort((a: CardViewmodel, b: CardViewmodel) => a.collectorNumberSortValue.localeCompare(b.collectorNumberSortValue)));
           });
       } else {
         setCards(new Array<CardViewmodel>());
@@ -56,16 +56,16 @@ export function CenterPanel(props: CenterPanelProps) {
 
   function getColumnDefinitions(languages: Array<LanguageDto>): Array<React.ReactElement<ColumnProps>> {
     const result = new Array<React.ReactElement<ColumnProps>>();
-    result.push(<Column cellRenderer={textCellRenderer(cards, (card: CardViewmodel) => card.collectorNumber)} name="Number" key="Number"/>);
-    result.push(<Column cellRenderer={textCellRenderer(cards, (card: CardViewmodel) => card.rarity)} name="Rarity" key="Rarity" />);
-    result.push(<Column cellRenderer={textCellRenderer(cards, (card: CardViewmodel) => card.cardName)} name="Name" key="Name" />);
-    result.push(<Column cellRenderer={textCellRenderer(cards, (card: CardViewmodel) => card.cardtypeLine)} name="Type" key="Type" />);
-    result.push(<Column cellRenderer={symbolRenderer(cards, (card: CardViewmodel) => card.cardManacost)} name="Mana cost" key="ManaCost" />);
-    result.push(<Column cellRenderer={cardSetNameRenderer(cards, props.selectedSets, (card: CardViewmodel) => card.setId)} name="Set" key="Set" />);
-    result.push(<Column cellRenderer={textCellRenderer(cards, (card: CardViewmodel) => card.cardPower)} name="Power" key="Power" />);
-    result.push(<Column cellRenderer={textCellRenderer(cards, (card: CardViewmodel) => card.cardThoughness)} name="Thoughness" key="Thoughness" />);
-    result.push(<Column cellRenderer={symbolRenderer(cards, (card: CardViewmodel) => card.colorIdentity)} name="CI" key="CI" />);
-    result.push(<Column cellRenderer={languageRenderer(languages, (card: CardViewmodel) => card.languages)} name="Languages" key="Languages" />);
+    result.push(<Column cellRenderer={textCellRenderer(cards, (card: CardViewmodel) => card.collectorNumber)} key="Number" name="Number" />);
+    result.push(<Column cellRenderer={textCellRenderer(cards, (card: CardViewmodel) => card.rarity)} key="Rarity" name="Rarity" />);
+    result.push(<Column cellRenderer={textCellRenderer(cards, (card: CardViewmodel) => card.cardName)} key="Name" name="Name" />);
+    result.push(<Column cellRenderer={textCellRenderer(cards, (card: CardViewmodel) => card.cardtypeLine)} key="Type" name="Type" />);
+    result.push(<Column cellRenderer={symbolRenderer(cards, (card: CardViewmodel) => card.cardManacost)} key="Mana cost" name="ManaCost" />);
+    result.push(<Column cellRenderer={cardSetNameRenderer(cards, props.selectedSets, (card: CardViewmodel) => card.setId)} key="Set" name="Set" />);
+    result.push(<Column cellRenderer={textCellRenderer(cards, (card: CardViewmodel) => card.cardPower)} key="Power" name="Power" />);
+    result.push(<Column cellRenderer={textCellRenderer(cards, (card: CardViewmodel) => card.cardThoughness)} key="Thoughness" name="Thoughness" />);
+    result.push(<Column cellRenderer={symbolRenderer(cards, (card: CardViewmodel) => card.colorIdentity)} key="CI" name="CI" />);
+    result.push(<Column cellRenderer={languageRenderer(languages, (card: CardViewmodel) => card.languages)} key="Languages" name="Languages" />);
     return result;
   }
 

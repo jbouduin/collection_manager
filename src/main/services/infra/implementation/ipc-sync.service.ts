@@ -16,7 +16,6 @@ interface SyncTaskParam {
 
 @singleton()
 export class IpcSyncService implements IIpcSyncService {
-
   //#region private readonly fields -------------------------------------------
   private readonly windowService: IWindowsService;
   //#endregion

@@ -15,7 +15,7 @@ export class AssetRouter extends BaseRouter implements IRouter {
   public constructor(
     @inject(INFRASTRUCTURE.LogService) logService: ILogService,
     @inject(INFRASTRUCTURE.ResultFacotry) resultFactory: IResultFactory,
-    @inject(INFRASTRUCTURE.ImageCacheService) imageCacheService: IImageCacheService,
+    @inject(INFRASTRUCTURE.ImageCacheService) imageCacheService: IImageCacheService
   ) {
     super(logService, resultFactory);
     this.imageCacheService = imageCacheService;
@@ -31,7 +31,6 @@ export class AssetRouter extends BaseRouter implements IRouter {
   //#region private methods ---------------------------------------------------
   public asset(request: RoutedRequest<void>): Promise<IResult<string>> {
     return this.imageCacheService.getAsset(request.queryParams["path"]);
-
   }
   //#endregion
 }

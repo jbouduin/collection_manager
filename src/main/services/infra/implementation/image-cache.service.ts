@@ -27,7 +27,7 @@ export class ImageCacheService implements IImageCacheService {
     @inject(INFRASTRUCTURE.ConfigurationService) configurationService: IConfigurationService,
     @inject(SCRYFALL.ScryfallClient) apiClient: IScryfallClient,
     @inject(INFRASTRUCTURE.LogService) logService: ILogService,
-    @inject(INFRASTRUCTURE.ResultFacotry) resultFactory: IResultFactory,
+    @inject(INFRASTRUCTURE.ResultFacotry) resultFactory: IResultFactory
   ) {
     this.configurationService = configurationService;
     this.apiClient = apiClient;
@@ -52,7 +52,7 @@ export class ImageCacheService implements IImageCacheService {
       .then((arrayBuffer: ArrayBuffer) => {
         const enc = new TextDecoder("utf-8");
         const asString = enc.decode(arrayBuffer);
-        return Promise.resolve( writeFileSync(this.pathToCardSetSvg(cardSet), this.hackCardSetSvg(asString)));
+        return Promise.resolve(writeFileSync(this.pathToCardSetSvg(cardSet), this.hackCardSetSvg(asString)));
       })
       .catch((reason) => this.logService.error("Main", `failed ${cardSet.name}`, reason));
   }

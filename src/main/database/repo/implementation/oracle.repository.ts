@@ -28,7 +28,7 @@ export class OracleRepository extends BaseRepository implements IOracleRepositor
         .$call((q) => logCompilable(this.logService, q))
         .$castTo<RulingLineDto>()
         .execute()
-        .then((r: Array<RulingLineDto>) =>this.resultFactory.createSuccessResult<Array<RulingLineDto>>(r));
+        .then((r: Array<RulingLineDto>) => this.resultFactory.createSuccessResult<Array<RulingLineDto>>(r));
     } catch (err) {
       return this.resultFactory.createExceptionResultPromise<Array<RulingLineDto>>(err);
     }
@@ -42,7 +42,7 @@ export class OracleRepository extends BaseRepository implements IOracleRepositor
         .where("oracle_legality.oracle_id", "=", oracleId)
         .$castTo<LegalityDto>()
         .execute()
-        .then((r: Array<LegalityDto>) => this.resultFactory.createSuccessResult(r))        ;
+        .then((r: Array<LegalityDto>) => this.resultFactory.createSuccessResult(r));
     } catch (err) {
       return this.resultFactory.createExceptionResultPromise<Array<LegalityDto>>(err);
     }

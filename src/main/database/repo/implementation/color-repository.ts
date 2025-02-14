@@ -8,7 +8,6 @@ import { BaseRepository } from "./base.repository";
 
 @injectable()
 export class ColorRepository extends BaseRepository implements IColorRepository {
-
   //#region Constructor & C° --------------------------------------------------
   public constructor(
     @inject(INFRASTRUCTURE.DatabaseService) databaseService: IDatabaseService,

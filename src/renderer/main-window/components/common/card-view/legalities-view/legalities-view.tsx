@@ -12,7 +12,7 @@ export function LegalitiesView(props: LegalitiesViewProps) {
   //#endregion
 
   //#region Context ---------------------------------------------------------------------
-    const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
+  const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
   //#endregion
 
   //#region Effects -----------------------------------------------------------

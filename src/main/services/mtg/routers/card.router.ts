@@ -30,7 +30,7 @@ export class CardRouter extends BaseRouter implements IRouter {
   //#region IRouteDestinationService methods ----------------------------------
   public setRoutes(router: IRouterService): void {
     router.registerGetRoute("/card/:id/ruling", this.getRuling.bind(this) as RouteCallback);
-    router.registerGetRoute('/card/query', this.queryCards.bind(this) as RouteCallback);
+    router.registerGetRoute("/card/query", this.queryCards.bind(this) as RouteCallback);
     router.registerGetRoute("/card/:id", this.getCard.bind(this) as RouteCallback);
   }
   //#endregion
@@ -38,12 +38,11 @@ export class CardRouter extends BaseRouter implements IRouter {
   //#region Route callbacks ---------------------------------------------------
   private getCard(request: RoutedRequest<void>): Promise<IResult<CardDto>> {
     return this.cardRepository.getCards(request.params["id"])
-      .then(
-        (r: IResult<Array<CardDto>>) => {
-          return r.data.length > 0
-            ? this.resultFactory.createSuccessResult<CardDto>(r.data[0])
-            : this.resultFactory.createNotFoundResult<CardDto>(request.params["id"])
-        });
+      .then((r: IResult<Array<CardDto>>) => {
+        return r.data.length > 0
+          ? this.resultFactory.createSuccessResult<CardDto>(r.data[0])
+          : this.resultFactory.createNotFoundResult<CardDto>(request.params["id"]);
+      });
   }
 
   private getRuling(request: RoutedRequest<void>): Promise<IResult<Array<RulingLineDto>>> {
@@ -66,12 +65,14 @@ export class CardRouter extends BaseRouter implements IRouter {
             changedImageStatusAction: undefined
           };
           return container.resolve<IRulingSyncService>(SCRYFALL.RulingSyncService)
-            .sync(dtoSyncParam, (s: string) => console.log(s))
-            .then(() => this.oracleRepository
-              .getByCardId(request.params["id"])
-              .then((afterSync: IResult<Array<RulingLineDto>>) => afterSync
-                .processResult((r: IResult<Array<RulingLineDto>>) => r.data = r.data.filter((line: RulingLineDto) => line.oracle_id !== null)))
-            );
+            .sync(dtoSyncParam, (s: string) => this.logService.debug("Main", s))
+            .then(() => {
+              return this.oracleRepository
+                .getByCardId(request.params["id"])
+                .then((afterSync: IResult<Array<RulingLineDto>>) => {
+                  return afterSync.processResult((r: IResult<Array<RulingLineDto>>) => r.data = r.data.filter((line: RulingLineDto) => line.oracle_id !== null));
+                });
+            });
         } else {
           return queryResult.processResult((r: IResult<Array<RulingLineDto>>) => r.data = r.data.filter((line: RulingLineDto) => line.oracle_id !== null));
         }
@@ -79,7 +80,7 @@ export class CardRouter extends BaseRouter implements IRouter {
   }
 
   private queryCards(request: RoutedRequest<void>): Promise<IResult<Array<CardDto>>> {
-    return this.cardRepository.getCards(undefined, request.queryParams["sets"].split(","))
+    return this.cardRepository.getCards(undefined, request.queryParams["sets"].split(","));
   }
   //#endregion
 }

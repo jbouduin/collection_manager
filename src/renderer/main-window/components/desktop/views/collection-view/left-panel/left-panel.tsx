@@ -29,8 +29,8 @@ export function LeftPanel(props: LeftPanelProps) {
 
   React.useEffect(
     () => {
-      ipcProxyService
-        .getData<Array<CollectionDto>>(`/collection`)
+      void ipcProxyService
+        .getData<Array<CollectionDto>>("/collection")
         .then((result: Array<CollectionDto>) => setCollections(result.map((collection: CollectionDto) => new CollectionViewmodel(collection))));
     },
     [props]

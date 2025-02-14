@@ -30,7 +30,6 @@ export class DatabaseService implements IDatabaseService {
 
   //#region IDatabaseService methods ------------------------------------------
   public connect(): IDatabaseService {
-    console.log("connecting to", this.configurationService.dataBaseFilePath);
     const dialect = new SqliteDialect({
       database: new SQLite(this.configurationService.dataBaseFilePath)
     });

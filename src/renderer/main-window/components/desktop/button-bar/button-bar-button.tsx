@@ -24,7 +24,6 @@ export function ButtonBarButton(props: ButtonBarButtonProps) {
   //#region Effect ------------------------------------------------------------
   React.useEffect(
     () => {
-      console.log(props.assetPath);
       void ipcProxyService.getData<string>(`/asset?path=${props.assetPath}`)
         .then((response: string) => setSvg(response));
     },

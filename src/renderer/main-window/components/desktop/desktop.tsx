@@ -16,7 +16,7 @@ import { SyncDialog } from "./sync-dialog/sync-dialog";
 import { CollectionView } from "./views/collection-view/collection-view";
 import { DatabaseView } from "./views/database-view/database-view";
 import { DeckView } from "./views/deck-view/deck-view";
-import { DisplayValueService, DisplayValueServiceContext } from "../../../common/context";
+import { DisplayValueService, DisplayValueServiceContext, IpcProxyService, IpcProxyServiceContext } from "../../../common/context";
 
 export function Desktop(props: DesktopProps) {
   //#region State -------------------------------------------------------------
@@ -29,6 +29,10 @@ export function Desktop(props: DesktopProps) {
     cardSet: null
   };
   const [desktopState, setDesktopState] = React.useState<DesktopState>(initialState);
+  //#endregion
+
+  //#region Context ---------------------------------------------------------------------
+  const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
   //#endregion
 
   //#region Event handling ----------------------------------------------------
@@ -84,7 +88,7 @@ export function Desktop(props: DesktopProps) {
       cardSetCodeToSyncCardsFor: code,
       changedImageStatusAction: "delete"
     };
-    void window.ipc.sync(params);
+    void ipcProxyService.postData<SyncParamDto, never>("/mtg-sync", params);
   }
 
   function synchronizeCollection(ids: Array<string>): void {
@@ -105,12 +109,12 @@ export function Desktop(props: DesktopProps) {
       cardSetCodeToSyncCardsFor: undefined,
       changedImageStatusAction: "delete"
     };
-    void window.ipc.sync(params);
+    void ipcProxyService.postData<SyncParamDto, never>("/mtg-sync", params);
   }
 
   function startSync(syncParam: SyncParamDto): void {
     setSplashScreenOpen(true);
-    void window.ipc.sync(syncParam);
+    void ipcProxyService.postData<SyncParamDto, never>("/mtg-sync", syncParam);
   }
   //#endregion
 

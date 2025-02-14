@@ -8,8 +8,9 @@ import { SyncParamDto } from "../../../../common/dto";
 import { IpcChannel, IpcRequest } from "../../../../common/ipc";
 import { MigrationDi } from "../../../database/migrations/migrations.di";
 import { IRouter } from "../../base";
-import { DATABASE, INFRASTRUCTURE } from "../../service.tokens";
-import { IBootstrapService, IConfigurationService, IDatabaseService, IIpcSyncService, IRouterService, IWindowsService } from "../interfaces";
+import { DATABASE, INFRASTRUCTURE, MTG } from "../../service.tokens";
+import { IBootstrapService, IConfigurationService, IDatabaseService, IRouterService, IWindowsService } from "../interfaces";
+import { IMtgSyncService } from "../../mtg/interfaces";
 
 
 @injectable()
@@ -91,8 +92,8 @@ export class BootstrapService implements IBootstrapService {
           ? this.firstUseSyncParam()
           : configurationService.configuration.syncAtStartupConfiguration;
         return container
-          .resolve<IIpcSyncService>(INFRASTRUCTURE.IpcSyncService)
-          .handle(syncParam, splashWindow);
+          .resolve<IMtgSyncService>(MTG.SyncService)
+          .synchronize(syncParam, splashWindow.webContents);
       })
       .then(() => splashWindow.webContents.send("splash", "loading main program"));
   }

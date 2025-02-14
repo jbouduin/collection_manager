@@ -3,10 +3,6 @@ export const INFRASTRUCTURE = Object.freeze({
   ConfigurationService: "ConfigurationService",
   DatabaseService: "DatabaseService",
   ImageCacheService: "ImageCacheService",
-  IpcDispatcherService: "IpcDispatcherService",
-  IpcPostService: "IpcPostService",
-  IpcQueryService: "IpcQueryService",
-  IpcSyncService: "IIpcSyncService",
   LogService: "LogService",
   ResultFacotry: "ResultFactory",
   RouterService: "RouterService",
@@ -30,7 +26,9 @@ export const REPOSITORIES = Object.freeze({
   OracleRepository: "OracleRepository"
 });
 
-// export const MTG = Object.freeze([]);
+export const MTG = Object.freeze({
+  SyncService: "SyncService"
+});
 
 export const SCRYFALL = Object.freeze({
   // Client

@@ -8,7 +8,7 @@ export class ServicesDI {
   public static register() {
     InfraDi.registerInfrastructure();
     CollectionDi.registerCollection();
-    MtgDi.registerMTG();
+    MtgDi.register();
     RepoDi.registerRepositories();
     ScryDi.registerScryfall();
   }

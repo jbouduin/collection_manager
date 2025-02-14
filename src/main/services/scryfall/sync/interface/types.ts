@@ -1,7 +1,9 @@
+import { CardSyncParam, RulingSyncParam } from "../../../../../common/dto";
+import { CatalogType } from "../../../../../common/types";
 import { IBaseSyncService } from "./base-sync.service";
 
-export type ICardSetSyncService = IBaseSyncService;
-export type ICardSymbolSyncService = IBaseSyncService;
-export type ICardSyncService = IBaseSyncService;
-export type ICatalogSyncService = IBaseSyncService;
-export type IRulingSyncService = IBaseSyncService;
+export type ICardSetSyncService = IBaseSyncService<void>;
+export type ICardSymbolSyncService = IBaseSyncService<void>;
+export type ICardSyncService = IBaseSyncService<CardSyncParam>;
+export type ICatalogSyncService = IBaseSyncService<Array<CatalogType>>;
+export type IRulingSyncService = IBaseSyncService<RulingSyncParam>;

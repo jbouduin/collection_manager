@@ -2,7 +2,6 @@ import * as fs from "fs";
 import { ExpressionOrFactory, InsertResult, Kysely, SqlBool, Transaction, UpdateResult } from "kysely";
 import { ExtractTableAlias } from "kysely/dist/cjs/parser/table-parser";
 import * as path from "path";
-import { SyncParamDto } from "../../../../../common/dto";
 import { ProgressCallback } from "../../../../../common/ipc";
 import { formatTimeStampedFileName } from "../../../../../common/util";
 import { DatabaseSchema } from "../../../../database/schema";
@@ -14,7 +13,7 @@ import { GenericSyncTaskParameter } from "./generic-sync-task.parameter";
 import { logCompilable } from "./log-compilable";
 
 
-export abstract class BaseSyncService implements IBaseSyncService {
+export abstract class BaseSyncService<T> implements IBaseSyncService<T> {
   //#region private readonly fields -------------------------------------------
   private readonly databaseService: IDatabaseService;
   //#endregion
@@ -46,7 +45,7 @@ export abstract class BaseSyncService implements IBaseSyncService {
   //#endregion
 
   //#region IBaseSyncService abstract methods ---------------------------------
-  public abstract sync(syncParam: SyncParamDto, progressCallback: ProgressCallback): Promise<void>;
+  public abstract sync(syncParam: T, progressCallback: ProgressCallback): Promise<void>;
   //#endregion
 
   //#region Protected auxiliary methods ---------------------------------------

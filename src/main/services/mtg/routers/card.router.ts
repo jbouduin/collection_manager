@@ -1,5 +1,5 @@
 import { container, inject, singleton } from "tsyringe";
-import { CardDto, RulingLineDto, SyncParamDto } from "../../../../common/dto";
+import { CardDto, RulingLineDto, RulingSyncParam } from "../../../../common/dto";
 import { ICardRepository, IOracleRepository } from "../../../database/repo/interfaces";
 import { BaseRouter, IResult, IRouter, RouteCallback, RoutedRequest } from "../../base";
 import { ILogService, IResultFactory, IRouterService } from "../../infra/interfaces";
@@ -51,21 +51,12 @@ export class CardRouter extends BaseRouter implements IRouter {
       .then((queryResult: IResult<Array<RulingLineDto>>) => {
         if (queryResult.data.length == 0) {
           // TODO refactor sync
-          const dtoSyncParam: SyncParamDto = {
-            catalogTypesToSync: [],
-            syncCardSymbols: false,
-            syncCardSets: false,
+          const syncParam: RulingSyncParam = {
             rulingSyncType: "selectionOfCards",
-            cardSyncType: "none",
-            cardSelectionToSync: [request.params["id"]],
-            cardImageStatusToSync: [],
-            syncCardsSyncedBeforeNumber: 0,
-            syncCardsSyncedBeforeUnit: undefined,
-            cardSetCodeToSyncCardsFor: undefined,
-            changedImageStatusAction: undefined
+            cardSelectionToSync: [request.params["id"]]
           };
           return container.resolve<IRulingSyncService>(SCRYFALL.RulingSyncService)
-            .sync(dtoSyncParam, (s: string) => this.logService.debug("Main", s))
+            .sync(syncParam, (s: string) => this.logService.debug("Main", s))
             .then(() => {
               return this.oracleRepository
                 .getByCardId(request.params["id"])

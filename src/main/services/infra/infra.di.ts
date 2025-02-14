@@ -6,15 +6,11 @@ import { BootstrapService } from "./implementation/bootstrap.service";
 import { ConfigurationService } from "./implementation/configuration.service";
 import { DatabaseService } from "./implementation/database.service";
 import { ImageCacheService } from "./implementation/image-cache.service";
-import { IpcDispatcherService } from "./implementation/ipc-dispatcher.service";
-// import { IpcPostService } from "./implementation/ipc-post.service";
-import { IpcSyncService } from "./implementation/ipc-sync.service";
 import { LogService } from "./implementation/log.service";
 import { ResultFactory } from "./implementation/result.factory";
 import { RouterService } from "./implementation/router.service";
 import { WindowsService } from "./implementation/windows.service";
-import { IBootstrapService, IConfigurationService, IDatabaseService, IImageCacheService, IIpcDispatcherService, IIpcSyncService, IResultFactory, IRouterService, IWindowsService } from "./interfaces";
-// import { IIpcPostService } from "./interfaces/ipc-post.service";
+import { IBootstrapService, IConfigurationService, IDatabaseService, IImageCacheService, IResultFactory, IRouterService, IWindowsService } from "./interfaces";
 import { ILogService } from "./interfaces/log.service";
 import { ConfigurationRouter, LogRouter } from "./routers";
 import { AssetRouter } from "./routers/asset.router";
@@ -22,9 +18,6 @@ import { AssetRouter } from "./routers/asset.router";
 
 export class InfraDi {
   public static registerInfrastructure() {
-    container.register<IIpcDispatcherService>(INFRASTRUCTURE.IpcDispatcherService, { useClass: IpcDispatcherService });
-    container.register<IIpcSyncService>(INFRASTRUCTURE.IpcSyncService, { useClass: IpcSyncService });
-
     container.register<IBootstrapService>(INFRASTRUCTURE.BootstrapService, { useClass: BootstrapService }, { lifecycle: Lifecycle.Singleton });
     container.register<IConfigurationService>(INFRASTRUCTURE.ConfigurationService, { useClass: ConfigurationService }, { lifecycle: Lifecycle.Singleton });
     container.register<IDatabaseService>(INFRASTRUCTURE.DatabaseService, { useClass: DatabaseService }, { lifecycle: Lifecycle.Singleton });

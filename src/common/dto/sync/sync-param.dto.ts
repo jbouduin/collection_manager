@@ -32,3 +32,6 @@ export interface SyncParamDto {
    *  boolean: check for new released spoilers (future sets) (startup only)
    */
 }
+
+export type CardSyncParam = Omit<SyncParamDto, "catalogTypesToSync" | "syncCardSymbols" | "syncCardSets" | "rulingSyncType">;
+export type RulingSyncParam = Omit<SyncParamDto, "catalogTypesToSync" | "syncCardSymbols" | "syncCardSets" | "cardSyncType" | "cardImageStatusToSync" | "syncCardsSyncedBeforeNumber" | "syncCardsSyncedBeforeUnit" | "cardSetCodeToSyncCardsFor" | "changedImageStatusAction">;

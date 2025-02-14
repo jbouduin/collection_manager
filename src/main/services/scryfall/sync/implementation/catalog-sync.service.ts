@@ -1,6 +1,5 @@
 import { Transaction } from "kysely";
 import { inject, injectable } from "tsyringe";
-import { SyncParamDto } from "../../../../../common/dto";
 import { ProgressCallback } from "../../../../../common/ipc";
 import { CatalogType } from "../../../../../common/types";
 import { DatabaseSchema } from "../../../../../main/database/schema";
@@ -20,7 +19,7 @@ type SyncSingleCatalogParameter = {
 };
 
 @injectable()
-export class CatalogSyncService extends BaseSyncService implements ICatalogSyncService {
+export class CatalogSyncService extends BaseSyncService<Array<CatalogType>> implements ICatalogSyncService {
   //#region private readonly fields -------------------------------------------
   private readonly catalogAdapter: ICatalogAdapter;
   //#endregion
@@ -39,8 +38,8 @@ export class CatalogSyncService extends BaseSyncService implements ICatalogSyncS
   //#endregion
 
   //#region ICatalogSyncService methods ---------------------------------------
-  public override async sync(syncParam: SyncParamDto, progressCallback: ProgressCallback): Promise<void> {
-    const serialExecutionArray = syncParam.catalogTypesToSync.map<SyncSingleCatalogParameter>((catalog: CatalogType) => {
+  public override async sync(syncParam: Array<CatalogType>, progressCallback: ProgressCallback): Promise<void> {
+    const serialExecutionArray = syncParam.map<SyncSingleCatalogParameter>((catalog: CatalogType) => {
       return { catalogType: catalog, progressCallback: progressCallback };
     });
     await runSerial<SyncSingleCatalogParameter>(serialExecutionArray, this.syncSingleCatalog.bind(this));

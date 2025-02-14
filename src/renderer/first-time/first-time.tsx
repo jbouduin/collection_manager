@@ -1,8 +1,8 @@
-import { BlueprintProvider, FocusStyleManager } from "@blueprintjs/core";
+import { BlueprintProvider, FocusStyleManager, OverlayToaster, Position, ToastProps } from "@blueprintjs/core";
 import * as React from "react";
 import { createRoot } from "react-dom/client";
 import { ConfigurationDto } from "../../common/dto";
-import { QueryParam } from "../../common/ipc-params";
+import { IpcProxyService, IpcProxyServiceContext } from "../common/context";
 import { ConfigurationViewModel } from "../common/viewmodels/configuration/configuration.viewmodel";
 import { FirstTimeView } from "./first-time-view/first-time-view";
 
@@ -11,21 +11,30 @@ FocusStyleManager.onlyShowFocusOnTabs();
 
 void (async () => {
   await import("../main-window/App.css");
-  let configurationViewmodel: ConfigurationViewModel;
-  const queryParam: QueryParam<null> = {
-    type: "Configuration",
-    options: null
-  };
-  // Go to main to ask for the factory default
-  await window.ipc.query(queryParam)
-    .then((configuration: ConfigurationDto) => configurationViewmodel = new ConfigurationViewModel(configuration, true))
-    .then(() => {
+
+  const appToaster = await OverlayToaster.createAsync(
+    {
+      className: "recipe-toaster",
+      position: Position.TOP
+    },
+    {
+      domRenderer: (toaster, containerElement) => createRoot(containerElement).render(toaster)
+    }
+  );
+
+  const ipcProxyService = new IpcProxyService((props: ToastProps, key?: string) => appToaster.show(props, key));
+
+  await ipcProxyService.getData<ConfigurationDto>("/configuration")
+    .then((configuration: ConfigurationDto) => new ConfigurationViewModel(configuration, true))
+    .then((configurationViewmodel: ConfigurationViewModel) => {
       const container = document.getElementById("root");
       const root = createRoot(container);
       /* eslint-disable @stylistic/function-paren-newline */
       root.render(
         <BlueprintProvider>
-          <FirstTimeView className={configurationViewmodel.theme} configuration={configurationViewmodel} />
+          <IpcProxyServiceContext.Provider value={ipcProxyService}>
+            <FirstTimeView className={configurationViewmodel.theme} configuration={configurationViewmodel} />
+          </IpcProxyServiceContext.Provider>
         </BlueprintProvider>
       );
     });

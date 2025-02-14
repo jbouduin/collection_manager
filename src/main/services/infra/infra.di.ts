@@ -8,23 +8,22 @@ import { DatabaseService } from "./implementation/database.service";
 import { ImageCacheService } from "./implementation/image-cache.service";
 import { IpcDispatcherService } from "./implementation/ipc-dispatcher.service";
 import { IpcPostService } from "./implementation/ipc-post.service";
-import { IpcQueryService } from "./implementation/ipc-query.service";
 import { IpcSyncService } from "./implementation/ipc-sync.service";
 import { LogService } from "./implementation/log.service";
 import { ResultFactory } from "./implementation/result.factory";
 import { RouterService } from "./implementation/router.service";
 import { WindowsService } from "./implementation/windows.service";
-import { IBootstrapService, IConfigurationService, IDatabaseService, IImageCacheService, IIpcDispatcherService, IIpcQueryService, IIpcSyncService, IResultFactory, IRouterService, IWindowsService } from "./interfaces";
+import { IBootstrapService, IConfigurationService, IDatabaseService, IImageCacheService, IIpcDispatcherService, IIpcSyncService, IResultFactory, IRouterService, IWindowsService } from "./interfaces";
 import { IIpcPostService } from "./interfaces/ipc-post.service";
 import { ILogService } from "./interfaces/log.service";
 import { ConfigurationRouter, LogRouter } from "./routers";
+import { AssetRouter } from "./routers/asset.router";
 
 
 export class InfraDi {
   public static registerInfrastructure() {
     container.register<IIpcDispatcherService>(INFRASTRUCTURE.IpcDispatcherService, { useClass: IpcDispatcherService });
     container.register<IIpcPostService>(INFRASTRUCTURE.IpcPostService, { useClass: IpcPostService });
-    container.register<IIpcQueryService>(INFRASTRUCTURE.IpcQueryService, { useClass: IpcQueryService });
     container.register<IIpcSyncService>(INFRASTRUCTURE.IpcSyncService, { useClass: IpcSyncService });
 
     container.register<IBootstrapService>(INFRASTRUCTURE.BootstrapService, { useClass: BootstrapService }, { lifecycle: Lifecycle.Singleton });
@@ -36,6 +35,7 @@ export class InfraDi {
     container.register<IRouterService>(INFRASTRUCTURE.RouterService, { useClass: RouterService }, { lifecycle: Lifecycle.Singleton });
     container.register<IWindowsService>(INFRASTRUCTURE.WindowsService, { useClass: WindowsService }, { lifecycle: Lifecycle.Singleton });
 
+    container.register<IRouter>(INFRASTRUCTURE.Router, { useClass: AssetRouter }, { lifecycle: Lifecycle.Singleton });
     container.register<IRouter>(INFRASTRUCTURE.Router, { useClass: LogRouter }, { lifecycle: Lifecycle.Singleton });
     container.register<IRouter>(INFRASTRUCTURE.Router, { useClass: ConfigurationRouter }, { lifecycle: Lifecycle.Singleton });
   }

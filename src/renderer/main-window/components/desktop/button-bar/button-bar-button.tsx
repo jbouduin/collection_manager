@@ -1,6 +1,6 @@
 import { Button, Popover, Tooltip } from "@blueprintjs/core";
 import * as React from "react";
-import { AssetQueryOptions, QueryParam } from "../../../../../common/ipc-params";
+import { IpcProxyService, IpcProxyServiceContext } from "../../../../common/context";
 import { SvgProvider } from "../../common/svg-provider/svg-provider";
 import { EButtonBarButtonType } from "./button-bar-button-type.enum";
 import { ButtonBarButtonProps } from "./button-bar-button.props";
@@ -9,6 +9,10 @@ import { ButtonBarButtonProps } from "./button-bar-button.props";
 export function ButtonBarButton(props: ButtonBarButtonProps) {
   //#region State -------------------------------------------------------------
   const [svg, setSvg] = React.useState<string>(undefined);
+  //#endregion
+
+  //#region Context ---------------------------------------------------------------------
+  const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
   //#endregion
 
   //#region Event handling ----------------------------------------------------
@@ -20,13 +24,9 @@ export function ButtonBarButton(props: ButtonBarButtonProps) {
   //#region Effect ------------------------------------------------------------
   React.useEffect(
     () => {
-      const param: QueryParam<AssetQueryOptions> = {
-        type: "Asset",
-        options: {
-          path: props.assetPath
-        }
-      };
-      void window.ipc.query(param).then((response: string) => setSvg(response));
+      console.log(props.assetPath);
+      void ipcProxyService.getData<string>(`/asset?path=${props.assetPath}`)
+        .then((response: string) => setSvg(response));
     },
     [props.assetPath]
   );

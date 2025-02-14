@@ -7,6 +7,7 @@ import { BaseService, IResult } from "../../base";
 import { INFRASTRUCTURE } from "../../service.tokens";
 import { IConfigurationService, ILogService, IResultFactory } from "../interfaces";
 
+
 @singleton()
 export class ConfigurationService extends BaseService implements IConfigurationService {
   //#region Private fields ----------------------------------------------------
@@ -25,6 +26,13 @@ export class ConfigurationService extends BaseService implements IConfigurationS
 
   public get isFirstUsage(): boolean {
     return this._isFirstUsage;
+  }
+
+  public get dataBaseFilePath(): string {
+    return join(
+      this._configuration.dataConfiguration.rootDataDirectory,
+      this._configuration.dataConfiguration.databaseName
+    );
   }
   //#endregion
 

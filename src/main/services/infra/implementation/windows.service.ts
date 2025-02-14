@@ -27,9 +27,6 @@ export class WindowsService implements IWindowsService {
   }
   //#endregion
 
-  //#region Constructor & C° --------------------------------------------------
-  //#endregion
-
   //#region IWindowsService methods -------------------------------------------
   public createFirstTimeWindow(): BrowserWindow {
     const createFirstTimeWindow = new BrowserWindow({

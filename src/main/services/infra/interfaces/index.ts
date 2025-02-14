@@ -3,7 +3,6 @@ export * from "./configuration.service";
 export * from "./database.service";
 export * from "./image-cache.service";
 export * from "./ipc-dispatcher.service";
-export * from "./ipc-query.service";
 export * from "./ipc-sync.service";
 export * from "./log.service";
 export * from "./result.factory";

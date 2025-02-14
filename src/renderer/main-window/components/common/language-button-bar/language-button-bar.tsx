@@ -1,13 +1,14 @@
 import { ButtonGroup } from "@blueprintjs/core";
 import * as React from "react";
-import { DtoCardLanguage, DtoLanguage } from "../../../../../common/dto";
+import { DtoCardLanguageDto, LanguageDto } from "../../../../../common/dto";
 import { LanguagesContext } from "../../context";
 import { LanguageButtonBarButton } from "./language-button-bar-button";
 import { LanguageButtonBarProps } from "./language-button-bar.props";
 
+
 export function LanguageButtonBar(props: LanguageButtonBarProps) {
   //#region Event handling ----------------------------------------------------
-  function onAnyButtonClick(language: DtoCardLanguage): void {
+  function onAnyButtonClick(language: DtoCardLanguageDto): void {
     props.onButtonClick(language);
   }
   //#endregion
@@ -16,11 +17,11 @@ export function LanguageButtonBar(props: LanguageButtonBarProps) {
   return (
     <LanguagesContext.Consumer >
       {
-        (languages: Array<DtoLanguage>) => (
+        (languages: Array<LanguageDto>) => (
           <ButtonGroup className="language-button-bar" minimal={true}>
             {
-              props.cardLanguages.map((language: DtoCardLanguage) => {
-                const languageDef = languages.find((lng: DtoLanguage) => lng.id == language.lang);
+              props.cardLanguages.map((language: DtoCardLanguageDto) => {
+                const languageDef = languages.find((lng: LanguageDto) => lng.id == language.lang);
                 const label = languageDef ? languageDef.button_text : language.lang;
                 const tooltip = languageDef ? languageDef.display_text : language.lang;
                 return (

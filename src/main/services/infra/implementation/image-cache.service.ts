@@ -1,15 +1,16 @@
 import { SVG, cleanupSVG, parseColors } from "@iconify/tools";
 import { net } from "electron";
-import * as fs from "fs";
+import { createWriteStream, existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from "fs";
 import { Selectable } from "kysely";
 import * as path from "path";
 import { inject, injectable } from "tsyringe";
 import { DtoCardImageData } from "../../../../common/dto";
 import { ProgressCallback } from "../../../../common/ipc-params";
 import { CardSetTable, CardSymbolTable } from "../../../../main/database/schema";
+import { IResult } from "../../base";
 import { IScryfallClient } from "../../scryfall/client/interfaces";
-import { IConfigurationService, IImageCacheService, ILogService } from "../interfaces";
-import { SCRYFALL, INFRASTRUCTURE } from "../../service.tokens";
+import { INFRASTRUCTURE, SCRYFALL } from "../../service.tokens";
+import { IConfigurationService, IImageCacheService, ILogService, IResultFactory } from "../interfaces";
 
 
 @injectable()
@@ -18,17 +19,20 @@ export class ImageCacheService implements IImageCacheService {
   private readonly configurationService: IConfigurationService;
   private readonly apiClient: IScryfallClient;
   private readonly logService: ILogService;
+  private readonly resultFactory: IResultFactory;
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
   public constructor(
     @inject(INFRASTRUCTURE.ConfigurationService) configurationService: IConfigurationService,
     @inject(SCRYFALL.ScryfallClient) apiClient: IScryfallClient,
-    @inject(INFRASTRUCTURE.LogService) logService: ILogService
+    @inject(INFRASTRUCTURE.LogService) logService: ILogService,
+    @inject(INFRASTRUCTURE.ResultFacotry) resultFactory: IResultFactory,
   ) {
     this.configurationService = configurationService;
     this.apiClient = apiClient;
     this.logService = logService;
+    this.resultFactory = resultFactory;
   }
   //#endregion
 
@@ -38,7 +42,7 @@ export class ImageCacheService implements IImageCacheService {
     return this.apiClient.fetchArrayBuffer(cardSymbol.svg_uri)
       .then((arrayBuffer: ArrayBuffer) => {
         const buffer = Buffer.from(arrayBuffer);
-        fs.createWriteStream(this.pathToCardSymbolSvg(cardSymbol)).write(buffer);
+        createWriteStream(this.pathToCardSymbolSvg(cardSymbol)).write(buffer);
       });
   }
 
@@ -48,25 +52,33 @@ export class ImageCacheService implements IImageCacheService {
       .then((arrayBuffer: ArrayBuffer) => {
         const enc = new TextDecoder("utf-8");
         const asString = enc.decode(arrayBuffer);
-        return fs.promises.writeFile(this.pathToCardSetSvg(cardSet), this.hackCardSetSvg(asString));
+        return Promise.resolve( writeFileSync(this.pathToCardSetSvg(cardSet), this.hackCardSetSvg(asString)));
       })
       .catch((reason) => this.logService.error("Main", `failed ${cardSet.name}`, reason));
   }
 
   public deleteCachedCardImage(card: DtoCardImageData): void {
     const cachePath = this.pathToCachedCardImage(card);
-    if (fs.existsSync(cachePath)) {
-      fs.unlinkSync(cachePath);
+    if (existsSync(cachePath)) {
+      unlinkSync(cachePath);
     }
   }
 
-  public async getAsset(path: string): Promise<string> {
-    return Promise.resolve(fs.readFileSync(path, { encoding: "utf-8" }));
+  public async getAsset(path: string): Promise<IResult<string>> {
+    if (existsSync(path)) {
+      try {
+        return this.resultFactory.createSuccessResultPromise<string>(readFileSync(path, { encoding: "utf-8" }));
+      } catch (err) {
+        return this.resultFactory.createExceptionResultPromise<string>(err);
+      }
+    } else {
+      return this.resultFactory.createNotFoundResultPromise<string>(path);
+    }
   }
 
   public async getCardImage(card: DtoCardImageData): Promise<Response> {
     const cachePath = this.pathToCachedCardImage(card);
-    if (fs.existsSync(cachePath)) {
+    if (existsSync(cachePath)) {
       return net.fetch(cachePath);
     } else {
       return this.fetchAndCacheCardImage(cachePath, card)
@@ -78,17 +90,17 @@ export class ImageCacheService implements IImageCacheService {
     const cachePath = this.pathToCachedCardImage(card);
     if (!onlyIfExists) {
       return this.fetchAndCacheCardImage(cachePath, card);
-    } else if (fs.existsSync(cachePath)) {
+    } else if (existsSync(cachePath)) {
       return this.fetchAndCacheCardImage(cachePath, card);
     }
   }
 
   public getCardSymbolSvg(cardSymbol: Selectable<CardSymbolTable>): string {
-    return fs.readFileSync(this.pathToCardSymbolSvg(cardSymbol), { encoding: "utf-8" });
+    return readFileSync(this.pathToCardSymbolSvg(cardSymbol), { encoding: "utf-8" });
   }
 
   public getCardSetSvg(cardSet: Selectable<CardSetTable>): string {
-    return fs.readFileSync(this.pathToCardSetSvg(cardSet), { encoding: "utf-8" });
+    return readFileSync(this.pathToCardSetSvg(cardSet), { encoding: "utf-8" });
   }
   //#endregion
 
@@ -97,15 +109,15 @@ export class ImageCacheService implements IImageCacheService {
     return this.apiClient.getCardImage(card)
       .then((arrayBuffer: ArrayBuffer) => {
         const buffer = Buffer.from(arrayBuffer);
-        return fs.promises.writeFile(cachePath, buffer);
+        return Promise.resolve(writeFileSync(cachePath, buffer));
       });
   }
 
   private pathToCardSymbolSvg(cardSymbol: Selectable<CardSymbolTable>): string {
     const fileName = new URL(cardSymbol.svg_uri).pathname.split("/").pop();
     const dirName = path.join(this.configurationService.configuration.dataConfiguration.cacheDirectory, "cardsymbols");
-    if (!fs.existsSync(dirName)) {
-      fs.mkdirSync(dirName, { recursive: true });
+    if (!existsSync(dirName)) {
+      mkdirSync(dirName, { recursive: true });
     }
     return path.join(dirName, fileName);
   }
@@ -122,8 +134,8 @@ export class ImageCacheService implements IImageCacheService {
       fileName = `${card.cardBackId}.jpg`;
     }
 
-    if (!fs.existsSync(dirName)) {
-      fs.mkdirSync(dirName, { recursive: true });
+    if (!existsSync(dirName)) {
+      mkdirSync(dirName, { recursive: true });
     }
     return path.join(dirName, fileName);
   }
@@ -131,8 +143,8 @@ export class ImageCacheService implements IImageCacheService {
   private pathToCardSetSvg(cardSet: Selectable<CardSetTable>): string {
     const fileName = `${cardSet.code}${path.extname(new URL(cardSet.icon_svg_uri).pathname.split("/").pop())}`;
     const dirName = path.join(this.configurationService.configuration.dataConfiguration.cacheDirectory, "sets");
-    if (!fs.existsSync(dirName)) {
-      fs.mkdirSync(dirName, { recursive: true });
+    if (!existsSync(dirName)) {
+      mkdirSync(dirName, { recursive: true });
     }
     return path.join(dirName, fileName);
   }

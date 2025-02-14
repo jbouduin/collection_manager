@@ -1,9 +1,9 @@
-import { DtoCardSet } from "../../../../common/dto";
+import { CardSetDto } from "../../../../common/dto";
 import { CardSetType } from "../../../../common/types";
 
 export class CardSetViewmodel {
   //#region private readonly fields -------------------------------------------
-  private readonly _dtoCardSet: DtoCardSet;
+  private readonly _dtoCardSet: CardSetDto;
   //#endregion
 
   //#region public getters ----------------------------------------------------
@@ -45,7 +45,7 @@ export class CardSetViewmodel {
   //#endregion
 
   //#region public getters ----------------------------------------------------
-  public constructor(dtoCardSet: DtoCardSet) {
+  public constructor(dtoCardSet: CardSetDto) {
     this._dtoCardSet = dtoCardSet;
   }
   //#endregion

@@ -30,6 +30,8 @@ export const REPOSITORIES = Object.freeze({
   OracleRepository: "OracleRepository"
 });
 
+// export const MTG = Object.freeze([]);
+
 export const SCRYFALL = Object.freeze({
   // Client
   ScryfallClient: "ScryfallClient",

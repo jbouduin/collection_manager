@@ -3,13 +3,13 @@ import { CardFaceColorMapTable, CatalogItemTable, CollectionTable, ColorTable, L
 
 export type CatalogItemDto = Selectable<CatalogItemTable>;
 export type ColorDto = Selectable<ColorTable>;
-export type DtoCollection = Selectable<CollectionTable>;
+export type CollectionDto = Selectable<CollectionTable>;
 export type NewCollection = Insertable<CollectionTable>;
 export type UpdateCollection = Updateable<CollectionTable>;
-export type DtoLanguage = Selectable<LanguageTable>;
-export type DtoRulingLine = Selectable<OracleRulingLineTable>;
+export type LanguageDto = Selectable<LanguageTable>;
+export type RulingLineDto = Selectable<OracleRulingLineTable>;
 export type DtoOracle = Selectable<OracleTable>;
-export type DtoCardfaceColor = Selectable<CardFaceColorMapTable>;
-export type DtoLegality = Selectable<OracleLegalityTable>;
+export type CardfaceColorDto = Selectable<CardFaceColorMapTable>;
+export type LegalityDto = Selectable<OracleLegalityTable>;
 
 export type IdSelectResult = { id: string };

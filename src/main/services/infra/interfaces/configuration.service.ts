@@ -1,7 +1,9 @@
 import { ConfigurationDto } from "../../../../common/dto";
 import { IResult } from "../../base";
 
+
 export interface IConfigurationService {
+  readonly dataBaseFilePath: string;
   readonly isFirstUsage: boolean;
   readonly configuration: ConfigurationDto;
 

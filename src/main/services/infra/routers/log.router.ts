@@ -1,10 +1,11 @@
 import { inject, singleton } from "tsyringe";
+import { LogEntryDto } from "../../../../common/dto/infra/log-entry.dto";
 import { EIpcStatus, IpcRequest } from "../../../../common/ipc";
 import { BaseRouter, IResult, IRouter, Result, RouteCallback } from "../../base";
 import { INFRASTRUCTURE } from "../../service.tokens";
 import { IResultFactory, IRouterService } from "../interfaces";
 import { ILogService } from "../interfaces/log.service";
-import { LogEntryDto } from "../../../../common/dto/infra/log-entry.dto";
+
 
 @singleton()
 export class LogRouter extends BaseRouter implements IRouter {

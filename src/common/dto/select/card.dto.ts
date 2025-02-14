@@ -1,11 +1,12 @@
 import { Selectable } from "kysely";
+import { CardColorDto, DtoCardface as CardfaceDto, DtoOracle as OracleDto } from "..";
 import { CardTable } from "../../../main/database/schema";
-import { DtoCardColor, DtoCardface, DtoOracle } from "..";
-import { DtoCardLanguage } from "./card-language.dto";
+import { DtoCardLanguageDto as CardLanguageDto } from "./card-language.dto";
 
-export interface DtoCard extends Selectable<CardTable> {
-  cardfaces: Array<DtoCardface>;
-  oracle: Array<DtoOracle>;
-  languages: Array<DtoCardLanguage>;
-  cardColors: Array<DtoCardColor>;
+
+export interface CardDto extends Selectable<CardTable> {
+  cardfaces: Array<CardfaceDto>;
+  oracle: Array<OracleDto>;
+  languages: Array<CardLanguageDto>;
+  cardColors: Array<CardColorDto>;
 }

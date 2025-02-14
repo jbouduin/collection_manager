@@ -2,7 +2,8 @@ import { inject, singleton } from "tsyringe";
 import { ConfigurationDto } from "../../../../common/dto";
 import { IResult, IRouter, RouteCallback, RoutedRequest } from "../../base";
 import { INFRASTRUCTURE } from "../../service.tokens";
-import { IRouterService, IConfigurationService } from "../interfaces";
+import { IConfigurationService, IRouterService } from "../interfaces";
+
 
 @singleton()
 export class ConfigurationRouter implements IRouter {

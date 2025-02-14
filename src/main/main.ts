@@ -28,12 +28,7 @@ void app.whenReady().then(async () => {
   ServicesDI.register();
   await container
     .resolve<IBootstrapService>(INFRASTRUCTURE.BootstrapService)
-    .boot(
-      container.resolve(INFRASTRUCTURE.WindowsService),
-      container.resolve(INFRASTRUCTURE.RouterService),
-      container.resolveAll(INFRASTRUCTURE.Router),
-      container.resolve(INFRASTRUCTURE.ConfigurationService)
-    );
+    .boot();
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {

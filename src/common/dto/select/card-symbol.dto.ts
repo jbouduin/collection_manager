@@ -1,7 +1,6 @@
+import { Selectable } from "kysely";
 import { CardSymbolAlternativeTable, CardSymbolColorMapTable, CardSymbolTable } from "../../../main/database/schema";
 
-
-import { Selectable } from "kysely";
 export type DtoCardSymbolColorMap = Selectable<CardSymbolColorMapTable>;
 export type DtoCardSymbolAlternative = Selectable<CardSymbolAlternativeTable>;
 

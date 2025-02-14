@@ -1,29 +1,28 @@
 import { HTMLTable, Intent, Tag } from "@blueprintjs/core";
 import * as React from "react";
-import { DtoLegality } from "../../../../../../common/dto";
-import { LegalityQueryOptions, QueryParam } from "../../../../../../common/ipc-params";
+import { LegalityDto } from "../../../../../../common/dto";
+import { IpcProxyService, IpcProxyServiceContext } from "../../../../../common/context";
 import { LegalitiesViewProps } from "./legalities-view.props";
+
 
 // LATER if token, art_serie, futurue release etc : just display text that this card is not to be used for deck building
 export function LegalitiesView(props: LegalitiesViewProps) {
   //#region State -------------------------------------------------------------
-  const [legalities, setLegalities] = React.useState(new Array<DtoLegality>());
+  const [legalities, setLegalities] = React.useState(new Array<LegalityDto>());
+  //#endregion
+
+  //#region Context ---------------------------------------------------------------------
+    const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
   //#endregion
 
   //#region Effects -----------------------------------------------------------
   React.useEffect(
     () => {
       if (props.oracleId) {
-        const rulingQueryParam: QueryParam<LegalityQueryOptions> = {
-          type: "Legality",
-          options: {
-            oracleId: props.oracleId
-          }
-        };
-        void window.ipc.query(rulingQueryParam)
-          .then((queryResult: Array<DtoLegality>) => setLegalities(queryResult));
+        void ipcProxyService.getData(`/oracle/${props.oracleId}/legality`)
+          .then((queryResult: Array<LegalityDto>) => setLegalities(queryResult));
       } else {
-        setLegalities(new Array<DtoLegality>());
+        setLegalities(new Array<LegalityDto>());
       }
     },
     [props.oracleId]
@@ -50,7 +49,7 @@ export function LegalitiesView(props: LegalitiesViewProps) {
   function getTable(): Array<React.JSX.Element> {
     const table = new Array<React.JSX.Element>();
     let currentRow: Array<React.JSX.Element>;
-    legalities.forEach((legality: DtoLegality, idx: number) => {
+    legalities.forEach((legality: LegalityDto, idx: number) => {
       if (idx % 2 == 0) {
         currentRow = new Array<React.JSX.Element>();
         currentRow.push(<td style={{ paddingLeft: "0px" }}>{legality.format}</td>);

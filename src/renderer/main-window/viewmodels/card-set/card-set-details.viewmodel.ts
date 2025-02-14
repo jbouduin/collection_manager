@@ -1,10 +1,10 @@
-import { DtoCardSetDetails, DtoCardSetLanguage, DtoLanguage } from "../../../../common/dto";
+import { CardSetDetailsDto, DtoCardSetLanguage, LanguageDto } from "../../../../common/dto";
 import { CardSetType } from "../../../../common/types";
 
 
 export class CardSetDetailsViewmodel {
   //#region Private fields ----------------------------------------------------
-  private _dtoCardSet: DtoCardSetDetails;
+  private _dtoCardSet: CardSetDetailsDto;
   //#endregion
 
   //#region Public getters ----------------------------------------------------
@@ -81,15 +81,15 @@ export class CardSetDetailsViewmodel {
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
-  public constructor(dtoCardSetDetails: DtoCardSetDetails) {
+  public constructor(dtoCardSetDetails: CardSetDetailsDto) {
     this._dtoCardSet = dtoCardSetDetails;
   }
   //#endregion
 
   //#region Public methods ----------------------------------------------------
-  public getLanguagesOfSet(languages: Array<DtoLanguage>): string {
+  public getLanguagesOfSet(languages: Array<LanguageDto>): string {
     return this._dtoCardSet.languages
-      .map((language: DtoCardSetLanguage) => languages.find((dtoLanguage: DtoLanguage) => dtoLanguage.id == language.lang).button_text)
+      .map((language: DtoCardSetLanguage) => languages.find((dtoLanguage: LanguageDto) => dtoLanguage.id == language.lang).button_text)
       .join(", ");
   }
   //#endregion

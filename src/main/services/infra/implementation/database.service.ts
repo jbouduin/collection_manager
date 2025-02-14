@@ -1,13 +1,13 @@
 import SQLite from "better-sqlite3";
 import { Kysely, MigrationInfo, MigrationProvider, MigrationResultSet, Migrator, ParseJSONResultsPlugin, SqliteDialect } from "kysely";
 import { inject, singleton } from "tsyringe";
-
 import { ProgressCallback } from "../../../../common/ipc-params";
 import { DatabaseSchema } from "../../../database/schema";
+import { INFRASTRUCTURE } from "../../service.tokens";
 import { IConfigurationService, IDatabaseService } from "../interfaces";
 import { runSerial } from "../util";
 import { SqliteKyselyPlugin } from "./sqlite.kysely.plugin";
-import { INFRASTRUCTURE } from "../../service.tokens";
+
 
 @singleton()
 export class DatabaseService implements IDatabaseService {
@@ -30,8 +30,9 @@ export class DatabaseService implements IDatabaseService {
 
   //#region IDatabaseService methods ------------------------------------------
   public connect(): IDatabaseService {
+    console.log("connecting to", this.configurationService.dataBaseFilePath);
     const dialect = new SqliteDialect({
-      database: new SQLite(this.configurationService.configuration.dataConfiguration.databaseName)
+      database: new SQLite(this.configurationService.dataBaseFilePath)
     });
     this._database = new Kysely<DatabaseSchema>({
       dialect: dialect,
@@ -42,7 +43,7 @@ export class DatabaseService implements IDatabaseService {
 
   public async migrateToLatest(migrationProvider: MigrationProvider, progressCallback: ProgressCallback): Promise<IDatabaseService> {
     const dialect = new SqliteDialect({
-      database: new SQLite(this.configurationService.configuration.dataConfiguration.databaseName)
+      database: new SQLite(this.configurationService.dataBaseFilePath)
     });
     const connection = new Kysely<DatabaseSchema>({
       dialect: dialect

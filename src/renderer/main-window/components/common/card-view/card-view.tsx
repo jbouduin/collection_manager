@@ -1,8 +1,7 @@
 import { H5, Section, SectionCard, Tab, Tabs } from "@blueprintjs/core";
 import * as React from "react";
-
-import { DtoCard, DtoCardLanguage } from "../../../../../common/dto";
-import { CardQueryOptions, QueryParam } from "../../../../../common/ipc-params";
+import { CardDto, DtoCardLanguageDto } from "../../../../../common/dto";
+import { IpcProxyService, IpcProxyServiceContext } from "../../../../common/context";
 import { CardViewmodel } from "../../../viewmodels";
 import { CardSymbolProvider } from "../card-symbol-provider/card-symbol-provider";
 import { LanguageButtonBar } from "../language-button-bar/language-button-bar";
@@ -18,6 +17,10 @@ import { LegalitiesView } from "./legalities-view/legalities-view";
 export function CardView(props: CardViewProps) {
   //#region State -------------------------------------------------------------
   const [cardViewState, setCardViewState] = React.useState<CardViewState>({ card: null, cardfaceSequence: 0 });
+  //#endregion
+
+  //#region Context ---------------------------------------------------------------------
+  const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
   //#endregion
 
   //#region Effects -----------------------------------------------------------
@@ -62,7 +65,7 @@ export function CardView(props: CardViewProps) {
             <LanguageButtonBar
               cardLanguages={cardViewState.card.otherCardLanguages}
               currentLanguage={cardViewState.card.cardLanguage}
-              onButtonClick={(language: DtoCardLanguage) => void loadCard(language.id)}
+              onButtonClick={(language: DtoCardLanguageDto) => void loadCard(language.id)}
             />
           </SectionCard>
         }
@@ -129,16 +132,8 @@ export function CardView(props: CardViewProps) {
   //#region Other Auxiliary methods -------------------------------------------
   async function loadCard(cardId: string): Promise<void> {
     if (cardId) {
-      const cardQueryParam: QueryParam<CardQueryOptions> = {
-        type: "Card",
-        options: {
-          cardId: cardId,
-          setIds: null
-        }
-      };
-      await window.ipc
-        .query(cardQueryParam)
-        .then((cardResult: Array<DtoCard>) => setCardViewState({ card: new CardViewmodel(cardResult[0]), cardfaceSequence: 0 }));
+      await ipcProxyService.getData<CardDto>(`/card/${cardId}`)
+        .then((cardResult: CardDto) => setCardViewState({ card: new CardViewmodel(cardResult), cardfaceSequence: 0 }));
     } else {
       setCardViewState(undefined);
     }

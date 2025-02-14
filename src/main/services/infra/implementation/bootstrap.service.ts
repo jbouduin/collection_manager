@@ -1,27 +1,26 @@
 import { app, BrowserWindow, dialog, ipcMain, IpcMainEvent, nativeTheme, session } from "electron";
 import { existsSync } from "fs";
+import { MigrationProvider } from "kysely";
+import { homedir } from "os";
 import { join } from "path";
 import { container, injectable } from "tsyringe";
-import { IBootstrapService, IRouterService, IConfigurationService, IWindowsService, IDatabaseService, IIpcSyncService } from "../interfaces";
-import { IRouter } from "../../base";
-import { homedir } from "os";
+import { SyncParamDto } from "../../../../common/dto";
 import { IpcChannel, IpcRequest } from "../../../../common/ipc";
 import { MigrationDi } from "../../../database/migrations/migrations.di";
-import { MigrationProvider } from "kysely";
-import { INFRASTRUCTURE, DATABASE } from "../../service.tokens";
-import { SyncParamDto } from "../../../../common/dto";
+import { IRouter } from "../../base";
+import { DATABASE, INFRASTRUCTURE } from "../../service.tokens";
+import { IBootstrapService, IConfigurationService, IDatabaseService, IIpcSyncService, IRouterService, IWindowsService } from "../interfaces";
 
 
 @injectable()
 export class BootstrapService implements IBootstrapService {
   //#region IBootstrapService methods -----------------------------------------
-  public async boot(
-    windowsService: IWindowsService,
-    rootRouterService: IRouterService,
-    routers: Array<IRouter>,
-    settingsService: IConfigurationService
-  ): Promise<void> {
-    await this.preboot(settingsService, rootRouterService, routers);
+  public async boot(): Promise<void> {
+    const windowsService: IWindowsService = container.resolve(INFRASTRUCTURE.WindowsService);
+    const rootRouterService: IRouterService = container.resolve(INFRASTRUCTURE.RouterService);
+    const settingsService: IConfigurationService = container.resolve(INFRASTRUCTURE.ConfigurationService);
+
+    await this.preboot(settingsService, rootRouterService);
     const splashWindow = windowsService.createSplashWindow();
     splashWindow.on("show", () => {
       void this.bootFunction(splashWindow)
@@ -60,17 +59,13 @@ export class BootstrapService implements IBootstrapService {
   //#endregion
 
   //#region helper methods ----------------------------------------------------
-  private async preboot(
-    configurationService: IConfigurationService,
-    routerService: IRouterService,
-    routers: Array<IRouter>
-  ): Promise<void> {
+  private async preboot(configurationService: IConfigurationService, routerService: IRouterService): Promise<void> {
     const reactDevToolsPath = join(process.env.LOCALAPPDATA, "Google", "Chrome", "User Data", "Default", "Extensions", "fmkadmapgofadopljbjfkapdkoienihi", "5.2.0_0");
     if (!app.isPackaged && existsSync(reactDevToolsPath)) {
       await session.defaultSession.loadExtension(reactDevToolsPath);
     }
     configurationService.loadSettings(app.getAppPath(), homedir(), nativeTheme.shouldUseDarkColors);
-    routers.forEach((svc: IRouter) => svc.setRoutes(routerService));
+    container.resolveAll(INFRASTRUCTURE.Router).forEach((svc: IRouter) => svc.setRoutes(routerService));
     routerService.logRoutes();
     this.registerIpcChannel("DELETE", routerService);
     this.registerIpcChannel("GET", routerService);

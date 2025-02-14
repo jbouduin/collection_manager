@@ -30,7 +30,7 @@ export class IpcProxyService {
       .catch((reason: Error) => this.processIpcRejection(reason));
   }
 
-  public getData<T extends object>(path: string): Promise<T> {
+  public getData<T extends object | string>(path: string): Promise<T> {
     const request: IpcRequest<never> = {
       id: ++this.getRequestCounter,
       path: path

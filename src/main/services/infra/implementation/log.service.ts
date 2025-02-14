@@ -3,6 +3,7 @@ import { singleton } from "tsyringe";
 import { LogSource } from "../../base";
 import { ILogService } from "../interfaces/log.service";
 
+
 @singleton()
 export class LogService implements ILogService {
   //#region ILogService methods -----------------------------------------------

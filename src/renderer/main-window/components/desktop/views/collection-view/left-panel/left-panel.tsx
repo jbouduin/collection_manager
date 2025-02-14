@@ -1,15 +1,15 @@
 import { TreeNodeInfo } from "@blueprintjs/core";
 import { cloneDeep } from "lodash";
 import * as React from "react";
-import { DtoCollection } from "../../../../../../../common/dto";
-import { QueryParam } from "../../../../../../../common/ipc-params";
+import { CollectionDto } from "../../../../../../../common/dto";
+import { IpcProxyService, IpcProxyServiceContext } from "../../../../../../common/context";
 import { BaseTreeView } from "../../../../../components/common/base-tree-view/base-tree-view";
 import { CollectionViewmodel } from "../../../../../viewmodels/collection/collection.viewmodel";
 import { TreeConfigurationViewmodel } from "../../../../../viewmodels/database-view/tree-configuration.viewmodel";
 import { CollectionDialog } from "./collection-dialog/collection-dialog";
+import { DialogData } from "./dialog-data";
 import { HeaderView } from "./header-view/header-view";
 import { LeftPanelProps } from "./left-panel.props";
-import { DialogData } from "./dialog-data";
 
 
 export function LeftPanel(props: LeftPanelProps) {
@@ -23,14 +23,15 @@ export function LeftPanel(props: LeftPanelProps) {
   });
   //#endregion
 
+  //#region Context ---------------------------------------------------------------------
+  const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
+  //#endregion
+
   React.useEffect(
     () => {
-      const queryCollections: QueryParam<null> = {
-        type: "Collection",
-        options: null
-      };
-      void window.ipc.query(queryCollections)
-        .then((result: Array<DtoCollection>) => setCollections(result.map((collection: DtoCollection) => new CollectionViewmodel(collection))));
+      ipcProxyService
+        .getData<Array<CollectionDto>>(`/collection`)
+        .then((result: Array<CollectionDto>) => setCollections(result.map((collection: CollectionDto) => new CollectionViewmodel(collection))));
     },
     [props]
   );
@@ -77,7 +78,7 @@ export function LeftPanel(props: LeftPanelProps) {
   }
 
   function onAddFolder(): void {
-    const newDto: DtoCollection = {
+    const newDto: CollectionDto = {
       id: 0,
       parent_id: dialogData.selectedCollection.id,
       name: "",
@@ -97,7 +98,7 @@ export function LeftPanel(props: LeftPanelProps) {
   }
 
   function onAddCollection(): void {
-    const newDto: DtoCollection = {
+    const newDto: CollectionDto = {
       id: 0,
       parent_id: dialogData.selectedCollection.id,
       name: "",

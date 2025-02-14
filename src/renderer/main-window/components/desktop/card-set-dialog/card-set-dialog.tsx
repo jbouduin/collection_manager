@@ -1,12 +1,11 @@
 import { AnchorButton, Button, Classes, Dialog, DialogBody, DialogFooter, HTMLTable, Icon, Tab, Tabs } from "@blueprintjs/core";
 import * as React from "react";
-import { DtoCardSetDetails, DtoCardSetLanguage, DtoLanguage, RendererConfigurationDto } from "../../../../../common/dto";
-import { CardSetDetailsQueryOptions, QueryParam } from "../../../../../common/ipc-params";
+import { CardSetDetailsDto, DtoCardSetLanguage, LanguageDto, RendererConfigurationDto } from "../../../../../common/dto";
+import { DisplayValueService, DisplayValueServiceContext, IpcProxyService, IpcProxyServiceContext } from "../../../../common/context";
 import { CardSetDetailsViewmodel } from "../../../viewmodels/card-set/card-set-details.viewmodel";
 import { SvgProvider } from "../../common/svg-provider/svg-provider";
 import { ConfigurationContext, LanguagesContext } from "../../context";
 import { CardSetDialogProps } from "./card-set-dialog.props";
-import { DisplayValueService, DisplayValueServiceContext } from "../../../../common/context";
 
 
 export function CardSetDialog(props: CardSetDialogProps) {
@@ -16,19 +15,16 @@ export function CardSetDialog(props: CardSetDialogProps) {
 
   //#region Context -----------------------------------------------------------
   const displayValueService = React.useContext<DisplayValueService>(DisplayValueServiceContext);
+  const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
   //#endregion
 
   //#region Effects -----------------------------------------------------------
   React.useEffect(
     () => {
       if (props.cardSetId) {
-        const setDetailQueryParam: QueryParam<CardSetDetailsQueryOptions> = {
-          type: "CardSetDetails",
-          options: { cardSetId: props.cardSetId }
-        };
-        void window.ipc
-          .query(setDetailQueryParam)
-          .then((cardSetDetails: DtoCardSetDetails) => {
+        void ipcProxyService
+          .getData(`/card-set/${props.cardSetId}`)
+          .then((cardSetDetails: CardSetDetailsDto) => {
             setCardSetDetails(new CardSetDetailsViewmodel(cardSetDetails));
           });
       }
@@ -98,7 +94,7 @@ export function CardSetDialog(props: CardSetDialogProps) {
     return (
       <LanguagesContext.Consumer>
         {
-          (languages: Array<DtoLanguage>) => (
+          (languages: Array<LanguageDto>) => (
             <Tabs
               animate={true}
               defaultSelectedTabId="core-details"
@@ -118,7 +114,7 @@ export function CardSetDialog(props: CardSetDialogProps) {
     );
   }
 
-  function renderMainPropertiesTable(languages: Array<DtoLanguage>): React.JSX.Element {
+  function renderMainPropertiesTable(languages: Array<LanguageDto>): React.JSX.Element {
     return (
       <HTMLTable
         border={0}
@@ -135,7 +131,7 @@ export function CardSetDialog(props: CardSetDialogProps) {
     );
   }
 
-  function renderMainPropertiesTableLines(languages: Array<DtoLanguage>): Array<React.JSX.Element> {
+  function renderMainPropertiesTableLines(languages: Array<LanguageDto>): Array<React.JSX.Element> {
     const table = new Array<React.JSX.Element>();
     table.push((
       <tr>
@@ -258,7 +254,7 @@ export function CardSetDialog(props: CardSetDialogProps) {
     return table;
   }
 
-  function renderLanguagePropertiesTable(languages: Array<DtoLanguage>): React.JSX.Element {
+  function renderLanguagePropertiesTable(languages: Array<LanguageDto>): React.JSX.Element {
     return (
       <HTMLTable bordered={false} compact={true} width="100%">
         <tbody>
@@ -270,11 +266,11 @@ export function CardSetDialog(props: CardSetDialogProps) {
     );
   }
 
-  function renderLanguagePropertiesTableLines(languages: Array<DtoLanguage>): Array<React.JSX.Element> {
+  function renderLanguagePropertiesTableLines(languages: Array<LanguageDto>): Array<React.JSX.Element> {
     return cardSetDetails.languagesWithNumberOfCards.map((cardSetDetailsLanguage: DtoCardSetLanguage) => {
       return (
         <tr>
-          <td style={{ paddingLeft: "0px" }}>{languages.find((language: DtoLanguage) => language.id == cardSetDetailsLanguage.lang).display_text}:</td>
+          <td style={{ paddingLeft: "0px" }}>{languages.find((language: LanguageDto) => language.id == cardSetDetailsLanguage.lang).display_text}:</td>
           <td style={{ paddingLeft: "0px" }}>{`${cardSetDetailsLanguage.number_of_cards} cards`}</td>
         </tr>
       );

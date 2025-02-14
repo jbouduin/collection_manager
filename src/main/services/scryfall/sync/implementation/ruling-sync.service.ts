@@ -11,7 +11,7 @@ import { IScryfallClient } from "../../client/interfaces";
 import { ScryfallRuling } from "../../types";
 import { IRulingSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
-import { logCompilable } from "./log-compilable";
+import { logCompilable } from "../../../../database/log-compilable";
 
 
 @injectable()

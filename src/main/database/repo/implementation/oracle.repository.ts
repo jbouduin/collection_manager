@@ -2,7 +2,7 @@ import { inject, injectable } from "tsyringe";
 import { LegalityDto, RulingLineDto } from "../../../../common/dto";
 import { IResult } from "../../../services/base";
 import { IDatabaseService, ILogService, IResultFactory } from "../../../services/infra/interfaces";
-import { logCompilable } from "../../../services/scryfall/sync/implementation/log-compilable";
+import { logCompilable } from "../../log-compilable";
 import { INFRASTRUCTURE } from "../../../services/service.tokens";
 import { IOracleRepository } from "../interfaces";
 import { BaseRepository } from "./base.repository";

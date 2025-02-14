@@ -10,7 +10,7 @@ import { ITableAdapter } from "../../adapt/interface/table.adapter";
 import { IScryfallClient } from "../../client/interfaces";
 import { IBaseSyncService } from "../interface/base-sync.service";
 import { GenericSyncTaskParameter } from "./generic-sync-task.parameter";
-import { logCompilable } from "./log-compilable";
+import { logCompilable } from "../../../../database/log-compilable";
 
 
 export abstract class BaseSyncService<T> implements IBaseSyncService<T> {

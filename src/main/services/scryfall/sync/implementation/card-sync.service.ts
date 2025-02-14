@@ -21,7 +21,7 @@ import { ScryfallCard, ScryfallCardface, ScryfallLegalities } from "../../types"
 import { ICardSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
 import { GenericSyncTaskParameter } from "./generic-sync-task.parameter";
-import { logCompilable } from "./log-compilable";
+import { logCompilable } from "../../../../database/log-compilable";
 
 type IdAndStatusSelectResult = IdSelectResult & { image_status: ImageStatus };
 type PreSyncSelectResult = {

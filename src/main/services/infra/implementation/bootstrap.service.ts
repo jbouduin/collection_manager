@@ -1,16 +1,19 @@
-import { app, BrowserWindow, dialog, ipcMain, IpcMainEvent, nativeTheme, session } from "electron";
+import { app, BrowserWindow, dialog, ipcMain, IpcMainEvent, nativeTheme, protocol, session } from "electron";
 import { existsSync } from "fs";
 import { MigrationProvider } from "kysely";
 import { homedir } from "os";
 import { join } from "path";
 import { container, injectable } from "tsyringe";
-import { SyncParamDto } from "../../../../common/dto";
+import { DtoCardImageData, SyncParamDto } from "../../../../common/dto";
 import { IpcChannel, IpcRequest } from "../../../../common/ipc";
 import { MigrationDi } from "../../../database/migrations/migrations.di";
-import { IRouter } from "../../base";
-import { DATABASE, INFRASTRUCTURE, MTG } from "../../service.tokens";
-import { IBootstrapService, IConfigurationService, IDatabaseService, IRouterService, IWindowsService } from "../interfaces";
+import { IResult, IRouter } from "../../base";
+import { DATABASE, INFRASTRUCTURE, MTG, REPOSITORIES } from "../../service.tokens";
+import { IBootstrapService, IConfigurationService, IDatabaseService, IImageCacheService, IRouterService, IWindowsService } from "../interfaces";
 import { IMtgSyncService } from "../../mtg/interfaces";
+import { ICardRepository } from "../../../database/repo/interfaces";
+import { CardSide, ImageSize } from "../../../../common/types";
+import { request } from "http";
 
 
 @injectable()
@@ -73,6 +76,18 @@ export class BootstrapService implements IBootstrapService {
     this.registerIpcChannel("PATCH", routerService);
     this.registerIpcChannel("POST", routerService);
     this.registerIpcChannel("PUT", routerService);
+    protocol.handle("cached-image", async (request: Request): Promise<Response> => {
+      const requestedUrl = new URL(request.url);
+      return container.resolve<ICardRepository>(REPOSITORIES.CardRepository)
+        .getCardImageData(requestedUrl.hostname)
+        .then((data: IResult<DtoCardImageData>) => {
+          data.data.imageType = requestedUrl.searchParams.get("size") as ImageSize;
+          data.data.side = requestedUrl.searchParams.get("side") as CardSide;
+          const cacheService = container.resolve<IImageCacheService>(INFRASTRUCTURE.ImageCacheService);
+          return cacheService.getCardImage(data.data);
+        });
+    });
+
     return Promise.resolve();
   }
 

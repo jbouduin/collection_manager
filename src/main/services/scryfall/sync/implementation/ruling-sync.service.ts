@@ -54,7 +54,7 @@ export class RulingSyncService extends BaseSyncService<RulingSyncParam> implemen
         return this.scryfallclient.getRulings(card.id)
           .then((scryFall: Array<ScryfallRuling>) => {
             this.dumpScryFallData(`ruling-${card.oracle_id}.json`, scryFall);
-            this.processSync(card.id, scryFall);
+            return this.processSync(card.id, scryFall);
           });
       }
     );
@@ -82,7 +82,7 @@ export class RulingSyncService extends BaseSyncService<RulingSyncParam> implemen
       });
     } else {
       return this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
-        trx.selectFrom("card")
+        await trx.selectFrom("card")
           .selectAll()
           .where("card.id", "=", cardId)
           .executeTakeFirst()

@@ -37,22 +37,20 @@ export class CardSetSyncService extends BaseSyncService<void> implements ICardSe
   public override async sync(_syncParam: void, progressCallback: ProgressCallback): Promise<void> {
     progressCallback("Synchronizing Card sets");
     return await this.scryfallclient.getCardSets(progressCallback)
-      .then(async (sets: Array<ScryfallCardSet>) => {
+      .then((sets: Array<ScryfallCardSet>) => {
         this.dumpScryFallData("card-sets.json", sets);
-        this.processSync(sets);
+        return this.processSync(sets);
       })
       .then(async () => await this.database
         .selectFrom("card_set")
         .selectAll()
         .execute())
-      .then(async (cardSets: Array<Selectable<CardSetTable>>) => {
-        let result = Promise.resolve();
+      .then((cardSets: Array<Selectable<CardSetTable>>) => {
         progressCallback(`Saved ${cardSets.length} card sets`);
-        cardSets.forEach(async (cardset: Selectable<CardSetTable>) => {
-          result = result.then(async () => await this.imageCacheService.cacheCardSetSvg(cardset, progressCallback));
-          await result;
-        });
-        return result;
+        return runSerial(
+          cardSets,
+          (cardSet: Selectable<CardSetTable>) => this.imageCacheService.cacheCardSetSvg(cardSet, progressCallback)
+        );
       });
   }
   //#endregion

@@ -42,6 +42,7 @@ export class CatalogSyncService extends BaseSyncService<Array<CatalogType>> impl
     const serialExecutionArray = syncParam.map<SyncSingleCatalogParameter>((catalog: CatalogType) => {
       return { catalogType: catalog, progressCallback: progressCallback };
     });
+    /* eslint-disable-next-line @typescript-eslint/no-unsafe-argument */
     await runSerial<SyncSingleCatalogParameter>(serialExecutionArray, this.syncSingleCatalog.bind(this));
     return Promise.resolve();
   }
@@ -107,7 +108,7 @@ export class CatalogSyncService extends BaseSyncService<Array<CatalogType>> impl
     }
     return catalog.then((fetched: ScryfallCatalog) => {
       this.dumpScryFallData(`catalog-${parameter.catalogType}.json`, fetched);
-      this.processSync(parameter, fetched);
+      return this.processSync(parameter, fetched);
     });
   }
 

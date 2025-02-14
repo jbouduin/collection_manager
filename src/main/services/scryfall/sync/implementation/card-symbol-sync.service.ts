@@ -44,23 +44,21 @@ export class CardSymbolSyncService extends BaseSyncService<void> implements ICar
   public override async sync(_syncParam: void, progressCallback: ProgressCallback): Promise<void> {
     progressCallback("Synchronizing card symbols");
     return await this.scryfallclient.getCardSymbols(progressCallback)
-      .then(async (all: Array<ScryfallCardSymbol>) => {
+      .then((all: Array<ScryfallCardSymbol>) => {
         this.dumpScryFallData("card-symbols.json", all);
-        this.processSync(all);
+        return this.processSync(all);
       })
       .then(async () => await this.database
         .selectFrom("card_symbol")
         .selectAll()
         .execute())
-      .then(async (allCardSymbols: Array<Selectable<CardSymbolTable>>) => {
+      .then((allCardSymbols: Array<Selectable<CardSymbolTable>>) => {
         this.logService.debug("Main", `Saved ${allCardSymbols.length} card symbols`);
         progressCallback(`Saved ${allCardSymbols.length} card symbols`);
-        let result = Promise.resolve();
-        allCardSymbols.forEach(async (cardSymbol: Selectable<CardSymbolTable>) => {
-          result = result.then(async () => await this.imageCacheService.cacheCardSymbolSvg(cardSymbol, progressCallback));
-          await result;
-        });
-        return result;
+        return runSerial(
+          allCardSymbols,
+          (cardSymbol: Selectable<CardSymbolTable>) => this.imageCacheService.cacheCardSymbolSvg(cardSymbol, progressCallback)
+        );
       });
   }
   //#endregion

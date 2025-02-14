@@ -6,17 +6,17 @@ export class SqliteKyselyPlugin implements KyselyPlugin {
     return args.node;
   }
 
-  public async transformResult(args: PluginTransformResultArgs): Promise<QueryResult<UnknownRow>> {
+  public transformResult(args: PluginTransformResultArgs): Promise<QueryResult<UnknownRow>> {
     const result: QueryResult<UnknownRow> = {
       ...args.result,
       rows: args.result.rows.map((r) => this.processAny(r))
     };
-    return result;
+    return Promise.resolve(result);
   }
   //#endregion
 
   //#region Auxiliary methods -------------------------------------------------
-  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
   private processAny(obj: Record<string, any>): Record<string, any> {
     for (const key in obj) {
       // Remark: we'll have to do it like this, until we find another way to identify date and boolean fields
@@ -25,7 +25,8 @@ export class SqliteKyselyPlugin implements KyselyPlugin {
       } else if (key.startsWith("is_")) {
         obj[key] = obj[key] as number > 0 ? true : false;
       } else if (typeof obj[key] == "object") {
-        obj[key] = this.processAny(obj[key]);
+        /* eslint-disable-next-line  @typescript-eslint/no-explicit-any */
+        obj[key] = this.processAny(obj[key] as Record<string, any>);
       }
     }
     return obj;

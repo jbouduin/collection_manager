@@ -60,7 +60,7 @@ export class ScryfallClient implements IScryfallClient {
     const uri = `${this.scryfallConfiguration.scryfallApiRoot}/${this.scryfallConfiguration.scryfallEndpoints["catalog"]}/${this.scryfallConfiguration.scryfallCatalogPaths[type]}`;
     return this
       .tryFetch(uri)
-      .then((fetchResult: Response) => fetchResult.json());
+      .then((fetchResult: Response) => fetchResult.json() as Promise<ScryfallCatalog>);
   }
 
   // LATER use emitter in getCards or in getlist
@@ -81,7 +81,7 @@ export class ScryfallClient implements IScryfallClient {
     const result = new Array<ScryfallCard>();
     // split array
     const chunks = cardIds.reduce(
-      (resultArray, item, index) => {
+      (resultArray: Array<Array<string>>, item, index) => {
         const chunkIndex = Math.floor(index / this.scryfallConfiguration.collectionChunkSize);
         if (!resultArray[chunkIndex]) {
           resultArray[chunkIndex] = []; // start a new chunk

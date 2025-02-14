@@ -86,9 +86,9 @@ export class CardSyncService extends BaseSyncService<CardSyncParam> implements I
         return this.processSync(presync.scryfallCards, progressCallback)
           .then(async () => this.processChangedImages(syncParam.changedImageStatusAction, presync.cardIdsWithStatus, progressCallback));
       })
-      .then(() => {
+      .then(async () => {
         if (syncParam.cardSyncType == "byCardSet") {
-          this.database
+          await this.database
             .updateTable("card_set")
             .set({ last_full_synchronization_at: sqliteUTCTimeStamp })
             .where("card_set.code", "=", syncParam.cardSetCodeToSyncCardsFor)
@@ -481,15 +481,18 @@ export class CardSyncService extends BaseSyncService<CardSyncParam> implements I
           // .$call(this.logCompilable)
           .$castTo<DtoCardImageData>()
           .execute()
-          .then(async (current: Array<DtoCardImageData>) => {
+          .then((current: Array<DtoCardImageData>) => {
             progressCallback(`Processing image (${index}/${total})`);
-            current.forEach(async (cardImageDto: DtoCardImageData) => {
-              if (action == "delete") {
-                this.imageCacheService.deleteCachedCardImage(cardImageDto);
-              } else {
-                await this.imageCacheService.cacheCardImage(cardImageDto, true);
+            return runSerial(
+              current,
+              (cardImageDto: DtoCardImageData) => {
+                if (action == "delete") {
+                  return Promise.resolve(this.imageCacheService.deleteCachedCardImage(cardImageDto));
+                } else {
+                  return this.imageCacheService.cacheCardImage(cardImageDto, true);
+                }
               }
-            });
+            );
           });
       }
     );

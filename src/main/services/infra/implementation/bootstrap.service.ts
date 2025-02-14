@@ -13,7 +13,6 @@ import { IBootstrapService, IConfigurationService, IDatabaseService, IImageCache
 import { IMtgSyncService } from "../../mtg/interfaces";
 import { ICardRepository } from "../../../database/repo/interfaces";
 import { CardSide, ImageSize } from "../../../../common/types";
-import { request } from "http";
 
 
 @injectable()

@@ -3,7 +3,7 @@ import * as helpers from "kysely/helpers/sqlite";
 import { inject, injectable } from "tsyringe";
 import { DtoCardSymbol, DtoCardSymbolAlternative, DtoCardSymbolColorMap } from "../../../../common/dto";
 import { IResult } from "../../../services/base";
-import { IDatabaseService, IImageCacheService, ILogService, IResultFactory } from "../../../services/infra/interfaces";
+import { IDatabaseService, ILogService, IResultFactory } from "../../../services/infra/interfaces";
 import { INFRASTRUCTURE } from "../../../services/service.tokens";
 import { CardSymbolTable } from "../../schema";
 import { cardSymbolAlternativeTableFields, cardSymbolColorMapTableFields, cardSymbolTableFields } from "../../schema/card-symbol/table-field.constants";
@@ -13,19 +13,13 @@ import { BaseRepository } from "./base.repository";
 
 @injectable()
 export class CardSymbolRepository extends BaseRepository implements ICardSymbolRepository {
-  //#region Private readonly fields -------------------------------------------
-  private imageCacheService: IImageCacheService;
-  //#endregion
-
   //#region Constructor & C° --------------------------------------------------
   public constructor(
     @inject(INFRASTRUCTURE.DatabaseService) databaseService: IDatabaseService,
-    @inject(INFRASTRUCTURE.ImageCacheService) imageCacheService: IImageCacheService,
     @inject(INFRASTRUCTURE.LogService) logService: ILogService,
     @inject(INFRASTRUCTURE.ResultFacotry) resultFactory: IResultFactory
   ) {
     super(databaseService, logService, resultFactory);
-    this.imageCacheService = imageCacheService;
   }
   //#endregion
 
@@ -58,20 +52,16 @@ export class CardSymbolRepository extends BaseRepository implements ICardSymbolR
     }
   }
 
-  // TODO move the logic of loadin the svg's out
-  public getCardSymbolSvg(): Promise<IResult<Map<string, string>>> {
+  public getCardSymbols(): Promise<IResult<Array<Selectable<CardSymbolTable>>>> {
     try {
       return this.database
         .selectFrom("card_symbol")
         .selectAll()
+        .$castTo<Selectable<CardSymbolTable>>()
         .execute()
-        .then((cardSymbols: Array<Selectable<CardSymbolTable>>) => {
-          const result = new Map<string, string>();
-          cardSymbols.forEach((cardSymbol: Selectable<CardSymbolTable>) => result.set(cardSymbol.id, this.imageCacheService.getCardSymbolSvg(cardSymbol)));
-          return this.resultFactory.createSuccessResult<Map<string, string>>(result);
-        });
+        .then((cardSymbols: Array<Selectable<CardSymbolTable>>) => this.resultFactory.createSuccessResult<Array<Selectable<CardSymbolTable>>>(cardSymbols));
     } catch (err) {
-      return this.resultFactory.createExceptionResultPromise<Map<string, string>>(err);
+      return this.resultFactory.createExceptionResultPromise<Array<Selectable<CardSymbolTable>>>(err);
     }
   }
 }

@@ -1,1 +1,1 @@
-export type DialogAction = "edit" | "create" | "none";
+export type DialogAction = "edit" | "create";

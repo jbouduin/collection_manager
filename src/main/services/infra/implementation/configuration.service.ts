@@ -167,6 +167,7 @@ export class ConfigurationService extends BaseService implements IConfigurationS
   private createRendererConfigurationFactoryDefault(useDarkTheme: boolean): RendererConfigurationDto {
     const result: RendererConfigurationDto = {
       useDarkTheme: useDarkTheme,
+      logServerResponses: false,
       databaseViewTreeConfiguration: {
         cardSetSort: "releaseDateDescending",
         cardSetGroupBy: "parent",

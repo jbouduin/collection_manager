@@ -4,12 +4,12 @@ import * as React from "react";
 import { RendererConfigurationDto } from "../../../../../../../../common/dto";
 import { handleStringChange } from "../../../../../../../common/utils";
 import { ConfigurationContext } from "../../../../../../components/context";
-import { CollectionViewmodel } from "../../../../../../viewmodels/collection/collection.viewmodel";
+import { CollectionTreeViewmodel } from "../../../../../../viewmodels/collection/collection.viewmodel";
 import { CollectionDialogProps } from "./collection-dialog.props";
 
 export function CollectionDialog(props: CollectionDialogProps) {
   //#region State -------------------------------------------------------------
-  const [collection, setCollection] = React.useState<CollectionViewmodel>(props.collection);
+  const [collection, setCollection] = React.useState<CollectionTreeViewmodel>(props.collection);
   //#endregion
 
   //#region Effect ------------------------------------------------------------

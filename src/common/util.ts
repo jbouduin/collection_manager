@@ -35,6 +35,7 @@ export function formatTimeStampedFileName(fileName: string) {
   return `${datePart}.${timePart}.${fileName}`;
 }
 
+// NOW this should become a function
 export const sqliteUTCTimeStamp = new Date().toISOString();
 
 /* eslint-disable @stylistic/multiline-comment-style */

@@ -34,7 +34,10 @@ void (async () => {
   };
   /* eslint-disable @typescript-eslint/no-unsafe-return */
   await ipcProxyService.getData<ConfigurationDto>("/configuration")
-    .then((configuration: ConfigurationDto) => desktopProps.configuration = configuration.rendererConfiguration)
+    .then((configuration: ConfigurationDto) => {
+      desktopProps.configuration = configuration.rendererConfiguration;
+      ipcProxyService.logServerResponses = configuration.rendererConfiguration.logServerResponses;
+    })
     .then(async () => ipcProxyService.getData<Map<string, string>>("/card-symbol/svg"))
     .then((cachedSvgs: Map<string, string>) => desktopProps.symbolSvgs = cachedSvgs)
     .then(async () => ipcProxyService.getData<Array<CardSetDto>>("/card-set"))

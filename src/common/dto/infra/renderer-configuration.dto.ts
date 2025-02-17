@@ -2,6 +2,7 @@ import { DatabaseTreeViewConfigurationDto } from "./database-view-tree-configura
 
 export interface RendererConfigurationDto {
   useDarkTheme: boolean;
+  logServerResponses: boolean;
   databaseViewTreeConfiguration: DatabaseTreeViewConfigurationDto;
   // FEATURE databaseViewTableConfiguration with column settings (columns to display, column order, default sort order...)
 }

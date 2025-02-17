@@ -29,7 +29,7 @@ export type RulingSyncType =
   "update" |
   "all" |
   "selectionOfCards";
-// TODO byLastSynchronized
+// FEATURE byLastSynchronized
 export type ScryfallEndpoint =
   "cards" |
   "cardSet" |

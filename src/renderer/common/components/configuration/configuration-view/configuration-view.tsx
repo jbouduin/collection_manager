@@ -1,11 +1,11 @@
 import { DialogBody, Tab, Tabs } from "@blueprintjs/core";
 import * as React from "react";
-
 import { SyncParameterView } from "../../sync-parameter-view/sync-parameter-view";
 import { DataConfigurationView } from "../data-configuration-view/data-configuration-view";
 import { DatabaseViewConfigurationView } from "../database-view-configuration-view/database-view-configuration-view";
 import { ConfigurationViewProps } from "./configuration-view.props";
 
+// LATER add logServerResponses and debuglevel (consider adding a different part in configurationdto for system settings)
 export function ConfigurationView(props: ConfigurationViewProps) {
   //#region Event handling ----------------------------------------------------
   const onSyncParamChanged = () => props.configurationChanged(props.configuration);

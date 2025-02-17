@@ -1,9 +1,12 @@
-import { DeleteResult } from "kysely";
+import { DeleteResult, InsertResult, Transaction } from "kysely";
 import { inject, injectable } from "tsyringe";
-import { CollectionDto, NewCollection, UpdateCollection } from "../../../../common/dto";
+import { CollectionDto, NewCollection } from "../../../../common/dto";
+import { sqliteUTCTimeStamp } from "../../../../common/util";
 import { IResult } from "../../../services/base";
 import { IDatabaseService, ILogService, IResultFactory } from "../../../services/infra/interfaces";
 import { INFRASTRUCTURE } from "../../../services/service.tokens";
+import { logCompilable } from "../../log-compilable";
+import { DatabaseSchema } from "../../schema";
 import { ICollectionRepository } from "../interfaces/collection.repository";
 import { BaseRepository } from "./base.repository";
 
@@ -33,16 +36,77 @@ export class CollectionRepository extends BaseRepository implements ICollectionR
     }
   }
 
-  public create(_collection: NewCollection): Promise<CollectionDto> {
-    throw new Error("Method not implemented.");
+  public create(collection: CollectionDto): Promise<IResult<CollectionDto>> {
+    try {
+      const now = sqliteUTCTimeStamp;
+      const toInsert: NewCollection = {
+        name: collection.name,
+        description: collection.description,
+        is_folder: collection.is_folder ? 1 : 0,
+        is_system: collection.is_system ? 1 : 0,
+        created_at: now,
+        modified_at: now,
+        parent_id: collection.parent_id
+      };
+      return this.database.transaction()
+        .execute(async (trx: Transaction<DatabaseSchema>) => {
+          return trx
+            .insertInto("collection")
+            .values(toInsert)
+            .$call((q) => logCompilable(this.logService, q))
+            .executeTakeFirstOrThrow()
+            .then((r: InsertResult) => trx.selectFrom("collection")
+              .selectAll()
+              .where("collection.id", "=", Number(r.insertId))
+              .$castTo<CollectionDto>()
+              .$call((q) => logCompilable(this.logService, q))
+              .executeTakeFirst())
+            .then((r: CollectionDto) => this.resultFactory.createSuccessResult<CollectionDto>(r));
+        });
+    } catch (err) {
+      return this.resultFactory.createExceptionResultPromise<CollectionDto>(err);
+    }
   }
 
-  public delete(_id: number): Promise<DeleteResult> {
-    throw new Error("Method not implemented.");
+  public delete(id: number): Promise<IResult<number>> {
+    try {
+      return this.database.transaction()
+        .execute(async (trx: Transaction<DatabaseSchema>) => {
+          return trx
+            .deleteFrom("collection")
+            .where("collection.id", "=", id)
+            .executeTakeFirstOrThrow()
+            .then((r: DeleteResult) => this.resultFactory.createSuccessResult<number>(Number(r.numDeletedRows)));
+        });
+    } catch (err) {
+      return this.resultFactory.createExceptionResultPromise<number>(err);
+    }
   }
 
-  public update(_collection: UpdateCollection): Promise<CollectionDto> {
-    throw new Error("Method not implemented.");
+  public update(collection: CollectionDto): Promise<IResult<CollectionDto>> {
+    try {
+      return this.database.transaction()
+        .execute(async (trx: Transaction<DatabaseSchema>) => {
+          return trx.updateTable("collection")
+            .set({
+              name: collection.name,
+              description: collection.description,
+              modified_at: sqliteUTCTimeStamp,
+              parent_id: collection.parent_id
+            })
+            .where("collection.id", "=", collection.id)
+            .executeTakeFirstOrThrow()
+            .then(() => trx.selectFrom("collection")
+              .selectAll()
+              .where("collection.id", "=", Number(collection.id))
+              .$castTo<CollectionDto>()
+              .$call((q) => logCompilable(this.logService, q))
+              .executeTakeFirst())
+            .then((r: CollectionDto) => this.resultFactory.createSuccessResult<CollectionDto>(r));
+        });
+    } catch (err) {
+      return this.resultFactory.createExceptionResultPromise<CollectionDto>(err);
+    }
   }
   //#endregion
 }

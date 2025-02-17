@@ -50,7 +50,7 @@ export class CardRouter extends BaseRouter implements IRouter {
       .getByCardId(request.params["id"])
       .then((queryResult: IResult<Array<RulingLineDto>>) => {
         if (queryResult.data.length == 0) {
-          // TODO refactor sync
+          // LATER refactor sync (also check if we really need adapters)
           const syncParam: RulingSyncParam = {
             rulingSyncType: "selectionOfCards",
             cardSelectionToSync: [request.params["id"]]

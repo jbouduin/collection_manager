@@ -1,86 +1,92 @@
-import { TreeNodeInfo } from "@blueprintjs/core";
+import { ContextMenu, Icon, Menu, MenuDivider, MenuItem, TreeNodeInfo } from "@blueprintjs/core";
 import { cloneDeep } from "lodash";
 import * as React from "react";
 import { CollectionDto } from "../../../../../../../common/dto";
 import { IpcProxyService, IpcProxyServiceContext } from "../../../../../../common/context";
 import { BaseTreeView } from "../../../../../components/common/base-tree-view/base-tree-view";
-import { CollectionViewmodel } from "../../../../../viewmodels/collection/collection.viewmodel";
+import { CollectionTreeViewmodel } from "../../../../../viewmodels/collection/collection.viewmodel";
 import { TreeConfigurationViewmodel } from "../../../../../viewmodels/database-view/tree-configuration.viewmodel";
 import { CollectionDialog } from "./collection-dialog/collection-dialog";
 import { DialogData } from "./dialog-data";
-import { HeaderView } from "./header-view/header-view";
 import { LeftPanelProps } from "./left-panel.props";
 
-
+let tempid = 1000;
 export function LeftPanel(props: LeftPanelProps) {
   //#region State -----------------------------------------------------------
-  const [collections, setCollections] = React.useState<Array<CollectionViewmodel>>(new Array<CollectionViewmodel>());
-  const [dialogData, setDialogData] = React.useState<DialogData>({
-    selectedCollection: undefined,
-    previousSelectedCollection: undefined,
-    dialogIsOpen: false,
-    dialogAction: "none"
-  });
+  const [collections, setCollections] = React.useState<Array<CollectionTreeViewmodel>>(new Array<CollectionTreeViewmodel>());
+  const [dialogData, setDialogData] = React.useState<DialogData>(null);
   //#endregion
 
-  //#region Context ---------------------------------------------------------------------
+  //#region Context -----------------------------------------------------------
   const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
   //#endregion
 
+  //#region Effects -----------------------------------------------------------
   React.useEffect(
     () => {
       void ipcProxyService
         .getData<Array<CollectionDto>>("/collection")
-        .then((result: Array<CollectionDto>) => setCollections(result.map((collection: CollectionDto) => new CollectionViewmodel(collection))));
+        .then((result: Array<CollectionDto>) => setCollections(result.map((collection: CollectionDto) => new CollectionTreeViewmodel(collection, false, false))));
     },
     [props]
   );
+  //#endregion
 
-  function applyFilterProps(data: Array<CollectionViewmodel>, _filterProps: TreeConfigurationViewmodel): Array<CollectionViewmodel> {
+  //#region Basetree props ----------------------------------------------------
+  function applyFilterProps(data: Array<CollectionTreeViewmodel>, _filterProps: TreeConfigurationViewmodel): Array<CollectionTreeViewmodel> {
     return data;
   }
 
-  function buildTree(data: Array<CollectionViewmodel>, __filterProps: TreeConfigurationViewmodel): Array<TreeNodeInfo<string | CollectionViewmodel>> {
+  function buildTree(data: Array<CollectionTreeViewmodel>, __filterProps: TreeConfigurationViewmodel): Array<TreeNodeInfo<string | CollectionTreeViewmodel>> {
     return buildTreeByParentRecursive(data, null);
   }
+  //#endregion
 
   //#region Event handling ----------------------------------------------------
-  function onSave(collection: CollectionViewmodel): void {
-    // TODO call backend to save changes or create new collection
-    const savedCollection = collection;
+  async function onSave(collection: CollectionTreeViewmodel): Promise<void> {
+    const savedDto: CollectionDto = dialogData.dialogAction == "edit"
+      ? await ipcProxyService.putData<CollectionDto, CollectionDto>(`/collection/${collection.id}`, collection.dto)
+      : await ipcProxyService.postData<CollectionDto, CollectionDto>("/collection", collection.dto);
+    collections.forEach((c: CollectionTreeViewmodel) => c.isSelected = false);
     const newCollectionList = cloneDeep(collections);
     if (dialogData.dialogAction == "edit") {
-      const indexOf = newCollectionList.findIndex((coll: CollectionViewmodel) => collection.id == coll.id);
+      const indexOf = newCollectionList.findIndex((coll: CollectionTreeViewmodel) => collection.id == coll.id);
+      const savedCollection = new CollectionTreeViewmodel(savedDto, true, newCollectionList[indexOf].isExpanded);
       newCollectionList[indexOf] = savedCollection;
     } else {
-      newCollectionList.push(savedCollection);
+      newCollectionList.push(new CollectionTreeViewmodel(savedDto, true, false));
     }
-    const newDialogData = cloneDeep(dialogData);
-    newDialogData.dialogIsOpen = false;
+    // expand the parents
+    let parentCollection = savedDto.parent_id != null
+      ? newCollectionList.find((c: CollectionTreeViewmodel) => c.id == savedDto.parent_id)
+      : null;
+    while (parentCollection != null) {
+      parentCollection.isExpanded = true;
+      parentCollection = parentCollection.parentId != null
+        ? newCollectionList.find((c: CollectionTreeViewmodel) => c.id == parentCollection.parentId)
+        : null;
+    }
     setCollections(newCollectionList);
-    setDialogData(newDialogData);
-    // TODO make sure the modifed collection is updated and the if it was a create make it selected
+    setDialogData(null);
   }
 
-  function onCollectionSelected(collections: Array<CollectionViewmodel>): void {
-    const newDialogData = cloneDeep(dialogData);
-    newDialogData.selectedCollection = collections[0];
-    setDialogData(newDialogData);
+  function onCollectionSelected(collections: Array<CollectionTreeViewmodel>): void {
+    collections[0].isSelected = true;
     props.onCollectionSelected(collections);
   }
 
-  function onEdit(): void {
-    const newDialogData = cloneDeep(dialogData);
-    newDialogData.previousSelectedCollection = cloneDeep(dialogData.selectedCollection);
-    newDialogData.dialogIsOpen = true;
-    newDialogData.dialogAction = "edit";
+  function onEdit(collection: CollectionTreeViewmodel): void {
+    const newDialogData: DialogData = {
+      selectedCollection: collection,
+      dialogAction: "edit"
+    };
     setDialogData(newDialogData);
   }
 
-  function onAddFolder(): void {
+  function onAddFolder(parentId: number | null): void {
     const newDto: CollectionDto = {
-      id: 0,
-      parent_id: dialogData.selectedCollection.id,
+      id: tempid++,
+      parent_id: parentId,
       name: "",
       description: "",
       is_system: false,
@@ -89,18 +95,16 @@ export function LeftPanel(props: LeftPanelProps) {
       modified_at: undefined
     };
     const newDialogData: DialogData = {
-      selectedCollection: new CollectionViewmodel(newDto),
-      previousSelectedCollection: dialogData.selectedCollection,
-      dialogIsOpen: true,
+      selectedCollection: new CollectionTreeViewmodel(newDto, true, false),
       dialogAction: "create"
     };
     setDialogData(newDialogData);
   }
 
-  function onAddCollection(): void {
+  function onAddCollection(parentId: number | null): void {
     const newDto: CollectionDto = {
-      id: 0,
-      parent_id: dialogData.selectedCollection.id,
+      id: tempid++,
+      parent_id: parentId,
       name: "",
       description: "",
       is_system: false,
@@ -109,32 +113,31 @@ export function LeftPanel(props: LeftPanelProps) {
       modified_at: undefined
     };
     const newDialogData: DialogData = {
-      selectedCollection: new CollectionViewmodel(newDto),
-      previousSelectedCollection: dialogData.selectedCollection,
-      dialogIsOpen: true,
+      selectedCollection: new CollectionTreeViewmodel(newDto, true, false),
       dialogAction: "create"
     };
     setDialogData(newDialogData);
   }
 
-  function onDelete(): void {
-    if (dialogData.selectedCollection && !dialogData.selectedCollection.isSystem) {
-      /*
-       * TODO confirmation dialog
-       * TODO call backend to delete
-       */
+  async function onDelete(id: number): Promise <void> {
+    // TODO ask confirmation
+    const deletedRows = await ipcProxyService.deleteData(`/collection/${id}`);
+    if (deletedRows > 0) {
       const newCollectionList = cloneDeep(collections);
-      const indexOf = newCollectionList.findIndex((collection: CollectionViewmodel) => collection.id == dialogData.selectedCollection.id);
+      const indexOf = newCollectionList.findIndex((collection: CollectionTreeViewmodel) => collection.id == id);
       newCollectionList.splice(indexOf, 1);
+      /*
+       * LATER recursively delete children from list
+       * they will not be displayed, as they have no more parent, but they remain in memory
+       * and we have a FK restraint on the database (no cascade)
+       * which make the option not to allow delete if there are children also legit
+       */
       setCollections(newCollectionList);
     }
   }
 
   function onCancelDialog(): void {
-    dialogData.selectedCollection.cancelChanges();
-    const newDialogData = cloneDeep(dialogData);
-    newDialogData.dialogIsOpen = false;
-    setDialogData(newDialogData);
+    setDialogData(null);
   }
   //#endregion
 
@@ -142,53 +145,148 @@ export function LeftPanel(props: LeftPanelProps) {
   return (
     <>
       <div className="card-set-tree-wrapper">
-        <HeaderView
-          canAddCollection={dialogData.selectedCollection ? dialogData.selectedCollection.isFolder : false}
-          canAddFolder={dialogData.selectedCollection ? dialogData.selectedCollection.isFolder : false}
-          canDelete={dialogData.selectedCollection ? !dialogData.selectedCollection.isSystem : false}
-          canEdit={dialogData.selectedCollection ? true : false}
-          onAddCollection={onAddCollection}
-          onAddFolder={onAddFolder}
-          onDelete={onDelete}
-          onEdit={onEdit}
-        />
-        <BaseTreeView<CollectionViewmodel, TreeConfigurationViewmodel>
-          applyFilterProps={applyFilterProps}
-          buildTree={buildTree}
-          data={collections}
-          filterProps={undefined}
-          onDataSelected={onCollectionSelected}
-        />
+        <ContextMenu
+          content={
+            <Menu>
+              <MenuItem
+                key="Add Folder"
+                onClick={
+                  (e) => {
+                    e.preventDefault();
+                    onAddFolder(null);
+                  }
+                }
+                text="Add Folder"
+              />
+              <MenuItem
+                key="Add Collection"
+                onClick={
+                  (e) => {
+                    e.preventDefault();
+                    onAddCollection(null);
+                  }
+                }
+                text="Add Collection"
+              />
+            </Menu>
+          }
+          key="root"
+        >
+          <BaseTreeView<CollectionTreeViewmodel, TreeConfigurationViewmodel>
+            applyFilterProps={applyFilterProps}
+            buildTree={buildTree}
+            data={collections}
+            filterProps={undefined}
+            onDataSelected={onCollectionSelected}
+          />
+        </ContextMenu>
       </div>
-      <CollectionDialog
-        collection={dialogData.selectedCollection}
-        dialogAction={dialogData.dialogAction}
-        isOpen={dialogData.dialogIsOpen}
-        onCancel={onCancelDialog}
-        onSave={onSave}
-      />
+      {
+        dialogData &&
+        <CollectionDialog
+          collection={dialogData.selectedCollection}
+          dialogAction={dialogData.dialogAction}
+          isOpen={true}
+          onCancel={onCancelDialog}
+          onSave={(collection: CollectionTreeViewmodel) => void onSave(collection)}
+        />
+      }
     </>
   );
   //#endregion
 
-  function buildTreeByParentRecursive(collections: Array<CollectionViewmodel>, id: number | null): Array<TreeNodeInfo<CollectionViewmodel>> {
+  function buildTreeByParentRecursive(collections: Array<CollectionTreeViewmodel>, id: number | null): Array<TreeNodeInfo<CollectionTreeViewmodel>> {
     return collections
-      .filter((item: CollectionViewmodel) => item.parentId === id)
-      .sort((a: CollectionViewmodel, b: CollectionViewmodel) => a.name.localeCompare(b.name))
-      .map((collection: CollectionViewmodel) => {
-        const childNodes: Array<TreeNodeInfo<CollectionViewmodel>> = buildTreeByParentRecursive(collections, collection.id);
+      .filter((item: CollectionTreeViewmodel) => item.parentId === id)
+      .sort((a: CollectionTreeViewmodel, b: CollectionTreeViewmodel) => {
+        if (a.isFolder && !b.isFolder) {
+          return -1;
+        } else if (!a.isFolder && b.isFolder) {
+          return 1;
+        } else {
+          return a.name.localeCompare(b.name, undefined, { caseFirst: "false" });
+        }
+      })
+      .map((collection: CollectionTreeViewmodel) => {
+        const childNodes: Array<TreeNodeInfo<CollectionTreeViewmodel>> = buildTreeByParentRecursive(collections, collection.id);
         const node = mapViewModelToTreeItem(collection);
         node.childNodes = childNodes.length > 0 ? childNodes : null;
         return node;
       });
   }
 
-  function mapViewModelToTreeItem(collection: CollectionViewmodel): TreeNodeInfo<CollectionViewmodel> {
-    const node: TreeNodeInfo<CollectionViewmodel> = {
+  function mapViewModelToTreeItem(collection: CollectionTreeViewmodel): TreeNodeInfo<CollectionTreeViewmodel> {
+    const node: TreeNodeInfo<CollectionTreeViewmodel> = {
       id: collection.id,
-      label: collection.name,
-      isExpanded: false,
-      isSelected: false,
+      label: (
+        <ContextMenu
+          className="set-tree-item"
+          content={
+            <Menu key="collection.id">
+              <MenuItem
+                key="edit"
+                onClick={
+                  (e) => {
+                    e.preventDefault();
+                    onEdit(collection);
+                  }
+                }
+                text="Edit"
+              />
+              {
+                collection.isFolder &&
+                <>
+                  <MenuDivider key="sep-1" />
+                  <MenuItem
+                    key="Add folder"
+                    onClick={
+                      (e) => {
+                        e.preventDefault();
+                        void onAddFolder(collection.id);
+                      }
+                    }
+                    text="Add Folder"
+                  />
+                  <MenuItem
+                    key="Add Collection"
+                    onClick={
+                      (e) => {
+                        e.preventDefault();
+                        void onAddCollection(collection.id);
+                      }
+                    }
+                    text="Add Collection"
+                  />
+                </>
+              }
+              {
+                !collection.isSystem &&
+                <>
+                  <MenuDivider key="sep-2" />
+                  <MenuItem
+                    key="Delete"
+                    onClick={
+                      (e) => {
+                        e.preventDefault();
+                        void onDelete(collection.id);
+                      }
+                    }
+                    text="Delete"
+                  />
+                </>
+              }
+            </Menu>
+          }
+          key={collection.id}
+        >
+          <Icon icon={collection.isFolder ? "folder-close" : "layers"} key="icon" style={{ width: "26px", height: "26px", alignContent: "center", paddingRight: "5px" }} />
+          <div key="name" style={{ alignContent: "center" }}>
+            {collection.name}
+          </div>
+        </ContextMenu>
+      ),
+      isExpanded: collection.isExpanded,
+      isSelected: collection.isSelected,
       nodeData: collection
     };
     return node;

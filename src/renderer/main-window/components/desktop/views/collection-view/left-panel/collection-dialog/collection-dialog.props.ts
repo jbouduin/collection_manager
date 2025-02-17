@@ -1,12 +1,13 @@
 import { Props } from "@blueprintjs/core";
-import { CollectionViewmodel } from "../../../../../../viewmodels/collection/collection.viewmodel";
+import { CollectionTreeViewmodel } from "../../../../../../viewmodels/collection/collection.viewmodel";
 import { DialogAction } from "../dialog-action";
 
+
 export interface CollectionDialogProps extends Props {
-  collection?: CollectionViewmodel;
+  collection?: CollectionTreeViewmodel;
   dialogAction: DialogAction;
   isOpen: boolean;
 
   onCancel: () => void;
-  onSave: (collection: CollectionViewmodel) => void;
+  onSave: (collection: CollectionTreeViewmodel) => void;
 }

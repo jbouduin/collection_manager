@@ -12,9 +12,14 @@ export class IpcProxyService {
   private putRequestCounter = 0;
   //#endregion
 
+  //#region Public fields -----------------------------------------------------
+  public logServerResponses: boolean;
+  //#endregion
+
   //#region Constructor & C° --------------------------------------------------
   public constructor(showToast: (props: ToastProps, key?: string) => void) {
     this.showToast = showToast;
+    this.logServerResponses = false;
   }
   //#endregion
 
@@ -76,8 +81,10 @@ export class IpcProxyService {
 
   //#region Auxiliary methods -------------------------------------------------
   private processIpcResponse<T>(response: IpcResponse<T>): T {
-    // eslint-disable-next-line no-console
-    console.log(response);
+    if (this.logServerResponses) {
+      // eslint-disable-next-line no-console
+      console.log(response);
+    }
     let errorMessage: string = undefined;
     switch (response.status) {
       case EIpcStatus.BadRequest:

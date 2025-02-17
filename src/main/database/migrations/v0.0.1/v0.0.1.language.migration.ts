@@ -38,23 +38,23 @@ async function createV0_0_1_Language(db: Kysely<any>): Promise<void> {
 
 async function populateV0_0_1_Language(db: Kysely<any>): Promise<Array<InsertResult>> {
   const values = new Array<Insertable<LanguageTable>>();
-  values.push({ created_at: sqliteUTCTimeStamp, modified_at: sqliteUTCTimeStamp, id: "en", sequence: 0, printed_code: "EN", display_text: "English", button_text: "EN" });
-  values.push({ created_at: sqliteUTCTimeStamp, modified_at: sqliteUTCTimeStamp, id: "es", sequence: 1, printed_code: "SP", display_text: "Spanish", button_text: "ES" });
-  values.push({ created_at: sqliteUTCTimeStamp, modified_at: sqliteUTCTimeStamp, id: "fr", sequence: 2, printed_code: "FR", display_text: "French", button_text: "FR" });
-  values.push({ created_at: sqliteUTCTimeStamp, modified_at: sqliteUTCTimeStamp, id: "de", sequence: 3, printed_code: "DE", display_text: "German", button_text: "DE" });
-  values.push({ created_at: sqliteUTCTimeStamp, modified_at: sqliteUTCTimeStamp, id: "it", sequence: 4, printed_code: "IT", display_text: "Italian", button_text: "IT" });
-  values.push({ created_at: sqliteUTCTimeStamp, modified_at: sqliteUTCTimeStamp, id: "pt", sequence: 5, printed_code: "PT", display_text: "Portuguese", button_text: "PT" });
-  values.push({ created_at: sqliteUTCTimeStamp, modified_at: sqliteUTCTimeStamp, id: "ja", sequence: 6, printed_code: "JP", display_text: "Japanese", button_text: "日本語" });
-  values.push({ created_at: sqliteUTCTimeStamp, modified_at: sqliteUTCTimeStamp, id: "ko", sequence: 7, printed_code: "KR", display_text: "Korean", button_text: "KO" });
-  values.push({ created_at: sqliteUTCTimeStamp, modified_at: sqliteUTCTimeStamp, id: "ru", sequence: 8, printed_code: "RU", display_text: "Russian", button_text: "RU" });
-  values.push({ created_at: sqliteUTCTimeStamp, modified_at: sqliteUTCTimeStamp, id: "zhs", sequence: 9, printed_code: "CS", display_text: "Simplified Chinese", button_text: "汉语" });
-  values.push({ created_at: sqliteUTCTimeStamp, modified_at: sqliteUTCTimeStamp, id: "zht", sequence: 10, printed_code: "CT", display_text: "Traditinal Chinese", button_text: "漢語" });
-  values.push({ created_at: sqliteUTCTimeStamp, modified_at: sqliteUTCTimeStamp, id: "he", sequence: 11, display_text: "Hebrew" });
-  values.push({ created_at: sqliteUTCTimeStamp, modified_at: sqliteUTCTimeStamp, id: "la", sequence: 12, display_text: "Latin" });
-  values.push({ created_at: sqliteUTCTimeStamp, modified_at: sqliteUTCTimeStamp, id: "grc", sequence: 13, display_text: "Ancient Greek" });
-  values.push({ created_at: sqliteUTCTimeStamp, modified_at: sqliteUTCTimeStamp, id: "ar", sequence: 14, display_text: "Arabic" });
-  values.push({ created_at: sqliteUTCTimeStamp, modified_at: sqliteUTCTimeStamp, id: "sa", sequence: 15, display_text: "Sanskrit" });
-  values.push({ created_at: sqliteUTCTimeStamp, modified_at: sqliteUTCTimeStamp, id: "ph", sequence: 16, printed_code: "PH", display_text: "Phyrexian" });
+  values.push({ created_at: sqliteUTCTimeStamp(), modified_at: sqliteUTCTimeStamp(), id: "en", sequence: 0, printed_code: "EN", display_text: "English", button_text: "EN" });
+  values.push({ created_at: sqliteUTCTimeStamp(), modified_at: sqliteUTCTimeStamp(), id: "es", sequence: 1, printed_code: "SP", display_text: "Spanish", button_text: "ES" });
+  values.push({ created_at: sqliteUTCTimeStamp(), modified_at: sqliteUTCTimeStamp(), id: "fr", sequence: 2, printed_code: "FR", display_text: "French", button_text: "FR" });
+  values.push({ created_at: sqliteUTCTimeStamp(), modified_at: sqliteUTCTimeStamp(), id: "de", sequence: 3, printed_code: "DE", display_text: "German", button_text: "DE" });
+  values.push({ created_at: sqliteUTCTimeStamp(), modified_at: sqliteUTCTimeStamp(), id: "it", sequence: 4, printed_code: "IT", display_text: "Italian", button_text: "IT" });
+  values.push({ created_at: sqliteUTCTimeStamp(), modified_at: sqliteUTCTimeStamp(), id: "pt", sequence: 5, printed_code: "PT", display_text: "Portuguese", button_text: "PT" });
+  values.push({ created_at: sqliteUTCTimeStamp(), modified_at: sqliteUTCTimeStamp(), id: "ja", sequence: 6, printed_code: "JP", display_text: "Japanese", button_text: "日本語" });
+  values.push({ created_at: sqliteUTCTimeStamp(), modified_at: sqliteUTCTimeStamp(), id: "ko", sequence: 7, printed_code: "KR", display_text: "Korean", button_text: "KO" });
+  values.push({ created_at: sqliteUTCTimeStamp(), modified_at: sqliteUTCTimeStamp(), id: "ru", sequence: 8, printed_code: "RU", display_text: "Russian", button_text: "RU" });
+  values.push({ created_at: sqliteUTCTimeStamp(), modified_at: sqliteUTCTimeStamp(), id: "zhs", sequence: 9, printed_code: "CS", display_text: "Simplified Chinese", button_text: "汉语" });
+  values.push({ created_at: sqliteUTCTimeStamp(), modified_at: sqliteUTCTimeStamp(), id: "zht", sequence: 10, printed_code: "CT", display_text: "Traditinal Chinese", button_text: "漢語" });
+  values.push({ created_at: sqliteUTCTimeStamp(), modified_at: sqliteUTCTimeStamp(), id: "he", sequence: 11, display_text: "Hebrew" });
+  values.push({ created_at: sqliteUTCTimeStamp(), modified_at: sqliteUTCTimeStamp(), id: "la", sequence: 12, display_text: "Latin" });
+  values.push({ created_at: sqliteUTCTimeStamp(), modified_at: sqliteUTCTimeStamp(), id: "grc", sequence: 13, display_text: "Ancient Greek" });
+  values.push({ created_at: sqliteUTCTimeStamp(), modified_at: sqliteUTCTimeStamp(), id: "ar", sequence: 14, display_text: "Arabic" });
+  values.push({ created_at: sqliteUTCTimeStamp(), modified_at: sqliteUTCTimeStamp(), id: "sa", sequence: 15, display_text: "Sanskrit" });
+  values.push({ created_at: sqliteUTCTimeStamp(), modified_at: sqliteUTCTimeStamp(), id: "ph", sequence: 16, printed_code: "PH", display_text: "Phyrexian" });
 
   return db.insertInto("language")
     .values(values)

@@ -10,7 +10,7 @@ import { scryfallBooleanToNumber, scryfallDateToIsoString } from "./utils";
 export class CardSetAdapter implements ICardSetAdapter {
   //#region ICardSetAdapter ---------------------------------------------------
   public toInsert(scryfall: ScryfallCardSet): InsertExpression<DatabaseSchema, "card_set"> {
-    const now = sqliteUTCTimeStamp;
+    const now = sqliteUTCTimeStamp();
     return {
       created_at: now,
       last_synced_at: now,
@@ -58,7 +58,7 @@ export class CardSetAdapter implements ICardSetAdapter {
       set_type: scryfall.set_type,
       tcgplayer_id: scryfall.tcgplayer_id,
       uri: scryfall.uri,
-      last_synced_at: sqliteUTCTimeStamp
+      last_synced_at: sqliteUTCTimeStamp()
       // last_full_synchronization_at => we do not overwrite this column
     };
   }

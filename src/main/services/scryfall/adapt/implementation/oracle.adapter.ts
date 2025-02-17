@@ -8,7 +8,7 @@ import { sqliteUTCTimeStamp } from "../../../../../common/util";
 
 export class OracleAdapter implements IOracleAdapter {
   public toInsert(scryfall: OracleAdapterParameter): InsertExpression<DatabaseSchema, "oracle"> {
-    const now = sqliteUTCTimeStamp;
+    const now = sqliteUTCTimeStamp();
 
     if (scryfall.scryfallCard) {
       return {
@@ -34,7 +34,7 @@ export class OracleAdapter implements IOracleAdapter {
   }
 
   public toUpdate(scryfall: OracleAdapterParameter): UpdateObjectExpression<DatabaseSchema, "oracle"> {
-    const now = sqliteUTCTimeStamp;
+    const now = sqliteUTCTimeStamp();
     if (scryfall.scryfallCard) {
       return {
         oracle_name: scryfall.scryfallCard.name,

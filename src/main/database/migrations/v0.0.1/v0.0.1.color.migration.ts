@@ -38,12 +38,12 @@ async function createV0_0_1_Color(db: Kysely<any>): Promise<void> {
 
 async function populateV0_0_1_Color(db: Kysely<any>): Promise<Array<InsertResult>> {
   const values = new Array<Insertable<ColorTable>>();
-  values.push({ created_at: sqliteUTCTimeStamp, modified_at: sqliteUTCTimeStamp, id: "W", sequence: 0, display_text: "White", land_type: "Plains", mana_symbol: "{W}" });
-  values.push({ created_at: sqliteUTCTimeStamp, modified_at: sqliteUTCTimeStamp, id: "U", sequence: 1, display_text: "Blue", land_type: "Island", mana_symbol: "{U}" });
-  values.push({ created_at: sqliteUTCTimeStamp, modified_at: sqliteUTCTimeStamp, id: "B", sequence: 2, display_text: "Black", land_type: "Swamp", mana_symbol: "{B}" });
-  values.push({ created_at: sqliteUTCTimeStamp, modified_at: sqliteUTCTimeStamp, id: "R", sequence: 3, display_text: "Red", land_type: "Mountain", mana_symbol: "{R}" });
-  values.push({ created_at: sqliteUTCTimeStamp, modified_at: sqliteUTCTimeStamp, id: "G", sequence: 4, display_text: "Green", land_type: "Forest", mana_symbol: "{G}" });
-  values.push({ created_at: sqliteUTCTimeStamp, modified_at: sqliteUTCTimeStamp, id: "C", sequence: 5, display_text: "Colorless", mana_symbol: "{C}" });
+  values.push({ created_at: sqliteUTCTimeStamp(), modified_at: sqliteUTCTimeStamp(), id: "W", sequence: 0, display_text: "White", land_type: "Plains", mana_symbol: "{W}" });
+  values.push({ created_at: sqliteUTCTimeStamp(), modified_at: sqliteUTCTimeStamp(), id: "U", sequence: 1, display_text: "Blue", land_type: "Island", mana_symbol: "{U}" });
+  values.push({ created_at: sqliteUTCTimeStamp(), modified_at: sqliteUTCTimeStamp(), id: "B", sequence: 2, display_text: "Black", land_type: "Swamp", mana_symbol: "{B}" });
+  values.push({ created_at: sqliteUTCTimeStamp(), modified_at: sqliteUTCTimeStamp(), id: "R", sequence: 3, display_text: "Red", land_type: "Mountain", mana_symbol: "{R}" });
+  values.push({ created_at: sqliteUTCTimeStamp(), modified_at: sqliteUTCTimeStamp(), id: "G", sequence: 4, display_text: "Green", land_type: "Forest", mana_symbol: "{G}" });
+  values.push({ created_at: sqliteUTCTimeStamp(), modified_at: sqliteUTCTimeStamp(), id: "C", sequence: 5, display_text: "Colorless", mana_symbol: "{C}" });
   return db
     .insertInto("color")
     .values(values)

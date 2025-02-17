@@ -38,7 +38,7 @@ export class CollectionRepository extends BaseRepository implements ICollectionR
 
   public create(collection: CollectionDto): Promise<IResult<CollectionDto>> {
     try {
-      const now = sqliteUTCTimeStamp;
+      const now = sqliteUTCTimeStamp();
       const toInsert: NewCollection = {
         name: collection.name,
         description: collection.description,
@@ -91,7 +91,7 @@ export class CollectionRepository extends BaseRepository implements ICollectionR
             .set({
               name: collection.name,
               description: collection.description,
-              modified_at: sqliteUTCTimeStamp,
+              modified_at: sqliteUTCTimeStamp(),
               parent_id: collection.parent_id
             })
             .where("collection.id", "=", collection.id)

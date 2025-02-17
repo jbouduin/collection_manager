@@ -42,7 +42,7 @@ function populateV0_1_0_Collection(db: Kysely<any>): Promise<InsertResult> {
       description: null,
       is_system: 1,
       is_folder: 1,
-      created_at: sqliteUTCTimeStamp,
+      created_at: sqliteUTCTimeStamp(),
       modified_at: sqliteUTCTimeStamp
     })
     .executeTakeFirst();

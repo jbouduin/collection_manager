@@ -90,7 +90,7 @@ export class CardSyncService extends BaseSyncService<CardSyncParam> implements I
         if (syncParam.cardSyncType == "byCardSet") {
           await this.database
             .updateTable("card_set")
-            .set({ last_full_synchronization_at: sqliteUTCTimeStamp })
+            .set({ last_full_synchronization_at: sqliteUTCTimeStamp() })
             .where("card_set.code", "=", syncParam.cardSetCodeToSyncCardsFor)
             .executeTakeFirst();
         }

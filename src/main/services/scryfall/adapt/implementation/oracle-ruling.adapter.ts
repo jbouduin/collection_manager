@@ -7,7 +7,7 @@ import { IOracleRulingAdapter } from "../interface";
 
 export class OracleRulingAdapter implements IOracleRulingAdapter {
   public toInsert(oracleId: string): InsertExpression<DatabaseSchema, "oracle_ruling"> {
-    const now = sqliteUTCTimeStamp;
+    const now = sqliteUTCTimeStamp();
     return {
       created_at: now,
       last_synced_at: now,
@@ -17,7 +17,7 @@ export class OracleRulingAdapter implements IOracleRulingAdapter {
 
   public toUpdate(): UpdateObjectExpression<DatabaseSchema, "oracle_ruling"> {
     return {
-      last_synced_at: sqliteUTCTimeStamp
+      last_synced_at: sqliteUTCTimeStamp()
     };
   }
 }

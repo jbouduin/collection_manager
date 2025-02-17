@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as helpers from "kysely/helpers/sqlite";
 import { inject, injectable } from "tsyringe";
-import { CardDto, CardColorDto, DtoCardImageData, DtoCardface, CardfaceColorDto, DtoOracle } from "../../../../common/dto";
+import { CardDto, CardColorDto, DtoCardImageData, CardfaceDto, CardfaceColorDto, OracleDto } from "../../../../common/dto";
 import { IResult } from "../../../services/base";
 import { IDatabaseService, ILogService, IResultFactory } from "../../../services/infra/interfaces";
 import { INFRASTRUCTURE } from "../../../services/service.tokens";
@@ -56,7 +56,7 @@ export class CardRepository extends BaseRepository implements ICardRepository {
         .selectFrom("card")
         .select((eb) => [
           ...cardTableFields,
-          helpers.jsonArrayFrom<DtoCardface>(
+          helpers.jsonArrayFrom<CardfaceDto>(
             eb.selectFrom("cardface")
               .select((eb) => [
                 ...cardfaceTableFields,
@@ -67,21 +67,21 @@ export class CardRepository extends BaseRepository implements ICardRepository {
                     .whereRef("cardface_color_map.sequence", "=", "cardface.sequence")
                     .$castTo<CardfaceColorDto>()
                 ).as("cardfaceColors"),
-                helpers.jsonObjectFrom<DtoOracle>(
+                helpers.jsonObjectFrom<OracleDto>(
                   eb.selectFrom("oracle")
                     .select(oracleTableFields)
                     .whereRef("oracle.oracle_id", "=", "cardface.oracle_id")
-                    .$castTo<DtoOracle>()
+                    .$castTo<OracleDto>()
                 ).as("oracle")
               ])
               .whereRef("cardface.card_id", "=", "card.id")
-              .$castTo<DtoCardface>()
+              .$castTo<CardfaceDto>()
           ).as("cardfaces"),
-          helpers.jsonArrayFrom<DtoOracle>(
+          helpers.jsonArrayFrom<OracleDto>(
             eb.selectFrom("oracle")
               .select(oracleTableFields)
               .whereRef("oracle.oracle_id", "=", "card.oracle_id")
-              .$castTo<DtoOracle>()
+              .$castTo<OracleDto>()
           ).as("oracle"),
           helpers.jsonArrayFrom(
             eb.selectFrom("card as c2")

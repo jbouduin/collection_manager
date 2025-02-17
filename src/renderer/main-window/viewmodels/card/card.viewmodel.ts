@@ -1,4 +1,4 @@
-import { CardDto, CardColorDto, DtoCardLanguageDto, DtoCardface, DtoOracle } from "../../../../common/dto";
+import { CardDto, CardColorDto, CardLanguageDto, CardfaceDto, OracleDto } from "../../../../common/dto";
 import { CardLayout, CardRarity, MTGLanguage } from "../../../../common/types";
 import { OracleViewmodel } from "../oracle/oracle-viewmodel";
 import { CardfaceViewmodel } from "./cardface.viewmodel";
@@ -20,20 +20,20 @@ export class CardViewmodel {
 
   public get cardName(): string {
     return this._dtoCard.layout != "reversible_card"
-      ? this.joinMultiCardFaceData(this._dtoCard.oracle.map((oracle: DtoOracle) => oracle.oracle_name))
-      : this.joinMultiCardFaceData(this._dtoCard.cardfaces.map((cardface: DtoCardface) => cardface.oracle.oracle_name));
+      ? this.joinMultiCardFaceData(this._dtoCard.oracle.map((oracle: OracleDto) => oracle.oracle_name))
+      : this.joinMultiCardFaceData(this._dtoCard.cardfaces.map((cardface: CardfaceDto) => cardface.oracle.oracle_name));
   }
 
   public get cardPower(): string {
-    return this.joinMultiCardFaceData(this._dtoCard.cardfaces.map((cardface: DtoCardface) => cardface.power));
+    return this.joinMultiCardFaceData(this._dtoCard.cardfaces.map((cardface: CardfaceDto) => cardface.power));
   }
 
   public get cardThoughness(): string {
-    return this.joinMultiCardFaceData(this._dtoCard.cardfaces.map((cardface: DtoCardface) => cardface.toughness));
+    return this.joinMultiCardFaceData(this._dtoCard.cardfaces.map((cardface: CardfaceDto) => cardface.toughness));
   }
 
   public get cardtypeLine(): string {
-    return this.joinMultiCardFaceData(this._dtoCard.oracle.map((oracle: DtoOracle) => oracle.type_line));
+    return this.joinMultiCardFaceData(this._dtoCard.oracle.map((oracle: OracleDto) => oracle.type_line));
   }
 
   public get collectorNumberSortValue(): string {
@@ -49,7 +49,7 @@ export class CardViewmodel {
   }
 
   public get languages(): Array<MTGLanguage> {
-    return this._dtoCard.languages.map((language: DtoCardLanguageDto) => language.lang);
+    return this._dtoCard.languages.map((language: CardLanguageDto) => language.lang);
   }
 
   public get colorIdentity(): Array<string> {
@@ -83,7 +83,7 @@ export class CardViewmodel {
     return this._dtoCard.lang;
   }
 
-  public get otherCardLanguages(): Array<DtoCardLanguageDto> {
+  public get otherCardLanguages(): Array<CardLanguageDto> {
     return this._dtoCard.languages;
   }
 
@@ -98,16 +98,16 @@ export class CardViewmodel {
     this._collectorNumberSortValue = isNaN(Number(dtoCard.collector_number)) ? dtoCard.collector_number : dtoCard.collector_number.padStart(4, "0");
     this._cardManaCost = this.calculateCardManaCost(dtoCard);
     this.cardFaces = new Map<number, CardfaceViewmodel>();
-    this._dtoCard.cardfaces.sort((a: DtoCardface, b: DtoCardface) => a.sequence - b.sequence);
-    this._dtoCard.cardfaces.forEach((cardface: DtoCardface) => this.cardFaces.set(cardface.sequence, new CardfaceViewmodel(cardface)));
+    this._dtoCard.cardfaces.sort((a: CardfaceDto, b: CardfaceDto) => a.sequence - b.sequence);
+    this._dtoCard.cardfaces.forEach((cardface: CardfaceDto) => this.cardFaces.set(cardface.sequence, new CardfaceViewmodel(cardface)));
     this.oracles = new Map<number, OracleViewmodel>();
-    this._dtoCard.oracle.sort((a: DtoOracle, b: DtoOracle) => a.face_sequence - b.face_sequence);
-    this._dtoCard.oracle.forEach((oracle: DtoOracle) => this.oracles.set(oracle.face_sequence, new OracleViewmodel(oracle)));
+    this._dtoCard.oracle.sort((a: OracleDto, b: OracleDto) => a.face_sequence - b.face_sequence);
+    this._dtoCard.oracle.forEach((oracle: OracleDto) => this.oracles.set(oracle.face_sequence, new OracleViewmodel(oracle)));
   }
 
   private calculateCardManaCost(dtoCard: CardDto): Array<string> {
     const result = new Array<string>();
-    dtoCard.cardfaces.forEach((cardface: DtoCardface, idx: number) => {
+    dtoCard.cardfaces.forEach((cardface: CardfaceDto, idx: number) => {
       if (idx > 0) {
         result.push("//");
       }

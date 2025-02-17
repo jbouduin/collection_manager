@@ -1,5 +1,4 @@
 import { Props } from "@blueprintjs/core";
-
 import { CardSetViewmodel, CardViewmodel } from "../../../../../viewmodels";
 
 

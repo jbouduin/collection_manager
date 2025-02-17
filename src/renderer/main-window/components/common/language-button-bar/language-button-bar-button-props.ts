@@ -1,11 +1,10 @@
 import { Props } from "@blueprintjs/core";
-
-import { DtoCardLanguageDto } from "../../../../../common/dto";
+import { CardLanguageDto } from "../../../../../common/dto";
 
 export interface LanguageButtonBarButtonProps extends Props {
-  language: DtoCardLanguageDto;
+  language: CardLanguageDto;
   label: string;
   tooltip: React.JSX.Element;
   isCurrentLanguage: boolean;
-  onButtonClick: (language: DtoCardLanguageDto) => void;
+  onButtonClick: (language: CardLanguageDto) => void;
 }

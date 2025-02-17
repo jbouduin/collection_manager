@@ -1,6 +1,6 @@
 import { DeleteResult, InsertResult, Transaction } from "kysely";
 import { inject, injectable } from "tsyringe";
-import { CollectionDto, NewCollection } from "../../../../common/dto";
+import { CollectionDto } from "../../../../common/dto";
 import { sqliteUTCTimeStamp } from "../../../../common/util";
 import { IResult } from "../../../services/base";
 import { IDatabaseService, ILogService, IResultFactory } from "../../../services/infra/interfaces";
@@ -39,20 +39,19 @@ export class CollectionRepository extends BaseRepository implements ICollectionR
   public create(collection: CollectionDto): Promise<IResult<CollectionDto>> {
     try {
       const now = sqliteUTCTimeStamp();
-      const toInsert: NewCollection = {
-        name: collection.name,
-        description: collection.description,
-        is_folder: collection.is_folder ? 1 : 0,
-        is_system: collection.is_system ? 1 : 0,
-        created_at: now,
-        modified_at: now,
-        parent_id: collection.parent_id
-      };
       return this.database.transaction()
         .execute(async (trx: Transaction<DatabaseSchema>) => {
           return trx
             .insertInto("collection")
-            .values(toInsert)
+            .values({
+              name: collection.name,
+              description: collection.description,
+              is_folder: collection.is_folder ? 1 : 0,
+              is_system: collection.is_system ? 1 : 0,
+              created_at: now,
+              modified_at: now,
+              parent_id: collection.parent_id
+            })
             .$call((q) => logCompilable(this.logService, q))
             .executeTakeFirstOrThrow()
             .then((r: InsertResult) => trx.selectFrom("collection")

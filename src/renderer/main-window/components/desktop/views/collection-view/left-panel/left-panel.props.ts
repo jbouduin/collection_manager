@@ -1,6 +1,6 @@
 import { Props } from "@blueprintjs/core";
-import { CollectionViewmodel } from "../../../../..//viewmodels/collection/collection.viewmodel";
+import { CollectionTreeViewmodel } from "../../../../../viewmodels";
 
 export interface LeftPanelProps extends Props {
-  onCollectionSelected: (collections: Array<CollectionViewmodel>) => void;
+  onCollectionSelected: (collections: Array<CollectionTreeViewmodel>) => void;
 }

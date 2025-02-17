@@ -18,7 +18,7 @@ export function DatabaseView(props: DatabaseViewProps) {
 
   //#region Event handlers ----------------------------------------------------
   function onCardSetsSelected(sets: Array<CardSetViewmodel>): void {
-    setState({ selectedSets: sets, selectedCards: state.selectedCards });
+    setState({ selectedSets: sets });
   }
 
   function onCardSelected(cards?: Array<CardViewmodel>): void {

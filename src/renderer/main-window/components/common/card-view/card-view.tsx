@@ -1,6 +1,6 @@
 import { H5, Section, SectionCard, Tab, Tabs } from "@blueprintjs/core";
 import * as React from "react";
-import { CardDto, DtoCardLanguageDto } from "../../../../../common/dto";
+import { CardDto, CardLanguageDto } from "../../../../../common/dto";
 import { IpcProxyService, IpcProxyServiceContext } from "../../../../common/context";
 import { CardViewmodel } from "../../../viewmodels";
 import { CardSymbolProvider } from "../card-symbol-provider/card-symbol-provider";
@@ -65,7 +65,7 @@ export function CardView(props: CardViewProps) {
             <LanguageButtonBar
               cardLanguages={cardViewState.card.otherCardLanguages}
               currentLanguage={cardViewState.card.cardLanguage}
-              onButtonClick={(language: DtoCardLanguageDto) => void loadCard(language.id)}
+              onButtonClick={(language: CardLanguageDto) => void loadCard(language.id)}
             />
           </SectionCard>
         }

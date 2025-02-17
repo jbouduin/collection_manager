@@ -1,9 +1,9 @@
-import { DtoCardface } from "../../../../common/dto";
+import { CardfaceDto } from "../../../../common/dto";
 import { OracleViewmodel } from "../oracle/oracle-viewmodel";
 
 export class CardfaceViewmodel {
   //#region private readonly fields -------------------------------------------
-  private readonly _dtoCardface: DtoCardface;
+  private readonly _dtoCardface: CardfaceDto;
   private readonly _manaCost: Array<string>;
   private readonly _oracle: OracleViewmodel;
   //#endregion
@@ -50,7 +50,7 @@ export class CardfaceViewmodel {
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
-  public constructor(dtoCardface: DtoCardface) {
+  public constructor(dtoCardface: CardfaceDto) {
     this._dtoCardface = dtoCardface;
     this._manaCost = this.convertManaCost(dtoCardface.mana_cost);
     this._oracle = new OracleViewmodel(dtoCardface.oracle);

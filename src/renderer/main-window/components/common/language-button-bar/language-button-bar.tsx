@@ -1,6 +1,6 @@
 import { ButtonGroup } from "@blueprintjs/core";
 import * as React from "react";
-import { DtoCardLanguageDto, LanguageDto } from "../../../../../common/dto";
+import { CardLanguageDto, LanguageDto } from "../../../../../common/dto";
 import { LanguagesContext } from "../../context";
 import { LanguageButtonBarButton } from "./language-button-bar-button";
 import { LanguageButtonBarProps } from "./language-button-bar.props";
@@ -8,7 +8,7 @@ import { LanguageButtonBarProps } from "./language-button-bar.props";
 
 export function LanguageButtonBar(props: LanguageButtonBarProps) {
   //#region Event handling ----------------------------------------------------
-  function onAnyButtonClick(language: DtoCardLanguageDto): void {
+  function onAnyButtonClick(language: CardLanguageDto): void {
     props.onButtonClick(language);
   }
   //#endregion
@@ -20,7 +20,7 @@ export function LanguageButtonBar(props: LanguageButtonBarProps) {
         (languages: Array<LanguageDto>) => (
           <ButtonGroup className="language-button-bar" minimal={true}>
             {
-              props.cardLanguages.map((language: DtoCardLanguageDto) => {
+              props.cardLanguages.map((language: CardLanguageDto) => {
                 const languageDef = languages.find((lng: LanguageDto) => lng.id == language.lang);
                 const label = languageDef ? languageDef.button_text : language.lang;
                 const tooltip = languageDef ? languageDef.display_text : language.lang;

@@ -5,7 +5,7 @@ import { MtgCardSetDetailsDto, MtgCardSetDto, MtgCardSetLanguageDto } from "../.
 import { IResult } from "../../../services/base";
 import { IDatabaseService, IImageCacheService, ILogService, IResultFactory } from "../../../services/infra/interfaces";
 import { INFRASTRUCTURE } from "../../../services/service.tokens";
-import { cardSetTableFields } from "../../schema/card/table-fields.constants";
+import { CARD_SET_TABLE_FIELDS } from "../../schema";
 import { ICardSetRepository } from "../interfaces";
 import { BaseRepository } from "./base.repository";
 
@@ -51,7 +51,7 @@ export class CardSetRepository extends BaseRepository implements ICardSetReposit
       return this.database
         .selectFrom("card_set")
         .select((eb) => [
-          ...cardSetTableFields,
+          ...CARD_SET_TABLE_FIELDS,
           helpers.jsonArrayFrom<MtgCardSetLanguageDto>(
             eb.selectFrom("card")
               .select((eb) => ["card.lang", eb.fn.count("card.id").as("number_of_cards")])

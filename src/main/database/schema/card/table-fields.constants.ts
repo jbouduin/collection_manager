@@ -1,9 +1,8 @@
 import { AnyColumnWithTable } from "kysely";
-
 import { DatabaseSchema } from "../database.schema";
 
 // TODO when creating tests, build a test that checks if all fields are in the array or find another way to get all field names
-export const cardTableFields: Array<AnyColumnWithTable<DatabaseSchema, "card">> = [
+export const CARD_TABLE_FIELDS: Array<AnyColumnWithTable<DatabaseSchema, "card">> = [
   "card.is_booster",
   "card.border",
   "card.card_back_id",
@@ -33,7 +32,7 @@ export const cardTableFields: Array<AnyColumnWithTable<DatabaseSchema, "card">> 
   "card.image_status"
 ];
 
-export const cardfaceTableFields: Array<AnyColumnWithTable<DatabaseSchema, "cardface">> = [
+export const CARDFACE_TABLE_FIELDS: Array<AnyColumnWithTable<DatabaseSchema, "cardface">> = [
   "cardface.artist",
   "cardface.card_id",
   "cardface.cmc",
@@ -56,41 +55,15 @@ export const cardfaceTableFields: Array<AnyColumnWithTable<DatabaseSchema, "card
   "cardface.watermark"
 ];
 
-export const cardColorMapTableFields: Array<AnyColumnWithTable<DatabaseSchema, "card_color_map">> = [
+export const CARD_COLOR_MAP_TABLE_FIELDS: Array<AnyColumnWithTable<DatabaseSchema, "card_color_map">> = [
   "card_color_map.card_id",
   "card_color_map.color_id",
   "card_color_map.color_type"
 ];
 
-export const cardfaceColorMapTableFields: Array<AnyColumnWithTable<DatabaseSchema, "cardface_color_map">> = [
+export const CARDFACE_COLOR_MAP_TABLE_FIELDS: Array<AnyColumnWithTable<DatabaseSchema, "cardface_color_map">> = [
   "cardface_color_map.card_id",
   "cardface_color_map.sequence",
   "cardface_color_map.color_id",
   "cardface_color_map.color_type"
-];
-
-export const cardSetTableFields: Array<AnyColumnWithTable<DatabaseSchema, "card_set">> = [
-  "card_set.arena_code",
-  "card_set.block",
-  "card_set.block_code",
-  "card_set.card_count",
-  "card_set.code",
-  "card_set.created_at",
-  "card_set.is_digital",
-  "card_set.is_foil_only",
-  "card_set.icon_svg_uri",
-  "card_set.id",
-  "card_set.last_full_synchronization_at",
-  "card_set.last_synced_at",
-  "card_set.mtgo_code",
-  "card_set.name",
-  "card_set.is_nonfoil_only",
-  "card_set.parent_set_code",
-  "card_set.printed_size",
-  "card_set.released_at",
-  "card_set.scryfall_uri",
-  "card_set.search_uri",
-  "card_set.set_type",
-  "card_set.tcgplayer_id",
-  "card_set.uri"
 ];

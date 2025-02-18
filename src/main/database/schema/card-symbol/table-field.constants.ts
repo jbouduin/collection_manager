@@ -2,7 +2,7 @@ import { AnyColumnWithTable } from "kysely";
 
 import { DatabaseSchema } from "../database.schema";
 
-export const cardSymbolTableFields: Array<AnyColumnWithTable<DatabaseSchema, "card_symbol">> = [
+export const CARD_SYMBOL_TABLE_FIELDS: Array<AnyColumnWithTable<DatabaseSchema, "card_symbol">> = [
   "card_symbol.is_appears_in_mana_costs",
   "card_symbol.cmc",
   "card_symbol.created_at",
@@ -19,12 +19,12 @@ export const cardSymbolTableFields: Array<AnyColumnWithTable<DatabaseSchema, "ca
   "card_symbol.is_transposable"
 ];
 
-export const cardSymbolColorMapTableFields: Array<AnyColumnWithTable<DatabaseSchema, "card_symbol_color_map">> = [
+export const CARD_SYMBOL_COLOR_MAP_TABLE_FIELDS: Array<AnyColumnWithTable<DatabaseSchema, "card_symbol_color_map">> = [
   "card_symbol_color_map.card_symbol_id",
   "card_symbol_color_map.color_id"
 ];
 
-export const cardSymbolAlternativeTableFields: Array<AnyColumnWithTable<DatabaseSchema, "card_symbol_alternative">> = [
+export const CARD_SYMBOL_ALTERNATIVE_TABLE_FIELDS: Array<AnyColumnWithTable<DatabaseSchema, "card_symbol_alternative">> = [
   "card_symbol_alternative.alternative",
   "card_symbol_alternative.card_symbol_id"
 ];

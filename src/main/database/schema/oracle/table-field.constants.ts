@@ -2,7 +2,7 @@ import { AnyColumnWithTable } from "kysely";
 
 import { DatabaseSchema } from "../database.schema";
 
-export const oracleTableFields: Array<AnyColumnWithTable<DatabaseSchema, "oracle">> = [
+export const ORACLE_TABLE_FIELDS: Array<AnyColumnWithTable<DatabaseSchema, "oracle">> = [
   "oracle.created_at",
   "oracle.face_sequence",
   "oracle.last_synced_at",

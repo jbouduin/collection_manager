@@ -1,15 +1,19 @@
+import { writeFileSync } from "fs";
 import { DeleteResult, InsertResult, Transaction } from "kysely";
+import * as helpers from "kysely/helpers/sqlite";
 import { inject, injectable } from "tsyringe";
-import { CollectionDto } from "../../../../common/dto";
+import { CardfaceColorDto, CollectionDto, MtgCardColorDto, MtgCardfaceDto, OracleDto, OwnedCardDto, OwnedCardListDto } from "../../../../common/dto";
 import { sqliteUTCTimeStamp } from "../../../../common/util";
 import { IResult } from "../../../services/base";
 import { IDatabaseService, ILogService, IResultFactory } from "../../../services/infra/interfaces";
 import { INFRASTRUCTURE } from "../../../services/service.tokens";
 import { logCompilable } from "../../log-compilable";
 import { DatabaseSchema } from "../../schema";
+import { cardColorMapTableFields, cardfaceColorMapTableFields, cardfaceTableFields, cardTableFields } from "../../schema/card/table-fields.constants";
+import { OWNED_CARD_TABLE_FIELDS } from "../../schema/collection/table-field.constants";
+import { oracleTableFields } from "../../schema/oracle/table-field.constants";
 import { ICollectionRepository } from "../interfaces/collection.repository";
 import { BaseRepository } from "./base.repository";
-
 
 @injectable()
 export class CollectionRepository extends BaseRepository implements ICollectionRepository {
@@ -24,6 +28,7 @@ export class CollectionRepository extends BaseRepository implements ICollectionR
   //#endregion
 
   //#region ICollectionRepository methods -------------------------------------
+  /* eslint-disable @stylistic/function-paren-newline */
   public getAll(): Promise<IResult<Array<CollectionDto>>> {
     try {
       return this.database.selectFrom("collection")
@@ -33,6 +38,76 @@ export class CollectionRepository extends BaseRepository implements ICollectionR
         .then((qryResult: Array<CollectionDto>) => this.resultFactory.createSuccessResult<Array<CollectionDto>>(qryResult));
     } catch (err) {
       return this.resultFactory.createExceptionResultPromise<Array<CollectionDto>>(err);
+    }
+  }
+
+  public getCollectionCardList(id: number): Promise<IResult<Array<OwnedCardListDto>>> {
+    try {
+      return this.database.selectFrom("card")
+        .select((eb) => [
+          ...cardTableFields,
+          helpers.jsonArrayFrom<MtgCardfaceDto>(
+            eb.selectFrom("cardface")
+              .select((eb) => [
+                ...cardfaceTableFields,
+                helpers.jsonArrayFrom<CardfaceColorDto>(
+                  eb.selectFrom("cardface_color_map")
+                    .select(cardfaceColorMapTableFields)
+                    .whereRef("cardface_color_map.card_id", "=", "cardface.card_id")
+                    .whereRef("cardface_color_map.sequence", "=", "cardface.sequence")
+                    .$castTo<CardfaceColorDto>()
+                ).as("cardfaceColors"),
+                helpers.jsonObjectFrom<OracleDto>(
+                  eb.selectFrom("oracle")
+                    .select(oracleTableFields)
+                    .whereRef("oracle.oracle_id", "=", "cardface.oracle_id")
+                    .$castTo<OracleDto>()
+                ).as("oracle")
+              ])
+              .whereRef("cardface.card_id", "=", "card.id")
+              .$castTo<MtgCardfaceDto>()
+          ).as("cardfaces"),
+          helpers.jsonArrayFrom<OracleDto>(
+            eb.selectFrom("oracle")
+              .select(oracleTableFields)
+              .whereRef("oracle.oracle_id", "=", "card.oracle_id")
+              .$castTo<OracleDto>()
+          ).as("oracle"),
+          helpers.jsonArrayFrom<OwnedCardDto>(
+            eb.selectFrom("owned_card")
+              .select((eb) => [
+                ...OWNED_CARD_TABLE_FIELDS,
+                eb.selectFrom("owned_card_collection_map as occm")
+                  .select("occm.quantity")
+                  .whereRef("occm.owned_card_id", "=", "owned_card.id")
+                  .where("occm.collection_id", "=", id)
+                  .$castTo<number>()
+                  .as("quantity")
+              ])
+              .whereRef("owned_card.card_id", "=", "card.id")
+              .$castTo<OwnedCardDto>()
+          ).as("ownedCards"),
+          helpers.jsonArrayFrom<MtgCardColorDto>(
+            eb.selectFrom("card_color_map")
+              .innerJoin("color", "color.id", "card_color_map.color_id")
+              .select([...cardColorMapTableFields, "color.mana_symbol"])
+              .whereRef("card_color_map.card_id", "=", "card.id")
+              .$castTo<MtgCardColorDto>()
+          ).as("cardColors")
+        ])
+        .innerJoin("owned_card", "owned_card.card_id", "card.id")
+        .innerJoin("owned_card_collection_map", "owned_card_collection_map.owned_card_id", "owned_card.id")
+        .where("owned_card_collection_map.collection_id", "=", id)
+        .groupBy(["card.id"])
+        .$call((q) => logCompilable(this.logService, q))
+        .$castTo<OwnedCardListDto>()
+        .execute()
+        .then((qryResult: Array<OwnedCardListDto>) => {
+          writeFileSync("c:/data/new-assistant/json/getCollectionCardList.json", JSON.stringify(qryResult, null, 2));
+          return this.resultFactory.createSuccessResult(qryResult);
+        });
+    } catch (err) {
+      return this.resultFactory.createExceptionResultPromise<Array<OwnedCardListDto>>(err);
     }
   }
 

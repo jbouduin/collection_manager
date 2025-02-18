@@ -101,7 +101,7 @@ function createV0_1_0_OwnedCard(db: Kysely<any>): Promise<void> {
   const options: CreateTableOptions = {
     tableName: "owned_card",
     isSynced: false,
-    primaryKeyType: "text"
+    primaryKeyType: "integer"
   };
   return createTable(db, options)
     .addColumn("card_id", "text", (cb: ColumnDefinitionBuilder) => cb.references("card.id").onDelete("cascade").notNull())

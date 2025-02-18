@@ -1,10 +1,10 @@
-import { CollectionCardDto, MtgCardColorDto, MtgCardDetailDto, MtgCardLanguageDto, MtgCardListDto, MtgCardfaceDto, OracleDto } from "../../../../common/dto";
+import { OwnedCardListDto, MtgCardColorDto, MtgCardDetailDto, MtgCardLanguageDto, MtgCardListDto, MtgCardfaceDto, OracleDto } from "../../../../common/dto";
 import { CardLayout, CardRarity, MTGLanguage } from "../../../../common/types";
 import { OracleViewmodel } from "../oracle/oracle-viewmodel";
 import { CardfaceViewmodel } from "./cardface.viewmodel";
 
 /* eslint-disable  @typescript-eslint/no-duplicate-type-constituents */
-abstract class BaseCardViewmodel<T extends MtgCardListDto | MtgCardDetailDto | CollectionCardDto> {
+abstract class BaseCardViewmodel<T extends MtgCardListDto | MtgCardDetailDto | OwnedCardListDto> {
   //#region private readonly fields -------------------------------------------
   private readonly _cardManaCost: Array<string>;
   //#endregion
@@ -190,7 +190,7 @@ export class MtgCardDetailViewmodel extends MtgCardViewmodel<MtgCardDetailDto> {
   //#endregion
 }
 
-export class CollectionCardListViewmodel extends BaseCardViewmodel<CollectionCardDto> {
+export class CollectionCardListViewmodel extends BaseCardViewmodel<OwnedCardListDto> {
   public get cardPower(): string {
     return this.joinMultiCardFaceData(this._dtoCard.cardfaces.map((cardface: MtgCardfaceDto) => cardface.power));
   }
@@ -210,15 +210,18 @@ export class CollectionCardListViewmodel extends BaseCardViewmodel<CollectionCar
   }
 
   public get language(): MTGLanguage {
-    return this._dtoCard.language.lang;
+    return this._dtoCard.lang;
   }
 
-  public get setName(): string {
-    return this._dtoCard.set.name;
+  public get dateSortValue(): string {
+    return this._dtoCard.released_at.toISOString();
+  }
+  public get setId(): string {
+    return this._dtoCard.set_id;
   }
 
   //#region Constructor & C° --------------------------------------------------
-  public constructor(dtoCard: CollectionCardDto) {
+  public constructor(dtoCard: OwnedCardListDto) {
     super(dtoCard);
   }
   //#endregion

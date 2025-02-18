@@ -27,7 +27,7 @@ export function LeftPanel(props: LeftPanelProps) {
         .getData<Array<CollectionDto>>("/collection")
         .then((result: Array<CollectionDto>) => setCollections(result.map((collection: CollectionDto) => new CollectionTreeViewmodel(collection, false, false))));
     },
-    [props]
+    []
   );
   //#endregion
 
@@ -70,7 +70,6 @@ export function LeftPanel(props: LeftPanelProps) {
   }
 
   function onCollectionSelected(collections: Array<CollectionTreeViewmodel>): void {
-    collections[0].isSelected = true;
     props.onCollectionSelected(collections);
   }
 
@@ -176,7 +175,7 @@ export function LeftPanel(props: LeftPanelProps) {
             buildTree={buildTree}
             data={collections}
             filterProps={undefined}
-            onDataSelected={onCollectionSelected}
+            onDataSelected={(collections: Array<CollectionTreeViewmodel>) => onCollectionSelected(collections)}
           />
         </ContextMenu>
       </div>

@@ -1,5 +1,5 @@
 import { inject, singleton } from "tsyringe";
-import { CollectionCardDto, CollectionDto } from "../../../../common/dto";
+import { OwnedCardListDto, CollectionDto } from "../../../../common/dto";
 import { ICollectionRepository } from "../../../database/repo/interfaces/collection.repository";
 import { BaseRouter, IResult, IRouter, RouteCallback, RoutedRequest } from "../../base";
 import { ILogService, IResultFactory, IRouterService } from "../../infra/interfaces";
@@ -42,7 +42,7 @@ export class CollectionRouter extends BaseRouter implements IRouter {
     return this.parseIntegerUrlParameter(request.params["id"], "Collection ID")
       .continueAsync<number>(
         (r: IResult<number>) => this.collectionRepository.delete(r.data),
-        (r: IResult<number>) => Promise.resolve(r)
+        (_r: IResult<number>) => this.resultFactory.createNotFoundResultPromise(`Collection with ID ${request.params["id"]}`)
       );
   }
 
@@ -50,9 +50,12 @@ export class CollectionRouter extends BaseRouter implements IRouter {
     return this.collectionRepository.getAll();
   }
 
-  private getCardsOfCollection(_request: RoutedRequest<void>): Promise<IResult<Array<CollectionCardDto>>> {
-    // NOW implement in repository
-    return this.resultFactory.createNotImplementedResultPromise(new Array<CollectionCardDto>());
+  private getCardsOfCollection(request: RoutedRequest<void>): Promise<IResult<Array<OwnedCardListDto>>> {
+    return this.parseIntegerUrlParameter(request.params["id"], "Collection ID")
+      .continueAsync<Array<OwnedCardListDto>>(
+        (r: IResult<number>) => this.collectionRepository.getCollectionCardList(r.data),
+        (_r: IResult<number>) => this.resultFactory.createNotFoundResultPromise<Array<OwnedCardListDto>>(`Collection with ID ${request.params["id"]}`)
+      );
   }
 
   private updateCollection(request: RoutedRequest<CollectionDto>): Promise<IResult<CollectionDto>> {

@@ -80,7 +80,6 @@ export function LeftPanel(props: LeftPanelProps) {
         return buildTreeByBlockOrType(data, (cardSet: CardSetViewmodel) => cardSet.cardSetType);
     }
   }
-
   //#endregion
 
   //#region Main --------------------------------------------------------------

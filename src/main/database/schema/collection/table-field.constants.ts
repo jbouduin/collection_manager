@@ -2,7 +2,7 @@ import { AnyColumnWithTable } from "kysely";
 
 import { DatabaseSchema } from "../database.schema";
 
-export const collectionTableFields: Array<AnyColumnWithTable<DatabaseSchema, "collection">> = [
+export const COLLECTION_TABLE_FIELDS: Array<AnyColumnWithTable<DatabaseSchema, "collection">> = [
   "collection.id",
   "collection.parent_id",
   "collection.name",
@@ -13,7 +13,7 @@ export const collectionTableFields: Array<AnyColumnWithTable<DatabaseSchema, "co
   "collection.modified_at"
 ];
 
-export const CardConditionTableFields: Array<AnyColumnWithTable<DatabaseSchema, "card_condition">> = [
+export const CARD_CONDITION_TABLE_FIELDS: Array<AnyColumnWithTable<DatabaseSchema, "card_condition">> = [
   "card_condition.id",
   "card_condition.sequence",
   "card_condition.color_code",
@@ -25,7 +25,7 @@ export const CardConditionTableFields: Array<AnyColumnWithTable<DatabaseSchema, 
   "card_condition.modified_at"
 ];
 
-export const OwnedCardFields: Array<AnyColumnWithTable<DatabaseSchema, "owned_card">> = [
+export const OWNED_CARD_TABLE_FIELDS: Array<AnyColumnWithTable<DatabaseSchema, "owned_card">> = [
   "owned_card.card_id",
   "owned_card.comments",
   "owned_card.condition_id",
@@ -34,7 +34,7 @@ export const OwnedCardFields: Array<AnyColumnWithTable<DatabaseSchema, "owned_ca
   "owned_card.modified_at"
 ];
 
-export const OwnedCardCollectionMapFields: Array<AnyColumnWithTable<DatabaseSchema, "owned_card_collection_map">> = [
+export const OWNED_CARD_COLLECTION_MAP_TABLE_FIELDS: Array<AnyColumnWithTable<DatabaseSchema, "owned_card_collection_map">> = [
   "owned_card_collection_map.owned_card_id",
   "owned_card_collection_map.collection_id",
   "owned_card_collection_map.quantity",

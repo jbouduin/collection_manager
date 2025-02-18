@@ -2,6 +2,7 @@ import { Region, SelectionModes, Table2 } from "@blueprintjs/table";
 import { BaseCardsTableViewProps } from "./base-cards-table-view.props";
 import * as React from "react";
 
+
 export function BaseCardsTableView<T>(props: BaseCardsTableViewProps<T>) {
   //#region event handling ----------------------------------------------------
   function selectedRegionTransform(region: Region): Region {
@@ -30,6 +31,7 @@ export function BaseCardsTableView<T>(props: BaseCardsTableViewProps<T>) {
   return (
     <div className="cards-table-wrapper">
       <Table2
+        cellRendererDependencies={[props.data]}
         children={props.columnDefinitions}
         numRows={props.data?.length ?? 0}
         onSelection={onSelection}

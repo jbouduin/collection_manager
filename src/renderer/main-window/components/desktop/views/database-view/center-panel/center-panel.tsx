@@ -25,11 +25,14 @@ export function CenterPanel(props: CenterPanelProps) {
       if (props.selectedSets) {
         void ipcProxyService
           .getData(`/card/query?sets=${props.selectedSets.map((set: CardSetViewmodel) => set.id).join(",")}`)
-          .then((cardResult: Array<MtgCardListDto>) => {
-            setCards(cardResult
-              .map((card: MtgCardListDto) => new MtgCardListViewmodel(card))
-              .sort((a: MtgCardListViewmodel, b: MtgCardListViewmodel) => a.collectorNumberSortValue.localeCompare(b.collectorNumberSortValue)));
-          });
+          .then(
+            (cardResult: Array<MtgCardListDto>) => {
+              setCards(cardResult
+                .map((card: MtgCardListDto) => new MtgCardListViewmodel(card))
+                .sort((a: MtgCardListViewmodel, b: MtgCardListViewmodel) => a.collectorNumberSortValue.localeCompare(b.collectorNumberSortValue)));
+            },
+            (_cardResult: Array<MtgCardListDto>) => setCards(new Array<MtgCardListViewmodel>())
+          );
       } else {
         setCards(new Array<MtgCardListViewmodel>());
       }

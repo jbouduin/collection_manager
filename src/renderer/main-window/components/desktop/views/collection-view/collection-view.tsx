@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { RendererConfigurationDto } from "../../../../../../common/dto";
-import { CardViewmodel, CollectionTreeViewmodel } from "../../../../viewmodels";
+import { CollectionTreeViewmodel, CollectionCardListViewmodel } from "../../../../viewmodels";
 import { ConfigurationContext } from "../../../context";
 import { CollectionViewProps } from "./collection-view.props";
 import { LeftPanel } from "./left-panel/left-panel";
@@ -19,7 +19,7 @@ export function CollectionView(_props: CollectionViewProps) {
     setState({ selectedCollection: collections[0] });
   }
 
-  function onCardSelected(cards?: Array<CardViewmodel>): void {
+  function onCardSelected(cards?: Array<CollectionCardListViewmodel>): void {
     setState({ selectedCards: cards, selectedCollection: state.selectedCollection });
   }
   //#endregion
@@ -39,8 +39,8 @@ export function CollectionView(_props: CollectionViewProps) {
               <PanelResizeHandle />
               <Panel>
                 <CenterPanel
-                  selectedCollection={state.selectedCollection}
                   onCardsSelected={onCardSelected}
+                  selectedCollection={state.selectedCollection}
                 />
               </Panel>
               <PanelResizeHandle />

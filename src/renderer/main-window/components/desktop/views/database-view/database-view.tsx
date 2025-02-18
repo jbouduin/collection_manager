@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { RendererConfigurationDto } from "../../../../../../common/dto";
-import { CardSetViewmodel, CardViewmodel } from "../../../../viewmodels";
+import { CardSetViewmodel, MtgCardListViewmodel } from "../../../../viewmodels";
 import { CardView } from "../../../common/card-view/card-view";
 import { ConfigurationContext } from "../../../context";
 import { CenterPanel } from "./center-panel/center-panel";
@@ -21,7 +21,7 @@ export function DatabaseView(props: DatabaseViewProps) {
     setState({ selectedSets: sets });
   }
 
-  function onCardSelected(cards?: Array<CardViewmodel>): void {
+  function onCardSelected(cards?: Array<MtgCardListViewmodel>): void {
     setState({ selectedCards: cards, selectedSets: state.selectedSets });
   }
   //#endregion

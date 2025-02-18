@@ -1,6 +1,6 @@
-import { CardSetViewmodel, CardViewmodel, CollectionTreeViewmodel } from "../../../../viewmodels";
+import { CollectionCardListViewmodel, CollectionTreeViewmodel } from "../../../../viewmodels";
 
 export interface CollectionViewState {
   selectedCollection?: CollectionTreeViewmodel;
-  selectedCards?: Array<CardViewmodel>;
+  selectedCards?: Array<CollectionCardListViewmodel>;
 }

@@ -1,5 +1,5 @@
 import { inject, singleton } from "tsyringe";
-import { DtoCardSymbol } from "../../../../common/dto";
+import { MtgCardSymbolDto } from "../../../../common/dto";
 import { ICardSymbolRepository } from "../../../database/repo/interfaces";
 import { BaseRouter, IResult, IRouter, RouteCallback, RoutedRequest } from "../../base";
 import { IImageCacheService, ILogService, IResultFactory, IRouterService } from "../../infra/interfaces";
@@ -36,7 +36,7 @@ export class CardSymbolRouter extends BaseRouter implements IRouter {
   //#endregion
 
   //#region Route callbacks ---------------------------------------------------
-  private getAll(_request: RoutedRequest<void>): Promise<IResult<Array<DtoCardSymbol>>> {
+  private getAll(_request: RoutedRequest<void>): Promise<IResult<Array<MtgCardSymbolDto>>> {
     return this.cardSymbolRepository.getAll();
   }
 

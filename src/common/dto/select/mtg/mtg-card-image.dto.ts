@@ -1,7 +1,7 @@
 import { CardSide, ImageSize } from "../../../types";
 
 
-export interface DtoCardImageData {
+export interface MtgCardImageDataDto {
   cardId: string;
   collectorNumber: string;
   cardBackId: string;

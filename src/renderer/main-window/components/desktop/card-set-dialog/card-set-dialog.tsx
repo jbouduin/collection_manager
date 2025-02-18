@@ -1,6 +1,6 @@
 import { AnchorButton, Button, Classes, Dialog, DialogBody, DialogFooter, HTMLTable, Icon, Tab, Tabs } from "@blueprintjs/core";
 import * as React from "react";
-import { CardSetDetailsDto, DtoCardSetLanguage, LanguageDto, RendererConfigurationDto } from "../../../../../common/dto";
+import { MtgCardSetDetailsDto, MtgCardSetLanguageDto, LanguageDto, RendererConfigurationDto } from "../../../../../common/dto";
 import { DisplayValueService, DisplayValueServiceContext, IpcProxyService, IpcProxyServiceContext } from "../../../../common/context";
 import { CardSetDetailsViewmodel } from "../../../viewmodels/card-set/card-set-details.viewmodel";
 import { SvgProvider } from "../../common/svg-provider/svg-provider";
@@ -24,7 +24,7 @@ export function CardSetDialog(props: CardSetDialogProps) {
       if (props.cardSetId) {
         void ipcProxyService
           .getData(`/card-set/${props.cardSetId}`)
-          .then((cardSetDetails: CardSetDetailsDto) => {
+          .then((cardSetDetails: MtgCardSetDetailsDto) => {
             setCardSetDetails(new CardSetDetailsViewmodel(cardSetDetails));
           });
       }
@@ -267,7 +267,7 @@ export function CardSetDialog(props: CardSetDialogProps) {
   }
 
   function renderLanguagePropertiesTableLines(languages: Array<LanguageDto>): Array<React.JSX.Element> {
-    return cardSetDetails.languagesWithNumberOfCards.map((cardSetDetailsLanguage: DtoCardSetLanguage) => {
+    return cardSetDetails.languagesWithNumberOfCards.map((cardSetDetailsLanguage: MtgCardSetLanguageDto) => {
       return (
         <tr>
           <td style={{ paddingLeft: "0px" }}>{languages.find((language: LanguageDto) => language.id == cardSetDetailsLanguage.lang).display_text}:</td>

@@ -1,6 +1,6 @@
-import { CardSetViewmodel, CardViewmodel } from "../../../../viewmodels";
+import { CardSetViewmodel, MtgCardListViewmodel } from "../../../../viewmodels";
 
 export interface DatabaseViewState {
   selectedSets?: Array<CardSetViewmodel>;
-  selectedCards?: Array<CardViewmodel>;
+  selectedCards?: Array<MtgCardListViewmodel>;
 }

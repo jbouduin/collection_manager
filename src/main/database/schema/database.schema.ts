@@ -5,8 +5,11 @@ import {
   CardSetTable, CatalogItemTable, ColorTable, LanguageTable,
   CardSymbolAlternativeTable, CardSymbolColorMapTable, CardSymbolTable,
   CardColorMapTable,
-  CollectionTable, OwnedCardTable
+  CollectionTable,
+  CardConditionTable,
+  OwnedCardTable
 } from ".";
+import { OwnedCardCollectionMapTable } from "./collection/owned-card-collection-map.table";
 
 
 export interface DatabaseSchema {
@@ -42,7 +45,9 @@ export interface DatabaseSchema {
   //#endregion
 
   //#region Collection --------------------------------------------------------
+  card_condition: CardConditionTable;
   collection: CollectionTable;
   owned_card: OwnedCardTable;
+  owned_card_collection_map: OwnedCardCollectionMapTable;
   //#endregion
 }

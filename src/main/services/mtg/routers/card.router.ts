@@ -1,5 +1,5 @@
 import { container, inject, singleton } from "tsyringe";
-import { CardDto, RulingLineDto, RulingSyncParam } from "../../../../common/dto";
+import { MtgCardDetailDto, MtgCardListDto, RulingLineDto, RulingSyncParam } from "../../../../common/dto";
 import { ICardRepository, IOracleRepository } from "../../../database/repo/interfaces";
 import { BaseRouter, IResult, IRouter, RouteCallback, RoutedRequest } from "../../base";
 import { ILogService, IResultFactory, IRouterService } from "../../infra/interfaces";
@@ -36,12 +36,12 @@ export class CardRouter extends BaseRouter implements IRouter {
   //#endregion
 
   //#region Route callbacks ---------------------------------------------------
-  private getCard(request: RoutedRequest<void>): Promise<IResult<CardDto>> {
-    return this.cardRepository.getCards(request.params["id"])
-      .then((r: IResult<Array<CardDto>>) => {
-        return r.data.length > 0
-          ? this.resultFactory.createSuccessResult<CardDto>(r.data[0])
-          : this.resultFactory.createNotFoundResult<CardDto>(request.params["id"]);
+  private getCard(request: RoutedRequest<void>): Promise<IResult<MtgCardDetailDto>> {
+    return this.cardRepository.getCardDetails(request.params["id"])
+      .then((r: IResult<MtgCardDetailDto>) => {
+        return r.data != undefined
+          ? this.resultFactory.createSuccessResult<MtgCardDetailDto>(r.data)
+          : this.resultFactory.createNotFoundResult<MtgCardDetailDto>(request.params["id"]);
       });
   }
 
@@ -70,8 +70,8 @@ export class CardRouter extends BaseRouter implements IRouter {
       });
   }
 
-  private queryCards(request: RoutedRequest<void>): Promise<IResult<Array<CardDto>>> {
-    return this.cardRepository.getCards(undefined, request.queryParams["sets"].split(","));
+  private queryCards(request: RoutedRequest<void>): Promise<IResult<Array<MtgCardListDto>>> {
+    return this.cardRepository.queryCards(request.queryParams["sets"].split(","));
   }
   //#endregion
 }

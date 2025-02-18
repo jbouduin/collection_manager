@@ -24,7 +24,7 @@ export function CardHeaderView(props: CardHeaderViewProps) {
               <H3>{props.card.cardName}</H3>
             </div>
             <div className="card-header-line-2" style={{ width: "100%" }}>
-              <H5>{props.card.cardtypeLine}</H5>
+              <H5>{props.card.cardTypeLine}</H5>
             </div>
           </>
         )

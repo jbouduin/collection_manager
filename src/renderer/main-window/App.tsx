@@ -1,7 +1,7 @@
 import { BlueprintProvider, FocusStyleManager, OverlayToaster, Position, ToastProps } from "@blueprintjs/core";
 import * as React from "react";
 import { createRoot } from "react-dom/client";
-import { CardSetDto, ConfigurationDto, LanguageDto } from "../../common/dto";
+import { MtgCardSetDto, ConfigurationDto, LanguageDto } from "../../common/dto";
 import { IpcProxyService, IpcProxyServiceContext } from "../common/context";
 import { Desktop } from "./components/desktop/desktop";
 import { DesktopProps } from "./components/desktop/desktop.props";
@@ -40,8 +40,8 @@ void (async () => {
     })
     .then(async () => ipcProxyService.getData<Map<string, string>>("/card-symbol/svg"))
     .then((cachedSvgs: Map<string, string>) => desktopProps.symbolSvgs = cachedSvgs)
-    .then(async () => ipcProxyService.getData<Array<CardSetDto>>("/card-set"))
-    .then((cardSets: Array<CardSetDto>) => desktopProps.cardSets = cardSets.map((cardSet: CardSetDto) => new CardSetViewmodel(cardSet)))
+    .then(async () => ipcProxyService.getData<Array<MtgCardSetDto>>("/card-set"))
+    .then((cardSets: Array<MtgCardSetDto>) => desktopProps.cardSets = cardSets.map((cardSet: MtgCardSetDto) => new CardSetViewmodel(cardSet)))
     .then(async () => ipcProxyService.getData<Array<LanguageDto>>("/language"))
     .then((languages: Array<LanguageDto>) => desktopProps.languages = languages)
     /* eslint-disable @stylistic/function-paren-newline */

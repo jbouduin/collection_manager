@@ -1,19 +1,23 @@
-import { CardDto, CardColorDto, CardLanguageDto, CardfaceDto, OracleDto } from "../../../../common/dto";
+import { CollectionCardDto, MtgCardColorDto, MtgCardDetailDto, MtgCardLanguageDto, MtgCardListDto, MtgCardfaceDto, OracleDto } from "../../../../common/dto";
 import { CardLayout, CardRarity, MTGLanguage } from "../../../../common/types";
 import { OracleViewmodel } from "../oracle/oracle-viewmodel";
 import { CardfaceViewmodel } from "./cardface.viewmodel";
 
-
-export class CardViewmodel {
+/* eslint-disable  @typescript-eslint/no-duplicate-type-constituents */
+abstract class BaseCardViewmodel<T extends MtgCardListDto | MtgCardDetailDto | CollectionCardDto> {
   //#region private readonly fields -------------------------------------------
-  private readonly _dtoCard: CardDto;
-  private readonly _collectorNumberSortValue: string;
   private readonly _cardManaCost: Array<string>;
-  private readonly cardFaces: Map<number, CardfaceViewmodel>;
-  private readonly oracles: Map<number, OracleViewmodel>;
   //#endregion
 
-  //#region public getters for table ------------------------------------------
+  //#region protected fields --------------------------------------------------
+  protected readonly _dtoCard: T;
+  //#endregion
+
+  //#region common getters ----------------------------------------------------
+  public get cardId(): string {
+    return this._dtoCard.id;
+  }
+
   public get cardManacost(): Array<string> {
     return this._cardManaCost;
   }
@@ -21,93 +25,31 @@ export class CardViewmodel {
   public get cardName(): string {
     return this._dtoCard.layout != "reversible_card"
       ? this.joinMultiCardFaceData(this._dtoCard.oracle.map((oracle: OracleDto) => oracle.oracle_name))
-      : this.joinMultiCardFaceData(this._dtoCard.cardfaces.map((cardface: CardfaceDto) => cardface.oracle.oracle_name));
+      : this.joinMultiCardFaceData(this._dtoCard.cardfaces.map((cardface: MtgCardfaceDto) => cardface.oracle.oracle_name));
   }
 
-  public get cardPower(): string {
-    return this.joinMultiCardFaceData(this._dtoCard.cardfaces.map((cardface: CardfaceDto) => cardface.power));
-  }
-
-  public get cardThoughness(): string {
-    return this.joinMultiCardFaceData(this._dtoCard.cardfaces.map((cardface: CardfaceDto) => cardface.toughness));
-  }
-
-  public get cardtypeLine(): string {
+  public get cardTypeLine(): string {
     return this.joinMultiCardFaceData(this._dtoCard.oracle.map((oracle: OracleDto) => oracle.type_line));
-  }
-
-  public get collectorNumberSortValue(): string {
-    return this._collectorNumberSortValue;
-  }
-
-  public get collectorNumber(): string {
-    return this._dtoCard.collector_number;
   }
 
   public get rarity(): CardRarity {
     return this._dtoCard.rarity;
   }
 
-  public get languages(): Array<MTGLanguage> {
-    return this._dtoCard.languages.map((language: CardLanguageDto) => language.lang);
-  }
-
-  public get colorIdentity(): Array<string> {
-    return this._dtoCard.cardColors
-      .filter((cardColor: CardColorDto) => cardColor.color_type == "identity")
-      .map((cardColor: CardColorDto) => cardColor.mana_symbol);
-  }
-  //#endregion
-
-  public get cardLayout(): CardLayout {
-    return this._dtoCard.layout;
-  }
-
   public get setId(): string {
     return this._dtoCard.set_id;
-  }
-
-  public get isMultipleLanguage(): boolean {
-    return this._dtoCard.languages.length > 1;
-  }
-
-  public get oracleId(): string {
-    return this._dtoCard.oracle_id;
-  }
-
-  public get cardId(): string {
-    return this._dtoCard.id;
-  }
-
-  public get cardLanguage(): MTGLanguage {
-    return this._dtoCard.lang;
-  }
-
-  public get otherCardLanguages(): Array<CardLanguageDto> {
-    return this._dtoCard.languages;
-  }
-
-  public get isLocalizedCard(): boolean {
-    return this._dtoCard.lang != "en";
   }
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
-  public constructor(dtoCard: CardDto) {
+  public constructor(dtoCard: T) {
     this._dtoCard = dtoCard;
-    this._collectorNumberSortValue = isNaN(Number(dtoCard.collector_number)) ? dtoCard.collector_number : dtoCard.collector_number.padStart(4, "0");
     this._cardManaCost = this.calculateCardManaCost(dtoCard);
-    this.cardFaces = new Map<number, CardfaceViewmodel>();
-    this._dtoCard.cardfaces.sort((a: CardfaceDto, b: CardfaceDto) => a.sequence - b.sequence);
-    this._dtoCard.cardfaces.forEach((cardface: CardfaceDto) => this.cardFaces.set(cardface.sequence, new CardfaceViewmodel(cardface)));
-    this.oracles = new Map<number, OracleViewmodel>();
-    this._dtoCard.oracle.sort((a: OracleDto, b: OracleDto) => a.face_sequence - b.face_sequence);
-    this._dtoCard.oracle.forEach((oracle: OracleDto) => this.oracles.set(oracle.face_sequence, new OracleViewmodel(oracle)));
   }
 
-  private calculateCardManaCost(dtoCard: CardDto): Array<string> {
+  private calculateCardManaCost(dtoCard: T): Array<string> {
     const result = new Array<string>();
-    dtoCard.cardfaces.forEach((cardface: CardfaceDto, idx: number) => {
+    dtoCard.cardfaces.forEach((cardface: MtgCardfaceDto, idx: number) => {
       if (idx > 0) {
         result.push("//");
       }
@@ -133,18 +75,8 @@ export class CardViewmodel {
   }
   //#endregion
 
-  //#region Public methods ----------------------------------------------------
-  public getCardface(sequence: number): CardfaceViewmodel {
-    return this.cardFaces.get(sequence);
-  }
-
-  public getOracle(sequence: number): OracleViewmodel {
-    return this.oracles.get(sequence);
-  }
-  //#endregion
-
   //#region Auxiliary methods -------------------------------------------------
-  private joinMultiCardFaceData(data: Array<string | null>): string {
+  protected joinMultiCardFaceData(data: Array<string | null>): string {
     if (data.filter((d: string) => d != null && d != undefined && d != "").length == 0) {
       return "";
     } else {
@@ -155,6 +87,139 @@ export class CardViewmodel {
         })
         .join(" // ");
     }
+  }
+  //#endregion
+}
+abstract class MtgCardViewmodel<T extends MtgCardListDto | MtgCardDetailDto> extends BaseCardViewmodel<T> {
+  //#region common getters ----------------------------------------------------
+  public get otherCardLanguages(): Array<MtgCardLanguageDto> {
+    return this._dtoCard.languages;
+  }
+  //#endregion
+
+  //#region Constructor & C° --------------------------------------------------
+  public constructor(dtoCard: T) {
+    super(dtoCard);
+  }
+  //#endregion
+}
+
+export class MtgCardListViewmodel extends MtgCardViewmodel<MtgCardListDto> {
+  //#region private readonly fields -------------------------------------------
+  private readonly _collectorNumberSortValue: string;
+  //#endregion
+
+  //#region List Specific getters ---------------------------------------------
+  public get cardPower(): string {
+    return this.joinMultiCardFaceData(this._dtoCard.cardfaces.map((cardface: MtgCardfaceDto) => cardface.power));
+  }
+
+  public get cardThoughness(): string {
+    return this.joinMultiCardFaceData(this._dtoCard.cardfaces.map((cardface: MtgCardfaceDto) => cardface.toughness));
+  }
+
+  public get collectorNumberSortValue(): string {
+    return this._collectorNumberSortValue;
+  }
+
+  public get collectorNumber(): string {
+    return this._dtoCard.collector_number;
+  }
+
+  public get languages(): Array<MTGLanguage> {
+    return this._dtoCard.languages.map((language: MtgCardLanguageDto) => language.lang);
+  }
+
+  public get colorIdentity(): Array<string> {
+    return this._dtoCard.cardColors
+      .filter((cardColor: MtgCardColorDto) => cardColor.color_type == "identity")
+      .map((cardColor: MtgCardColorDto) => cardColor.mana_symbol);
+  }
+  //#endregion
+
+  //#region Constructor & C° --------------------------------------------------
+  public constructor(dtoCard: MtgCardListDto) {
+    super(dtoCard);
+    this._collectorNumberSortValue = isNaN(Number(dtoCard.collector_number)) ? dtoCard.collector_number : dtoCard.collector_number.padStart(4, "0");
+  }
+  //#endregion
+}
+
+export class MtgCardDetailViewmodel extends MtgCardViewmodel<MtgCardDetailDto> {
+  private readonly cardFaces: Map<number, CardfaceViewmodel>;
+  private readonly oracles: Map<number, OracleViewmodel>;
+
+  //#region Detail specific getters -------------------------------------------
+  public get cardLanguage(): MTGLanguage {
+    return this._dtoCard.lang;
+  }
+
+  public get cardLayout(): CardLayout {
+    return this._dtoCard.layout;
+  }
+
+  public get isMultipleLanguage(): boolean {
+    return this._dtoCard.languages.length > 1;
+  }
+
+  public get oracleId(): string {
+    return this._dtoCard.oracle_id;
+  }
+  //#endregion
+
+  //#region Constructor & C° --------------------------------------------------
+  public constructor(dtoCard: MtgCardListDto) {
+    super(dtoCard);
+    this.cardFaces = new Map<number, CardfaceViewmodel>();
+    this._dtoCard.cardfaces.sort((a: MtgCardfaceDto, b: MtgCardfaceDto) => a.sequence - b.sequence);
+    this._dtoCard.cardfaces.forEach((cardface: MtgCardfaceDto) => this.cardFaces.set(cardface.sequence, new CardfaceViewmodel(cardface)));
+    this.oracles = new Map<number, OracleViewmodel>();
+    this._dtoCard.oracle.sort((a: OracleDto, b: OracleDto) => a.face_sequence - b.face_sequence);
+    this._dtoCard.oracle.forEach((oracle: OracleDto) => this.oracles.set(oracle.face_sequence, new OracleViewmodel(oracle)));
+  }
+  //#endregion
+
+  //#region Public methods ----------------------------------------------------
+  public getCardface(sequence: number): CardfaceViewmodel {
+    return this.cardFaces.get(sequence);
+  }
+
+  public getOracle(sequence: number): OracleViewmodel {
+    return this.oracles.get(sequence);
+  }
+  //#endregion
+}
+
+export class CollectionCardListViewmodel extends BaseCardViewmodel<CollectionCardDto> {
+  public get cardPower(): string {
+    return this.joinMultiCardFaceData(this._dtoCard.cardfaces.map((cardface: MtgCardfaceDto) => cardface.power));
+  }
+
+  public get cardThoughness(): string {
+    return this.joinMultiCardFaceData(this._dtoCard.cardfaces.map((cardface: MtgCardfaceDto) => cardface.toughness));
+  }
+
+  public get collectorNumber(): string {
+    return this._dtoCard.collector_number;
+  }
+
+  public get colorIdentity(): Array<string> {
+    return this._dtoCard.cardColors
+      .filter((cardColor: MtgCardColorDto) => cardColor.color_type == "identity")
+      .map((cardColor: MtgCardColorDto) => cardColor.mana_symbol);
+  }
+
+  public get language(): MTGLanguage {
+    return this._dtoCard.language.lang;
+  }
+
+  public get setName(): string {
+    return this._dtoCard.set.name;
+  }
+
+  //#region Constructor & C° --------------------------------------------------
+  public constructor(dtoCard: CollectionCardDto) {
+    super(dtoCard);
   }
   //#endregion
 }

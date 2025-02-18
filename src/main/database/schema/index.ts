@@ -9,8 +9,10 @@ export * from "./card/card.table";
 export * from "./card/cardface-color-map.table";
 export * from "./card/cardface-table";
 
+export * from "./collection/card-condition.table";
 export * from "./collection/collection.table";
 export * from "./collection/owned-card.table";
+export * from "./collection/owned-card-collection-map.table";
 
 export * from "./master-data/card-set.table";
 export * from "./master-data/catalog-item.table";

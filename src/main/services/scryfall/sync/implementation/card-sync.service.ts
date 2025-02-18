@@ -1,6 +1,6 @@
 import { DeleteResult, InsertResult, Transaction, UpdateResult, sql } from "kysely";
 import { inject, injectable } from "tsyringe";
-import { CardSyncParam, DtoCardImageData, IdSelectResult } from "../../../../../common/dto";
+import { CardSyncParam, MtgCardImageDataDto, IdSelectResult } from "../../../../../common/dto";
 import { ProgressCallback } from "../../../../../common/ipc";
 import { ChangedImageStatusAction, GameFormat, ImageStatus, MTGColor, MTGColorType, TimespanUnit } from "../../../../../common/types";
 import { isSingleCardFaceLayout, sqliteUTCTimeStamp } from "../../../../../common/util";
@@ -479,13 +479,13 @@ export class CardSyncService extends BaseSyncService<CardSyncParam> implements I
           .where("card.id", "=", prev.id)
           .where("card.image_status", "!=", prev.image_status)
           // .$call(this.logCompilable)
-          .$castTo<DtoCardImageData>()
+          .$castTo<MtgCardImageDataDto>()
           .execute()
-          .then((current: Array<DtoCardImageData>) => {
+          .then((current: Array<MtgCardImageDataDto>) => {
             progressCallback(`Processing image (${index}/${total})`);
             return runSerial(
               current,
-              (cardImageDto: DtoCardImageData) => {
+              (cardImageDto: MtgCardImageDataDto) => {
                 if (action == "delete") {
                   return Promise.resolve(this.imageCacheService.deleteCachedCardImage(cardImageDto));
                 } else {

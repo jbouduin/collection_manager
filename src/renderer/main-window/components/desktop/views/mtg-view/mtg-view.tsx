@@ -5,14 +5,14 @@ import { CardSetViewmodel, MtgCardListViewmodel } from "../../../../viewmodels";
 import { CardView } from "../../../common/card-view/card-view";
 import { ConfigurationContext } from "../../../context";
 import { CenterPanel } from "./center-panel/center-panel";
-import { DatabaseViewProps } from "./database-view.props";
-import { DatabaseViewState } from "./database-view.state";
+import { MtgViewProps } from "./mtg-view.props";
+import { MtgViewState } from "./mtg-view.state";
 import { LeftPanel } from "./left-panel/left-panel";
 
 
-export function DatabaseView(props: DatabaseViewProps) {
+export function MtgView(props: MtgViewProps) {
   //#region State -------------------------------------------------------------
-  const initialState: DatabaseViewState = {};
+  const initialState: MtgViewState = {};
   const [state, setState] = React.useState(initialState);
   //#endregion
 

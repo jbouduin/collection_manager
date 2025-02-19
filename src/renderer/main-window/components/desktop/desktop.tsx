@@ -13,7 +13,7 @@ import { SettingsDialog } from "./settings-dialog/settings-dialog";
 import { SplashScreen } from "./splash-screen/splash-screen";
 import { SyncDialog } from "./sync-dialog/sync-dialog";
 import { CollectionView } from "./views/collection-view/collection-view";
-import { DatabaseView } from "./views/database-view/database-view";
+import { MtgView } from "./views/mtg-view/mtg-view";
 import { DeckView } from "./views/deck-view/deck-view";
 import { DisplayValueService, DisplayValueServiceContext, IpcProxyService, IpcProxyServiceContext } from "../../../common/context";
 
@@ -176,7 +176,7 @@ export function Desktop(_props: Props) {
                       <div className="main-panel">
                         {
                           desktopState.currentView == EDesktopView.Database &&
-                          <DatabaseView onCardSetDialog={(cardSet: CardSetViewmodel) => setCardSetDialogOpen(true, cardSet)} onSynchronizeSet={synchronizeSet} />
+                          <MtgView onCardSetDialog={(cardSet: CardSetViewmodel) => setCardSetDialogOpen(true, cardSet)} onSynchronizeSet={synchronizeSet} />
                         }
                         {
                           desktopState.currentView == EDesktopView.Collection &&

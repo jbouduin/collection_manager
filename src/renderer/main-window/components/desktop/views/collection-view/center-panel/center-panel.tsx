@@ -1,12 +1,13 @@
 import { Cell, CellRenderer, Column, ColumnProps } from "@blueprintjs/table";
 import * as React from "react";
-import { OwnedCardListDto, LanguageDto } from "../../../../../../../common/dto";
+import { LanguageDto, OwnedCardDto, OwnedCardListDto } from "../../../../../../../common/dto";
 import { IpcProxyService, IpcProxyServiceContext } from "../../../../../../common/context";
 import { BaseCardsTableView } from "../../../../../components/common/base-cards-table-view/base-cards-table-view";
-import { symbolRenderer, textCellRenderer } from "../../../../../components/common/base-cards-table-view/cell-renderers";
-import { CardSetContext, LanguagesContext } from "../../../../../components/context";
-import { CardSetViewmodel, CollectionCardListViewmodel } from "../../../../../viewmodels";
+import { cardSetRenderer, textCellRenderer } from "../../../../../components/common/base-cards-table-view/cell-renderers";
+import { CardConditionContext, CardSetContext, LanguagesContext } from "../../../../../components/context";
+import { CardConditionViewmodel, CardSetViewmodel, CollectionCardListViewmodel } from "../../../../../viewmodels";
 import { CenterPanelProps } from "./center-panel.props";
+import { MTGLanguage } from "../../../../../../../common/types";
 
 
 export function CenterPanel(props: CenterPanelProps) {
@@ -40,7 +41,7 @@ export function CenterPanel(props: CenterPanelProps) {
   );
   //#endregion
 
-  //#region Main --------------------------------------------------------------
+  //#region Rendering ---------------------------------------------------------
   return (
     <LanguagesContext.Consumer>
       {
@@ -48,36 +49,45 @@ export function CenterPanel(props: CenterPanelProps) {
           <CardSetContext.Consumer>
             {
               (cardSets: Array<CardSetViewmodel>) => (
-                <BaseCardsTableView<CollectionCardListViewmodel>
-                  columnDefinitions={getColumnDefinitions(languages, cardSets)}
-                  data={cards}
-                  onCardsSelected={(cards?: Array<CollectionCardListViewmodel>) => props.onCardsSelected(cards)}
-                />)
+                <CardConditionContext.Consumer>
+                  {
+                    (conditions: Array<CardConditionViewmodel>) => (
+                      <BaseCardsTableView<CollectionCardListViewmodel>
+                        columnDefinitions={getColumnDefinitions(languages, cardSets, conditions)}
+                        data={cards}
+                        onCardsSelected={(cards?: Array<CollectionCardListViewmodel>) => props.onCardsSelected(cards)}
+                      />
+                    )
+                  }
+                </CardConditionContext.Consumer>
+              )
             }
           </CardSetContext.Consumer>
         )
       }
     </LanguagesContext.Consumer>
   );
-  //#endregion
 
-  function getColumnDefinitions(languages: Array<LanguageDto>, cardSets: Array<CardSetViewmodel>): Array<React.ReactElement<ColumnProps>> {
+  function getColumnDefinitions(languages: Array<LanguageDto>, cardSets: Array<CardSetViewmodel>, conditions: Array<CardConditionViewmodel>): Array<React.ReactElement<ColumnProps>> {
     const result = new Array<React.ReactElement<ColumnProps>>();
-    result.push(<Column cellRenderer={cardSetRenderer(cardSets, (card: CollectionCardListViewmodel) => card.setId)} key="Set" name="Set" />);
+    result.push(<Column cellRenderer={cardSetRenderer(cards, cardSets, (card: CollectionCardListViewmodel) => card.setId)} key="Set" name="Set" />);
     result.push(<Column cellRenderer={textCellRenderer(cards, (card: CollectionCardListViewmodel) => card.rarity)} key="Rarity" name="Rarity" />);
     result.push(<Column cellRenderer={languageRenderer(languages, (card: CollectionCardListViewmodel) => card.language)} key="Language" name="Language" />);
     result.push(<Column cellRenderer={textCellRenderer(cards, (card: CollectionCardListViewmodel) => card.cardName)} key="Name" name="Name" />);
-    result.push(<Column cellRenderer={textCellRenderer(cards, (card: CollectionCardListViewmodel) => card.cardTypeLine)} key="Type" name="Type" />);
-    result.push(<Column cellRenderer={symbolRenderer(cards, (card: CollectionCardListViewmodel) => card.cardManacost)} key="Mana cost" name="ManaCost" />);
-    result.push(<Column cellRenderer={textCellRenderer(cards, (card: CollectionCardListViewmodel) => card.cardPower)} key="Power" name="Power" />);
-    result.push(<Column cellRenderer={textCellRenderer(cards, (card: CollectionCardListViewmodel) => card.cardThoughness)} key="Thoughness" name="Thoughness" />);
-
-    // result.push(<Column cellRenderer={symbolRenderer(cards, (card: CollectionCardListViewmodel) => card.colorIdentity)} key="CI" name="CI" />);
-
+    conditions.forEach((condition: CardConditionViewmodel) => {
+      result.push(<Column cellRenderer={quantityRenderer(condition.code, (card: CollectionCardListViewmodel) => card.ownedCards)} key={condition.code} name={condition.expression} />);
+    });
+    /*
+     * result.push(<Column cellRenderer={textCellRenderer(cards, (card: CollectionCardListViewmodel) => card.cardTypeLine)} key="Type" name="Type" />);
+     * result.push(<Column cellRenderer={symbolRenderer(cards, (card: CollectionCardListViewmodel) => card.cardManacost)} key="Mana cost" name="ManaCost" />);
+     * result.push(<Column cellRenderer={textCellRenderer(cards, (card: CollectionCardListViewmodel) => card.cardPower)} key="Power" name="Power" />);
+     * result.push(<Column cellRenderer={textCellRenderer(cards, (card: CollectionCardListViewmodel) => card.cardThoughness)} key="Thoughness" name="Thoughness" />);
+     * result.push(<Column cellRenderer={symbolRenderer(cards, (card: CollectionCardListViewmodel) => card.colorIdentity)} key="CI" name="CI" />);
+     */
     return result;
   }
 
-  function languageRenderer(languages: Array<LanguageDto>, valueCallBack: (card: CollectionCardListViewmodel) => string): CellRenderer {
+  function languageRenderer(languages: Array<LanguageDto>, valueCallBack: (card: CollectionCardListViewmodel) => MTGLanguage): CellRenderer {
     return (row: number) => {
       const language = valueCallBack(cards[row]);
       const languageDef = languages.find((lng: LanguageDto) => lng.id == language);
@@ -89,15 +99,17 @@ export function CenterPanel(props: CenterPanelProps) {
     };
   }
 
-  function cardSetRenderer(cardSets: Array<CardSetViewmodel>, valueCallBack: (card: CollectionCardListViewmodel) => string): CellRenderer {
+  function quantityRenderer(condition: string, valueCallBack: (card: CollectionCardListViewmodel) => Array<OwnedCardDto>): CellRenderer {
     return (row: number) => {
-      const setId = valueCallBack(cards[row]);
-      const cardSet = cardSets.find((cardSetViewmodel: CardSetViewmodel) => cardSetViewmodel.id == setId);
+      const ownedCards = valueCallBack(cards[row]);
+      const foil = ownedCards.find((ownedCard: OwnedCardDto) => ownedCard.condition_id == condition && ownedCard.is_foil == true)?.quantity || 0;
+      const nonFoil = ownedCards.find((ownedCard: OwnedCardDto) => ownedCard.condition_id == condition && ownedCard.is_foil == false)?.quantity || 0;
       return (
         <Cell>
-          {cardSet ? cardSet.cardSetName : undefined}
+          {`${nonFoil} non-foil / ${foil} foil`}
         </Cell>
       );
     };
   }
+  //#endregion
 }

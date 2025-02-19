@@ -7,10 +7,16 @@ export function textCellRenderer<T>(data: Array<T>, valueCallBack: (card: T) => 
   return (row: number) => (<Cell>{valueCallBack(data[row])} </Cell>);
 }
 
-export function cardSetNameRenderer<T>(data: Array<T>, cardSets: Array<CardSetViewmodel>, idExtractor: (card: T) => string): CellRenderer {
+// TODO display the cardsymbol also - maybe use a parameter
+export function cardSetRenderer<T>(data: Array<T>, cardSets: Array<CardSetViewmodel>, valueCallBack: (card: T) => string): CellRenderer {
   return (row: number) => {
-    const set = cardSets.find((s: CardSetViewmodel) => s.id == idExtractor(data[row]));
-    return (<Cell>{set?.cardSetName} </Cell>);
+    const setId = valueCallBack(data[row]);
+    const cardSet = cardSets.find((cardSetViewmodel: CardSetViewmodel) => cardSetViewmodel.id == setId);
+    return (
+      <Cell>
+        {cardSet ? cardSet.cardSetName : undefined}
+      </Cell>
+    );
   };
 }
 

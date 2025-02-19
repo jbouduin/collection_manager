@@ -1,10 +1,10 @@
 import { Cell, CellRenderer, Column, ColumnProps } from "@blueprintjs/table";
 import * as React from "react";
-import { MtgCardListDto, LanguageDto } from "../../../../../../../common/dto";
+import { LanguageDto, MtgCardListDto } from "../../../../../../../common/dto";
 import { MTGLanguage } from "../../../../../../../common/types";
 import { IpcProxyService, IpcProxyServiceContext } from "../../../../../../common/context";
 import { BaseCardsTableView } from "../../../../../components/common/base-cards-table-view/base-cards-table-view";
-import { cardSetNameRenderer, symbolRenderer, textCellRenderer } from "../../../../../components/common/base-cards-table-view/cell-renderers";
+import { cardSetRenderer, symbolRenderer, textCellRenderer } from "../../../../../components/common/base-cards-table-view/cell-renderers";
 import { LanguagesContext } from "../../../../../components/context";
 import { CardSetViewmodel, MtgCardListViewmodel } from "../../../../../viewmodels";
 import { CenterPanelProps } from "./center-panel.props";
@@ -64,7 +64,7 @@ export function CenterPanel(props: CenterPanelProps) {
     result.push(<Column cellRenderer={textCellRenderer(cards, (card: MtgCardListViewmodel) => card.cardName)} key="Name" name="Name" />);
     result.push(<Column cellRenderer={textCellRenderer(cards, (card: MtgCardListViewmodel) => card.cardTypeLine)} key="Type" name="Type" />);
     result.push(<Column cellRenderer={symbolRenderer(cards, (card: MtgCardListViewmodel) => card.cardManacost)} key="Mana cost" name="ManaCost" />);
-    result.push(<Column cellRenderer={cardSetNameRenderer(cards, props.selectedSets, (card: MtgCardListViewmodel) => card.setId)} key="Set" name="Set" />);
+    result.push(<Column cellRenderer={cardSetRenderer(cards, props.selectedSets, (card: MtgCardListViewmodel) => card.setId)} key="Set" name="Set" />);
     result.push(<Column cellRenderer={textCellRenderer(cards, (card: MtgCardListViewmodel) => card.cardPower)} key="Power" name="Power" />);
     result.push(<Column cellRenderer={textCellRenderer(cards, (card: MtgCardListViewmodel) => card.cardThoughness)} key="Thoughness" name="Thoughness" />);
     result.push(<Column cellRenderer={symbolRenderer(cards, (card: MtgCardListViewmodel) => card.colorIdentity)} key="CI" name="CI" />);

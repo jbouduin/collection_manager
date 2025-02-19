@@ -4,7 +4,7 @@ import { clone, cloneDeep } from "lodash";
 import * as React from "react";
 import { CardConditionDto, ConfigurationDto, LanguageDto, MtgCardSetDto, SyncParamDto } from "../../../../common/dto";
 import { CardConditionViewmodel, CardSetViewmodel } from "../../viewmodels";
-import { CardSetContext, CardSymbolContext, ConfigurationContext, LanguagesContext } from "../context";
+import { CardConditionContext, CardSetContext, CardSymbolContext, ConfigurationContext, LanguagesContext } from "../context";
 import { ButtonBar } from "./button-bar/button-bar";
 import { CardSetDialog } from "./card-set-dialog/card-set-dialog";
 import { EDesktopView } from "./desktop-view.enum";
@@ -165,47 +165,49 @@ export function Desktop(_props: Props) {
             <LanguagesContext.Provider value={desktopState.languages}>
               <CardSymbolContext.Provider value={desktopState.symbolSvgs}>
                 <CardSetContext.Provider value={desktopState.cardSets}>
-                  <Card className={classNames(desktopState.rendererConfiguration.useDarkTheme ? Classes.DARK : "", "desktop-wrapper")}>
-                    <ButtonBar
-                      currentView={desktopState.currentView}
-                      onDesktopViewSelectionClick={onDesktopViewSelectionClick}
-                      onSettingsMenuClick={() => setSettingsDialogOpen(true)}
-                      onSyncMenuClick={() => setSyncDialogOpen(true)}
+                  <CardConditionContext.Provider value={desktopState.cardConditions}>
+                    <Card className={classNames(desktopState.rendererConfiguration.useDarkTheme ? Classes.DARK : "", "desktop-wrapper")}>
+                      <ButtonBar
+                        currentView={desktopState.currentView}
+                        onDesktopViewSelectionClick={onDesktopViewSelectionClick}
+                        onSettingsMenuClick={() => setSettingsDialogOpen(true)}
+                        onSyncMenuClick={() => setSyncDialogOpen(true)}
+                      />
+                      <div className="main-panel">
+                        {
+                          desktopState.currentView == EDesktopView.Database &&
+                          <DatabaseView onCardSetDialog={(cardSet: CardSetViewmodel) => setCardSetDialogOpen(true, cardSet)} onSynchronizeSet={synchronizeSet} />
+                        }
+                        {
+                          desktopState.currentView == EDesktopView.Collection &&
+                          <CollectionView />
+                        }
+                        {
+                          desktopState.currentView == EDesktopView.Deck &&
+                          <DeckView onSynchronizeCollection={synchronizeCollection} />
+                        }
+                      </div>
+                    </Card>
+                    <SettingsDialog
+                      isOpen={desktopState.settingsDialogOpen}
+                      onDialogClose={() => setSettingsDialogOpen(false)}
                     />
-                    <div className="main-panel">
-                      {
-                        desktopState.currentView == EDesktopView.Database &&
-                        <DatabaseView onCardSetDialog={(cardSet: CardSetViewmodel) => setCardSetDialogOpen(true, cardSet)} onSynchronizeSet={synchronizeSet} />
-                      }
-                      {
-                        desktopState.currentView == EDesktopView.Collection &&
-                        <CollectionView />
-                      }
-                      {
-                        desktopState.currentView == EDesktopView.Deck &&
-                        <DeckView onSynchronizeCollection={synchronizeCollection} />
-                      }
-                    </div>
-                  </Card>
-                  <SettingsDialog
-                    isOpen={desktopState.settingsDialogOpen}
-                    onDialogClose={() => setSettingsDialogOpen(false)}
-                  />
-                  <SyncDialog
-                    isOpen={desktopState.syncDialogOpen}
-                    onDialogClose={() => setSyncDialogOpen(false)}
-                    onOkClick={startSync}
-                  />
-                  <SplashScreen
-                    isOpen={desktopState.splashScreenOpen}
-                    onDialogClose={() => setSplashScreenOpen(false)}
-                  />
-                  <CardSetDialog
-                    cardSetId={desktopState.cardSet?.id}
-                    cardSetSvg={desktopState.cardSet?.cardSetSvg}
-                    isOpen={desktopState.cardSetDialogOpen}
-                    onDialogClose={() => setCardSetDialogOpen(false)}
-                  />
+                    <SyncDialog
+                      isOpen={desktopState.syncDialogOpen}
+                      onDialogClose={() => setSyncDialogOpen(false)}
+                      onOkClick={startSync}
+                    />
+                    <SplashScreen
+                      isOpen={desktopState.splashScreenOpen}
+                      onDialogClose={() => setSplashScreenOpen(false)}
+                    />
+                    <CardSetDialog
+                      cardSetId={desktopState.cardSet?.id}
+                      cardSetSvg={desktopState.cardSet?.cardSetSvg}
+                      isOpen={desktopState.cardSetDialogOpen}
+                      onDialogClose={() => setCardSetDialogOpen(false)}
+                    />
+                  </CardConditionContext.Provider>
                 </CardSetContext.Provider>
               </CardSymbolContext.Provider>
             </LanguagesContext.Provider>

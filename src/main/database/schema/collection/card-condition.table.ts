@@ -3,7 +3,7 @@ import { NonSynchronized } from "../base.types";
 
 
 export interface CardConditionTable extends NonSynchronized {
-  id: ColumnType<number, string, never>;
+  id: ColumnType<string, string, never>;
   sequence: ColumnType<number, number, never>;
   color_code: ColumnType<string>;
   expression: ColumnType<string>;

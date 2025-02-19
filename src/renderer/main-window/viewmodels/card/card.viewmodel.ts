@@ -1,4 +1,4 @@
-import { OwnedCardListDto, MtgCardColorDto, MtgCardDetailDto, MtgCardLanguageDto, MtgCardListDto, MtgCardfaceDto, OracleDto } from "../../../../common/dto";
+import { OwnedCardListDto, MtgCardColorDto, MtgCardDetailDto, MtgCardLanguageDto, MtgCardListDto, MtgCardfaceDto, OracleDto, OwnedCardDto } from "../../../../common/dto";
 import { CardLayout, CardRarity, MTGLanguage } from "../../../../common/types";
 import { OracleViewmodel } from "../oracle/oracle-viewmodel";
 import { CardfaceViewmodel } from "./cardface.viewmodel";
@@ -191,6 +191,7 @@ export class MtgCardDetailViewmodel extends MtgCardViewmodel<MtgCardDetailDto> {
 }
 
 export class CollectionCardListViewmodel extends BaseCardViewmodel<OwnedCardListDto> {
+  //#region Getters -----------------------------------------------------------
   public get cardPower(): string {
     return this.joinMultiCardFaceData(this._dtoCard.cardfaces.map((cardface: MtgCardfaceDto) => cardface.power));
   }
@@ -219,6 +220,11 @@ export class CollectionCardListViewmodel extends BaseCardViewmodel<OwnedCardList
   public get setId(): string {
     return this._dtoCard.set_id;
   }
+
+  public get ownedCards(): Array<OwnedCardDto> {
+    return this._dtoCard.ownedCards;
+  }
+  //#endregion
 
   //#region Constructor & C° --------------------------------------------------
   public constructor(dtoCard: OwnedCardListDto) {

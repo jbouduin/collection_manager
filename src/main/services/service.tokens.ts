@@ -16,6 +16,7 @@ export const DATABASE = Object.freeze({
 });
 
 export const REPOSITORIES = Object.freeze({
+  CardConditionRepository: "CardConditionRepository",
   CardRepository: "CardRepository",
   CardSetRepository: "CardSetRepository",
   CardSymbolRepository: "CardSymbolRepository",

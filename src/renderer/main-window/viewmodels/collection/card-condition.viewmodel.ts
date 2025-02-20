@@ -1,4 +1,5 @@
 import { CardConditionDto } from "../../../../common/dto";
+import { CardCondition } from "../../../../common/types";
 import { BaseViewmodel } from "../../../common/viewmodels/base.viewmodel";
 
 
@@ -8,7 +9,7 @@ export class CardConditionViewmodel extends BaseViewmodel<CardConditionDto> {
     return this._dto.condition;
   }
 
-  public get code(): string {
+  public get code(): CardCondition {
     return this._dto.id;
   }
 

@@ -38,6 +38,18 @@ export interface IResult<T> {
    */
   convertAsync<U>(onSuccess?: (r: T) => U, onFailure?: (r: T) => U): Promise<IResult<U>>;
   /**
+   * Convert a to a different datatype
+   *
+   * @param data
+   */
+  cast<U>(data: U): IResult<U>;
+  /**
+   * Convert a to a different datatype
+   *
+   * @param data
+   */
+  castAsync<U>(data: U): Promise<IResult<U>>;
+  /**
    * Process the result's data
    *
    * @param onSuccess function to be executed if the current status is not an error.
@@ -71,6 +83,14 @@ export class Result<T> implements IResult<T> {
   //#endregion
 
   //#region IResult methods ---------------------------------------------------
+  public cast<U>(data: U): IResult<U> {
+    return new Result<U>(this.status, data, this.message);
+  }
+
+  public castAsync<U>(data: U): Promise<IResult<U>> {
+    return Promise.resolve(this.cast(data));
+  }
+
   public continue<U>(onSuccess: (r: IResult<T>) => IResult<U>, onFailure: (r: Result<T>) => IResult<U>): IResult<U> {
     if (this.status < EIpcStatus.BadRequest) {
       return onSuccess(this);
@@ -89,6 +109,7 @@ export class Result<T> implements IResult<T> {
       return onFailure(this);
     }
   }
+
   public convert<U>(onSuccess?: (r: T) => U, onFailure?: (r: T) => U): IResult<U> {
     const result: Result<U> = new Result<U>(this.status, undefined, this.message);
     if (this.status < EIpcStatus.BadRequest) {

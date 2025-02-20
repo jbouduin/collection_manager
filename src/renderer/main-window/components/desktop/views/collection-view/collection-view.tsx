@@ -7,6 +7,7 @@ import { CollectionViewProps } from "./collection-view.props";
 import { LeftPanel } from "./left-panel/left-panel";
 import { CollectionViewState } from "./collection-view-state";
 import { CenterPanel } from "./center-panel/center-panel";
+import { CardView } from "../../../common/card-view/card-view";
 
 export function CollectionView(_props: CollectionViewProps) {
   //#region State -------------------------------------------------------------
@@ -45,7 +46,11 @@ export function CollectionView(_props: CollectionViewProps) {
               </Panel>
               <PanelResizeHandle />
               <Panel defaultSize={20}>
-                Right
+                <CardView
+                  cardId={state.selectedCards ? state.selectedCards[0].cardId : null}
+                  collectionId={state.selectedCollection?.id}
+                  showOtherLanguages={false}
+                />
               </Panel>
             </PanelGroup>
           </>

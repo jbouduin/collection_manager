@@ -2,7 +2,7 @@ import { Button, ButtonGroup, Menu, MenuItem, Popover } from "@blueprintjs/core"
 import * as React from "react";
 import { HeaderViewProps } from "./header-view.props";
 
-// type PopoverKey = "add_menu" | "edit_menu" | "delete_menu";
+
 // TODO currently not used
 export function HeaderView(props: HeaderViewProps) {
   //#region Main --------------------------------------------------------------

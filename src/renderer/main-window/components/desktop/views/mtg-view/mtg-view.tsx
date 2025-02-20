@@ -52,6 +52,8 @@ export function MtgView(props: MtgViewProps) {
               <Panel defaultSize={20}>
                 <CardView
                   cardId={state.selectedCards ? calculateCardToDisplay() : null}
+                  collectionId={null}
+                  showOtherLanguages={true}
                 />
               </Panel>
             </PanelGroup>

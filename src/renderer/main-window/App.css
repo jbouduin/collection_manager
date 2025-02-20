@@ -175,3 +175,8 @@ img.rotate-180 {
   padding-top: 375px;
   color: white;
 }
+
+
+.zero-padding-left {
+  padding-left: 0px;
+}

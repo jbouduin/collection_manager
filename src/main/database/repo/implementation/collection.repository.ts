@@ -2,14 +2,14 @@ import { writeFileSync } from "fs";
 import { DeleteResult, InsertResult, Transaction } from "kysely";
 import * as helpers from "kysely/helpers/sqlite";
 import { inject, injectable } from "tsyringe";
-import { CardfaceColorDto, CollectionDto, MtgCardColorDto, MtgCardfaceDto, OracleDto, OwnedCardDto, OwnedCardListDto } from "../../../../common/dto";
+import { CardfaceColorDto, CollectionDto, MtgCardColorDto, MtgCardfaceDto, OracleDto, OwnedCardCollectionMapDto, OwnedCardDto, OwnedCardListDto, OwnedCardQuantityDto } from "../../../../common/dto";
 import { sqliteUTCTimeStamp } from "../../../../common/util";
 import { IResult } from "../../../services/base";
 import { IDatabaseService, ILogService, IResultFactory } from "../../../services/infra/interfaces";
 import { INFRASTRUCTURE } from "../../../services/service.tokens";
 import { logCompilable } from "../../log-compilable";
 import { CARD_COLOR_MAP_TABLE_FIELDS, CARD_TABLE_FIELDS, CARDFACE_COLOR_MAP_TABLE_FIELDS, CARDFACE_TABLE_FIELDS, DatabaseSchema } from "../../schema";
-import { OWNED_CARD_TABLE_FIELDS } from "../../schema/collection/table-field.constants";
+import { OWNED_CARD_COLLECTION_MAP_TABLE_FIELDS, OWNED_CARD_TABLE_FIELDS } from "../../schema/collection/table-field.constants";
 import { ORACLE_TABLE_FIELDS } from "../../schema/oracle/table-field.constants";
 import { ICollectionRepository } from "../interfaces/collection.repository";
 import { BaseRepository } from "./base.repository";
@@ -37,6 +37,62 @@ export class CollectionRepository extends BaseRepository implements ICollectionR
         .then((qryResult: Array<CollectionDto>) => this.resultFactory.createSuccessResult<Array<CollectionDto>>(qryResult));
     } catch (err) {
       return this.resultFactory.createExceptionResultPromise<Array<CollectionDto>>(err);
+    }
+  }
+
+  public getCardQuantitiesForCardInCollection(cardId: string, collectionId: number): Promise<IResult<Array<OwnedCardQuantityDto>>> {
+    try {
+      return this.database.selectFrom("owned_card")
+        .select((eb) => [
+          ...OWNED_CARD_TABLE_FIELDS,
+          helpers.jsonArrayFrom<OwnedCardCollectionMapDto>(
+            eb.selectFrom("owned_card_collection_map")
+              .select([...OWNED_CARD_COLLECTION_MAP_TABLE_FIELDS])
+              .whereRef("owned_card_collection_map.owned_card_id", "=", "owned_card.id")
+              .where("owned_card_collection_map.collection_id", "=", collectionId)
+              .$castTo<OwnedCardCollectionMapDto>()
+          )
+            .as("collectionMaps")
+        ])
+        .innerJoin("owned_card_collection_map as occm", "occm.owned_card_id", "owned_card.id")
+        .where("owned_card.card_id", "=", cardId)
+        .where("occm.collection_id", "=", collectionId)
+        .$castTo<OwnedCardQuantityDto>()
+        .$call((q) => logCompilable(this.logService, q))
+        .execute()
+        .then((qryResult: Array<OwnedCardQuantityDto>) => {
+          writeFileSync("c:/data/new-assistant/json/getCardQuantitiesForCardInCollection.json", JSON.stringify(qryResult, null, 2));
+          return this.resultFactory.createSuccessResult<Array<OwnedCardQuantityDto>>(qryResult);
+        });
+    } catch (err) {
+      return this.resultFactory.createExceptionResultPromise<Array<OwnedCardQuantityDto>>(err);
+    }
+  }
+
+  public getCardQuantitiesForCard(cardId: string): Promise<IResult<Array<OwnedCardQuantityDto>>> {
+    try {
+      return this.database.selectFrom("owned_card")
+        .select((eb) => [
+          ...OWNED_CARD_TABLE_FIELDS,
+          helpers.jsonArrayFrom<OwnedCardCollectionMapDto>(
+            eb.selectFrom("owned_card_collection_map")
+              .select([...OWNED_CARD_COLLECTION_MAP_TABLE_FIELDS])
+              .whereRef("owned_card_collection_map.owned_card_id", "=", "owned_card.id")
+              .$castTo<OwnedCardCollectionMapDto>()
+          )
+            .as("collectionMaps")
+        ])
+        .innerJoin("owned_card_collection_map as occm", "occm.owned_card_id", "owned_card.id")
+        .where("owned_card.card_id", "=", cardId)
+        .$call((q) => logCompilable(this.logService, q))
+        .$castTo<OwnedCardQuantityDto>()
+        .execute()
+        .then((qryResult: Array<OwnedCardQuantityDto>) => {
+          writeFileSync("c:/data/new-assistant/json/getCardQuantitiesForCard.json", JSON.stringify(qryResult, null, 2));
+          return this.resultFactory.createSuccessResult<Array<OwnedCardQuantityDto>>(qryResult);
+        });
+    } catch (err) {
+      return this.resultFactory.createExceptionResultPromise<Array<OwnedCardQuantityDto>>(err);
     }
   }
 

@@ -112,6 +112,7 @@ function createV0_1_0_OwnedCard(db: Kysely<any>): Promise<void> {
     .execute();
 }
 
+// NOW use cretetable options
 function createV0_1_0_OwnedCardCollectionMap(db: Kysely<any>): Promise<void> {
   return db.schema.createTable("owned_card_collection_map")
     .addColumn("owned_card_id", "integer", (col: ColumnDefinitionBuilder) => col.references("owned_card.id").onDelete("cascade").notNull())

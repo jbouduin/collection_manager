@@ -24,7 +24,7 @@ export function CenterPanel(props: CenterPanelProps) {
     () => {
       if (props.selectedCollection?.isFolder == false) {
         void ipcProxyService
-          .getData<Array<OwnedCardListDto>>(`/collection/${props.selectedCollection.id}/cards`)
+          .getData<Array<OwnedCardListDto>>(`/collection/${props.selectedCollection.id}/card`)
           .then(
             (result: Array<OwnedCardListDto>) => {
               setCards(result

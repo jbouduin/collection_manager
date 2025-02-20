@@ -12,6 +12,7 @@ import { CardRulingsView } from "./card-rulings-view/card-rulings-view";
 import { CardViewState } from "./card-view-state";
 import { CardViewProps } from "./card-view.props";
 import { LegalitiesView } from "./legalities-view/legalities-view";
+import { OwnedCardQuantity } from "../owned-card/owned-card-quantity";
 
 
 export function CardView(props: CardViewProps) {
@@ -60,7 +61,7 @@ export function CardView(props: CardViewProps) {
         title={<CardHeaderView card={cardViewState.card} />}
       >
         {
-          cardViewState.card.isMultipleLanguage &&
+          props.showOtherLanguages && cardViewState.card.isMultipleLanguage &&
           <SectionCard padded={false}>
             <LanguageButtonBar
               cardLanguages={cardViewState.card.otherCardLanguages}
@@ -121,6 +122,11 @@ export function CardView(props: CardViewProps) {
               id="Legality"
               panel={<LegalitiesView oracleId={cardViewState.card.oracleId} />}
               title="Legality"
+            />
+            <Tab
+              id="Owned"
+              panel={<OwnedCardQuantity cardId={cardViewState.card.cardId} collectionId={props.collectionId} />}
+              title="Ownership"
             />
           </Tabs>
         </SectionCard>

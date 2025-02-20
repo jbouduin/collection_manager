@@ -1,6 +1,6 @@
 import { Props } from "@blueprintjs/core";
 
-export interface OwnedCardQuantityProps extends Props {
+export interface OwnedCardTableProps extends Props {
   collectionId: number;
   cardId: string;
 }

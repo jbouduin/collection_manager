@@ -1,3 +1,12 @@
+export const DATABASE = Object.freeze({
+  CustomMigrationProvider: Symbol("CustomMigrationProvider"),
+  Migration: Symbol("Migration")
+});
+
+export const COLLECTION = Object.freeze({
+  CardQuantityService: "CardQuantityService"
+});
+
 export const INFRASTRUCTURE = Object.freeze({
   BootstrapService: "BootstrapService",
   ConfigurationService: "ConfigurationService",
@@ -10,9 +19,8 @@ export const INFRASTRUCTURE = Object.freeze({
   WindowsService: "WindowsService"
 });
 
-export const DATABASE = Object.freeze({
-  CustomMigrationProvider: Symbol("CustomMigrationProvider"),
-  Migration: Symbol("Migration")
+export const MTG = Object.freeze({
+  SyncService: "SyncService"
 });
 
 export const REPOSITORIES = Object.freeze({
@@ -25,10 +33,6 @@ export const REPOSITORIES = Object.freeze({
   ColorRepository: "ColorRepository",
   LanguageRepository: "LanguageRepository",
   OracleRepository: "OracleRepository"
-});
-
-export const MTG = Object.freeze({
-  SyncService: "SyncService"
 });
 
 export const SCRYFALL = Object.freeze({

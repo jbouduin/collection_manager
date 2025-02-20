@@ -23,7 +23,7 @@ import { BaseSyncService } from "./base-sync.service";
 import { GenericSyncTaskParameter } from "./generic-sync-task.parameter";
 import { logCompilable } from "../../../../database/log-compilable";
 
-type IdAndStatusSelectResult = IdSelectResult & { image_status: ImageStatus };
+type IdAndStatusSelectResult = IdSelectResult<string> & { image_status: ImageStatus };
 type PreSyncSelectResult = {
   scryfallCards: Array<ScryfallCard>;
   cardIdsWithStatus: Array<IdAndStatusSelectResult>;
@@ -139,7 +139,7 @@ export class CardSyncService extends BaseSyncService<CardSyncParam> implements I
           if (results.length > 0 || syncParam.cardSelectionToSync.length > 0) {
             const idsTouse = syncParam.cardSyncType == "collection"
               ? syncParam.cardSelectionToSync
-              : results.map((result: IdSelectResult) => result.id);
+              : results.map((result: IdSelectResult<string>) => result.id);
             const scryfallCards = await this.scryfallclient.getCardCollections(idsTouse, progressCallback);
             return {
               scryfallCards: scryfallCards,

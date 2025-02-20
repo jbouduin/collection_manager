@@ -30,8 +30,10 @@ export class DatabaseService implements IDatabaseService {
 
   //#region IDatabaseService methods ------------------------------------------
   public connect(): IDatabaseService {
+    const database = new SQLite(this.configurationService.dataBaseFilePath);
+    database.pragma("foreign_keys = ON");
     const dialect = new SqliteDialect({
-      database: new SQLite(this.configurationService.dataBaseFilePath)
+      database: database
     });
     this._database = new Kysely<DatabaseSchema>({
       dialect: dialect,

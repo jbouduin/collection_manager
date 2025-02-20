@@ -1,1 +1,1 @@
-export type IdSelectResult = { id: string };
+export type IdSelectResult<T> = { id: T };

@@ -1,9 +1,9 @@
 import * as React from "react";
-import { CardSymbolProviderProps } from "./card-symbol-provider.props";
+import { CardSymbolRendererProps } from "./card-symbol-renderer.props";
 import { SvgProvider } from "../svg-provider/svg-provider";
 import { CardSymbolContext } from "../../context";
 
-export function CardSymbolProvider(props: CardSymbolProviderProps) {
+export function CardSymbolRenderer(props: CardSymbolRendererProps) {
   //#region Rendering ---------------------------------------------------------
   return (
     <>

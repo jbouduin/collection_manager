@@ -1,8 +1,8 @@
 import { writeFileSync } from "fs";
-import { DeleteResult, InsertResult, Transaction } from "kysely";
+import { DeleteResult, InsertResult, Transaction, UpdateResult } from "kysely";
 import * as helpers from "kysely/helpers/sqlite";
 import { inject, injectable } from "tsyringe";
-import { CardfaceColorDto, CollectionDto, MtgCardColorDto, MtgCardfaceDto, OracleDto, OwnedCardCollectionMapDto, OwnedCardDto, OwnedCardListDto, OwnedCardQuantityDto } from "../../../../common/dto";
+import { CardfaceColorDto, CollectionDto, IdSelectResult, MtgCardColorDto, MtgCardfaceDto, OracleDto, OwnedCardCollectionMapDto, OwnedCardDto, OwnedCardListDto, OwnedCardQuantityDto } from "../../../../common/dto";
 import { sqliteUTCTimeStamp } from "../../../../common/util";
 import { IResult } from "../../../services/base";
 import { IDatabaseService, ILogService, IResultFactory } from "../../../services/infra/interfaces";
@@ -58,7 +58,7 @@ export class CollectionRepository extends BaseRepository implements ICollectionR
         .where("owned_card.card_id", "=", cardId)
         .where("occm.collection_id", "=", collectionId)
         .$castTo<OwnedCardQuantityDto>()
-        .$call((q) => logCompilable(this.logService, q))
+        // .$call((q) => logCompilable(this.logService, q))
         .execute()
         .then((qryResult: Array<OwnedCardQuantityDto>) => {
           writeFileSync("c:/data/new-assistant/json/getCardQuantitiesForCardInCollection.json", JSON.stringify(qryResult, null, 2));
@@ -188,7 +188,7 @@ export class CollectionRepository extends BaseRepository implements ICollectionR
               .selectAll()
               .where("collection.id", "=", Number(r.insertId))
               .$castTo<CollectionDto>()
-              .$call((q) => logCompilable(this.logService, q))
+              // .$call((q) => logCompilable(this.logService, q))
               .executeTakeFirst())
             .then((r: CollectionDto) => this.resultFactory.createSuccessResult<CollectionDto>(r));
         });
@@ -209,6 +209,129 @@ export class CollectionRepository extends BaseRepository implements ICollectionR
         });
     } catch (err) {
       return this.resultFactory.createExceptionResultPromise<number>(err);
+    }
+  }
+
+  public async saveQuantitiesForCardInCollection(
+    cardId: string,
+    collectionId: number,
+    quantities: Array<OwnedCardQuantityDto>
+  ): Promise<IResult<Array<OwnedCardQuantityDto>>> {
+    writeFileSync("c:/data/new-assistant/json/saveQuantities.json", JSON.stringify(quantities, null, 2));
+    if (quantities.findIndex((ocq: OwnedCardQuantityDto) => ocq.card_id != cardId) >= 0) {
+      return this.resultFactory.createBadRequestResultPromise<Array<OwnedCardQuantityDto>>();
+    }
+    if (quantities.map((ocq: OwnedCardQuantityDto) => ocq.collectionMaps)
+      .flat(1)
+      .findIndex((cm: OwnedCardCollectionMapDto) => cm.collection_id != collectionId) >= 0
+    ) {
+      return this.resultFactory.createBadRequestResultPromise<Array<OwnedCardQuantityDto>>();
+    }
+
+    try {
+      const now = sqliteUTCTimeStamp();
+      return this.database.transaction()
+        .execute(async (trx: Transaction<DatabaseSchema>) => {
+          // save the new ones
+          const newOwnedCardIds = quantities.filter((ocq: OwnedCardQuantityDto) => ocq.id == 0).map((ocq: OwnedCardQuantityDto) => {
+            return trx
+              .insertInto("owned_card")
+              .values({
+                card_id: ocq.card_id,
+                condition_id: ocq.condition_id,
+                created_at: now,
+                is_foil: ocq.is_foil ? 1 : 0,
+                modified_at: now
+              })
+              .executeTakeFirstOrThrow()
+              .then((r: InsertResult) => trx.selectFrom("owned_card")
+                .select("owned_card.id")
+                .where("owned_card.id", "=", Number(r.insertId))
+                .$castTo<IdSelectResult<number>>()
+                .$call((q) => logCompilable(this.logService, q))
+                .executeTakeFirst()
+                .then((own: IdSelectResult<number>) => {
+                  return Promise.all([
+                    ...ocq.collectionMaps.map((cm: OwnedCardCollectionMapDto) => trx.insertInto("owned_card_collection_map")
+                      .values({
+                        collection_id: cm.collection_id,
+                        created_at: now,
+                        modified_at: now,
+                        owned_card_id: own.id,
+                        quantity: cm.quantity
+                      })
+                      .executeTakeFirst())
+                  ])
+                    .then(() => own.id);
+                })
+              );
+          });
+          // update the existing ones
+          const existingOwnCardIds = quantities.filter((ocq: OwnedCardQuantityDto) => ocq.id > 0).map((ocqq: OwnedCardQuantityDto) => {
+            return trx.updateTable("owned_card")
+              .set({ modified_at: now })
+              .executeTakeFirstOrThrow()
+              .then(async (_r: UpdateResult) => {
+                // save the new ones
+                const newMaps = ocqq.collectionMaps.filter((cm: OwnedCardCollectionMapDto) => cm.owned_card_id == 0).map((cm: OwnedCardCollectionMapDto) => {
+                  return trx.insertInto("owned_card_collection_map")
+                    .values({
+                      collection_id: cm.collection_id,
+                      created_at: now,
+                      modified_at: now,
+                      owned_card_id: ocqq.id,
+                      quantity: cm.quantity
+                    })
+                    .executeTakeFirstOrThrow()
+                    .then((ir: InsertResult) => ir.insertId);
+                });
+                // update the existing ones
+                const existingMaps = ocqq.collectionMaps.filter((cm: OwnedCardCollectionMapDto) => cm.owned_card_id != 0).map((cm: OwnedCardCollectionMapDto) => {
+                  return trx.updateTable("owned_card_collection_map")
+                    .set({
+                      modified_at: now,
+                      quantity: cm.quantity
+                    })
+                    .where("owned_card_collection_map.collection_id", "=", cm.collection_id)
+                    .where("owned_card_collection_map.owned_card_id", "=", cm.owned_card_id)
+                    .executeTakeFirstOrThrow()
+                    .then((ur: UpdateResult) => ur.numUpdatedRows);
+                });
+                return Promise.all([
+                  ...existingMaps,
+                  ...newMaps
+                ]).then(() => ocqq.id);
+              });
+          });
+          return Promise.all([
+            ...newOwnedCardIds,
+            ...existingOwnCardIds
+          ]).then((mapIds: Array<number>) => trx.selectFrom("owned_card")
+            .select((eb) => [
+              ...OWNED_CARD_TABLE_FIELDS,
+              helpers.jsonArrayFrom<OwnedCardCollectionMapDto>(
+                eb.selectFrom("owned_card_collection_map")
+                  .select([...OWNED_CARD_COLLECTION_MAP_TABLE_FIELDS])
+                  .whereRef("owned_card_collection_map.owned_card_id", "=", "owned_card.id")
+                  .where("owned_card_collection_map.collection_id", "=", collectionId)
+                  .$castTo<OwnedCardCollectionMapDto>()
+              )
+                .as("collectionMaps")
+            ])
+            .innerJoin("owned_card_collection_map as occm", "occm.owned_card_id", "owned_card.id")
+            .where("owned_card.id", "in", mapIds)
+            .where("occm.collection_id", "=", collectionId)
+            .$castTo<OwnedCardQuantityDto>()
+            .$call((q) => logCompilable(this.logService, q))
+            .execute()
+            .then((qryResult: Array<OwnedCardQuantityDto>) => {
+              writeFileSync("c:/data/new-assistant/json/savedQuantities.json", JSON.stringify(qryResult, null, 2));
+              return this.resultFactory.createSuccessResult<Array<OwnedCardQuantityDto>>(qryResult);
+            }
+            ));
+        });
+    } catch (err) {
+      return this.resultFactory.createExceptionResultPromise<Array<OwnedCardQuantityDto>>(err);
     }
   }
 

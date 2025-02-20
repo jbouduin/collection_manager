@@ -1,5 +1,5 @@
 import { Props } from "@blueprintjs/core";
 
-export interface CardSymbolProviderProps extends Props {
+export interface CardSymbolRendererProps extends Props {
   cardSymbols: Array<string>;
 }

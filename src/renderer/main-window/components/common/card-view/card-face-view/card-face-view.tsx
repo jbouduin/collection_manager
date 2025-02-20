@@ -2,7 +2,7 @@ import { H5, Section, SectionCard, Tab, Tabs } from "@blueprintjs/core";
 import classNames from "classnames";
 import * as React from "react";
 
-import { CardSymbolProvider } from "../../card-symbol-provider/card-symbol-provider";
+import { CardSymbolRenderer } from "../../card-symbol-renderer";
 import { CardTextView } from "../card-text-view/card-text-view";
 import { CardfaceViewProps } from "./card-face-view.props";
 
@@ -12,7 +12,7 @@ export function CardfaceView(props: CardfaceViewProps) {
     <Section
       collapsible={true}
       compact={true}
-      rightElement={<CardSymbolProvider cardSymbols={props.cardface.manaCost} className="mana-cost-image-in-title" />}
+      rightElement={<CardSymbolRenderer cardSymbols={props.cardface.manaCost} className="mana-cost-image-in-title" />}
       title={
         <>
           <div className="card-header-line-1">

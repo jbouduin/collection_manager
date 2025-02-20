@@ -1,6 +1,6 @@
 import { Cell, CellRenderer } from "@blueprintjs/table";
 import * as React from "react";
-import { CardSymbolProvider } from "../card-symbol-provider/card-symbol-provider";
+import { CardSymbolRenderer } from "../card-symbol-renderer";
 import { CardSetViewmodel } from "../../../viewmodels";
 
 export function textCellRenderer<T>(data: Array<T>, valueCallBack: (card: T) => string): CellRenderer {
@@ -23,7 +23,7 @@ export function cardSetRenderer<T>(data: Array<T>, cardSets: Array<CardSetViewmo
 export function symbolRenderer<T>(data: Array<T>, valueCallBack: (card: T) => Array<string>): CellRenderer {
   return (row: number) => (
     <Cell>
-      <CardSymbolProvider cardSymbols={valueCallBack(data[row])} className="mana-cost-image-in-table" />
+      <CardSymbolRenderer cardSymbols={valueCallBack(data[row])} className="mana-cost-image-in-table" />
     </Cell >
   );
 }

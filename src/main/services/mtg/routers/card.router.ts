@@ -12,21 +12,20 @@ import { ICollectionRepository } from "../../../database/repo/interfaces/collect
 export class CardRouter extends BaseRouter implements IRouter {
   //#region Private fields ----------------------------------------------------
   private readonly cardRepository: ICardRepository;
-  private readonly collectionRepository: ICollectionRepository;
   private readonly oracleRepository: IOracleRepository;
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
   public constructor(
     @inject(REPOSITORIES.CardRepository) cardRepository: ICardRepository,
-    @inject(REPOSITORIES.CollectionRepository) collectionRepository: ICollectionRepository,
+    // @inject(REPOSITORIES.CollectionRepository) collectionRepository: ICollectionRepository,
     @inject(REPOSITORIES.OracleRepository) oracleRepository: IOracleRepository,
     @inject(INFRASTRUCTURE.LogService) logService: ILogService,
     @inject(INFRASTRUCTURE.ResultFacotry) resultFactory: IResultFactory
   ) {
     super(logService, resultFactory);
     this.cardRepository = cardRepository;
-    this.collectionRepository = collectionRepository;
+    // this.collectionRepository = collectionRepository;
     this.oracleRepository = oracleRepository;
   }
   //#endregion
@@ -51,7 +50,7 @@ export class CardRouter extends BaseRouter implements IRouter {
   }
 
   private getCardOwnerShip(request: RoutedRequest<void>): Promise<IResult<Array<OwnedCardQuantityDto>>> {
-    return this.collectionRepository.getCardQuantitiesForCard(request.params["id"]);
+    return container.resolve<ICollectionRepository>(REPOSITORIES.CollectionRepository).getCardQuantitiesForCard(request.params["id"]);
   }
 
   private getRuling(request: RoutedRequest<void>): Promise<IResult<Array<RulingLineDto>>> {

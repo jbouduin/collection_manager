@@ -16,6 +16,14 @@ export class CardConditionViewmodel extends BaseViewmodel<CardConditionDto> {
   public get expression(): string {
     return this._dto.expression;
   }
+
+  public get id(): CardCondition {
+    return this._dto.id;
+  }
+
+  public get sequence(): number {
+    return this._dto.sequence;
+  }
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------

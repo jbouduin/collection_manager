@@ -105,19 +105,24 @@ function createV0_1_0_OwnedCard(db: Kysely<any>): Promise<void> {
   };
   return createTable(db, options)
     .addColumn("card_id", "text", (cb: ColumnDefinitionBuilder) => cb.references("card.id").onDelete("cascade").notNull())
-    .addColumn("condition_id", "text", (cb: ColumnDefinitionBuilder) => cb.references("condition.id").onDelete("cascade").notNull())
+    .addColumn("condition_id", "text", (cb: ColumnDefinitionBuilder) => cb.references("card_condition.id").onDelete("cascade").notNull())
     .addColumn("is_foil", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
     .addColumn("comments", "text")
-    .addUniqueConstraint("CARD_ID_CONDITION_ID_IS_FOILUC", ["card_id", "condition_id", "is_foil"])
+    .addUniqueConstraint("CARD_ID_CONDITION_ID_IS_FOIL_UC", ["card_id", "condition_id", "is_foil"])
     .execute();
 }
 
-// NOW use cretetable options
 function createV0_1_0_OwnedCardCollectionMap(db: Kysely<any>): Promise<void> {
-  return db.schema.createTable("owned_card_collection_map")
-    .addColumn("owned_card_id", "integer", (col: ColumnDefinitionBuilder) => col.references("owned_card.id").onDelete("cascade").notNull())
-    .addColumn("collection_id", "integer", (col: ColumnDefinitionBuilder) => col.references("collection.id").onDelete("cascade").notNull())
+  const options: CreateTableOptions = {
+    tableName: "owned_card_collection_map",
+    isSynced: false,
+    primaryKeyType: "custom",
+    primaryKey: [
+      { columnName: "owned_card_id", dataType: "integer", callback: (col: ColumnDefinitionBuilder) => col.references("owned_card.id").onDelete("cascade").notNull() },
+      { columnName: "collection_id", dataType: "integer", callback: (col: ColumnDefinitionBuilder) => col.references("collection.id").onDelete("cascade").notNull() }
+    ]
+  };
+  return createTable(db, options)
     .addColumn("quantity", "integer", (col: ColumnDefinitionBuilder) => col.notNull())
-    .addPrimaryKeyConstraint("OWNED_CARD_COLLECTION_MAP_PK", ["owned_card_id", "collection_id"])
     .execute();
 }

@@ -3,8 +3,9 @@ import * as React from "react";
 import { MtgCardDetailDto, MtgCardLanguageDto } from "../../../../../common/dto";
 import { IpcProxyService, IpcProxyServiceContext } from "../../../../common/context";
 import { MtgCardDetailViewmodel } from "../../../viewmodels";
-import { CardSymbolProvider } from "../card-symbol-provider/card-symbol-provider";
+import { CardSymbolRenderer } from "../card-symbol-renderer";
 import { LanguageButtonBar } from "../language-button-bar/language-button-bar";
+import { OwnedCardTable } from "../owned-card/own-card-table";
 import { CardfaceView } from "./card-face-view/card-face-view";
 import { CardHeaderView } from "./card-header-view/card-header-view";
 import { CardImageView } from "./card-image-view/card-image-viewr";
@@ -12,7 +13,6 @@ import { CardRulingsView } from "./card-rulings-view/card-rulings-view";
 import { CardViewState } from "./card-view-state";
 import { CardViewProps } from "./card-view.props";
 import { LegalitiesView } from "./legalities-view/legalities-view";
-import { OwnedCardQuantity } from "../owned-card/owned-card-quantity";
 
 
 export function CardView(props: CardViewProps) {
@@ -57,7 +57,7 @@ export function CardView(props: CardViewProps) {
       <Section
         collapsible={true}
         compact={true}
-        rightElement={<CardSymbolProvider cardSymbols={cardViewState.card.cardManacost} className="mana-cost-image-in-title" />}
+        rightElement={<CardSymbolRenderer cardSymbols={cardViewState.card.cardManacost} className="mana-cost-image-in-title" />}
         title={<CardHeaderView card={cardViewState.card} />}
       >
         {
@@ -115,17 +115,20 @@ export function CardView(props: CardViewProps) {
           >
             <Tab
               id="Rulings"
+              key="Rulings"
               panel={<CardRulingsView card={cardViewState.card} />}
               title="Rulings"
             />
             <Tab
               id="Legality"
+              key="Legality"
               panel={<LegalitiesView oracleId={cardViewState.card.oracleId} />}
               title="Legality"
             />
             <Tab
               id="Owned"
-              panel={<OwnedCardQuantity cardId={cardViewState.card.cardId} collectionId={props.collectionId} />}
+              key="Owned"
+              panel={<OwnedCardTable cardId={cardViewState.card.cardId} collectionId={props.collectionId} />}
               title="Ownership"
             />
           </Tabs>

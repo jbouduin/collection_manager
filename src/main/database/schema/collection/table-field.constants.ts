@@ -26,6 +26,7 @@ export const CARD_CONDITION_TABLE_FIELDS: Array<AnyColumnWithTable<DatabaseSchem
 ];
 
 export const OWNED_CARD_TABLE_FIELDS: Array<AnyColumnWithTable<DatabaseSchema, "owned_card">> = [
+  "owned_card.id",
   "owned_card.card_id",
   "owned_card.comments",
   "owned_card.condition_id",

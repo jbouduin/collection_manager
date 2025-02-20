@@ -3,5 +3,6 @@ export * from "./card/card.viewmodel";
 export * from "./card/cardface.viewmodel";
 export * from "./collection/collection.viewmodel";
 export * from "./collection/card-condition.viewmodel";
+export * from "./collection/onwed-card-quantity.viewmodel";
 export * from "./database-view/tree-configuration.viewmodel";
 export * from "./oracle/oracle-viewmodel";

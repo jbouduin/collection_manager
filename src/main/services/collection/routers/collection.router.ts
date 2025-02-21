@@ -32,19 +32,19 @@ export class CollectionRouter extends BaseRouter implements IRouter {
 
   //#region Route callbacks ---------------------------------------------------
   private createCollection(request: RoutedRequest<CollectionDto>): Promise<IResult<CollectionDto>> {
-    return container.resolve<ICollectionRepository>(REPOSITORIES.CollectionRepository).create(request.data);
+    return container.resolve<ICollectionRepository>(REPOSITORIES.CollectionRepository).createCollection(request.data);
   }
 
   private deleteCollection(request: RoutedRequest<void>): Promise<IResult<number>> {
     return this.parseIntegerUrlParameter(request.params["id"], "Collection ID")
       .continueAsync<number>(
-        (r: IResult<number>) => container.resolve<ICollectionRepository>(REPOSITORIES.CollectionRepository).delete(r.data),
+        (r: IResult<number>) => container.resolve<ICollectionRepository>(REPOSITORIES.CollectionRepository).deleteCollection(r.data),
         (r: IResult<number>) => Promise.resolve(r)
       );
   }
 
   private getAll(_request: RoutedRequest<void>): Promise<IResult<Array<CollectionDto>>> {
-    return container.resolve<ICollectionRepository>(REPOSITORIES.CollectionRepository).getAll();
+    return container.resolve<ICollectionRepository>(REPOSITORIES.CollectionRepository).getAllCollections();
   }
 
   private getCardsOfCollection(request: RoutedRequest<void>): Promise<IResult<Array<OwnedCardListDto>>> {
@@ -70,7 +70,7 @@ export class CollectionRouter extends BaseRouter implements IRouter {
           if (r.data != request.data.id) {
             return this.resultFactory.createBadRequestResultPromise<CollectionDto>();
           } else {
-            return container.resolve<ICollectionRepository>(REPOSITORIES.CollectionRepository).update(request.data);
+            return container.resolve<ICollectionRepository>(REPOSITORIES.CollectionRepository).updateCollection(request.data);
           }
         },
         (r: IResult<number>) => r.castAsync<CollectionDto>(null)

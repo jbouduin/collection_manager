@@ -28,7 +28,7 @@ export class CollectionRepository extends BaseRepository implements ICollectionR
 
   //#region ICollectionRepository methods -------------------------------------
   /* eslint-disable @stylistic/function-paren-newline */
-  public getAll(): Promise<IResult<Array<CollectionDto>>> {
+  public getAllCollections(): Promise<IResult<Array<CollectionDto>>> {
     try {
       return this.database.selectFrom("collection")
         .selectAll()
@@ -84,6 +84,7 @@ export class CollectionRepository extends BaseRepository implements ICollectionR
         ])
         .innerJoin("owned_card_collection_map as occm", "occm.owned_card_id", "owned_card.id")
         .where("owned_card.card_id", "=", cardId)
+        .groupBy("owned_card.id")
         .$call((q) => logCompilable(this.logService, q))
         .$castTo<OwnedCardQuantityDto>()
         .execute()
@@ -153,7 +154,7 @@ export class CollectionRepository extends BaseRepository implements ICollectionR
         .innerJoin("owned_card", "owned_card.card_id", "card.id")
         .innerJoin("owned_card_collection_map", "owned_card_collection_map.owned_card_id", "owned_card.id")
         .where("owned_card_collection_map.collection_id", "=", id)
-        .groupBy(["card.id"])
+        .groupBy("card.id")
         .$call((q) => logCompilable(this.logService, q))
         .$castTo<OwnedCardListDto>()
         .execute()
@@ -166,7 +167,7 @@ export class CollectionRepository extends BaseRepository implements ICollectionR
     }
   }
 
-  public create(collection: CollectionDto): Promise<IResult<CollectionDto>> {
+  public createCollection(collection: CollectionDto): Promise<IResult<CollectionDto>> {
     try {
       const now = sqliteUTCTimeStamp();
       return this.database.transaction()
@@ -197,7 +198,7 @@ export class CollectionRepository extends BaseRepository implements ICollectionR
     }
   }
 
-  public delete(id: number): Promise<IResult<number>> {
+  public deleteCollection(id: number): Promise<IResult<number>> {
     try {
       return this.database.transaction()
         .execute(async (trx: Transaction<DatabaseSchema>) => {
@@ -212,12 +213,28 @@ export class CollectionRepository extends BaseRepository implements ICollectionR
     }
   }
 
-  public async saveQuantitiesForCardInCollection(
+  public saveQuantitiesForCard(cardId: string, quantities: Array<OwnedCardQuantityDto>): Promise<IResult<Array<OwnedCardQuantityDto>>> {
+    writeFileSync("c:/data/new-assistant/json/saveQuantitiesForCard.json", JSON.stringify(quantities, null, 2));
+    if (quantities.findIndex((ocq: OwnedCardQuantityDto) => ocq.card_id != cardId) >= 0) {
+      return this.resultFactory.createBadRequestResultPromise<Array<OwnedCardQuantityDto>>();
+    }
+    try {
+      return this.saveQuantities(quantities).then(
+        (_r: IResult<void>) => this.getCardQuantitiesForCard(cardId),
+        // NOW check all methods in repositories and routers for promise rejection
+        (r: Error) => this.resultFactory.createErrorResultPromise<Array<OwnedCardQuantityDto>>(r.message)
+      );
+    } catch (err) {
+      return this.resultFactory.createExceptionResultPromise<Array<OwnedCardQuantityDto>>(err);
+    }
+  }
+
+  public saveQuantitiesForCardInCollection(
     cardId: string,
     collectionId: number,
     quantities: Array<OwnedCardQuantityDto>
   ): Promise<IResult<Array<OwnedCardQuantityDto>>> {
-    writeFileSync("c:/data/new-assistant/json/saveQuantities.json", JSON.stringify(quantities, null, 2));
+    writeFileSync("c:/data/new-assistant/json/saveQuantitiesForCardInCollection.json", JSON.stringify(quantities, null, 2));
     if (quantities.findIndex((ocq: OwnedCardQuantityDto) => ocq.card_id != cardId) >= 0) {
       return this.resultFactory.createBadRequestResultPromise<Array<OwnedCardQuantityDto>>();
     }
@@ -229,113 +246,16 @@ export class CollectionRepository extends BaseRepository implements ICollectionR
     }
 
     try {
-      const now = sqliteUTCTimeStamp();
-      return this.database.transaction()
-        .execute(async (trx: Transaction<DatabaseSchema>) => {
-          // save the new ones
-          const newOwnedCardIds = quantities.filter((ocq: OwnedCardQuantityDto) => ocq.id == 0).map((ocq: OwnedCardQuantityDto) => {
-            return trx
-              .insertInto("owned_card")
-              .values({
-                card_id: ocq.card_id,
-                condition_id: ocq.condition_id,
-                created_at: now,
-                is_foil: ocq.is_foil ? 1 : 0,
-                modified_at: now
-              })
-              .executeTakeFirstOrThrow()
-              .then((r: InsertResult) => trx.selectFrom("owned_card")
-                .select("owned_card.id")
-                .where("owned_card.id", "=", Number(r.insertId))
-                .$castTo<IdSelectResult<number>>()
-                .$call((q) => logCompilable(this.logService, q))
-                .executeTakeFirst()
-                .then((own: IdSelectResult<number>) => {
-                  return Promise.all([
-                    ...ocq.collectionMaps.map((cm: OwnedCardCollectionMapDto) => trx.insertInto("owned_card_collection_map")
-                      .values({
-                        collection_id: cm.collection_id,
-                        created_at: now,
-                        modified_at: now,
-                        owned_card_id: own.id,
-                        quantity: cm.quantity
-                      })
-                      .executeTakeFirst())
-                  ])
-                    .then(() => own.id);
-                })
-              );
-          });
-          // update the existing ones
-          const existingOwnCardIds = quantities.filter((ocq: OwnedCardQuantityDto) => ocq.id > 0).map((ocqq: OwnedCardQuantityDto) => {
-            return trx.updateTable("owned_card")
-              .set({ modified_at: now })
-              .executeTakeFirstOrThrow()
-              .then(async (_r: UpdateResult) => {
-                // save the new ones
-                const newMaps = ocqq.collectionMaps.filter((cm: OwnedCardCollectionMapDto) => cm.owned_card_id == 0).map((cm: OwnedCardCollectionMapDto) => {
-                  return trx.insertInto("owned_card_collection_map")
-                    .values({
-                      collection_id: cm.collection_id,
-                      created_at: now,
-                      modified_at: now,
-                      owned_card_id: ocqq.id,
-                      quantity: cm.quantity
-                    })
-                    .executeTakeFirstOrThrow()
-                    .then((ir: InsertResult) => ir.insertId);
-                });
-                // update the existing ones
-                const existingMaps = ocqq.collectionMaps.filter((cm: OwnedCardCollectionMapDto) => cm.owned_card_id != 0).map((cm: OwnedCardCollectionMapDto) => {
-                  return trx.updateTable("owned_card_collection_map")
-                    .set({
-                      modified_at: now,
-                      quantity: cm.quantity
-                    })
-                    .where("owned_card_collection_map.collection_id", "=", cm.collection_id)
-                    .where("owned_card_collection_map.owned_card_id", "=", cm.owned_card_id)
-                    .executeTakeFirstOrThrow()
-                    .then((ur: UpdateResult) => ur.numUpdatedRows);
-                });
-                return Promise.all([
-                  ...existingMaps,
-                  ...newMaps
-                ]).then(() => ocqq.id);
-              });
-          });
-          return Promise.all([
-            ...newOwnedCardIds,
-            ...existingOwnCardIds
-          ]).then((mapIds: Array<number>) => trx.selectFrom("owned_card")
-            .select((eb) => [
-              ...OWNED_CARD_TABLE_FIELDS,
-              helpers.jsonArrayFrom<OwnedCardCollectionMapDto>(
-                eb.selectFrom("owned_card_collection_map")
-                  .select([...OWNED_CARD_COLLECTION_MAP_TABLE_FIELDS])
-                  .whereRef("owned_card_collection_map.owned_card_id", "=", "owned_card.id")
-                  .where("owned_card_collection_map.collection_id", "=", collectionId)
-                  .$castTo<OwnedCardCollectionMapDto>()
-              )
-                .as("collectionMaps")
-            ])
-            .innerJoin("owned_card_collection_map as occm", "occm.owned_card_id", "owned_card.id")
-            .where("owned_card.id", "in", mapIds)
-            .where("occm.collection_id", "=", collectionId)
-            .$castTo<OwnedCardQuantityDto>()
-            .$call((q) => logCompilable(this.logService, q))
-            .execute()
-            .then((qryResult: Array<OwnedCardQuantityDto>) => {
-              writeFileSync("c:/data/new-assistant/json/savedQuantities.json", JSON.stringify(qryResult, null, 2));
-              return this.resultFactory.createSuccessResult<Array<OwnedCardQuantityDto>>(qryResult);
-            }
-            ));
-        });
+      return this.saveQuantities(quantities).then(
+        (_r: IResult<void>) => this.getCardQuantitiesForCard(cardId),
+        (r: IResult<void>) => r.castAsync<Array<OwnedCardQuantityDto>>(undefined)
+      );
     } catch (err) {
       return this.resultFactory.createExceptionResultPromise<Array<OwnedCardQuantityDto>>(err);
     }
   }
 
-  public update(collection: CollectionDto): Promise<IResult<CollectionDto>> {
+  public updateCollection(collection: CollectionDto): Promise<IResult<CollectionDto>> {
     try {
       return this.database.transaction()
         .execute(async (trx: Transaction<DatabaseSchema>) => {
@@ -352,13 +272,124 @@ export class CollectionRepository extends BaseRepository implements ICollectionR
               .selectAll()
               .where("collection.id", "=", Number(collection.id))
               .$castTo<CollectionDto>()
-              .$call((q) => logCompilable(this.logService, q))
+              // .$call((q) => logCompilable(this.logService, q))
               .executeTakeFirst())
             .then((r: CollectionDto) => this.resultFactory.createSuccessResult<CollectionDto>(r));
         });
     } catch (err) {
       return this.resultFactory.createExceptionResultPromise<CollectionDto>(err);
     }
+  }
+  //#endregion
+
+  //#endregion Auxiliary methods ----------------------------------------------
+  private saveQuantities(quantities: Array<OwnedCardQuantityDto>): Promise<IResult<void>> {
+    const now = sqliteUTCTimeStamp();
+    return this.database.transaction()
+      .execute(async (trx: Transaction<DatabaseSchema>) => {
+        // save the new owned cards -> those with id equal to zero
+        const newOwnedCardIds = quantities.filter((ocq: OwnedCardQuantityDto) => ocq.id == 0).map((ocq: OwnedCardQuantityDto) => {
+          return trx
+            .insertInto("owned_card")
+            .values({
+              card_id: ocq.card_id,
+              condition_id: ocq.condition_id,
+              created_at: now,
+              is_foil: ocq.is_foil ? 1 : 0,
+              modified_at: now
+            })
+            .$call((q) => logCompilable(this.logService, q))
+            .executeTakeFirstOrThrow()
+            .then((r: InsertResult) => trx.selectFrom("owned_card")
+              .select("owned_card.id")
+              .where("owned_card.id", "=", Number(r.insertId))
+              .$castTo<IdSelectResult<number>>()
+              .$call((q) => logCompilable(this.logService, q))
+              .executeTakeFirst()
+              .then((own: IdSelectResult<number>) => {
+                // as this is a new owned_card, we can just save all collectionMaps because they also have to be new
+                return Promise.all([
+                  ...ocq.collectionMaps.map((cm: OwnedCardCollectionMapDto) => trx.insertInto("owned_card_collection_map")
+                    .values({
+                      collection_id: cm.collection_id,
+                      created_at: now,
+                      modified_at: now,
+                      owned_card_id: own.id,
+                      quantity: cm.quantity
+                    })
+                    .$call((q) => logCompilable(this.logService, q))
+                    .executeTakeFirst())
+                ])
+                  .then(() => own.id);
+              })
+            );
+        });
+        // update the existing own cards -> those who have an id
+        const existingOwnCardIds = quantities.filter((ocq: OwnedCardQuantityDto) => ocq.id > 0).map((ocqq: OwnedCardQuantityDto) => {
+          return trx.updateTable("owned_card")
+            .set({ modified_at: now })
+            .where("owned_card.id", "=", ocqq.id)
+            .executeTakeFirstOrThrow()
+            .then(async (_r: UpdateResult) => {
+              // save the new ones
+              const newMaps = ocqq.collectionMaps.filter((cm: OwnedCardCollectionMapDto) => cm.owned_card_id == 0).map((cm: OwnedCardCollectionMapDto) => {
+                return trx.insertInto("owned_card_collection_map")
+                  .values({
+                    collection_id: cm.collection_id,
+                    created_at: now,
+                    modified_at: now,
+                    owned_card_id: ocqq.id,
+                    quantity: cm.quantity
+                  })
+                  .executeTakeFirstOrThrow()
+                  .then((ir: InsertResult) => ir.insertId);
+              });
+              const existingMaps = ocqq.collectionMaps.filter((cm: OwnedCardCollectionMapDto) => cm.owned_card_id != 0).map((cm: OwnedCardCollectionMapDto) => {
+                if (cm.quantity == 0) {
+                  // delete maps with quantity 0
+                  return trx.deleteFrom("owned_card_collection_map")
+                    .where("owned_card_collection_map.collection_id", "=", cm.collection_id)
+                    .where("owned_card_collection_map.owned_card_id", "=", cm.owned_card_id)
+                    .executeTakeFirstOrThrow()
+                    .then((ur: DeleteResult) => ur.numDeletedRows);
+                } else {
+                  // update the existing ones with the new quantity
+                  return trx.updateTable("owned_card_collection_map")
+                    .set({
+                      modified_at: now,
+                      quantity: cm.quantity
+                    })
+                    .where("owned_card_collection_map.collection_id", "=", cm.collection_id)
+                    .where("owned_card_collection_map.owned_card_id", "=", cm.owned_card_id)
+                    .executeTakeFirstOrThrow()
+                    .then((ur: UpdateResult) => ur.numUpdatedRows);
+                }
+              });
+              return Promise.all([
+                ...existingMaps,
+                ...newMaps
+              ]);
+            });
+        });
+        return Promise
+          .all([
+            ...newOwnedCardIds,
+            ...existingOwnCardIds
+          ])
+          .then(() => trx
+            .deleteFrom("owned_card")
+            .where(
+              (eb) => eb.not(eb.exists(
+                eb.selectFrom("owned_card_collection_map")
+                  .select("owned_card_collection_map.owned_card_id")
+                  .whereRef("owned_card_collection_map.owned_card_id", "=", "owned_card.id")
+              ))
+            )
+            .$call((q) => logCompilable(this.logService, q))
+            .execute()
+          )
+          .then(() => this.resultFactory.createSuccessResult<void>(undefined));
+      });
   }
   //#endregion
 }

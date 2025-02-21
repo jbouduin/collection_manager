@@ -36,6 +36,7 @@ export class CardRouter extends BaseRouter implements IRouter {
     router.registerGetRoute("/card/:id/collection", this.getCardOwnerShip.bind(this) as RouteCallback);
     router.registerGetRoute("/card/query", this.queryCards.bind(this) as RouteCallback);
     router.registerGetRoute("/card/:id", this.getCard.bind(this) as RouteCallback);
+    router.registerPostRoute("/card/:id/collection", this.updateQuantities.bind(this) as RouteCallback);
   }
   //#endregion
 
@@ -80,6 +81,11 @@ export class CardRouter extends BaseRouter implements IRouter {
 
   private queryCards(request: RoutedRequest<void>): Promise<IResult<Array<MtgCardListDto>>> {
     return this.cardRepository.queryCards(request.queryParams["sets"].split(","));
+  }
+
+  private updateQuantities(request: RoutedRequest<Array<OwnedCardQuantityDto>>): Promise<IResult<Array<OwnedCardQuantityDto>>> {
+    return container.resolve<ICollectionRepository>(REPOSITORIES.CollectionRepository)
+      .saveQuantitiesForCard(request.params["id"], request.data);
   }
   //#endregion
 }

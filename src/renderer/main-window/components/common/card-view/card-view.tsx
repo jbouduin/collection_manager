@@ -5,7 +5,7 @@ import { IpcProxyService, IpcProxyServiceContext } from "../../../../common/cont
 import { MtgCardDetailViewmodel } from "../../../viewmodels";
 import { CardSymbolRenderer } from "../card-symbol-renderer";
 import { LanguageButtonBar } from "../language-button-bar/language-button-bar";
-import { OwnedCardTable } from "../owned-card/own-card-table";
+import { OwnedCardPanel } from "../owned-card/own-card-panel";
 import { CardfaceView } from "./card-face-view/card-face-view";
 import { CardHeaderView } from "./card-header-view/card-header-view";
 import { CardImageView } from "./card-image-view/card-image-viewr";
@@ -128,7 +128,7 @@ export function CardView(props: CardViewProps) {
             <Tab
               id="Owned"
               key="Owned"
-              panel={<OwnedCardTable cardId={cardViewState.card.cardId} collectionId={props.collectionId} />}
+              panel={<OwnedCardPanel cardId={cardViewState.card.cardId} collectionId={props.collectionId} />}
               title="Ownership"
             />
           </Tabs>

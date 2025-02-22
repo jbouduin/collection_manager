@@ -25,6 +25,7 @@ export function ConfigurationView(props: ConfigurationViewProps) {
           panel={
             <DataConfigurationView
               configuration={props.configuration.dataConfigurationViewmodel}
+              isFirstUse={props.configuration.isFirstUse}
               onConfigurationChanged={onDataConfigurationChanged}
             />
           }

@@ -70,20 +70,30 @@ export function Desktop(_props: Props) {
   );
   //#endregion
 
-  //#region Event handling ----------------------------------------------------
+  //#region Event handling -> view selection ----------------------------------
   function onDesktopViewSelectionClick(desktopView: EDesktopView): void {
     const newState = clone(desktopState);
     newState.currentView = desktopView;
     setDesktopState(newState);
   }
+  //#endregion
 
+  //#region Event handling -> Settings Dialog ---------------------------------
   function setSettingsDialogOpen(open: boolean): void {
-    // NOW here we have to retrieve settings again
-    const newState = clone(desktopState);
+    const newState = cloneDeep(desktopState);
     newState.settingsDialogOpen = open;
     setDesktopState(newState);
   }
 
+  function afterSaveSettings(saved: ConfigurationDto): void {
+    const newState = cloneDeep(desktopState);
+    newState.settingsDialogOpen = false;
+    newState.rendererConfiguration = saved.rendererConfiguration;
+    setDesktopState(newState);
+  }
+  //#endregion
+
+  //#region Event handling -> Sync Dialog -------------------------------------
   function setSyncDialogOpen(open: boolean): void {
     // NOW here we have to retrieve cardsets and card symbols
     const newState = clone(desktopState);
@@ -91,6 +101,14 @@ export function Desktop(_props: Props) {
     setDesktopState(newState);
   }
 
+  function openSyncDialog(): void {
+    const newState = clone(desktopState);
+    newState.syncDialogOpen = true;
+    setDesktopState(newState);
+  }
+  //#endregion
+
+  //#region Event handling -> Splashscreen -----------------------------------
   function setSplashScreenOpen(open: boolean): void {
     const newState = clone(desktopState);
     newState.splashScreenOpen = open;
@@ -99,7 +117,10 @@ export function Desktop(_props: Props) {
     }
     setDesktopState(newState);
   }
+  //#endregion
 
+  // NOW can we move this dialog to left panel ?
+  //#region Event handling -> Card set ----------------------------------------
   function setCardSetDialogOpen(open: boolean, cardSet?: CardSetViewmodel): void {
     const newState = clone(desktopState);
     newState.cardSetDialogOpen = open;
@@ -171,7 +192,7 @@ export function Desktop(_props: Props) {
                         currentView={desktopState.currentView}
                         onDesktopViewSelectionClick={onDesktopViewSelectionClick}
                         onSettingsMenuClick={() => setSettingsDialogOpen(true)}
-                        onSyncMenuClick={() => setSyncDialogOpen(true)}
+                        onSyncMenuClick={openSyncDialog}
                       />
                       <div className="main-panel">
                         {
@@ -188,15 +209,22 @@ export function Desktop(_props: Props) {
                         }
                       </div>
                     </Card>
-                    <SettingsDialog
-                      isOpen={desktopState.settingsDialogOpen}
-                      onDialogClose={() => setSettingsDialogOpen(false)}
-                    />
-                    <SyncDialog
-                      isOpen={desktopState.syncDialogOpen}
-                      onDialogClose={() => setSyncDialogOpen(false)}
-                      onOkClick={startSync}
-                    />
+                    {
+                      desktopState.settingsDialogOpen &&
+                      <SettingsDialog
+                        afterSave={(saved: ConfigurationDto) => afterSaveSettings(saved)}
+                        isOpen={desktopState.settingsDialogOpen}
+                        onDialogClose={() => setSettingsDialogOpen(false)}
+                      />
+                    }
+                    {
+                      desktopState.syncDialogOpen &&
+                      <SyncDialog
+                        isOpen={desktopState.syncDialogOpen}
+                        onDialogClose={() => setSyncDialogOpen(false)}
+                        onOkClick={startSync}
+                      />
+                    }
                     <SplashScreen
                       isOpen={desktopState.splashScreenOpen}
                       onDialogClose={() => setSplashScreenOpen(false)}

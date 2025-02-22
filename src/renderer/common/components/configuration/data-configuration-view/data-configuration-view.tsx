@@ -8,12 +8,14 @@ export function DataConfigurationView(props: DataConfigurationViewProps) {
   return (
     <SectionCard padded={false}>
       <FormGroup
+        disabled={!props.isFirstUse}
         key="root-data-directory"
         label="Data directory"
         labelFor="root-data-directory"
         labelInfo="required"
       >
         <InputGroup
+          disabled={!props.isFirstUse}
           id="root-data-directory"
           inputMode="text"
           onChange={
@@ -27,12 +29,14 @@ export function DataConfigurationView(props: DataConfigurationViewProps) {
         />
       </FormGroup>
       <FormGroup
+        disabled={!props.isFirstUse}
         key="database-name"
         label="Database name"
         labelFor="database-name"
         labelInfo="required"
       >
         <InputGroup
+          disabled={!props.isFirstUse}
           id="database-name"
           inputMode="text"
           onChange={
@@ -47,12 +51,14 @@ export function DataConfigurationView(props: DataConfigurationViewProps) {
         />
       </FormGroup>
       <FormGroup
+        disabled={!props.isFirstUse}
         key="cache-directory"
         label="Cache directory"
         labelFor="cache-directory"
         labelInfo="required"
       >
         <InputGroup
+          disabled={!props.isFirstUse}
           id="cache-directory"
           inputMode="text"
           onChange={

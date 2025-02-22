@@ -8,9 +8,10 @@ import { ConfigurationWrapper } from "../../../../common/components/configuratio
 import { IpcProxyService, IpcProxyServiceContext } from "../../../../common/context";
 import { ConfigurationViewModel } from "../../../../common/viewmodels/configuration/configuration.viewmodel";
 import { ConfigurationContext } from "../../context";
+import { SettingsDialogProps } from "./settings-dialog.props";
 
 
-export function SettingsDialog(props: BaseDialogProps) {
+export function SettingsDialog(props: SettingsDialogProps) {
   //#region State -----------------------------------------------------------------------
   const [configuration, setConfiguration] = React.useState<ConfigurationViewModel>(undefined);
   //#endregion
@@ -54,7 +55,9 @@ export function SettingsDialog(props: BaseDialogProps) {
                 void ipcProxyService
                   .putData<ConfigurationDto, ConfigurationDto>("/configuration", toSave)
                   .then(
-                    (_saved: ConfigurationDto) => props.onDialogClose(),
+                    (saved: ConfigurationDto) => {
+                      props.afterSave(saved)
+                    },
                     noop
                   );
               }}

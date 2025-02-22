@@ -1,6 +1,6 @@
 import { Card, Classes, Props } from "@blueprintjs/core";
 import classNames from "classnames";
-import { clone, cloneDeep } from "lodash";
+import { cloneDeep } from "lodash";
 import * as React from "react";
 import { CardConditionDto, ConfigurationDto, LanguageDto, MtgCardSetDto, SyncParamDto } from "../../../../common/dto";
 import { DisplayValueService, DisplayValueServiceContext, IpcProxyService, IpcProxyServiceContext } from "../../../common/context";
@@ -8,7 +8,7 @@ import { CardConditionViewmodel, CardSetViewmodel } from "../../viewmodels";
 import { CardConditionContext, CardSetContext, CardSymbolContext, ConfigurationContext, LanguagesContext } from "../context";
 import { ButtonBar } from "./button-bar/button-bar";
 import { EDesktopView } from "./desktop-view.enum";
-import { DesktopState } from "./desktop.state";
+import { AfterSplashScreenClose, DesktopState } from "./desktop.state";
 import { SettingsDialog } from "./settings-dialog/settings-dialog";
 import { SplashScreen } from "./splash-screen/splash-screen";
 import { SyncDialog } from "./sync-dialog/sync-dialog";
@@ -19,6 +19,7 @@ import { MtgView } from "./views/mtg-view/mtg-view";
 export function Desktop(_props: Props) {
   //#region State -------------------------------------------------------------
   const initialState: DesktopState = {
+    afterSplashScreenClose: null,
     initialized: false,
     currentView: EDesktopView.Database,
     settingsDialogOpen: false,
@@ -70,7 +71,7 @@ export function Desktop(_props: Props) {
 
   //#region Event handling -> view selection ----------------------------------
   function onDesktopViewSelectionClick(desktopView: EDesktopView): void {
-    const newState = clone(desktopState);
+    const newState = cloneDeep(desktopState);
     newState.currentView = desktopView;
     setDesktopState(newState);
   }
@@ -93,33 +94,38 @@ export function Desktop(_props: Props) {
 
   //#region Event handling -> Sync Dialog -------------------------------------
   function setSyncDialogOpen(open: boolean): void {
-    // NOW here we have to retrieve cardsets and card symbols
-    const newState = clone(desktopState);
+    const newState = cloneDeep(desktopState);
     newState.syncDialogOpen = open;
-    setDesktopState(newState);
-  }
-
-  function openSyncDialog(): void {
-    const newState = clone(desktopState);
-    newState.syncDialogOpen = true;
     setDesktopState(newState);
   }
   //#endregion
 
   //#region Event handling -> Splashscreen -----------------------------------
-  function setSplashScreenOpen(open: boolean): void {
-    const newState = clone(desktopState);
-    newState.splashScreenOpen = open;
-    if (open) {
-      newState.syncDialogOpen = false;
+  async function closeSplashScreen(): Promise<void> {
+    if (desktopState.afterSplashScreenClose != null) {
+      const newState = cloneDeep(desktopState);
+      newState.splashScreenOpen = false;
+      newState.afterSplashScreenClose = null;
+      if (desktopState.afterSplashScreenClose.includes("CardSymbols")) {
+        newState.symbolSvgs = await ipcProxyService.getData<Map<string, string>>("/card-symbol/svg");
+      }
+      if (desktopState.afterSplashScreenClose.includes("CardSets")) {
+        newState.cardSets = await ipcProxyService
+          .getData<Array<MtgCardSetDto>>("/card-set")
+          .then((r: Array<MtgCardSetDto>) => r.map((cardSet: MtgCardSetDto) => new CardSetViewmodel(cardSet)));
+      }
+      setDesktopState(newState);
+    } else {
+      const newState = cloneDeep(desktopState);
+      newState.splashScreenOpen = false;
+      setDesktopState(newState);
     }
-    setDesktopState(newState);
   }
   //#endregion
 
   //#region Event handling -> Card set ----------------------------------------
   function synchronizeSet(code: string): void {
-    const newState = clone(desktopState);
+    const newState = cloneDeep(desktopState);
     newState.splashScreenOpen = true;
     setDesktopState(newState);
 
@@ -140,7 +146,7 @@ export function Desktop(_props: Props) {
   }
 
   function synchronizeCollection(ids: Array<string>): void {
-    const newState = clone(desktopState);
+    const newState = cloneDeep(desktopState);
     newState.splashScreenOpen = true;
     setDesktopState(newState);
 
@@ -161,7 +167,19 @@ export function Desktop(_props: Props) {
   }
 
   function startSync(syncParam: SyncParamDto): void {
-    setSplashScreenOpen(true);
+    const newState = cloneDeep(desktopState);
+    newState.syncDialogOpen = false;
+    newState.splashScreenOpen = true;
+    if (syncParam.syncCardSets || syncParam.syncCardSymbols) {
+      newState.afterSplashScreenClose = new Array<AfterSplashScreenClose>();
+      if (syncParam.syncCardSets) {
+        newState.afterSplashScreenClose.push("CardSets");
+      }
+      if (syncParam.syncCardSymbols) {
+        newState.afterSplashScreenClose.push("CardSymbols");
+      }
+    }
+    setDesktopState(newState);
     void ipcProxyService.postData<SyncParamDto, never>("/mtg-sync", syncParam);
   }
   //#endregion
@@ -182,7 +200,7 @@ export function Desktop(_props: Props) {
                         currentView={desktopState.currentView}
                         onDesktopViewSelectionClick={onDesktopViewSelectionClick}
                         onSettingsMenuClick={() => setSettingsDialogOpen(true)}
-                        onSyncMenuClick={openSyncDialog}
+                        onSyncMenuClick={() => setSyncDialogOpen(true)}
                       />
                       <div className="main-panel">
                         {
@@ -215,10 +233,13 @@ export function Desktop(_props: Props) {
                         onOkClick={startSync}
                       />
                     }
-                    <SplashScreen
-                      isOpen={desktopState.splashScreenOpen}
-                      onDialogClose={() => setSplashScreenOpen(false)}
-                    />
+                    {
+                      desktopState.splashScreenOpen &&
+                      <SplashScreen
+                        isOpen={desktopState.splashScreenOpen}
+                        onDialogClose={() => void closeSplashScreen()}
+                      />
+                    }
                   </CardConditionContext.Provider>
                 </CardSetContext.Provider>
               </CardSymbolContext.Provider>

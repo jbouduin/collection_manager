@@ -219,11 +219,7 @@ export class CollectionRepository extends BaseRepository implements ICollectionR
       return this.resultFactory.createBadRequestResultPromise<Array<OwnedCardQuantityDto>>();
     }
     try {
-      return this.saveQuantities(quantities).then(
-        (_r: IResult<void>) => this.getCardQuantitiesForCard(cardId),
-        // NOW check all methods in repositories and routers for promise rejection
-        (r: Error) => this.resultFactory.createErrorResultPromise<Array<OwnedCardQuantityDto>>(r.message)
-      );
+      return this.saveQuantities(quantities).then((_r: IResult<void>) => this.getCardQuantitiesForCard(cardId));
     } catch (err) {
       return this.resultFactory.createExceptionResultPromise<Array<OwnedCardQuantityDto>>(err);
     }
@@ -246,10 +242,7 @@ export class CollectionRepository extends BaseRepository implements ICollectionR
     }
 
     try {
-      return this.saveQuantities(quantities).then(
-        (_r: IResult<void>) => this.getCardQuantitiesForCard(cardId),
-        (r: IResult<void>) => r.castAsync<Array<OwnedCardQuantityDto>>(undefined)
-      );
+      return this.saveQuantities(quantities).then((_r: IResult<void>) => this.getCardQuantitiesForCard(cardId));
     } catch (err) {
       return this.resultFactory.createExceptionResultPromise<Array<OwnedCardQuantityDto>>(err);
     }

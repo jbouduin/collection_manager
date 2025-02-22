@@ -35,10 +35,14 @@ function createV0_1_0_Collection(db: Kysely<any>) {
 }
 
 function populateV0_1_0_Collection(db: Kysely<any>): Promise<InsertResult> {
+  /*
+   * add one single system value, which will be the parent for all folders and collections created in the root.
+   * This value will not be retrieved
+   */
   return db.insertInto("collection")
     .values({
       parent_id: null,
-      name: "All",
+      name: "System root",
       description: null,
       is_system: 1,
       is_folder: 1,

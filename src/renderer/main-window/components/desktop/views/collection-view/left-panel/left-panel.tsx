@@ -37,7 +37,10 @@ export function LeftPanel(props: LeftPanelProps) {
   }
 
   function buildTree(data: Array<CollectionTreeViewmodel>, __filterProps: TreeConfigurationViewmodel): Array<TreeNodeInfo<string | CollectionTreeViewmodel>> {
-    return buildTreeByParentRecursive(data, null);
+    const treeFromRoot = buildTreeByParentRecursive(data, null);
+    return treeFromRoot.length > 0
+      ? treeFromRoot[0].childNodes
+      : treeFromRoot;
   }
   //#endregion
 
@@ -46,27 +49,29 @@ export function LeftPanel(props: LeftPanelProps) {
     const savedDto: CollectionDto = dialogData.dialogAction == "edit"
       ? await ipcProxyService.putData<CollectionDto, CollectionDto>(`/collection/${collection.id}`, collection.dto)
       : await ipcProxyService.postData<CollectionDto, CollectionDto>("/collection", collection.dto);
-    collections.forEach((c: CollectionTreeViewmodel) => c.isSelected = false);
-    const newCollectionList = cloneDeep(collections);
-    if (dialogData.dialogAction == "edit") {
-      const indexOf = newCollectionList.findIndex((coll: CollectionTreeViewmodel) => collection.id == coll.id);
-      const savedCollection = new CollectionTreeViewmodel(savedDto, true, newCollectionList[indexOf].isExpanded);
-      newCollectionList[indexOf] = savedCollection;
-    } else {
-      newCollectionList.push(new CollectionTreeViewmodel(savedDto, true, false));
-    }
-    // expand the parents
-    let parentCollection = savedDto.parent_id != null
-      ? newCollectionList.find((c: CollectionTreeViewmodel) => c.id == savedDto.parent_id)
-      : null;
-    while (parentCollection != null) {
-      parentCollection.isExpanded = true;
-      parentCollection = parentCollection.parentId != null
-        ? newCollectionList.find((c: CollectionTreeViewmodel) => c.id == parentCollection.parentId)
+    if (savedDto) {
+      collections.forEach((c: CollectionTreeViewmodel) => c.isSelected = false);
+      const newCollectionList = cloneDeep(collections);
+      if (dialogData.dialogAction == "edit") {
+        const indexOf = newCollectionList.findIndex((coll: CollectionTreeViewmodel) => collection.id == coll.id);
+        const savedCollection = new CollectionTreeViewmodel(savedDto, true, newCollectionList[indexOf].isExpanded);
+        newCollectionList[indexOf] = savedCollection;
+      } else {
+        newCollectionList.push(new CollectionTreeViewmodel(savedDto, true, false));
+      }
+      // expand the parents
+      let parentCollection = savedDto.parent_id != null
+        ? newCollectionList.find((c: CollectionTreeViewmodel) => c.id == savedDto.parent_id)
         : null;
+      while (parentCollection != null) {
+        parentCollection.isExpanded = true;
+        parentCollection = parentCollection.parentId != null
+          ? newCollectionList.find((c: CollectionTreeViewmodel) => c.id == parentCollection.parentId)
+          : null;
+      }
+      setCollections(newCollectionList);
+      setDialogData(null);
     }
-    setCollections(newCollectionList);
-    setDialogData(null);
   }
 
   function onCollectionSelected(collections: Array<CollectionTreeViewmodel>): void {
@@ -82,6 +87,9 @@ export function LeftPanel(props: LeftPanelProps) {
   }
 
   function onAddFolder(parentId: number | null): void {
+    if (parentId == null) {
+      parentId = collections.find((c: CollectionTreeViewmodel) => c.parentId == null).id;
+    }
     const newDto: CollectionDto = {
       id: tempid++,
       parent_id: parentId,
@@ -100,6 +108,9 @@ export function LeftPanel(props: LeftPanelProps) {
   }
 
   function onAddCollection(parentId: number | null): void {
+    if (parentId == null) {
+      parentId = collections.find((c: CollectionTreeViewmodel) => c.parentId == null).id;
+    }
     const newDto: CollectionDto = {
       id: tempid++,
       parent_id: parentId,
@@ -117,7 +128,7 @@ export function LeftPanel(props: LeftPanelProps) {
     setDialogData(newDialogData);
   }
 
-  async function onDelete(id: number): Promise <void> {
+  async function onDelete(id: number): Promise<void> {
     // TODO ask confirmation
     const deletedRows = await ipcProxyService.deleteData(`/collection/${id}`);
     if (deletedRows > 0) {

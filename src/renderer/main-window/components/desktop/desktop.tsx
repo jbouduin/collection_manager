@@ -3,19 +3,18 @@ import classNames from "classnames";
 import { clone, cloneDeep } from "lodash";
 import * as React from "react";
 import { CardConditionDto, ConfigurationDto, LanguageDto, MtgCardSetDto, SyncParamDto } from "../../../../common/dto";
+import { DisplayValueService, DisplayValueServiceContext, IpcProxyService, IpcProxyServiceContext } from "../../../common/context";
 import { CardConditionViewmodel, CardSetViewmodel } from "../../viewmodels";
 import { CardConditionContext, CardSetContext, CardSymbolContext, ConfigurationContext, LanguagesContext } from "../context";
 import { ButtonBar } from "./button-bar/button-bar";
-import { CardSetDialog } from "./card-set-dialog/card-set-dialog";
 import { EDesktopView } from "./desktop-view.enum";
 import { DesktopState } from "./desktop.state";
 import { SettingsDialog } from "./settings-dialog/settings-dialog";
 import { SplashScreen } from "./splash-screen/splash-screen";
 import { SyncDialog } from "./sync-dialog/sync-dialog";
 import { CollectionView } from "./views/collection-view/collection-view";
-import { MtgView } from "./views/mtg-view/mtg-view";
 import { DeckView } from "./views/deck-view/deck-view";
-import { DisplayValueService, DisplayValueServiceContext, IpcProxyService, IpcProxyServiceContext } from "../../../common/context";
+import { MtgView } from "./views/mtg-view/mtg-view";
 
 export function Desktop(_props: Props) {
   //#region State -------------------------------------------------------------
@@ -26,7 +25,6 @@ export function Desktop(_props: Props) {
     syncDialogOpen: false,
     splashScreenOpen: false,
     cardSetDialogOpen: false,
-    cardSet: null,
     rendererConfiguration: null,
     cardConditions: new Array<CardConditionViewmodel>(),
     cardSets: new Array<CardSetViewmodel>(),
@@ -119,15 +117,7 @@ export function Desktop(_props: Props) {
   }
   //#endregion
 
-  // NOW can we move this dialog to left panel ?
   //#region Event handling -> Card set ----------------------------------------
-  function setCardSetDialogOpen(open: boolean, cardSet?: CardSetViewmodel): void {
-    const newState = clone(desktopState);
-    newState.cardSetDialogOpen = open;
-    newState.cardSet = cardSet;
-    setDesktopState(newState);
-  }
-
   function synchronizeSet(code: string): void {
     const newState = clone(desktopState);
     newState.splashScreenOpen = true;
@@ -197,7 +187,7 @@ export function Desktop(_props: Props) {
                       <div className="main-panel">
                         {
                           desktopState.currentView == EDesktopView.Database &&
-                          <MtgView onCardSetDialog={(cardSet: CardSetViewmodel) => setCardSetDialogOpen(true, cardSet)} onSynchronizeSet={synchronizeSet} />
+                          <MtgView onSynchronizeSet={synchronizeSet} />
                         }
                         {
                           desktopState.currentView == EDesktopView.Collection &&
@@ -228,12 +218,6 @@ export function Desktop(_props: Props) {
                     <SplashScreen
                       isOpen={desktopState.splashScreenOpen}
                       onDialogClose={() => setSplashScreenOpen(false)}
-                    />
-                    <CardSetDialog
-                      cardSetId={desktopState.cardSet?.id}
-                      cardSetSvg={desktopState.cardSet?.cardSetSvg}
-                      isOpen={desktopState.cardSetDialogOpen}
-                      onDialogClose={() => setCardSetDialogOpen(false)}
                     />
                   </CardConditionContext.Provider>
                 </CardSetContext.Provider>

@@ -9,7 +9,6 @@ export interface DesktopState {
   settingsDialogOpen: boolean;
   syncDialogOpen: boolean;
   splashScreenOpen: boolean;
-  cardSet?: CardSetViewmodel;
   rendererConfiguration: RendererConfigurationDto;
   cardConditions: Array<CardConditionViewmodel>;
   cardSets: Array<CardSetViewmodel>;

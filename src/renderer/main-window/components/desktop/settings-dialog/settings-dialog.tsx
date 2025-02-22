@@ -3,7 +3,6 @@ import { noop } from "lodash";
 import * as React from "react";
 import { RendererConfigurationDto } from "../../../../../common/dto";
 import { ConfigurationDto } from "../../../../../common/dto/";
-import { BaseDialogProps } from "../../../../common/components/base-dialog-props";
 import { ConfigurationWrapper } from "../../../../common/components/configuration/configuration-wrapper/configuration-wrapper";
 import { IpcProxyService, IpcProxyServiceContext } from "../../../../common/context";
 import { ConfigurationViewModel } from "../../../../common/viewmodels/configuration/configuration.viewmodel";
@@ -55,9 +54,7 @@ export function SettingsDialog(props: SettingsDialogProps) {
                 void ipcProxyService
                   .putData<ConfigurationDto, ConfigurationDto>("/configuration", toSave)
                   .then(
-                    (saved: ConfigurationDto) => {
-                      props.afterSave(saved)
-                    },
+                    (saved: ConfigurationDto) => props.afterSave(saved),
                     noop
                   );
               }}

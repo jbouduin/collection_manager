@@ -8,10 +8,12 @@ import { SvgProvider } from "../../../../common/svg-provider/svg-provider";
 import { CardSetContext } from "../../../../context";
 import { HeaderView } from "./header-view/header-view";
 import { LeftPanelProps } from "./left-panel.props";
+import { CardSetDialog } from "../../../card-set-dialog/card-set-dialog";
 
 export function LeftPanel(props: LeftPanelProps) {
   //#region State -------------------------------------------------------------
   const [state, setState] = React.useState<TreeConfigurationViewmodel>(new TreeConfigurationViewmodel(props.configuration));
+  const [selectedCardSetForDialog, setSelectedCardSetForDialog] = React.useState<CardSetViewmodel>(undefined);
   //#endregion
 
   //#region event handling ----------------------------------------------------
@@ -107,10 +109,20 @@ export function LeftPanel(props: LeftPanelProps) {
           )
         }
       </CardSetContext.Consumer>
+      {
+        selectedCardSetForDialog &&
+        <CardSetDialog
+          cardSetId={selectedCardSetForDialog.id}
+          cardSetSvg={selectedCardSetForDialog.cardSetSvg}
+          isOpen={true}
+          onDialogClose={() => setSelectedCardSetForDialog(null)}
+        />
+      }
     </div>
   );
   //#endregion
 
+  //#region Auxiliary tree related methods ------------------------------------
   function buildTreeByParent(cardSets: Array<CardSetViewmodel>): Array<TreeNodeInfo<CardSetViewmodel>> {
     return buildTreeByParentRecursive(cardSets, null);
   }
@@ -190,7 +202,7 @@ export function LeftPanel(props: LeftPanelProps) {
                 onClick={
                   (e) => {
                     e.preventDefault();
-                    props.onCardSetDialog(cardSet);
+                    setSelectedCardSetForDialog(cardSet);
                   }
                 }
                 text="Properties"
@@ -213,4 +225,5 @@ export function LeftPanel(props: LeftPanelProps) {
     };
     return node;
   }
+  //#endregion
 }

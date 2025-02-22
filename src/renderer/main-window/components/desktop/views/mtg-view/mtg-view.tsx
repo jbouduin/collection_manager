@@ -36,7 +36,6 @@ export function MtgView(props: MtgViewProps) {
               <Panel defaultSize={20}>
                 <LeftPanel
                   configuration={configuration.databaseViewTreeConfiguration}
-                  onCardSetDialog={props.onCardSetDialog}
                   onSetsSelected={onCardSetsSelected}
                   onSynchronizeSet={props.onSynchronizeSet}
                 />

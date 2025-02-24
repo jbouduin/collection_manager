@@ -38,10 +38,6 @@ export function LeftPanel(props: LeftPanelProps) {
   //#endregion
 
   //#region Basetree props ----------------------------------------------------
-  function applyFilterProps(data: Array<CollectionTreeViewmodel>, _filterProps: TreeConfigurationViewmodel): Array<CollectionTreeViewmodel> {
-    return data;
-  }
-
   function buildTree(data: Array<CollectionTreeViewmodel>, __filterProps: TreeConfigurationViewmodel): Array<TreeNodeInfo<string | CollectionTreeViewmodel>> {
     const treeFromRoot = buildTreeByParentRecursive(data, null);
     return treeFromRoot.length > 0
@@ -188,7 +184,6 @@ export function LeftPanel(props: LeftPanelProps) {
           key="root"
         >
           <Treeview
-            applyFilterProps={applyFilterProps}
             buildTree={buildTree}
             data={collections}
             filterProps={undefined}

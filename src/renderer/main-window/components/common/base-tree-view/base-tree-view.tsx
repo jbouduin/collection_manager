@@ -15,7 +15,9 @@ export function BaseTreeView<TData, TFilter>(props: BaseTreeViewProps<TData, TFi
     () => {
       dispatch({
         type: "FILTER",
-        payload: props.buildTree(props.applyFilterProps(props.data, props.filterProps), props.filterProps)
+        payload: props.filterProps
+          ? props.buildTree(props.filterProps.applyFilterProps(props.data, props.filterProps.filter), props.filterProps.filter)
+          : props.buildTree(props.data, undefined)
       });
     },
     [props.filterProps, props.data]

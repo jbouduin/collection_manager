@@ -106,12 +106,10 @@ export function LeftPanel(props: LeftPanelProps) {
       <CardSetContext.Consumer>
         {
           (cardSets: Array<CardSetViewmodel>) => (
-            // <BaseTreeView<CardSetViewmodel, TreeConfigurationViewmodel>
             <Treeview
-              applyFilterProps={applyFilterProps}
               buildTree={buildTree}
               data={cardSets}
-              filterProps={state}
+              filterProps={{filter: state, applyFilterProps: applyFilterProps}}
               onDataSelected={(sets: Array<CardSetViewmodel>) => props.onSetsSelected(sets)}
             />
           )

@@ -65,7 +65,7 @@ export function CenterPanel(props: CenterPanelProps) {
     result.push(<Column cellRenderer={textCellRenderer(cards, (card: MtgCardListViewmodel) => card.cardName)} key="Name" name="Name" />);
     result.push(<Column cellRenderer={textCellRenderer(cards, (card: MtgCardListViewmodel) => card.cardTypeLine)} key="Type" name="Type" />);
     result.push(<Column cellRenderer={symbolRenderer(cards, (card: MtgCardListViewmodel) => card.cardManacost)} key="Mana cost" name="ManaCost" />);
-    result.push(<Column cellRenderer={cardSetRenderer(cards, props.selectedSets, (card: MtgCardListViewmodel) => card.setId)} key="Set" name="Set" />);
+    result.push(<Column cellRenderer={cardSetRenderer(cards, false, props.selectedSets, (card: MtgCardListViewmodel) => [card.setId, card.rarity])} key="Set" name="Set" />);
     result.push(<Column cellRenderer={textCellRenderer(cards, (card: MtgCardListViewmodel) => card.cardPower)} key="Power" name="Power" />);
     result.push(<Column cellRenderer={textCellRenderer(cards, (card: MtgCardListViewmodel) => card.cardThoughness)} key="Thoughness" name="Thoughness" />);
     result.push(<Column cellRenderer={symbolRenderer(cards, (card: MtgCardListViewmodel) => card.colorIdentity)} key="CI" name="CI" />);

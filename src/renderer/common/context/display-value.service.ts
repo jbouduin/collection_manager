@@ -1,6 +1,6 @@
 import { CardSetGroupBy, CardSetSort, CardSetType, CardSyncType, CatalogType, ImageStatus, RulingSyncType, TimespanUnit } from "../../../common/types";
 
-// TODO use records instead of maps
+
 export class DisplayValueService {
   //#region private fields ----------------------------------------------------
   private readonly _cardSetGroupByDisplayValues: Map<CardSetGroupBy, string>;

@@ -1,3 +1,5 @@
+import { CardRarity } from "../../common/types";
+
 /** Event handler that exposes the target element's value as a boolean. */
 export function handleBooleanChange(handler: (checked: boolean) => void) {
   return (event: React.FormEvent<HTMLElement>) => handler((event.target as HTMLInputElement).checked);
@@ -24,4 +26,17 @@ export function displayValueMapToSelectOptions<T>(map: Map<T, string>): Array<Se
   const result = new Array<SelectOption<T>>();
   map.forEach((value: string, key: T) => result.push({ value: key, label: value }));
   return result;
+}
+
+export function getRarityColorClassname(rarity: CardRarity) {
+  switch (rarity) {
+    case "uncommon":
+      return "rarity-uncommon";
+    case "rare":
+      return "rarity-rare";
+    case "mythic":
+      return "rarity-mythic";
+    default:
+      return "";
+  }
 }

@@ -5,6 +5,7 @@ import { CardSetViewmodel } from "../../../../viewmodels";
 import { CardSetContext } from "../../../context";
 import { SvgProvider } from "../../svg-provider/svg-provider";
 import { CardHeaderViewProps } from "./card-header-view.props";
+import { getRarityColorClassname } from "../../../../../common/utils";
 
 
 export function CardHeaderView(props: CardHeaderViewProps) {
@@ -33,18 +34,5 @@ export function CardHeaderView(props: CardHeaderViewProps) {
   );
   //#endregion
 
-  //#region Auxiliary functions -----------------------------------------------
-  function getRarityColorClassname(rarity: CardRarity) {
-    switch (rarity) {
-      case "uncommon":
-        return "rarity-uncommon";
-      case "rare":
-        return "rarity-rare";
-      case "mythic":
-        return "rarity-mythic";
-      default:
-        return "";
-    }
-  }
-  //#endregion
+
 }

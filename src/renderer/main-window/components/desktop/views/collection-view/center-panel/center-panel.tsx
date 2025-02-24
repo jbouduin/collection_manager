@@ -70,7 +70,7 @@ export function CenterPanel(props: CenterPanelProps) {
 
   function getColumnDefinitions(languages: Array<LanguageDto>, cardSets: Array<CardSetViewmodel>, conditions: Array<CardConditionViewmodel>): Array<React.ReactElement<ColumnProps>> {
     const result = new Array<React.ReactElement<ColumnProps>>();
-    result.push(<Column cellRenderer={cardSetRenderer(cards, cardSets, (card: CollectionCardListViewmodel) => card.setId)} key="Set" name="Set" />);
+    result.push(<Column cellRenderer={cardSetRenderer(cards, true, cardSets, (card: CollectionCardListViewmodel) => [card.setId, card.rarity])} key="Set" name="Set" />);
     result.push(<Column cellRenderer={textCellRenderer(cards, (card: CollectionCardListViewmodel) => card.rarity)} key="Rarity" name="Rarity" />);
     result.push(<Column cellRenderer={languageRenderer(languages, (card: CollectionCardListViewmodel) => card.language)} key="Language" name="Language" />);
     result.push(<Column cellRenderer={textCellRenderer(cards, (card: CollectionCardListViewmodel) => card.cardName)} key="Name" name="Name" />);

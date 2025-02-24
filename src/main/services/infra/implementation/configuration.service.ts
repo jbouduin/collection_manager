@@ -159,7 +159,8 @@ export class ConfigurationService extends BaseService implements IConfigurationS
       syncCardsSyncedBeforeNumber: 0,
       syncCardsSyncedBeforeUnit: undefined,
       cardSetCodeToSyncCardsFor: undefined,
-      changedImageStatusAction: "delete"
+      changedImageStatusAction: "delete",
+      oracleId: undefined
     };
     return result;
   }

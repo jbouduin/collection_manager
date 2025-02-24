@@ -8,12 +8,35 @@ import { LanguageButtonBar } from "../language-button-bar/language-button-bar";
 import { OwnedCardPanel } from "../owned-card/own-card-panel";
 import { CardfaceView } from "./card-face-view/card-face-view";
 import { CardHeaderView } from "./card-header-view/card-header-view";
+import { CardHeaderViewProps } from "./card-header-view/card-header-view.props";
 import { CardImageView } from "./card-image-view/card-image-viewr";
 import { CardRulingsView } from "./card-rulings-view/card-rulings-view";
 import { CardViewState } from "./card-view-state";
 import { CardViewProps } from "./card-view.props";
 import { LegalitiesView } from "./legalities-view/legalities-view";
+import { LegalitiesViewProps } from "./legalities-view/legalities-view.props";
+import { CardRulingsViewProps } from "./card-rulings-view/card-rulings-view.props";
 
+const CardHeaderViewMemo = React.memo(
+  CardHeaderView,
+  (prev: CardHeaderViewProps, next: CardHeaderViewProps) => {
+    return prev.card.cardName == next.card.cardName;
+  }
+);
+
+const LegalitiesViewMemo = React.memo(
+  LegalitiesView,
+  (prev: LegalitiesViewProps, next: LegalitiesViewProps) => {
+    return prev.oracleId == next.oracleId;
+  }
+);
+
+const CardRulingsViewMemo = React.memo(
+  CardRulingsView,
+  (prev: CardRulingsViewProps, next: CardRulingsViewProps) => {
+    return prev.oracleId == next.oracleId;
+  }
+);
 
 export function CardView(props: CardViewProps) {
   //#region State -------------------------------------------------------------
@@ -58,7 +81,7 @@ export function CardView(props: CardViewProps) {
         collapsible={true}
         compact={true}
         rightElement={<CardSymbolRenderer cardSymbols={cardViewState.card.cardManacost} className="mana-cost-image-in-title" />}
-        title={<CardHeaderView card={cardViewState.card} />}
+        title={<CardHeaderViewMemo card={cardViewState.card} />}
       >
         {
           props.showOtherLanguages && cardViewState.card.isMultipleLanguage &&
@@ -116,13 +139,13 @@ export function CardView(props: CardViewProps) {
             <Tab
               id="Rulings"
               key="Rulings"
-              panel={<CardRulingsView card={cardViewState.card} />}
+              panel={<CardRulingsViewMemo oracleId={cardViewState.card.oracleId} />}
               title="Rulings"
             />
             <Tab
               id="Legality"
               key="Legality"
-              panel={<LegalitiesView oracleId={cardViewState.card.oracleId} />}
+              panel={<LegalitiesViewMemo oracleId={cardViewState.card.oracleId} />}
               title="Legality"
             />
             <Tab

@@ -42,6 +42,7 @@ export class RulingSyncService extends BaseSyncService<RulingSyncParam> implemen
     const cards = await this.database.selectFrom("card")
       .$if(syncParam.rulingSyncType == "update", (eb) => eb.innerJoin("oracle_ruling", "oracle_ruling.oracle_id", "card.oracle_id"))
       .$if(syncParam.rulingSyncType == "selectionOfCards", (eb) => eb.where("card.id", "in", syncParam.cardSelectionToSync))
+      .$if(syncParam.rulingSyncType == "oracleId", (eb) => eb.where("card.oracle_id", "=", syncParam.oracleId))
       .selectAll("card")
       .where("card.oracle_id", "is not", null)
       .groupBy("card.oracle_id")

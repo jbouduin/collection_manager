@@ -3,10 +3,11 @@ import * as React from "react";
 import { CardSetType } from "../../../../../../../../common/types";
 import { HeaderViewProps } from "./header-view-props";
 import { DisplayValueService, DisplayValueServiceContext } from "../../../../../../../common/context";
+import { isEmpty, xor } from "lodash";
 
 type PopoverKey = "card-set-group-by-menu" | "card-set-sort-menu" | "card-set-type-filter-menu";
 
-export function HeaderView(props: HeaderViewProps) {
+function headerView(props: HeaderViewProps) {
   //#region State -------------------------------------------------------------
   const [textFilterValue, setTextFilterValue] = React.useState<string>(null);
   //#endregion
@@ -201,3 +202,13 @@ export function HeaderView(props: HeaderViewProps) {
   }
   //#endregion
 }
+
+/*
+ * This is just a test on memoization
+ * probably not a big gain for the heaer view component
+ */
+export const HeaderView = React.memo(headerView, (prev: HeaderViewProps, next: HeaderViewProps) => {
+  return prev.cardSetGroupBy == next.cardSetGroupBy &&
+    prev.cardSetSort == next.cardSetSort &&
+    isEmpty(xor(prev.cardSetTypeFilter, next.cardSetTypeFilter));
+});

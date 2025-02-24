@@ -21,7 +21,8 @@ export function SyncDialog(props: SyncDialogProps) {
     syncCardsSyncedBeforeNumber: 1,
     syncCardsSyncedBeforeUnit: "month",
     cardSetCodeToSyncCardsFor: undefined,
-    changedImageStatusAction: "delete"
+    changedImageStatusAction: "delete",
+    oracleId: undefined
   });
   const [syncParam, setSyncParam] = React.useState<SyncParamViewmodel>(initialState);
   //#endregion

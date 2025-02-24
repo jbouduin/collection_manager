@@ -1,13 +1,21 @@
+import { isEqual } from "lodash";
 import * as React from "react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { RendererConfigurationDto } from "../../../../../../common/dto";
-import { CollectionTreeViewmodel, CollectionCardListViewmodel } from "../../../../viewmodels";
+import { CollectionCardListViewmodel, CollectionTreeViewmodel } from "../../../../viewmodels";
+import { CardView } from "../../../common/card-view/card-view";
 import { ConfigurationContext } from "../../../context";
+import { CenterPanel, CenterPanelProps } from "./center-panel";
+import { CollectionViewState } from "./collection-view-state";
 import { CollectionViewProps } from "./collection-view.props";
 import { LeftPanel } from "./left-panel/left-panel";
-import { CollectionViewState } from "./collection-view-state";
-import { CenterPanel } from "./center-panel/center-panel";
-import { CardView } from "../../../common/card-view/card-view";
+
+const CenterPanelMemo = React.memo(
+  CenterPanel,
+  (prev: CenterPanelProps, next: CenterPanelProps) => {
+    return isEqual(prev.selectedCollection, next.selectedCollection);
+  }
+);
 
 export function CollectionView(_props: CollectionViewProps) {
   //#region State -------------------------------------------------------------
@@ -39,7 +47,7 @@ export function CollectionView(_props: CollectionViewProps) {
               </Panel>
               <PanelResizeHandle />
               <Panel>
-                <CenterPanel
+                <CenterPanelMemo
                   onCardsSelected={onCardSelected}
                   selectedCollection={state.selectedCollection}
                 />

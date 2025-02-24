@@ -1,8 +1,8 @@
 import { Tree, TreeNodeInfo } from "@blueprintjs/core";
-import { NodePath, TreeAction } from "./types";
+import { NodePath, BaseTreeViewAction } from "./types";
 import { cloneDeep } from "lodash";
 
-export function BaseReducer(state: Array<TreeNodeInfo>, action: TreeAction) {
+export function BaseTreeViewReducer(state: Array<TreeNodeInfo>, action: BaseTreeViewAction) {
   const newState = cloneDeep(state);
   switch (action.type) {
     case "DESELECT_ALL":

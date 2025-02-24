@@ -1,15 +1,21 @@
 import { ContextMenu, Icon, Menu, MenuDivider, MenuItem, TreeNodeInfo } from "@blueprintjs/core";
-import { cloneDeep } from "lodash";
+import { cloneDeep, isEqual } from "lodash";
 import * as React from "react";
 import { CollectionDto } from "../../../../../../../common/dto";
 import { IpcProxyService, IpcProxyServiceContext } from "../../../../../../common/context";
-import { BaseTreeView } from "../../../../../components/common/base-tree-view/base-tree-view";
 import { CollectionTreeViewmodel, TreeConfigurationViewmodel } from "../../../../../viewmodels";
+import { BaseTreeView, BaseTreeViewProps } from "../../../../common/base-tree-view";
 import { CollectionDialog } from "./collection-dialog/collection-dialog";
 import { DialogData } from "./dialog-data";
 import { LeftPanelProps } from "./left-panel.props";
 
-let tempid = 1000;
+const Treeview = React.memo(
+  BaseTreeView<CollectionTreeViewmodel, TreeConfigurationViewmodel>,
+  (prev: BaseTreeViewProps<CollectionTreeViewmodel, TreeConfigurationViewmodel>, next: BaseTreeViewProps<CollectionTreeViewmodel, TreeConfigurationViewmodel>) => {
+    return isEqual(prev.data, next.data) && isEqual(prev.filterProps, next.filterProps);
+  }
+);
+
 export function LeftPanel(props: LeftPanelProps) {
   //#region State -----------------------------------------------------------
   const [collections, setCollections] = React.useState<Array<CollectionTreeViewmodel>>(new Array<CollectionTreeViewmodel>());
@@ -91,7 +97,7 @@ export function LeftPanel(props: LeftPanelProps) {
       parentId = collections.find((c: CollectionTreeViewmodel) => c.parentId == null).id;
     }
     const newDto: CollectionDto = {
-      id: tempid++,
+      id: 0,
       parent_id: parentId,
       name: "",
       description: "",
@@ -112,7 +118,7 @@ export function LeftPanel(props: LeftPanelProps) {
       parentId = collections.find((c: CollectionTreeViewmodel) => c.parentId == null).id;
     }
     const newDto: CollectionDto = {
-      id: tempid++,
+      id: 0,
       parent_id: parentId,
       name: "",
       description: "",
@@ -181,7 +187,7 @@ export function LeftPanel(props: LeftPanelProps) {
           }
           key="root"
         >
-          <BaseTreeView<CollectionTreeViewmodel, TreeConfigurationViewmodel>
+          <Treeview
             applyFilterProps={applyFilterProps}
             buildTree={buildTree}
             data={collections}

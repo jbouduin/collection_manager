@@ -1,14 +1,21 @@
 import { ContextMenu, Menu, MenuItem, TreeNodeInfo } from "@blueprintjs/core";
-import { cloneDeep, upperFirst } from "lodash";
+import { cloneDeep, isEqual, upperFirst } from "lodash";
 import * as React from "react";
 import { CardSetGroupBy, CardSetSort, CardSetType } from "../../../../../../../common/types";
 import { CardSetViewmodel, TreeConfigurationViewmodel } from "../../../../../viewmodels";
-import { BaseTreeView } from "../../../../common/base-tree-view/base-tree-view";
+import { BaseTreeView, BaseTreeViewProps } from "../../../../common/base-tree-view";
 import { SvgProvider } from "../../../../common/svg-provider/svg-provider";
 import { CardSetContext } from "../../../../context";
+import { CardSetDialog } from "../../../card-set-dialog/card-set-dialog";
 import { HeaderView } from "./header-view/header-view";
 import { LeftPanelProps } from "./left-panel.props";
-import { CardSetDialog } from "../../../card-set-dialog/card-set-dialog";
+
+const Treeview = React.memo(
+  BaseTreeView<CardSetViewmodel, TreeConfigurationViewmodel>,
+  (prev: BaseTreeViewProps<CardSetViewmodel, TreeConfigurationViewmodel>, next: BaseTreeViewProps<CardSetViewmodel, TreeConfigurationViewmodel>) => {
+    return isEqual(prev.data, next.data) && isEqual(prev.filterProps, next.filterProps);
+  }
+);
 
 export function LeftPanel(props: LeftPanelProps) {
   //#region State -------------------------------------------------------------
@@ -99,7 +106,8 @@ export function LeftPanel(props: LeftPanelProps) {
       <CardSetContext.Consumer>
         {
           (cardSets: Array<CardSetViewmodel>) => (
-            <BaseTreeView<CardSetViewmodel, TreeConfigurationViewmodel>
+            // <BaseTreeView<CardSetViewmodel, TreeConfigurationViewmodel>
+            <Treeview
               applyFilterProps={applyFilterProps}
               buildTree={buildTree}
               data={cardSets}

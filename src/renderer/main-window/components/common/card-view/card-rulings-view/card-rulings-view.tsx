@@ -18,14 +18,14 @@ export function CardRulingsView(props: CardRulingsViewProps) {
   //#region Effects -----------------------------------------------------------
   React.useEffect(
     () => {
-      if (props.card) {
-        void ipcProxyService.getData(`/card/${props.card.cardId}/ruling`)
+      if (props.oracleId) {
+        void ipcProxyService.getData(`/oracle/${props.oracleId}/ruling`)
           .then((queryResult: Array<RulingLineDto>) => setRulings(queryResult));
       } else {
         setRulings(null);
       }
     },
-    [props.card]
+    [props.oracleId]
   );
   //#endregion
 

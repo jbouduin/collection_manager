@@ -140,7 +140,8 @@ export function Desktop(_props: Props) {
       syncCardsSyncedBeforeNumber: undefined,
       syncCardsSyncedBeforeUnit: undefined,
       cardSetCodeToSyncCardsFor: code,
-      changedImageStatusAction: "delete"
+      changedImageStatusAction: "delete",
+      oracleId: undefined
     };
     void ipcProxyService.postData<SyncParamDto, never>("/mtg-sync", params);
   }
@@ -161,7 +162,8 @@ export function Desktop(_props: Props) {
       syncCardsSyncedBeforeNumber: undefined,
       syncCardsSyncedBeforeUnit: undefined,
       cardSetCodeToSyncCardsFor: undefined,
-      changedImageStatusAction: "delete"
+      changedImageStatusAction: "delete",
+      oracleId: undefined
     };
     void ipcProxyService.postData<SyncParamDto, never>("/mtg-sync", params);
   }

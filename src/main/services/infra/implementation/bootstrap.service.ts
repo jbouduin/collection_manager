@@ -121,17 +121,19 @@ export class BootstrapService implements IBootstrapService {
 
   private firstUseSyncParam(): SyncParamDto {
     const result: SyncParamDto = {
-      catalogTypesToSync: ["AbilityWords", "LandTypes", "ArtifactTypes"], // add more catalogs when we need them to search
+      cardImageStatusToSync: [],
+      cardSelectionToSync: [],
+      cardSetCodeToSyncCardsFor: undefined,
+      cardSyncType: "none",
+      // FEATURE Advanced search: add more catalogs to the array below when we need them to search
+      catalogTypesToSync: ["AbilityWords", "LandTypes", "ArtifactTypes"],
+      changedImageStatusAction: undefined,
+      oracleId: undefined,
+      rulingSyncType: "none",
       syncCardSymbols: true,
       syncCardSets: true,
-      rulingSyncType: "none",
-      cardSyncType: "none",
-      cardSelectionToSync: [],
-      cardImageStatusToSync: [],
       syncCardsSyncedBeforeNumber: 0,
-      syncCardsSyncedBeforeUnit: undefined,
-      cardSetCodeToSyncCardsFor: undefined,
-      changedImageStatusAction: undefined
+      syncCardsSyncedBeforeUnit: undefined
     };
     return result;
   }

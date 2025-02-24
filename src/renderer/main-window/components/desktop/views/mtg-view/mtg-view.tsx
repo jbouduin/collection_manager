@@ -1,29 +1,30 @@
+import { isEmpty, xor } from "lodash";
 import * as React from "react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { RendererConfigurationDto } from "../../../../../../common/dto";
 import { CardSetViewmodel, MtgCardListViewmodel } from "../../../../viewmodels";
 import { CardView } from "../../../common/card-view/card-view";
 import { ConfigurationContext } from "../../../context";
-import { CenterPanel } from "./center-panel/center-panel";
+import { CenterPanel, CenterPanelProps } from "./center-panel";
+import { LeftPanel } from "./left-panel";
 import { MtgViewProps } from "./mtg-view.props";
 import { MtgViewState } from "./mtg-view.state";
-import { LeftPanel } from "./left-panel/left-panel";
 
+const CenterPanelMemo = React.memo(
+  CenterPanel,
+  (prev: CenterPanelProps, next: CenterPanelProps) => {
+    return prev.selectedSets != null && next.selectedSets != null &&
+      isEmpty(xor(
+        prev.selectedSets.map((vm: CardSetViewmodel) => vm.id),
+        next.selectedSets.map((vm: CardSetViewmodel) => vm.id)
+      ));
+  }
+);
 
 export function MtgView(props: MtgViewProps) {
   //#region State -------------------------------------------------------------
   const initialState: MtgViewState = {};
   const [state, setState] = React.useState(initialState);
-  //#endregion
-
-  //#region Event handlers ----------------------------------------------------
-  function onCardSetsSelected(sets: Array<CardSetViewmodel>): void {
-    setState({ selectedSets: sets });
-  }
-
-  function onCardSelected(cards?: Array<MtgCardListViewmodel>): void {
-    setState({ selectedCards: cards, selectedSets: state.selectedSets });
-  }
   //#endregion
 
   //#region Main --------------------------------------------------------------
@@ -36,14 +37,14 @@ export function MtgView(props: MtgViewProps) {
               <Panel defaultSize={20}>
                 <LeftPanel
                   configuration={configuration.databaseViewTreeConfiguration}
-                  onSetsSelected={onCardSetsSelected}
+                  onSetsSelected={(sets: Array<CardSetViewmodel>) => setState({ selectedSets: sets })}
                   onSynchronizeSet={props.onSynchronizeSet}
                 />
               </Panel>
               <PanelResizeHandle />
               <Panel>
-                <CenterPanel
-                  onCardsSelected={onCardSelected}
+                <CenterPanelMemo
+                  onCardsSelected={(cards?: Array<MtgCardListViewmodel>) => setState({ selectedCards: cards, selectedSets: state.selectedSets })}
                   selectedSets={state.selectedSets}
                 />
               </Panel>

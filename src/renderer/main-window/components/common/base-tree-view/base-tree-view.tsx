@@ -1,13 +1,13 @@
 import * as React from "react";
-import { BaseTreeViewProps } from "./base-tree.props";
-import { BaseReducer, getTreeNodeItemsRecursive } from "./base-reducer";
+import { BaseTreeViewProps } from "./base-tree-view.props";
+import { BaseTreeViewReducer, getTreeNodeItemsRecursive } from "./base-tree-view.reducer";
 import { Classes, Tree, TreeNodeInfo } from "@blueprintjs/core";
 import { NodePath } from "./types";
 import classNames from "classnames";
 
 export function BaseTreeView<TData, TFilter>(props: BaseTreeViewProps<TData, TFilter>) {
   //#region State -------------------------------------------------------------
-  const [nodes, dispatch] = React.useReducer(BaseReducer, undefined);
+  const [nodes, dispatch] = React.useReducer(BaseTreeViewReducer, undefined);
   //#endregion
 
   //#region Effect ------------------------------------------------------------

@@ -3,6 +3,10 @@ import { CardSetGroupBy, CardSetSort, CardSetType } from "../../../../common/typ
 import { BaseViewmodel } from "../base.viewmodel";
 
 export class DatabaseViewTreeConfigurationViewmodel extends BaseViewmodel<DatabaseTreeViewConfigurationDto> {
+  //#region public fields -----------------------------------------------------
+  public cardSetFilterValue: string;
+  //#endregion
+
   //#region Getters/Setters ---------------------------------------------------
   public get cardSetSort(): CardSetSort {
     return this._dto.cardSetSort;
@@ -40,6 +44,7 @@ export class DatabaseViewTreeConfigurationViewmodel extends BaseViewmodel<Databa
     } else {
       this._dto.cardSetTypeFilter.push(cardSetType);
     }
+    this.cardSetFilterValue = null;
   }
   //#endregion
 }

@@ -14,6 +14,7 @@ export interface SyncParamDto {
    * Rulings to sync
    */
   rulingSyncType: RulingSyncType;
+  oracleId: string;
   /**
    * Cards to sync
    */
@@ -33,5 +34,5 @@ export interface SyncParamDto {
    */
 }
 
-export type CardSyncParam = Omit<SyncParamDto, "catalogTypesToSync" | "syncCardSymbols" | "syncCardSets" | "rulingSyncType">;
+export type CardSyncParam = Omit<SyncParamDto, "catalogTypesToSync" | "syncCardSymbols" | "syncCardSets" | "rulingSyncType" | "oracleId">;
 export type RulingSyncParam = Omit<SyncParamDto, "catalogTypesToSync" | "syncCardSymbols" | "syncCardSets" | "cardSyncType" | "cardImageStatusToSync" | "syncCardsSyncedBeforeNumber" | "syncCardsSyncedBeforeUnit" | "cardSetCodeToSyncCardsFor" | "changedImageStatusAction">;

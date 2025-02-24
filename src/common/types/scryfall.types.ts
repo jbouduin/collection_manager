@@ -6,11 +6,13 @@ export type ImageSize =
   "png" |
   "art_crop" |
   "border_crop";
+
 export type ImageStatus =
   "missing" |
   "placeholder" |
   "lowres" |
   "highres_scan";
+
 export type RulingSource = "wotc" | "scryfall";
 //#endregion
 
@@ -23,13 +25,17 @@ export type CardSyncType =
   "byLastSynchronized" |
   "collection";
 // FEATURE  bulk
+
 export type ChangedImageStatusAction = "delete" | "replace";
+
 export type RulingSyncType =
   "none" |
   "update" |
   "all" |
-  "selectionOfCards";
+  "selectionOfCards" |
+  "oracleId";
 // FEATURE byLastSynchronized
+
 export type ScryfallEndpoint =
   "cards" |
   "cardSet" |
@@ -38,5 +44,6 @@ export type ScryfallEndpoint =
   "collection" |
   "ruling" |
   "search";
+
 export type TimespanUnit = "day" | "week" | "month" | "year";
 //#endregion

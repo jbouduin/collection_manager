@@ -17,13 +17,12 @@ export class OracleRepository extends BaseRepository implements IOracleRepositor
     super(databaseService, logService, resultFactory);
   }
 
-  public async getByCardId(cardId: string): Promise<IResult<Array<RulingLineDto>>> {
+  public async getByOracleId(oracleId: string): Promise<IResult<Array<RulingLineDto>>> {
     try {
       return this.database
-        .selectFrom("card")
-        .innerJoin("oracle_ruling", "oracle_ruling.oracle_id", "card.oracle_id")
+        .selectFrom("oracle_ruling")
         .leftJoin("oracle_ruling_line", "oracle_ruling_line.oracle_id", "oracle_ruling.oracle_id")
-        .where("card.id", "=", cardId)
+        .where("oracle_ruling.oracle_id", "=", oracleId)
         .selectAll("oracle_ruling_line")
         .$call((q) => logCompilable(this.logService, q))
         .$castTo<RulingLineDto>()

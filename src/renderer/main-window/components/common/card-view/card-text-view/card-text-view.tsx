@@ -1,12 +1,10 @@
 import * as React from "react";
-
-import { CardTextViewProps } from "./card-text-view.props";
-import { SvgProvider } from "../../svg-provider/svg-provider";
 import { CardSymbolContext } from "../../../context";
+import { SvgProvider } from "../../svg-provider/svg-provider";
+import { CardTextViewProps } from "./card-text-view.props";
 
 
 export function CardTextView(props: CardTextViewProps) {
-  console.log("in CardTextView function");
   //#region Main --------------------------------------------------------------
   return (
     <CardSymbolContext.Consumer>
@@ -41,7 +39,13 @@ export function CardTextView(props: CardTextViewProps) {
     return matches.map((match: string, idx: number) => {
       if (match.startsWith("{") && match.endsWith("}")) {
         const svg = symbols.get(match);
-        return (<SvgProvider key={`s-${idx}`} svg={svg} className="mana-cost-image-in-text"/>);
+        return (
+          <SvgProvider
+            className="mana-cost-image-in-text"
+            key={`s-${idx}`}
+            svg={svg}
+          />
+        );
       } else {
         return match;
       }

@@ -21,7 +21,7 @@ async function createV0_0_1_Set(db: Kysely<any>): Promise<void> {
   const options: CreateTableOptions = {
     isSynced: true,
     tableName: "card_set",
-    defaultIdPrimaryKey: true
+    primaryKeyType: "text"
   };
 
   return createTable(db, options)

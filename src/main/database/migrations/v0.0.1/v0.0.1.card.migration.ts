@@ -1,8 +1,7 @@
-/* eslint-disable  @typescript-eslint/no-explicit-any */
 import { ColumnDefinitionBuilder, Kysely } from "kysely";
-
 import { CreateTableOptions, IBaseMigration, createTable } from "../base-migration";
 
+/* eslint-disable @typescript-eslint/no-explicit-any, @stylistic/newline-per-chained-call */
 export class V0_0_1_Card_Migration implements IBaseMigration {
   public get keyName(): string {
     return "0006: v.0.0.1.Card";
@@ -14,8 +13,8 @@ export class V0_0_1_Card_Migration implements IBaseMigration {
       .then(async () => await createV0_0_1_CardGame(db))
       .then(async () => await createV0_0_1_CardColorMap(db))
       .then(async () => await createV0_0_1_Cardface(db))
-      .then(async () => await createV0_0_1_CardCardMap(db))
-      .then(async () => await createV0_0_1_CardFaceColorMap(db));
+      .then(async () => await createV0_0_1_CardFaceColorMap(db))
+      .then(async () => await createV0_0_1_CardCardMap(db));
   }
 
   public async down(db: Kysely<any>): Promise<void> {
@@ -30,11 +29,10 @@ export class V0_0_1_Card_Migration implements IBaseMigration {
 }
 
 async function createV0_0_1_Card(db: Kysely<any>): Promise<void> {
-  console.log("card");
   const options: CreateTableOptions = {
     isSynced: true,
     tableName: "card",
-    defaultIdPrimaryKey: true
+    primaryKeyType: "text"
   };
   await createTable(db, options)
     .addColumn("lang", "text", (col: ColumnDefinitionBuilder) => col.references("language.id").onDelete("cascade").notNull())
@@ -69,7 +67,6 @@ async function createV0_0_1_Card(db: Kysely<any>): Promise<void> {
 }
 
 async function createV0_0_1_CardMultiversId(db: Kysely<any>): Promise<void> {
-  console.log("card_multiverse_id");
   return db.schema.createTable("card_multiverse_id")
     .addColumn("card_id", "text", (col: ColumnDefinitionBuilder) => col.references("card.id").onDelete("cascade").notNull())
     .addColumn("multiverse_id", "integer", (col: ColumnDefinitionBuilder) => col.notNull())
@@ -78,7 +75,6 @@ async function createV0_0_1_CardMultiversId(db: Kysely<any>): Promise<void> {
 }
 
 async function createV0_0_1_CardColorMap(db: Kysely<any>): Promise<void> {
-  console.log("card_color_map");
   return db.schema.createTable("card_color_map")
     .addColumn("card_id", "text", (col: ColumnDefinitionBuilder) => col.references("card.id").onDelete("cascade").notNull())
     .addColumn("color_type", "text", (col: ColumnDefinitionBuilder) => col.notNull())
@@ -89,12 +85,10 @@ async function createV0_0_1_CardColorMap(db: Kysely<any>): Promise<void> {
       .createIndex("card_color_map_color_type_color_id_idx")
       .on("card_color_map")
       .columns(["color_type", "color_id"])
-      .execute()
-    );
+      .execute());
 }
 
 async function createV0_0_1_CardGame(db: Kysely<any>): Promise<void> {
-  console.log("card_game");
   return db.schema.createTable("card_game")
     .addColumn("card_id", "text", (col: ColumnDefinitionBuilder) => col.references("card.id").onDelete("cascade").notNull())
     .addColumn("game", "text", (col: ColumnDefinitionBuilder) => col.notNull())
@@ -103,8 +97,6 @@ async function createV0_0_1_CardGame(db: Kysely<any>): Promise<void> {
 }
 
 async function createV0_0_1_Cardface(db: Kysely<any>): Promise<void> {
-  console.log("card_face");
-
   await db.schema.createTable("cardface")
     .addColumn("card_id", "text", (col: ColumnDefinitionBuilder) => col.references("card.id").onDelete("cascade").notNull())
     .addColumn("sequence", "integer", (col: ColumnDefinitionBuilder) => col.notNull())
@@ -130,30 +122,34 @@ async function createV0_0_1_Cardface(db: Kysely<any>): Promise<void> {
 }
 
 async function createV0_0_1_CardFaceColorMap(db: Kysely<any>): Promise<void> {
-  console.log("cardface_color_map");
   return db.schema.createTable("cardface_color_map")
     .addColumn("card_id", "text", (col: ColumnDefinitionBuilder) => col.notNull())
     .addColumn("sequence", "integer", (col: ColumnDefinitionBuilder) => col.notNull())
     .addColumn("color_type", "text", (col: ColumnDefinitionBuilder) => col.notNull())
     .addColumn("color_id", "text", (col: ColumnDefinitionBuilder) => col.references("color.id").onDelete("cascade").notNull())
     .addForeignKeyConstraint(
-      "FK_cardface_color_map_cardface", ["card_id", "sequence"],
-      "cardface", ["card_id", "sequence"],
-      (cb) => cb.onDelete("cascade"))
+      "FK_cardface_color_map_cardface",
+      ["card_id", "sequence"],
+      "cardface",
+      ["card_id", "sequence"],
+      (cb) => cb.onDelete("cascade")
+    )
     .addPrimaryKeyConstraint("CARDFACE_COLOR_MAP_PK", ["card_id", "sequence", "color_type", "color_id"])
     .execute()
     .then(async () => await db.schema
       .createIndex("cardface_color_map_color_type_color_id_idx")
       .on("cardface_color_map")
       .columns(["color_type", "color_id"])
-      .execute()
-    );
+      .execute());
 }
 
 async function createV0_0_1_CardCardMap(db: Kysely<any>): Promise<void> {
-  console.log("card_card_map");
   return db.schema.createTable("card_card_map")
-    .addColumn("card_id", "text", (col: ColumnDefinitionBuilder) => col.references("card.id").onDelete("cascade").notNull())
+    .addColumn(
+      "card_id",
+      "text",
+      (col: ColumnDefinitionBuilder) => col.references("card.id").onDelete("cascade").notNull()
+    )
     .addColumn("related_card_id", "text", (col: ColumnDefinitionBuilder) => col.notNull())
     .addColumn("component", "text", (col: ColumnDefinitionBuilder) => col.notNull())
     .addPrimaryKeyConstraint("CARD_CARD_MAP_PK", ["card_id", "related_card_id", "component"])

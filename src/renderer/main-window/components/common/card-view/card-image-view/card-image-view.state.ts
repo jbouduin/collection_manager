@@ -1,4 +1,4 @@
-import { CardSide } from "../../../../../../common/dto";
+import { CardSide } from "../../../../../../common/types";
 
 export type RotationClass = "" | "rotate-180" | "rotate-90";
 

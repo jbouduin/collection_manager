@@ -1,46 +1,34 @@
-import "./App.css";
-
-import { BlueprintProvider, FocusStyleManager } from "@blueprintjs/core";
+import { BlueprintProvider, FocusStyleManager, OverlayToaster, Position, ToastProps } from "@blueprintjs/core";
 import * as React from "react";
 import { createRoot } from "react-dom/client";
-
-import { DtoCardSet, DtoConfiguration, DtoLanguage } from "../../common/dto";
-import { QueryParam } from "../../common/ipc-params";
+import { IpcProxyService, IpcProxyServiceContext } from "../common/context";
 import { Desktop } from "./components/desktop/desktop";
-import { DesktopProps } from "./components/desktop/desktop.props";
-import { CardSetViewmodel } from "./viewmodels/card-set/card-set.viewmodel";
+
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
-(async () => {
-  // Wait until CSS is loaded before rendering components because some of them (like Table)
-  // rely on those styles to take accurate DOM measurements.
-  // TODO await import("./App.css");
-  const container = document.getElementById("root") as HTMLElement;
+void (async () => {
+  await import("./App.css");
+
+
+  const appToaster = await OverlayToaster.createAsync(
+    {
+      className: "recipe-toaster",
+      position: Position.TOP
+    },
+    {
+      domRenderer: (toaster, containerElement) => createRoot(containerElement).render(toaster)
+    }
+  );
+  const ipcProxyService = new IpcProxyService((props: ToastProps, key?: string) => appToaster.show(props, key));
+  const container = document.getElementById("root");
   const root = createRoot(container);
-  const cardSymbolQueryParam: QueryParam<null> = {
-    type: "CardSymbolCachedSvg",
-    options: null
-  };
-  const desktopProps: DesktopProps = {
-    cardSets: new Array<CardSetViewmodel>(),
-    symbolSvgs: new Map<string, string>(),
-    languages: new Array<DtoLanguage>(),
-    configuration: null
-  };
-  window.ipc.query({ type: "Configuration", options: null })
-    .then((configuration: DtoConfiguration) => desktopProps.configuration = configuration.rendererConfiguration)
-    .then(async () => window.ipc.query(cardSymbolQueryParam))
-    .then((cachedSvgs: Map<string, string>) => {
-      desktopProps.symbolSvgs = cachedSvgs;
-    })
-    .then(async () => await window.ipc.query({ type: "CardSet", options: null }))
-    .then((cardSets: Array<DtoCardSet>) => desktopProps.cardSets = cardSets.map((cardSet: DtoCardSet) => new CardSetViewmodel(cardSet)))
-    .then(async () => await window.ipc.query({ type: "Language", options: null }))
-    .then((languages: Array<DtoLanguage>) => desktopProps.languages = languages)
-    .then(() => root.render(
-      <BlueprintProvider>
-        <Desktop {...desktopProps} />
-      </BlueprintProvider>
-    ));
+  /* eslint-disable @stylistic/function-paren-newline */
+  root.render(
+    <BlueprintProvider>
+      <IpcProxyServiceContext.Provider value={ipcProxyService}>
+        <Desktop />
+      </IpcProxyServiceContext.Provider>
+    </BlueprintProvider>
+  );
 })();

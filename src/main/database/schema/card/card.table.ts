@@ -1,6 +1,6 @@
 import { ColumnType } from "kysely";
 
-import { CardBorderColor, CardFrame, CardLayout, CardRarity, CardSecurityStamp, ImageStatus, MTGLanguage } from "../../../../common/enums";
+import { CardBorderColor, CardFrame, CardLayout, CardRarity, CardSecurityStamp, ImageStatus, MTGLanguage } from "../../../../common/types";
 import { SynchronizedWithStringId } from "../base.types";
 
 export interface CardTable extends SynchronizedWithStringId {
@@ -30,14 +30,17 @@ export interface CardTable extends SynchronizedWithStringId {
   is_variation: ColumnType<boolean, number, number>;
 }
 
-// NOT prints_search_uri (A link to where you can begin paginating all re/prints for this card on Scryfall’s API.):
-// link is like "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aaa454a53-859c-4d54-b3e1-3764f67c00ff&unique=prints",
+/**
+ * NOT prints_search_uri (A link to where you can begin paginating all re/prints for this card on Scryfall’s API.):
+ * link is like "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aaa454a53-859c-4d54-b3e1-3764f67c00ff&unique=prints",
+ */
 
-// LATER store "finishes" in a table (An array of computer - readable flags that indicate if this card can come in foil, nonfoil, or etched finishes.)
-// LATER store "frame_effects": Array of This card’s frame effects, if any.Will make some other properties redundant I suppose
-// LATER store "promo_types" in a table (An array of strings describing what categories of promo cards this card falls into.)
-
-// LATER store "variation_of?" (The printing ID of the printing this card is a variation of.)
-// LATER store "attraction_lights" in a table: The lit Unfinity attractions lights array on this card, if any.
-// LATER store "prices" in a table (probably after implementing collection)
-// LATER store "purchase_uris" in a table
+/**
+ * LATER store "finishes" in a table (An array of computer - readable flags that indicate if this card can come in foil, nonfoil, or etched finishes.)
+ * LATER store "frame_effects": Array of This card’s frame effects, if any.Will make some other properties redundant I suppose
+ * LATER store "promo_types" in a table (An array of strings describing what categories of promo cards this card falls into.)
+ * LATER store "variation_of?" (The printing ID of the printing this card is a variation of.)
+ * LATER store "attraction_lights" in a table: The lit Unfinity attractions lights array on this card, if any.
+ * LATER store "prices" in a table (probably after implementing collection)
+ * LATER store "purchase_uris" in a table
+ */

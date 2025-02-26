@@ -1,16 +1,16 @@
 import SQLite from "better-sqlite3";
 import { Kysely, MigrationInfo, MigrationProvider, MigrationResultSet, Migrator, ParseJSONResultsPlugin, SqliteDialect } from "kysely";
 import { inject, singleton } from "tsyringe";
-
-import { ProgressCallback } from "../../../../common/ipc-params";
+import { ProgressCallback } from "../../../../common/ipc";
 import { DatabaseSchema } from "../../../database/schema";
-import INFRATOKENS, { IConfigurationService, IDatabaseService } from "../interfaces";
+import { INFRASTRUCTURE } from "../../service.tokens";
+import { IConfigurationService, IDatabaseService } from "../interfaces";
 import { runSerial } from "../util";
 import { SqliteKyselyPlugin } from "./sqlite.kysely.plugin";
 
+
 @singleton()
 export class DatabaseService implements IDatabaseService {
-
   //#region private fields ----------------------------------------------------
   private _database: Kysely<DatabaseSchema>;
   private configurationService: IConfigurationService;
@@ -23,16 +23,17 @@ export class DatabaseService implements IDatabaseService {
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
-  public constructor(@inject(INFRATOKENS.ConfigurationService) configurationService: IConfigurationService) {
+  public constructor(@inject(INFRASTRUCTURE.ConfigurationService) configurationService: IConfigurationService) {
     this.configurationService = configurationService;
   }
   //#endregion
 
   //#region IDatabaseService methods ------------------------------------------
   public connect(): IDatabaseService {
-
+    const database = new SQLite(this.configurationService.dataBaseFilePath);
+    database.pragma("foreign_keys = ON");
     const dialect = new SqliteDialect({
-      database: new SQLite(this.configurationService.dataBaseFilePath)
+      database: database
     });
     this._database = new Kysely<DatabaseSchema>({
       dialect: dialect,
@@ -46,15 +47,10 @@ export class DatabaseService implements IDatabaseService {
       database: new SQLite(this.configurationService.dataBaseFilePath)
     });
     const connection = new Kysely<DatabaseSchema>({
-      dialect: dialect,
+      dialect: dialect
     });
 
-    const migrator = new Migrator(
-      {
-        db: connection,
-        provider: migrationProvider
-      }
-    );
+    const migrator = new Migrator({ db: connection, provider: migrationProvider });
 
     const migrationsToExecute = (await migrator.getMigrations()).filter((migration: MigrationInfo) => !migration.executedAt);
 
@@ -68,7 +64,8 @@ export class DatabaseService implements IDatabaseService {
               throw migrationResultSet.error;
             }
           });
-      })
+      }
+    )
       .then(() => this);
   }
   //#endregion

@@ -5,11 +5,8 @@ export function scryfallDateToIsoString(scryfall: string): string | null {
       return null;
     } else {
       try {
-        return new Date(
-          Date.UTC(parseInt(split[0]), parseInt(split[1]) - 1, parseInt(split[2]), 8, 0, 0)
-        )
-        .toISOString();
-      } catch (error) {
+        return new Date(Date.UTC(parseInt(split[0]), parseInt(split[1]) - 1, parseInt(split[2]), 8, 0, 0)).toISOString();
+      } catch {
         return null;
       }
     }

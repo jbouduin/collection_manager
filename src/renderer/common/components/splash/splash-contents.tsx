@@ -1,10 +1,8 @@
 import { ProgressBar } from "@blueprintjs/core";
 import * as React from "react";
-
 import { SplashContentState } from "./splash-content.state";
 
 export function SplashContent() {
-
   //#region State -------------------------------------------------------------
   const initialState: SplashContentState = {
     label: "Loading",
@@ -21,7 +19,7 @@ export function SplashContent() {
   return (
     <div className="splash-wrapper">
       <p>{state.label}</p>
-      <ProgressBar animate={true} value={state.currentProgress} intent="primary" ></ProgressBar>
+      <ProgressBar animate={true} intent="primary" value={state.currentProgress} />
     </div>
   );
   //#endregion

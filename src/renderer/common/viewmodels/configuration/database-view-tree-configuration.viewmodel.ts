@@ -1,8 +1,11 @@
-import { DtoDatabaseTreeViewConfiguration } from "../../../../common/dto";
-import { CardSetGroupBy, CardSetSort, CardSetType } from "../../../../common/enums";
+import { DatabaseTreeViewConfigurationDto } from "../../../../common/dto";
+import { CardSetGroupBy, CardSetSort, CardSetType } from "../../../../common/types";
 import { BaseViewmodel } from "../base.viewmodel";
 
-export class DatabaseViewTreeConfigurationViewmodel extends BaseViewmodel < DtoDatabaseTreeViewConfiguration > {
+export class DatabaseViewTreeConfigurationViewmodel extends BaseViewmodel<DatabaseTreeViewConfigurationDto> {
+  //#region public fields -----------------------------------------------------
+  public cardSetFilterValue: string;
+  //#endregion
 
   //#region Getters/Setters ---------------------------------------------------
   public get cardSetSort(): CardSetSort {
@@ -27,7 +30,7 @@ export class DatabaseViewTreeConfigurationViewmodel extends BaseViewmodel < DtoD
   //#endregion
 
   //#region Constructor -------------------------------------------------------
-  public constructor(dtoConfiguration: DtoDatabaseTreeViewConfiguration) {
+  public constructor(dtoConfiguration: DatabaseTreeViewConfigurationDto) {
     super(dtoConfiguration);
   }
   //#endregion
@@ -41,6 +44,7 @@ export class DatabaseViewTreeConfigurationViewmodel extends BaseViewmodel < DtoD
     } else {
       this._dto.cardSetTypeFilter.push(cardSetType);
     }
+    this.cardSetFilterValue = null;
   }
   //#endregion
 }

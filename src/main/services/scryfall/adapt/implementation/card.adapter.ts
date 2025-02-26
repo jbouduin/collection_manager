@@ -9,7 +9,7 @@ import { sqliteUTCTimeStamp } from "../../../../../common/util";
 
 export class CardAdapter implements ICardAdapter {
   public toInsert(scryfall: ScryfallCard): InsertExpression<DatabaseSchema, "card"> {
-    const now = sqliteUTCTimeStamp;
+    const now = sqliteUTCTimeStamp();
     return {
       created_at: now,
       last_synced_at: now,
@@ -28,7 +28,7 @@ export class CardAdapter implements ICardAdapter {
       frame: scryfall.frame,
       is_full_art: scryfallBooleanToNumber(scryfall.full_art),
       rarity: scryfall.rarity,
-      released_at: scryfallDateToIsoString( scryfall.released_at),
+      released_at: scryfallDateToIsoString(scryfall.released_at),
       is_reprint: scryfallBooleanToNumber(scryfall.reprint),
       set_id: scryfall.set_id,
       is_oversized: scryfallBooleanToNumber(scryfall.oversized),
@@ -61,7 +61,7 @@ export class CardAdapter implements ICardAdapter {
       is_oversized: scryfallBooleanToNumber(scryfall.oversized),
       is_reserved: scryfallBooleanToNumber(scryfall.reserved),
       is_promo: scryfallBooleanToNumber(scryfall.promo),
-      last_synced_at: sqliteUTCTimeStamp,
+      last_synced_at: sqliteUTCTimeStamp(),
       is_story_spotlight: scryfallBooleanToNumber(scryfall.story_spotlight),
       image_status: scryfall.image_status,
       is_variation: scryfallBooleanToNumber(scryfall.variation),

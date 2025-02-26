@@ -11,7 +11,7 @@ import { ITableAdapter } from "./table.adapter";
 
 
 export type ICardSetAdapter = ITableAdapter<"card_set", ScryfallCardSet>;
-export type ICatalogAdapter = ITableAdapter<"catalog_item",CatalogAdapterParam>;
+export type ICatalogAdapter = ITableAdapter<"catalog_item", CatalogAdapterParam>;
 export type ICardSymbolAdapter = ITableAdapter<"card_symbol", ScryfallCardSymbol>;
 export type ICardSymbolAlternativeAdapter = ITableAdapter<"card_symbol_alternative", CardSymbolAlternativeAdapterParam>;
 export type ICardSymbolColorMapAdapter = ITableAdapter<"card_symbol_color_map", CardSymbolColorMapAdapterParam>;
@@ -30,28 +30,3 @@ export type IOracleKeywordAdapter = ITableAdapter<"oracle_keyword", OracleKeywor
 export type IOracleLegalityAdapter = ITableAdapter<"oracle_legality", OracleLegalityAdapterParameter>;
 export type IOracleRulingAdapter = ITableAdapter<"oracle_ruling", string>;
 export type IOracleRulingLineAdapter = ITableAdapter<"oracle_ruling_line", ScryfallRuling>;
-
-const ADAPTTOKENS = Object.freeze({
-  CardSetAdapter: "CardSetAdapter",
-  CatalogAdapter: "CatalogAdapter",
-
-  CardSymbolAdapter: "CardSymbolAdapter",
-  CardSymbolAlternativeAdapter: "CardSymbolAlternativeAdapter",
-  CardSymbolColorMapAdapter: "CardSymbolColorMapAdapter",
-
-  CardAdapter: "CardAdapter",
-  CardColorMapAdapter: "CardColorMapAdapter",
-  CardGameAdapter: "CardGameAdapter",
-  CardMultiverseIdAdapter: "CardMultiverseIdAdapter",
-  CardfaceAdapter: "CardfaceAdapter",
-  CardfaceColorMapAdapter: "CardfaceColorMapAdapter",
-  CardCardMapAdapter: "CardCardMapAdapter",
-
-  OracleAdapter: "OracleAdapter",
-  OracleKeywordAdapter: "OracleKeywordAdapter",
-  OracleLegalityAdapter: "OracleLegalityAdapter",
-  OracleRulingLineAdapter: "OracleRulingLineAdapter",
-  OracleRulingAdapter: "OracleRulingAdapter"
-});
-
-export default ADAPTTOKENS;

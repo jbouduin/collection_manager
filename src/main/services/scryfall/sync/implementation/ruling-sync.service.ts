@@ -1,20 +1,21 @@
 import { DeleteResult, ExpressionOrFactory, InsertResult, Selectable, SqlBool, Transaction, UpdateResult } from "kysely";
 import { inject, injectable } from "tsyringe";
-
-import { DtoSyncParam } from "../../../../../common/dto";
-import { ProgressCallback } from "../../../../../common/ipc-params";
+import { RulingSyncParam } from "../../../../../common/dto";
+import { ProgressCallback } from "../../../../../common/ipc";
 import { runSerial } from "../../../../../main/services/infra/util";
 import { CardTable, DatabaseSchema } from "../../../../database/schema";
-import INFRATOKENS, { IConfigurationService, IDatabaseService } from "../../../infra/interfaces";
-import ADAPTTOKENS, { IOracleRulingAdapter, IOracleRulingLineAdapter } from "../../adapt/interface";
-import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
+import { IConfigurationService, IDatabaseService, ILogService } from "../../../infra/interfaces";
+import { INFRASTRUCTURE, SCRYFALL } from "../../../service.tokens";
+import { IOracleRulingAdapter, IOracleRulingLineAdapter } from "../../adapt/interface";
+import { IScryfallClient } from "../../client/interfaces";
 import { ScryfallRuling } from "../../types";
 import { IRulingSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
+import { logCompilable } from "../../../../database/log-compilable";
+
 
 @injectable()
-export class RulingSyncService extends BaseSyncService implements IRulingSyncService {
-
+export class RulingSyncService extends BaseSyncService<RulingSyncParam> implements IRulingSyncService {
   //#region private readonly fields -------------------------------------------
   private readonly rulingLineAdapter: IOracleRulingLineAdapter;
   private readonly rulingAdapter: IOracleRulingAdapter;
@@ -22,27 +23,30 @@ export class RulingSyncService extends BaseSyncService implements IRulingSyncSer
 
   //#region Constructor & C° --------------------------------------------------
   public constructor(
-    @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
-    @inject(INFRATOKENS.ConfigurationService) configurationService: IConfigurationService,
-    @inject(CLIENTTOKENS.ScryfallClient) scryfallclient: IScryfallClient,
-    @inject(ADAPTTOKENS.OracleRulingLineAdapter) rulingLineAdapter: IOracleRulingLineAdapter,
-    @inject(ADAPTTOKENS.OracleRulingAdapter) rulingAdapter: IOracleRulingAdapter) {
-    super(databaseService, configurationService, scryfallclient);
+    @inject(INFRASTRUCTURE.DatabaseService) databaseService: IDatabaseService,
+    @inject(INFRASTRUCTURE.ConfigurationService) configurationService: IConfigurationService,
+    @inject(INFRASTRUCTURE.LogService) logService: ILogService,
+    @inject(SCRYFALL.ScryfallClient) scryfallclient: IScryfallClient,
+    @inject(SCRYFALL.OracleRulingLineAdapter) rulingLineAdapter: IOracleRulingLineAdapter,
+    @inject(SCRYFALL.OracleRulingAdapter) rulingAdapter: IOracleRulingAdapter
+  ) {
+    super(databaseService, configurationService, logService, scryfallclient);
     this.rulingLineAdapter = rulingLineAdapter;
     this.rulingAdapter = rulingAdapter;
   }
 
   //#region IRulingSyncService methods ----------------------------------------
-  public override async sync(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void> {
+  public override async sync(syncParam: RulingSyncParam, progressCallback: ProgressCallback): Promise<void> {
     // this will not return reversible_card of type land, as they do not have an oracle id
     progressCallback("Synchronizing rulings");
     const cards = await this.database.selectFrom("card")
       .$if(syncParam.rulingSyncType == "update", (eb) => eb.innerJoin("oracle_ruling", "oracle_ruling.oracle_id", "card.oracle_id"))
       .$if(syncParam.rulingSyncType == "selectionOfCards", (eb) => eb.where("card.id", "in", syncParam.cardSelectionToSync))
+      .$if(syncParam.rulingSyncType == "oracleId", (eb) => eb.where("card.oracle_id", "=", syncParam.oracleId))
       .selectAll("card")
       .where("card.oracle_id", "is not", null)
       .groupBy("card.oracle_id")
-      .$call(this.logCompilable)
+      .$call((q) => logCompilable(this.logService, q))
       .execute();
     return runSerial<Selectable<CardTable>>(
       cards,
@@ -51,7 +55,7 @@ export class RulingSyncService extends BaseSyncService implements IRulingSyncSer
         return this.scryfallclient.getRulings(card.id)
           .then((scryFall: Array<ScryfallRuling>) => {
             this.dumpScryFallData(`ruling-${card.oracle_id}.json`, scryFall);
-            this.processSync(card.id, scryFall);
+            return this.processSync(card.id, scryFall);
           });
       }
     );
@@ -70,7 +74,7 @@ export class RulingSyncService extends BaseSyncService implements IRulingSyncSer
         }
       });
       if (groupByOracleid.size > 1) {
-        console.log("We have an issue here! More then one oracle id found for the same card");
+        this.logService.error("Main", `We have an issue here! More then one oracle id found for the card with id ${cardId}`);
       }
       return this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
         for (const oracleId of groupByOracleid.keys()) {
@@ -79,7 +83,7 @@ export class RulingSyncService extends BaseSyncService implements IRulingSyncSer
       });
     } else {
       return this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
-        trx.selectFrom("card")
+        await trx.selectFrom("card")
           .selectAll()
           .where("card.id", "=", cardId)
           .executeTakeFirst()
@@ -89,7 +93,6 @@ export class RulingSyncService extends BaseSyncService implements IRulingSyncSer
   }
 
   private async syncRulingForSingleOracleId(trx: Transaction<DatabaseSchema>, oracleId: string, rulings: Array<ScryfallRuling>): Promise<InsertResult | void> {
-
     const rulingFilter: ExpressionOrFactory<DatabaseSchema, "oracle_ruling", SqlBool> = (eb) => eb("oracle_ruling.oracle_id", "=", oracleId);
     const existingRulingPromise = trx
       .selectFrom("oracle_ruling")
@@ -114,7 +117,8 @@ export class RulingSyncService extends BaseSyncService implements IRulingSyncSer
 
     const deleteLinesPromise: Promise<Array<DeleteResult>> = insertOrUpdateRulingPromise.then(() => {
       const rulingLineFilter: ExpressionOrFactory<DatabaseSchema, "oracle_ruling_line", SqlBool> = (eb) => eb("oracle_ruling_line.oracle_id", "=", oracleId);
-      return trx.deleteFrom("oracle_ruling_line").where(rulingLineFilter).execute();
+      return trx.deleteFrom("oracle_ruling_line").where(rulingLineFilter)
+        .execute();
     });
 
     if (rulings.length > 0) {

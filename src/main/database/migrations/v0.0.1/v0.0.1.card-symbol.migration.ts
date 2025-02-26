@@ -1,4 +1,4 @@
-/* eslint-disable  @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any, @stylistic/newline-per-chained-call */
 import { ColumnDefinitionBuilder, Kysely } from "kysely";
 
 import { IBaseMigration, CreateTableOptions, createTable } from "../base-migration";
@@ -25,7 +25,7 @@ async function createV0_0_1_CardSymbol(db: Kysely<any>): Promise<void> {
   const options: CreateTableOptions = {
     isSynced: true,
     tableName: "card_symbol",
-    defaultIdPrimaryKey: true
+    primaryKeyType: "text"
   };
   return createTable(db, options)
     .addColumn("svg_uri", "text", (col: ColumnDefinitionBuilder) => col.notNull())

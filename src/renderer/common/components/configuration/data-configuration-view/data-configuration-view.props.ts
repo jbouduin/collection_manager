@@ -4,6 +4,7 @@ import { DataConfigurationViewmodel } from "../../../viewmodels/configuration/da
 
 export interface DataConfigurationViewProps extends Props {
   configuration: DataConfigurationViewmodel;
-  // onConfigurationChanged: (configuration: DataConfigurationViewmodel) => void;
+  isFirstUse: boolean;
+
   onConfigurationChanged: () => void;
 }

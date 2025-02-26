@@ -1,6 +1,5 @@
-import { DtoSyncParam } from "../../../../..//common/dto";
-import { ProgressCallback } from "../../../../../common/ipc-params";
+import { ProgressCallback } from "../../../../../common/ipc";
 
-export interface IBaseSyncService{
-  sync(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void>;
+export interface IBaseSyncService<T> {
+  sync(syncParam: T, progressCallback: ProgressCallback): Promise<void>;
 }

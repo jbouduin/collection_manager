@@ -1,45 +1,50 @@
 import { Transaction } from "kysely";
 import { inject, injectable } from "tsyringe";
-
-import { DtoSyncParam } from "../../../../../common/dto";
-import { CatalogType } from "../../../../../common/enums";
-import { ProgressCallback } from "../../../../../common/ipc-params";
+import { ProgressCallback } from "../../../../../common/ipc";
+import { CatalogType } from "../../../../../common/types";
 import { DatabaseSchema } from "../../../../../main/database/schema";
-import INFRATOKENS, { IConfigurationService, IDatabaseService } from "../../../../../main/services/infra/interfaces";
+import { IConfigurationService, IDatabaseService, ILogService } from "../../../../../main/services/infra/interfaces";
 import { runSerial } from "../../../../../main/services/infra/util";
-import ADAPTTOKENS, { ICatalogAdapter } from "../../adapt/interface";
-import CLIENTTOKENS, { IScryfallClient } from "../../client/interfaces";
+import { INFRASTRUCTURE, SCRYFALL } from "../../../service.tokens";
+import { ICatalogAdapter } from "../../adapt/interface";
+import { IScryfallClient } from "../../client/interfaces";
 import { ScryfallCatalog } from "../../types";
 import { ICatalogSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
 
+
 type SyncSingleCatalogParameter = {
-  catalogType: CatalogType,
-  progressCallback: ProgressCallback
+  catalogType: CatalogType;
+  progressCallback: ProgressCallback;
 };
 
 @injectable()
-export class CatalogSyncService extends BaseSyncService implements ICatalogSyncService {
-
+export class CatalogSyncService extends BaseSyncService<Array<CatalogType>> implements ICatalogSyncService {
   //#region private readonly fields -------------------------------------------
   private readonly catalogAdapter: ICatalogAdapter;
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
   public constructor(
-    @inject(INFRATOKENS.DatabaseService) databaseService: IDatabaseService,
-    @inject(INFRATOKENS.ConfigurationService) configurationService: IConfigurationService,
-    @inject(CLIENTTOKENS.ScryfallClient) scryfallclient: IScryfallClient,
-    @inject(ADAPTTOKENS.CatalogAdapter) catalogAdapter: ICatalogAdapter) {
-    super(databaseService, configurationService, scryfallclient);
+    @inject(INFRASTRUCTURE.DatabaseService) databaseService: IDatabaseService,
+    @inject(INFRASTRUCTURE.ConfigurationService) configurationService: IConfigurationService,
+    @inject(INFRASTRUCTURE.LogService) logService: ILogService,
+    @inject(SCRYFALL.ScryfallClient) scryfallclient: IScryfallClient,
+    @inject(SCRYFALL.CatalogAdapter) catalogAdapter: ICatalogAdapter
+  ) {
+    super(databaseService, configurationService, logService, scryfallclient);
     this.catalogAdapter = catalogAdapter;
   }
   //#endregion
 
   //#region ICatalogSyncService methods ---------------------------------------
-  public override async sync(syncParam: DtoSyncParam, progressCallback: ProgressCallback): Promise<void> {
-    const serialExecutionArray = syncParam.catalogTypesToSync.map<SyncSingleCatalogParameter>((catalog: CatalogType) => { return { catalogType: catalog, progressCallback: progressCallback }; });
+  public override async sync(syncParam: Array<CatalogType>, progressCallback: ProgressCallback): Promise<void> {
+    const serialExecutionArray = syncParam.map<SyncSingleCatalogParameter>((catalog: CatalogType) => {
+      return { catalogType: catalog, progressCallback: progressCallback };
+    });
+    /* eslint-disable-next-line @typescript-eslint/no-unsafe-argument */
     await runSerial<SyncSingleCatalogParameter>(serialExecutionArray, this.syncSingleCatalog.bind(this));
+    return Promise.resolve();
   }
   //#endregion
 
@@ -102,8 +107,8 @@ export class CatalogSyncService extends BaseSyncService implements ICatalogSyncS
         break;
     }
     return catalog.then((fetched: ScryfallCatalog) => {
-      this.dumpScryFallData(`catalog-${parameter}.json`, fetched);
-      this.processSync(parameter, fetched);
+      this.dumpScryFallData(`catalog-${parameter.catalogType}.json`, fetched);
+      return this.processSync(parameter, fetched);
     });
   }
 
@@ -112,8 +117,11 @@ export class CatalogSyncService extends BaseSyncService implements ICatalogSyncS
       parameter.progressCallback(`Saving ${catalog.total_values} items for catalog '${parameter.catalogType}'`);
     }
     return await this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
-      await trx.deleteFrom("catalog_item").where("catalog_item.catalog_name", "=", parameter.catalogType).execute();
-      await trx.insertInto("catalog_item")
+      await trx
+        .deleteFrom("catalog_item").where("catalog_item.catalog_name", "=", parameter.catalogType)
+        .execute();
+      await trx
+        .insertInto("catalog_item")
         .values(catalog.data.map((item: string) => this.catalogAdapter.toInsert({ catalogType: parameter.catalogType, item: item })))
         .executeTakeFirstOrThrow();
     });

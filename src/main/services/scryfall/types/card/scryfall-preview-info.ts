@@ -1,9 +1,9 @@
 export interface ScryfallPreviewInfo {
   /**
-  * The date this card was previewed.
-  *
-  * @type IsoDate
-  */
+   * The date this card was previewed.
+   *
+   * @type IsoDate
+   */
   previewed_at: string;
   /**
    * A link to the preview for this card.

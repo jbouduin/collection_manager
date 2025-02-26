@@ -1,35 +1,40 @@
-import "../main-window/App.css";
-
-import { BlueprintProvider, FocusStyleManager } from "@blueprintjs/core";
+import { BlueprintProvider, FocusStyleManager, OverlayToaster, Position, ToastProps } from "@blueprintjs/core";
 import * as React from "react";
-
 import { createRoot } from "react-dom/client";
-import { DtoConfiguration } from "../../common/dto/configuration/configuration.dto";
-import { QueryParam } from "../../common/ipc-params";
+import { ConfigurationDto } from "../../common/dto";
+import { IpcProxyService, IpcProxyServiceContext } from "../common/context";
 import { ConfigurationViewModel } from "../common/viewmodels/configuration/configuration.viewmodel";
 import { FirstTimeView } from "./first-time-view/first-time-view";
 
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
-(async () => {
-  // Wait until CSS is loaded before rendering components because some of them (like Table)
-  // rely on those styles to take accurate DOM measurements.
-  // TODO await import("./App.css");
-  let configurationViewmodel: ConfigurationViewModel;
-  const queryParam: QueryParam<null> = {
-    type: "Configuration",
-    options: null
-  };
-  // Go to main to ask for the factory default
-  window.ipc.query(queryParam)
-    .then((configuration: DtoConfiguration) => configurationViewmodel = new ConfigurationViewModel( configuration, true))
-    .then(() => {
-      const container = document.getElementById("root") as HTMLElement;
+void (async () => {
+  await import("../main-window/App.css");
+
+  const appToaster = await OverlayToaster.createAsync(
+    {
+      className: "recipe-toaster",
+      position: Position.TOP
+    },
+    {
+      domRenderer: (toaster, containerElement) => createRoot(containerElement).render(toaster)
+    }
+  );
+
+  const ipcProxyService = new IpcProxyService((props: ToastProps, key?: string) => appToaster.show(props, key));
+
+  await ipcProxyService.getData<ConfigurationDto>("/configuration")
+    .then((configuration: ConfigurationDto) => new ConfigurationViewModel(configuration, true))
+    .then((configurationViewmodel: ConfigurationViewModel) => {
+      const container = document.getElementById("root");
       const root = createRoot(container);
+      /* eslint-disable @stylistic/function-paren-newline */
       root.render(
         <BlueprintProvider>
-          <FirstTimeView  configuration={configurationViewmodel} className={configurationViewmodel.theme} />
+          <IpcProxyServiceContext.Provider value={ipcProxyService}>
+            <FirstTimeView className={configurationViewmodel.theme} configuration={configurationViewmodel} />
+          </IpcProxyServiceContext.Provider>
         </BlueprintProvider>
       );
     });

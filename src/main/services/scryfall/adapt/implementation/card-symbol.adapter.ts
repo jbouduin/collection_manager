@@ -9,7 +9,7 @@ import { scryfallBooleanToNumber } from "./utils";
 
 export class CardSymbolAdapter implements ICardSymbolAdapter {
   public toInsert(cardSymbol: ScryfallCardSymbol): InsertExpression<DatabaseSchema, "card_symbol"> {
-    const now = sqliteUTCTimeStamp;
+    const now = sqliteUTCTimeStamp();
     return {
       created_at: now,
       last_synced_at: now,
@@ -35,7 +35,7 @@ export class CardSymbolAdapter implements ICardSymbolAdapter {
       english: cardSymbol.english,
       is_funny: scryfallBooleanToNumber(cardSymbol.funny),
       is_hybrid: scryfallBooleanToNumber(cardSymbol.hybrid),
-      last_synced_at: sqliteUTCTimeStamp,
+      last_synced_at: sqliteUTCTimeStamp(),
       loose_variant: cardSymbol.loose_variant,
       mana_value: cardSymbol.mana_value,
       is_phyrexian: scryfallBooleanToNumber(cardSymbol.phyrexian),
@@ -44,5 +44,4 @@ export class CardSymbolAdapter implements ICardSymbolAdapter {
       is_transposable: scryfallBooleanToNumber(cardSymbol.transposable)
     };
   }
-
 }

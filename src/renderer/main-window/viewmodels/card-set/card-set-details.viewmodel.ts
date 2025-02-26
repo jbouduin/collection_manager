@@ -1,10 +1,10 @@
-import { CardSetTypeDisplayValue } from "../../../../common/enums";
-import { DtoCardSetDetails, DtoCardSetLanguage, DtoLanguage } from "../../../../common/dto";
+import { MtgCardSetDetailsDto, MtgCardSetLanguageDto, LanguageDto } from "../../../../common/dto";
+import { CardSetType } from "../../../../common/types";
 
 
 export class CardSetDetailsViewmodel {
   //#region Private fields ----------------------------------------------------
-  private _dtoCardSet: DtoCardSetDetails;
+  private _dtoCardSet: MtgCardSetDetailsDto;
   //#endregion
 
   //#region Public getters ----------------------------------------------------
@@ -16,14 +16,14 @@ export class CardSetDetailsViewmodel {
     return this._dtoCardSet.name;
   }
 
-  public get cardSetType(): string {
-    return CardSetTypeDisplayValue.get(this._dtoCardSet.set_type);
+  public get cardSetType(): CardSetType {
+    return this._dtoCardSet.set_type;
   }
 
   public get lastFullSynchronizationString(): string {
-    return this._dtoCardSet.last_full_synchronization_at ?
-      this._dtoCardSet.last_full_synchronization_at.toLocaleString() :
-      "Never";
+    return this._dtoCardSet.last_full_synchronization_at
+      ? this._dtoCardSet.last_full_synchronization_at.toLocaleString()
+      : "Never";
   }
 
   public get numberOfPrintedCards(): number {
@@ -51,7 +51,7 @@ export class CardSetDetailsViewmodel {
     return this._dtoCardSet.last_full_synchronization_at ? true : false;
   }
 
-  public get languagesWithNumberOfCards(): Array<DtoCardSetLanguage> {
+  public get languagesWithNumberOfCards(): Array<MtgCardSetLanguageDto> {
     return this._dtoCardSet.languages;
   }
 
@@ -64,7 +64,7 @@ export class CardSetDetailsViewmodel {
   }
 
   public get digital(): boolean {
-    return this._dtoCardSet.is_digital ;
+    return this._dtoCardSet.is_digital;
   }
 
   public get mtgOnlineCode(): string {
@@ -81,16 +81,15 @@ export class CardSetDetailsViewmodel {
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
-  public constructor(dtoCardSetDetails: DtoCardSetDetails) {
+  public constructor(dtoCardSetDetails: MtgCardSetDetailsDto) {
     this._dtoCardSet = dtoCardSetDetails;
   }
   //#endregion
 
   //#region Public methods ----------------------------------------------------
-  public getLanguagesOfSet(languages: Array<DtoLanguage>): string {
+  public getLanguagesOfSet(languages: Array<LanguageDto>): string {
     return this._dtoCardSet.languages
-      .map((language: DtoCardSetLanguage) =>
-        languages.find((dtoLanguage: DtoLanguage) => dtoLanguage.id == language.lang).button_text)
+      .map((language: MtgCardSetLanguageDto) => languages.find((dtoLanguage: LanguageDto) => dtoLanguage.id == language.lang).button_text)
       .join(", ");
   }
   //#endregion

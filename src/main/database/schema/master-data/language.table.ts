@@ -1,6 +1,5 @@
 import { ColumnType } from "kysely";
-
-import { MTGLanguage } from "../../../../common/enums";
+import { MTGLanguage } from "../../../../common/types";
 import { NonSynchronized } from "../base.types";
 
 

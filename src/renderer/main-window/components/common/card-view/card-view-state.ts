@@ -1,6 +1,6 @@
-import { CardViewmodel } from "../../../viewmodels";
+import { MtgCardDetailViewmodel } from "../../../viewmodels";
 
 export interface CardViewState {
-  card?: CardViewmodel;
+  card?: MtgCardDetailViewmodel;
   cardfaceSequence: number;
 }

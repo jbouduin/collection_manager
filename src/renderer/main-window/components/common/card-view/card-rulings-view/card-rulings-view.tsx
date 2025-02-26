@@ -1,58 +1,57 @@
 import { Classes, SectionCard } from "@blueprintjs/core";
 import classNames from "classnames";
 import * as React from "react";
-
-import { DtoRulingLine } from "../../../../../../common/dto";
-import { QueryParam, RulingQueryOptions } from "../../../../../../common/ipc-params";
+import { RulingLineDto } from "../../../../../../common/dto";
+import { IpcProxyService, IpcProxyServiceContext } from "../../../../../common/context";
 import { CardRulingsViewProps } from "./card-rulings-view.props";
 
-export function CardRulingsView(props: CardRulingsViewProps) {
 
+export function CardRulingsView(props: CardRulingsViewProps) {
   //#region State -------------------------------------------------------------
-  const [rulings, setRulings] = React.useState(null as Array<DtoRulingLine>);
+  const [rulings, setRulings] = React.useState(null as Array<RulingLineDto>);
+  //#endregion
+
+  //#region Context ---------------------------------------------------------------------
+  const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
   //#endregion
 
   //#region Effects -----------------------------------------------------------
   React.useEffect(
     () => {
-      if (props.card) {
-        const rulingQueryParam: QueryParam<RulingQueryOptions> = {
-          type: "Ruling",
-          options: {
-            cardId: props.card.cardId
-          }
-        };
-        window.ipc.query(rulingQueryParam)
-          .then((queryResult: Array<DtoRulingLine>) => setRulings(queryResult));
+      if (props.oracleId) {
+        void ipcProxyService.getData(`/oracle/${props.oracleId}/ruling`)
+          .then((queryResult: Array<RulingLineDto>) => setRulings(queryResult));
       } else {
         setRulings(null);
       }
     },
-    [props.card]
+    [props.oracleId]
   );
   //#endregion
 
-  //#region Main --------------------------------------------------------------
-  return (rulings?.length > 0 ?
-    <SectionCard padded={false}>
-      {
-        rulings.map((ruling: DtoRulingLine, idx: number) => renderSingleRulingLine(idx, ruling, idx == rulings.length - 1))
+  //#region Rendering ---------------------------------------------------------
+  return rulings?.length > 0
+    ? renderSectionCard(rulings)
+    : undefined;
 
-      }
-    </SectionCard> :
-    undefined
-  );
-  //#endregion
+  function renderSectionCard(rulings: Array<RulingLineDto>): React.JSX.Element {
+    return (
+      <SectionCard padded={false}>
+        {
+          rulings.map((ruling: RulingLineDto, idx: number) => renderSingleRulingLine(idx, ruling, idx == rulings.length - 1))
+        }
+      </SectionCard>
+    );
+  }
 
-  //#region Auxiliary methods -------------------------------------------------
-  function renderSingleRulingLine(idx: number, ruling: DtoRulingLine, isLast: boolean): React.JSX.Element {
+  function renderSingleRulingLine(idx: number, ruling: RulingLineDto, isLast: boolean): React.JSX.Element {
     return (
       <div key={`r-${idx}`}>
         <p>{ruling.published_at.toLocaleDateString(navigator.language, { day: "2-digit", month: "2-digit", year: "numeric" })} - {ruling.source}</p>
         <p className={Classes.RUNNING_TEXT}>{ruling.comments}</p>
         {
           !isLast &&
-          <p className={classNames("bp5-divider", "ruling-divider")}></p>
+          <p className={classNames("bp5-divider", "ruling-divider")} />
         }
       </div>
     );

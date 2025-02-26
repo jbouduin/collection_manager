@@ -1,4 +1,4 @@
 export type CardSymbolColorMapAdapterParam = {
-  cardSymbolId: string,
-  colorIds: Array<string>,
+  cardSymbolId: string;
+  colorIds: Array<string>;
 };

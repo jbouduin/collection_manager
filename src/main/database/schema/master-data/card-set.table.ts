@@ -1,6 +1,5 @@
 import { ColumnType } from "kysely";
-
-import { CardSetType } from "../../../../common/enums/card-set-type.enum";
+import { CardSetType } from "../../../../common/types";
 import { SynchronizedWithStringId } from "../base.types";
 
 export interface CardSetTable extends SynchronizedWithStringId {

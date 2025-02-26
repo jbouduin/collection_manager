@@ -8,7 +8,7 @@ import { OracleLegalityAdapterParameter } from "../interface/param";
 
 export class OracleLegalityAdapter implements IOracleLegalityAdapter {
   public toInsert(scryfall: OracleLegalityAdapterParameter): InsertExpression<DatabaseSchema, "oracle_legality"> {
-    const now = sqliteUTCTimeStamp;
+    const now = sqliteUTCTimeStamp();
     return {
       created_at: now,
       last_synced_at: now,
@@ -21,7 +21,7 @@ export class OracleLegalityAdapter implements IOracleLegalityAdapter {
   public toUpdate(scryfall: OracleLegalityAdapterParameter): UpdateObjectExpression<DatabaseSchema, "oracle_legality"> {
     return {
       legality: scryfall.legality,
-      last_synced_at: sqliteUTCTimeStamp
+      last_synced_at: sqliteUTCTimeStamp()
     };
   }
 }

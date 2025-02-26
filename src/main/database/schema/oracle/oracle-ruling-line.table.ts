@@ -1,6 +1,6 @@
 import { ColumnType } from "kysely";
+import { RulingSource } from "../../../../common/types";
 
-import { RulingSource } from "../../../../common/enums";
 
 export interface OracleRulingLineTable {
   oracle_id: ColumnType<string, string, never>;

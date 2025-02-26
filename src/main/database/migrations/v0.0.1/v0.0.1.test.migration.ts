@@ -19,11 +19,11 @@ export class V0_0_1_Test_Migration implements IBaseMigration {
   }
 }
 
-function createV0_0_1_Test(db: Kysely<any>): Promise < void> {
+function createV0_0_1_Test(db: Kysely<any>): Promise<void> {
   const options: CreateTableOptions = {
     isSynced: false,
     tableName: "test",
-    defaultIdPrimaryKey: true
+    primaryKeyType: "text"
   };
 
   return createTable(db, options)
@@ -49,9 +49,9 @@ async function populateV0_0_1_Test(db: Kysely<any>): Promise<Array<InsertResult>
   values.push({ id: "zht", sequence: 10, printed_code: "CT", display_text: "Traditinal Chinese", button_text: "漢語" });
   values.push({ id: "he", sequence: 11, display_text: "Hebrew" });
   values.push({ id: "la", sequence: 12, display_text: "Latin" });
-  values.push({ id: "grc", sequence: 13, display_text: "Ancient Greek", });
-  values.push({ id: "ar", sequence: 14, display_text: "Arabic", });
-  values.push({ id: "sa", sequence: 15, display_text: "Sanskrit", });
+  values.push({ id: "grc", sequence: 13, display_text: "Ancient Greek" });
+  values.push({ id: "ar", sequence: 14, display_text: "Arabic" });
+  values.push({ id: "sa", sequence: 15, display_text: "Sanskrit" });
   values.push({ id: "ph", sequence: 16, printed_code: "PH", display_text: "Phyrexian" });
 
   return db.insertInto("test")

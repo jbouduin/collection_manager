@@ -1,19 +1,19 @@
-import { DtoCardface } from "../../../../common/dto";
+import { MtgCardfaceDto } from "../../../../common/dto";
 import { OracleViewmodel } from "../oracle/oracle-viewmodel";
 
 export class CardfaceViewmodel {
   //#region private readonly fields -------------------------------------------
-  private readonly _dtoCardface: DtoCardface;
+  private readonly _dtoCardface: MtgCardfaceDto;
   private readonly _manaCost: Array<string>;
   private readonly _oracle: OracleViewmodel;
   //#endregion
 
   //#region Public getters -----------------------------------------------------
   public get printedName(): string {
-    //here we have a data quality issue with non english split cards
-    return this._dtoCardface.printed_name.indexOf(" // ") >= 0 ?
-      this._dtoCardface.face_name :
-      this._dtoCardface.printed_name;
+    // here we have a data quality issue with non english split cards
+    return this._dtoCardface.printed_name.indexOf(" // ") >= 0
+      ? this._dtoCardface.face_name
+      : this._dtoCardface.printed_name;
   }
 
   public get printedTypeLine(): string {
@@ -50,7 +50,7 @@ export class CardfaceViewmodel {
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
-  public constructor(dtoCardface: DtoCardface) {
+  public constructor(dtoCardface: MtgCardfaceDto) {
     this._dtoCardface = dtoCardface;
     this._manaCost = this.convertManaCost(dtoCardface.mana_cost);
     this._oracle = new OracleViewmodel(dtoCardface.oracle);
@@ -59,7 +59,10 @@ export class CardfaceViewmodel {
   private convertManaCost(manaCost: string): Array<string> {
     const splittedCellValue = manaCost.split("}");
     splittedCellValue.pop();
-    return splittedCellValue.map((s: string, i: number) => i < splittedCellValue.length ? s + "}" : s);
+    return splittedCellValue.map((s: string, i: number) => {
+      /* es-lint-disable-next-line @stylistic/operator-linebreak */
+      return i < splittedCellValue.length ? s + "}" : s;
+    });
   }
   //#endregion
 }

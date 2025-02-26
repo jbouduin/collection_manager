@@ -2,13 +2,13 @@ import { InsertExpression } from "kysely/dist/cjs/parser/insert-values-parser";
 import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser";
 
 import { DatabaseSchema } from "../../../../../main/database/schema";
-import { IOracleAdapter, } from "../interface";
+import { IOracleAdapter } from "../interface";
 import { OracleAdapterParameter } from "../interface/param";
 import { sqliteUTCTimeStamp } from "../../../../../common/util";
 
 export class OracleAdapter implements IOracleAdapter {
   public toInsert(scryfall: OracleAdapterParameter): InsertExpression<DatabaseSchema, "oracle"> {
-    const now = sqliteUTCTimeStamp;
+    const now = sqliteUTCTimeStamp();
 
     if (scryfall.scryfallCard) {
       return {
@@ -34,7 +34,7 @@ export class OracleAdapter implements IOracleAdapter {
   }
 
   public toUpdate(scryfall: OracleAdapterParameter): UpdateObjectExpression<DatabaseSchema, "oracle"> {
-    const now = sqliteUTCTimeStamp;
+    const now = sqliteUTCTimeStamp();
     if (scryfall.scryfallCard) {
       return {
         oracle_name: scryfall.scryfallCard.name,
@@ -51,5 +51,4 @@ export class OracleAdapter implements IOracleAdapter {
       };
     }
   }
-
 }

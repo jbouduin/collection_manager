@@ -1,11 +1,11 @@
 import { Lifecycle, container } from "tsyringe";
-
-import CLIENTTOKENS, { IScryfallClient } from "./interfaces";
+import { SCRYFALL } from "../../service.tokens";
 import { ScryfallClient } from "./implementation/scryfall-client";
+import { IScryfallClient } from "./interfaces";
 
 
 export class ClientDi {
   public static registerClient() {
-    container.register<IScryfallClient>(CLIENTTOKENS.ScryfallClient, { useClass: ScryfallClient }, { lifecycle: Lifecycle.Singleton });
+    container.register<IScryfallClient>(SCRYFALL.ScryfallClient, { useClass: ScryfallClient }, { lifecycle: Lifecycle.Singleton });
   }
 }

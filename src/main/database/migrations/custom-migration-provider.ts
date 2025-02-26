@@ -1,21 +1,27 @@
-import { Migration, MigrationProvider } from "kysely";
+import { Kysely, Migration, MigrationProvider } from "kysely";
 import { injectAll, injectable } from "tsyringe";
-
 import { IBaseMigration } from "./base-migration/base.migration";
-import MIGRATOKENS from "./migration.tokens";
+import { DATABASE } from "../../services/service.tokens";
+
 
 @injectable()
 export class CustomMigrationProvider implements MigrationProvider {
+  //#region private readonly fields -------------------------------------------
+  private readonly allMigrations: Array<IBaseMigration>;
+  //#endregion
 
-  private allMigrations: Array<IBaseMigration>;
-
-  public constructor(@injectAll(MIGRATOKENS.Migration) allMigrations: Array<IBaseMigration>) {
+  //#region Constructor & C° --------------------------------------------------
+  public constructor(@injectAll(DATABASE.Migration) allMigrations: Array<IBaseMigration>) {
     this.allMigrations = allMigrations;
   }
+  //#endregion
 
+  //#region MigrationProvider implementation ----------------------------------
   public getMigrations(): Promise<Record<string, Migration>> {
     const result: Record<string, Migration> = {};
-    this.allMigrations.forEach((migration: IBaseMigration) => result[migration.keyName] = { up: migration.up, down: migration.down });
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    this.allMigrations.forEach((migration: IBaseMigration) => result[migration.keyName] = { up: (db: Kysely<any>) => migration.up(db), down: (db: Kysely<any>) => migration.down(db) });
     return Promise.resolve(result);
   }
+  //#endregion
 }

@@ -1,12 +1,12 @@
 import { Button, Classes, Dialog, DialogBody, DialogFooter } from "@blueprintjs/core";
 import { cloneDeep } from "lodash";
 import * as React from "react";
-
+import { RendererConfigurationDto } from "../../../../../common/dto";
 import { SyncParameterView } from "../../../../common/components/sync-parameter-view/sync-parameter-view";
 import { SyncParamViewmodel } from "../../../../common/viewmodels/sync-param/sync-param.viewmodel";
 import { ConfigurationContext } from "../../context";
 import { SyncDialogProps } from "./sync-dialog.props";
-import { DtoRendererConfiguration } from "../../../../../common/dto";
+
 
 export function SyncDialog(props: SyncDialogProps) {
   //#region State -------------------------------------------------------------
@@ -21,7 +21,8 @@ export function SyncDialog(props: SyncDialogProps) {
     syncCardsSyncedBeforeNumber: 1,
     syncCardsSyncedBeforeUnit: "month",
     cardSetCodeToSyncCardsFor: undefined,
-    changedImageStatusAction: "delete"
+    changedImageStatusAction: "delete",
+    oracleId: undefined
   });
   const [syncParam, setSyncParam] = React.useState<SyncParamViewmodel>(initialState);
   //#endregion
@@ -37,22 +38,22 @@ export function SyncDialog(props: SyncDialogProps) {
   return (
     <ConfigurationContext.Consumer>
       {
-        (configuration: DtoRendererConfiguration) => (
+        (configuration: RendererConfigurationDto) => (
           <Dialog
-            style={{ width: "800px" }}
+            canEscapeKeyClose={true}
+            canOutsideClickClose={false}
+            className={configuration.useDarkTheme ? Classes.DARK : ""}
+            isCloseButtonShown={true}
             isOpen={props.isOpen}
             onClose={() => props.onDialogClose()}
             shouldReturnFocusOnClose={true}
-            canEscapeKeyClose={true}
-            canOutsideClickClose={false}
-            isCloseButtonShown={true}
+            style={{ width: "800px" }}
             title="Synchronize"
-            className={configuration.useDarkTheme ? Classes.DARK : ""}
           >
             <DialogBody>
               <SyncParameterView
-                syncParam={syncParam}
                 onSyncParamChanged={onSyncParamChanged}
+                syncParam={syncParam}
               />
             </DialogBody>
             <DialogFooter actions={renderActions()} />

@@ -1,29 +1,30 @@
 import { Classes } from "@blueprintjs/core";
 
-import { DtoConfiguration } from "../../../../common/dto/configuration/configuration.dto";
+import { ConfigurationDto } from "../../../../common/dto";
 import { BaseViewmodel } from "../base.viewmodel";
 import { SyncParamViewmodel } from "../sync-param/sync-param.viewmodel";
 import { DatabaseViewTreeConfigurationViewmodel } from "./database-view-tree-configuration.viewmodel";
 import { DataConfigurationViewmodel } from "./data-configuration.viewmodel";
 
-export class ConfigurationViewModel extends BaseViewmodel<DtoConfiguration> {
-
+export class ConfigurationViewModel extends BaseViewmodel<ConfigurationDto> {
   //#region private fields ----------------------------------------------------
   private _syncParamViewmodel: SyncParamViewmodel;
   private _databaseViewTreeConfigurationViewmodel: DatabaseViewTreeConfigurationViewmodel;
   private _dataConfigurationViewmodel: DataConfigurationViewmodel;
-  private _hasChanges: boolean;
+  private readonly _isFirstUse: boolean;
   //#endregion
 
   //#region Auxiliary getters -------------------------------------------------
   public override get hasChanges(): boolean {
-    return this._hasChanges || super.hasChanges;
+    return this._isFirstUse || super.hasChanges;
+  }
+
+  public get isFirstUse(): boolean {
+    return this._isFirstUse;
   }
   //#endregion
 
   //#region Getters/Setters ---------------------------------------------------
-
-
   public get theme(): string {
     return this._dto.rendererConfiguration.useDarkTheme ? Classes.DARK : "";
   }
@@ -57,15 +58,12 @@ export class ConfigurationViewModel extends BaseViewmodel<DtoConfiguration> {
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
-  public constructor(dtoConfiguration: DtoConfiguration, hasChanges: boolean) {
+  public constructor(dtoConfiguration: ConfigurationDto, isFirstUse: boolean) {
     super(dtoConfiguration);
-    this._hasChanges = hasChanges;
+    this._isFirstUse = isFirstUse;
     this._syncParamViewmodel = new SyncParamViewmodel(dtoConfiguration.syncAtStartupConfiguration);
     this._databaseViewTreeConfigurationViewmodel = new DatabaseViewTreeConfigurationViewmodel(dtoConfiguration.rendererConfiguration.databaseViewTreeConfiguration);
     this._dataConfigurationViewmodel = new DataConfigurationViewmodel(dtoConfiguration.dataConfiguration);
   }
-  //#endregion
-
-  //#region Public methods ----------------------------------------------------
   //#endregion
 }

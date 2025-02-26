@@ -1,6 +1,7 @@
-import { CatalogType } from "../../../../../../common/enums";
+import { CatalogType } from "../../../../../../common/types";
+
 
 export type CatalogAdapterParam = {
-  catalogType: CatalogType,
-  item: string
+  catalogType: CatalogType;
+  item: string;
 };

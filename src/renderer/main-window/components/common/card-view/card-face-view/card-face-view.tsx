@@ -2,18 +2,17 @@ import { H5, Section, SectionCard, Tab, Tabs } from "@blueprintjs/core";
 import classNames from "classnames";
 import * as React from "react";
 
-import { CardSymbolProvider } from "../../card-symbol-provider/card-symbol-provider";
+import { CardSymbolRenderer } from "../../card-symbol-renderer";
 import { CardTextView } from "../card-text-view/card-text-view";
 import { CardfaceViewProps } from "./card-face-view.props";
 
 export function CardfaceView(props: CardfaceViewProps) {
-  console.log("in cardfaceview function");
-
-  //#region Main --------------------------------------------------------------
+  //#region Rendering ---------------------------------------------------------
   return (
     <Section
-      compact={true}
       collapsible={true}
+      compact={true}
+      rightElement={<CardSymbolRenderer cardSymbols={props.cardface.manaCost} className="mana-cost-image-in-title" />}
       title={
         <>
           <div className="card-header-line-1">
@@ -24,31 +23,34 @@ export function CardfaceView(props: CardfaceViewProps) {
           </div>
         </>
       }
-      rightElement={<CardSymbolProvider cardSymbols={props.cardface.manaCost} className="mana-cost-image-in-title" />}
     >
-
       <SectionCard className="card-view-section-card" padded={false}>
-        <Tabs animate={true} id="card-detail-tabs" defaultSelectedTabId="Oracle0" renderActiveTabPanelOnly={true}>
+        <Tabs
+          animate={true}
+          defaultSelectedTabId="Oracle0"
+          id="card-detail-tabs"
+          renderActiveTabPanelOnly={true}
+        >
           <Tab
             id="Oracle0"
-            title="Oracle"
             panel={<CardTextView cardText={props.oracle?.oracleText} />}
+            title="Oracle"
           />
           <Tab
             id="Printed0"
-            title="Printed"
             panel={
               <>
                 <CardTextView cardText={props.cardface.printedText} />
                 {
                   props.cardface.hasFlavorText &&
                   <div>
-                    <p className={classNames("bp5-divider", "ruling-divider")}></p>
+                    <p className={classNames("bp5-divider", "ruling-divider")} />
                     <p><i>{props.cardface.flavorText}</i></p>
                   </div>
                 }
               </>
             }
+            title="Printed"
           />
         </Tabs>
       </SectionCard>

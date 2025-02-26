@@ -2,7 +2,7 @@ import { Checkbox, FormGroup, HTMLSelect, HTMLTable } from "@blueprintjs/core";
 import * as React from "react";
 import { CardSetGroupBy, CardSetSort, CardSetType } from "../../../../../common/types";
 import { DisplayValueService, DisplayValueServiceContext } from "../../../context";
-import { displayValueMapToSelectOptions, handleBooleanChange, handleValueChange } from "../../../utils";
+import { displayValueRecordToSelectOptions, handleBooleanChange, handleValueChange } from "../../../utils";
 import { DatabaseViewConfigurationViewProps } from "./database-view-configuration-view.props";
 
 
@@ -22,7 +22,7 @@ export function DatabaseViewConfigurationView(props: DatabaseViewConfigurationVi
                     props.onConfigurationChanged();
                   })
                 }
-                options={displayValueMapToSelectOptions(displayValueService.cardSetSortDisplayValues)}
+                options={displayValueRecordToSelectOptions(displayValueService.cardSetSortDisplayValues)}
                 value={props.configuration.cardSetSort}
               />
             </FormGroup>
@@ -35,7 +35,7 @@ export function DatabaseViewConfigurationView(props: DatabaseViewConfigurationVi
                     props.onConfigurationChanged();
                   })
                 }
-                options={displayValueMapToSelectOptions(displayValueService.cardSetGroupByDisplayValues)}
+                options={displayValueRecordToSelectOptions(displayValueService.cardSetGroupByDisplayValues)}
                 value={props.configuration.cardSetGroupBy}
               />
             </FormGroup>
@@ -64,7 +64,7 @@ export function DatabaseViewConfigurationView(props: DatabaseViewConfigurationVi
     const table = new Array<React.JSX.Element>();
     let currentRow: Array<React.JSX.Element>;
     let idx = 0;
-    displayValueService.cardSetTypeDisplayValues.forEach((displayValue: string, key: CardSetType) => {
+    Object.keys(displayValueService.cardSetTypeDisplayValues).forEach((key: CardSetType) => {
       if (idx % 3 == 0) {
         currentRow = new Array<React.JSX.Element>();
       }
@@ -73,7 +73,7 @@ export function DatabaseViewConfigurationView(props: DatabaseViewConfigurationVi
           <Checkbox
             checked={props.configuration.cardSetTypeFilter.indexOf(key) >= 0}
             key={key}
-            label={displayValue}
+            label={displayValueService.cardSetTypeDisplayValues[key]}
             onChange={
               handleBooleanChange((_value: boolean) => {
                 props.configuration.toggleCardSetFilterType(key);

@@ -196,7 +196,7 @@ function headerView(props: HeaderViewProps) {
         onClick={() => props.onCardSetTypeFilterChanged(setType)}
         roleStructure="listoption"
         selected={props.cardSetTypeFilter.indexOf(setType) >= 0}
-        text={displayValueService.cardSetTypeDisplayValues.get(setType)}
+        text={displayValueService.cardSetTypeDisplayValues[setType]}
       />
     );
   }

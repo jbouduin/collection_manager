@@ -2,7 +2,7 @@ import { Checkbox, Divider, FormGroup, H4, HTMLSelect, HTMLTable, NumericInput, 
 import * as React from "react";
 import { CardSyncType, CatalogType, ImageStatus, RulingSyncType, TimespanUnit } from "../../../../common/types";
 import { DisplayValueService, DisplayValueServiceContext } from "../../context";
-import { displayValueMapToSelectOptions, handleBooleanChange, handleValueChange } from "../../utils";
+import { displayValueRecordToSelectOptions, handleBooleanChange, handleValueChange } from "../../utils";
 import { SyncParameterViewProps } from "./sync-parameter-view.props";
 
 export function SyncParameterView(props: SyncParameterViewProps) {
@@ -23,7 +23,7 @@ export function SyncParameterView(props: SyncParameterViewProps) {
                     props.onSyncParamChanged(props.syncParam);
                   })
                 }
-                options={displayValueMapToSelectOptions(displayValueService.cardSyncTypeDisplayValues)}
+                options={displayValueRecordToSelectOptions(displayValueService.cardSyncTypeDisplayValues)}
                 value={props.syncParam.cardSyncType}
               />
             </FormGroup>
@@ -64,7 +64,7 @@ export function SyncParameterView(props: SyncParameterViewProps) {
                         props.onSyncParamChanged(props.syncParam);
                       })
                     }
-                    options={displayValueMapToSelectOptions(displayValueService.timespanUnitDisplayValues)}
+                    options={displayValueRecordToSelectOptions(displayValueService.timespanUnitDisplayValues)}
                     value={props.syncParam.syncCardsSyncedBeforeUnit}
                   />
                 </div>
@@ -80,7 +80,7 @@ export function SyncParameterView(props: SyncParameterViewProps) {
                     props.onSyncParamChanged(props.syncParam);
                   })
                 }
-                options={displayValueMapToSelectOptions(displayValueService.rulingSyncTypeDisplayValues)}
+                options={displayValueRecordToSelectOptions(displayValueService.rulingSyncTypeDisplayValues)}
                 value={props.syncParam.rulingSyncType}
               />
             </FormGroup>
@@ -137,7 +137,7 @@ export function SyncParameterView(props: SyncParameterViewProps) {
     const table = new Array<React.JSX.Element>();
     let currentRow: Array<React.JSX.Element>;
     let idx = 0;
-    displayValueService.catalogTypeDisplayValues.forEach((displayValue: string, key: CatalogType) => {
+    Object.keys(displayValueService.catalogTypeDisplayValues).forEach((key: CatalogType) => {
       if (idx % 3 == 0) {
         currentRow = new Array<React.JSX.Element>();
       }
@@ -146,7 +146,7 @@ export function SyncParameterView(props: SyncParameterViewProps) {
           <Checkbox
             checked={props.syncParam.getCatalogToSync(key)}
             key={key}
-            label={displayValue}
+            label={displayValueService.catalogTypeDisplayValues[key]}
             onChange={
               handleBooleanChange((value: boolean) => {
                 props.syncParam.setCatalogToSync(key, value);
@@ -170,20 +170,23 @@ export function SyncParameterView(props: SyncParameterViewProps) {
 
   function renderImageStatus(displayValueService: DisplayValueService): Array<React.JSX.Element> {
     const result = new Array<React.JSX.Element>();
-    displayValueService.imageStatusDisplayValues.forEach((displayValue: string, key: ImageStatus) => {
-      result.push((
-        <Checkbox
-          checked={props.syncParam.getCardImageStatusToSync(key)}
-          key={key}
-          label={displayValue}
-          onChange={
-            handleBooleanChange((value: boolean) => {
-              props.syncParam.setCardImageStatusToSync(key, value);
-              props.onSyncParamChanged(props.syncParam);
-            })
-          }
-        />
-      ));
+
+    Object.keys(displayValueService.imageStatusDisplayValues).forEach((key: ImageStatus) => {
+      if (displayValueService.imageStatusDisplayValues[key]) {
+        result.push((
+          <Checkbox
+            checked={props.syncParam.getCardImageStatusToSync(key)}
+            key={key}
+            label={displayValueService.imageStatusDisplayValues[key]}
+            onChange={
+              handleBooleanChange((value: boolean) => {
+                props.syncParam.setCardImageStatusToSync(key, value);
+                props.onSyncParamChanged(props.syncParam);
+              })
+            }
+          />
+        ));
+      }
     });
     return result;
   }

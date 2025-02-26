@@ -136,26 +136,28 @@ export type CatalogType =
   "Watermarks" |
   "WordBank";
 export type GameFormat =
-  "standard" |
-  "future" |
-  "historic" |
-  "gladiator" |
-  "pioneer" |
-  "explorer" |
-  "modern" |
-  "legacy" |
-  "pauper" |
-  "vintage" |
-  "penny" |
-  "commander" |
-  "oathbreaker" |
-  "brawl" |
-  "historicbrawl" |
   "alchemy" |
-  "paupercommander" |
+  "brawl" |
+  "commander" |
   "duel" |
+  "explorer" |
+  "future" |
+  "gladiator" |
+  "historic" |
+  "legacy" |
+  "modern" |
+  "oathbreaker" |
+  "oldschool" |
+  "pauper" |
+  "paupercommander" |
+  "penny" |
+  "pioneer" |
+  "predh" |
   "premodern" |
-  "oldschool";
+  "standard" |
+  "standardbrawl" |
+  "timeless" |
+  "vintage";
 export type Game = "paper" | "arena" | "mtgo";
 export type MTGColorType =
   "card" |

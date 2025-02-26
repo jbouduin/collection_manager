@@ -4,7 +4,7 @@ import { IpcProxyService, IpcProxyServiceContext } from "../../../../../../commo
 import { BaseCardsTableView } from "../../../../../components/common/base-cards-table-view/base-cards-table-view";
 import { CardConditionContext, CardSetContext, LanguagesContext } from "../../../../../components/context";
 import { CardConditionViewmodel, CardSetViewmodel, CollectionCardListViewmodel } from "../../../../../viewmodels";
-import { BaseLookupResult, CardSetColumn, CardSetLooupResult, IBaseColumn, TextColumn, TextLookupResult } from "../../../../common/base-cards-table-view/columns";
+import { BaseLookupResult, CardSetColumn, CardSetLookupResult, IBaseColumn, TextColumn, TextLookupResult } from "../../../../common/base-cards-table-view/columns";
 import { CenterPanelProps } from "./center-panel.props";
 
 
@@ -90,7 +90,7 @@ export function CenterPanel(props: CenterPanelProps) {
       : { collectorNumberSortValue: card.collectorNumberSortValue, textValue: card.language };
   }
 
-  function cardSetCallback(card: CollectionCardListViewmodel): CardSetLooupResult {
+  function cardSetCallback(card: CollectionCardListViewmodel): CardSetLookupResult {
     const cardSet = cardSetContext.find((set: CardSetViewmodel) => set.id == card.setId);
     return cardSet
       ? { collectorNumberSortValue: card.collectorNumberSortValue, cardSetName: cardSet.cardSetName, svg: cardSet.cardSetSvg, rarity: card.rarity }

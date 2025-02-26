@@ -5,7 +5,7 @@ import { IpcProxyService, IpcProxyServiceContext } from "../../../../../../commo
 import { BaseCardsTableView } from "../../../../../components/common/base-cards-table-view/base-cards-table-view";
 import { CardSetContext, LanguagesContext } from "../../../../../components/context";
 import { CardSetViewmodel, MtgCardListViewmodel } from "../../../../../viewmodels";
-import { BaseLookupResult, CardSetColumn, CardSetLooupResult, ColorIdentityColumn, IBaseColumn, ManaCostColumn, TextColumn, TextLookupResult } from "../../../../common/base-cards-table-view/columns";
+import { BaseLookupResult, CardSetColumn, CardSetLookupResult, CollectiorNumberColumn, ColorIdentityColumn, IBaseColumn, ManaCostColumn, TextColumn, TextLookupResult } from "../../../../common/base-cards-table-view/columns";
 import { CenterPanelProps } from "./center-panel.props";
 
 
@@ -56,11 +56,11 @@ export function CenterPanel(props: CenterPanelProps) {
   //#region Auxiliary methods -------------------------------------------------
   function getSortableColumnDefinitions(): Array<IBaseColumn<MtgCardListViewmodel, BaseLookupResult>> {
     const result = new Array<IBaseColumn<MtgCardListViewmodel, BaseLookupResult>>();
-    result.push(new TextColumn<MtgCardListViewmodel>(
+    result.push(new CollectiorNumberColumn<MtgCardListViewmodel>(
       0,
       "Number",
       (card: MtgCardListViewmodel) => {
-        return { collectorNumberSortValue: card.collectorNumberSortValue, textValue: card.collectorNumber };
+        return { collectorNumberSortValue: card.collectorNumberSortValue, displayValue: card.collectorNumber };
       }
     ));
     result.push(new TextColumn<MtgCardListViewmodel>(
@@ -125,7 +125,7 @@ export function CenterPanel(props: CenterPanelProps) {
     return result;
   }
 
-  function cardSetCallback(card: MtgCardListViewmodel): CardSetLooupResult {
+  function cardSetCallback(card: MtgCardListViewmodel): CardSetLookupResult {
     const cardSet = cardSetContext.find((set: CardSetViewmodel) => set.id == card.setId);
     return cardSet
       ? { collectorNumberSortValue: card.collectorNumberSortValue, cardSetName: cardSet.cardSetName, svg: undefined, rarity: card.rarity }

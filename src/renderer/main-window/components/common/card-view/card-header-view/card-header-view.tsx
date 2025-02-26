@@ -1,11 +1,10 @@
 import { H3, H5 } from "@blueprintjs/core";
 import * as React from "react";
-import { CardRarity } from "../../../../../../common/types";
+import { getRarityColorClassname } from "../../../../../common/utils";
 import { CardSetViewmodel } from "../../../../viewmodels";
 import { CardSetContext } from "../../../context";
 import { SvgProvider } from "../../svg-provider/svg-provider";
 import { CardHeaderViewProps } from "./card-header-view.props";
-import { getRarityColorClassname } from "../../../../../common/utils";
 
 
 export function CardHeaderView(props: CardHeaderViewProps) {
@@ -33,6 +32,4 @@ export function CardHeaderView(props: CardHeaderViewProps) {
     </CardSetContext.Consumer>
   );
   //#endregion
-
-
 }

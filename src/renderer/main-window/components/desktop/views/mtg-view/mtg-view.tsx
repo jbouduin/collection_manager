@@ -51,7 +51,7 @@ export function MtgView(props: MtgViewProps) {
               <PanelResizeHandle />
               <Panel defaultSize={20}>
                 <CardView
-                  cardId={state.selectedCards ? calculateCardToDisplay() : null}
+                  cardId={state.selectedCards?.length > 0 ? calculateCardToDisplay() : null}
                   collectionId={null}
                   showOtherLanguages={true}
                 />

@@ -1,13 +1,11 @@
-import { Cell, CellRenderer, Column, ColumnProps } from "@blueprintjs/table";
 import * as React from "react";
 import { LanguageDto, OwnedCardDto, OwnedCardListDto } from "../../../../../../../common/dto";
 import { IpcProxyService, IpcProxyServiceContext } from "../../../../../../common/context";
 import { BaseCardsTableView } from "../../../../../components/common/base-cards-table-view/base-cards-table-view";
-import { cardSetRenderer, textCellRenderer } from "../../../../../components/common/base-cards-table-view/cell-renderers";
 import { CardConditionContext, CardSetContext, LanguagesContext } from "../../../../../components/context";
 import { CardConditionViewmodel, CardSetViewmodel, CollectionCardListViewmodel } from "../../../../../viewmodels";
+import { BaseLookupResult, CardSetColumn, CardSetLooupResult, IBaseColumn, TextColumn, TextLookupResult } from "../../../../common/base-cards-table-view/columns";
 import { CenterPanelProps } from "./center-panel.props";
-import { MTGLanguage } from "../../../../../../../common/types";
 
 
 export function CenterPanel(props: CenterPanelProps) {
@@ -16,7 +14,9 @@ export function CenterPanel(props: CenterPanelProps) {
   //#endregion
 
   //#region Context ---------------------------------------------------------------------
+  const cardSetContext = React.useContext<Array<CardSetViewmodel>>(CardSetContext);
   const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
+  const languagesContext = React.useContext<Array<LanguageDto>>(LanguagesContext);
   //#endregion
 
   //#region Effects -----------------------------------------------------------
@@ -43,72 +43,65 @@ export function CenterPanel(props: CenterPanelProps) {
 
   //#region Rendering ---------------------------------------------------------
   return (
-    <LanguagesContext.Consumer>
+    <CardConditionContext.Consumer>
       {
-        (languages: Array<LanguageDto>) => (
-          <CardSetContext.Consumer>
-            {
-              (cardSets: Array<CardSetViewmodel>) => (
-                <CardConditionContext.Consumer>
-                  {
-                    (conditions: Array<CardConditionViewmodel>) => (
-                      <BaseCardsTableView<CollectionCardListViewmodel>
-                        columnDefinitions={getColumnDefinitions(languages, cardSets, conditions)}
-                        data={cards}
-                        onCardsSelected={(cards?: Array<CollectionCardListViewmodel>) => props.onCardsSelected(cards)}
-                      />
-                    )
-                  }
-                </CardConditionContext.Consumer>
-              )
-            }
-          </CardSetContext.Consumer>
+        (conditions: Array<CardConditionViewmodel>) => (
+          <BaseCardsTableView<CollectionCardListViewmodel>
+            data={cards}
+            onCardsSelected={(cards?: Array<CollectionCardListViewmodel>) => props.onCardsSelected(cards)}
+            sortableColumnDefintions={getSortableColumnDefinitions(conditions)}
+          />
         )
       }
-    </LanguagesContext.Consumer>
+    </CardConditionContext.Consumer>
   );
+  //#endregion
 
-  function getColumnDefinitions(languages: Array<LanguageDto>, cardSets: Array<CardSetViewmodel>, conditions: Array<CardConditionViewmodel>): Array<React.ReactElement<ColumnProps>> {
-    const result = new Array<React.ReactElement<ColumnProps>>();
-    result.push(<Column cellRenderer={cardSetRenderer(cards, true, cardSets, (card: CollectionCardListViewmodel) => [card.setId, card.rarity])} key="Set" name="Set" />);
-    result.push(<Column cellRenderer={textCellRenderer(cards, (card: CollectionCardListViewmodel) => card.rarity)} key="Rarity" name="Rarity" />);
-    result.push(<Column cellRenderer={languageRenderer(languages, (card: CollectionCardListViewmodel) => card.language)} key="Language" name="Language" />);
-    result.push(<Column cellRenderer={textCellRenderer(cards, (card: CollectionCardListViewmodel) => card.cardName)} key="Name" name="Name" />);
-    conditions.forEach((condition: CardConditionViewmodel) => {
-      result.push(<Column cellRenderer={quantityRenderer(condition.code, (card: CollectionCardListViewmodel) => card.ownedCards)} key={condition.code} name={condition.expression} />);
+  //#region Auxiliary methods -------------------------------------------------
+  function getSortableColumnDefinitions(conditions: Array<CardConditionViewmodel>): Array<IBaseColumn<CollectionCardListViewmodel, BaseLookupResult>> {
+    const result = new Array<IBaseColumn<CollectionCardListViewmodel, BaseLookupResult>>();
+    result.push(new CardSetColumn<CollectionCardListViewmodel>(0, "Set", (card: CollectionCardListViewmodel) => cardSetCallback(card)));
+    result.push(new TextColumn<CollectionCardListViewmodel>(
+      1,
+      "Rarity",
+      (card: CollectionCardListViewmodel) => {
+        return { collectorNumberSortValue: card.collectorNumberSortValue, textValue: card.rarity };
+      }
+    ));
+    result.push(new TextColumn<CollectionCardListViewmodel>(2, "Language", languageCallback));
+    result.push(new TextColumn<CollectionCardListViewmodel>(
+      3,
+      "Name",
+      (card: CollectionCardListViewmodel) => {
+        return { collectorNumberSortValue: card.collectorNumberSortValue, textValue: card.cardName };
+      }
+    ));
+    conditions.forEach((condition: CardConditionViewmodel, idx: number) => {
+      // TODO sort by foil / non foil / total
+      result.push(new TextColumn<CollectionCardListViewmodel>(4 + idx, condition.expression, getQuantityCallback(condition.id)));
     });
-    /*
-     * result.push(<Column cellRenderer={textCellRenderer(cards, (card: CollectionCardListViewmodel) => card.cardTypeLine)} key="Type" name="Type" />);
-     * result.push(<Column cellRenderer={symbolRenderer(cards, (card: CollectionCardListViewmodel) => card.cardManacost)} key="Mana cost" name="ManaCost" />);
-     * result.push(<Column cellRenderer={textCellRenderer(cards, (card: CollectionCardListViewmodel) => card.cardPower)} key="Power" name="Power" />);
-     * result.push(<Column cellRenderer={textCellRenderer(cards, (card: CollectionCardListViewmodel) => card.cardThoughness)} key="Thoughness" name="Thoughness" />);
-     * result.push(<Column cellRenderer={symbolRenderer(cards, (card: CollectionCardListViewmodel) => card.colorIdentity)} key="CI" name="CI" />);
-     */
     return result;
   }
 
-  function languageRenderer(languages: Array<LanguageDto>, valueCallBack: (card: CollectionCardListViewmodel) => MTGLanguage): CellRenderer {
-    return (row: number) => {
-      const language = valueCallBack(cards[row]);
-      const languageDef = languages.find((lng: LanguageDto) => lng.id == language);
-      return (
-        <Cell>
-          {languageDef ? languageDef.button_text : language}
-        </Cell>
-      );
-    };
+  function languageCallback(card: CollectionCardListViewmodel): TextLookupResult {
+    const languageDef = languagesContext.find((lng: LanguageDto) => lng.id == card.language);
+    return languageDef
+      ? { collectorNumberSortValue: card.collectorNumberSortValue, textValue: languageDef.button_text }
+      : { collectorNumberSortValue: card.collectorNumberSortValue, textValue: card.language };
   }
 
-  function quantityRenderer(condition: string, valueCallBack: (card: CollectionCardListViewmodel) => Array<OwnedCardDto>): CellRenderer {
-    return (row: number) => {
-      const ownedCards = valueCallBack(cards[row]);
-      const foil = ownedCards.find((ownedCard: OwnedCardDto) => ownedCard.condition_id == condition && ownedCard.is_foil == true)?.quantity || 0;
-      const nonFoil = ownedCards.find((ownedCard: OwnedCardDto) => ownedCard.condition_id == condition && ownedCard.is_foil == false)?.quantity || 0;
-      return (
-        <Cell>
-          {`${nonFoil} non-foil / ${foil} foil`}
-        </Cell>
-      );
+  function cardSetCallback(card: CollectionCardListViewmodel): CardSetLooupResult {
+    const cardSet = cardSetContext.find((set: CardSetViewmodel) => set.id == card.setId);
+    return cardSet
+      ? { collectorNumberSortValue: card.collectorNumberSortValue, cardSetName: cardSet.cardSetName, svg: cardSet.cardSetSvg, rarity: card.rarity }
+      : { collectorNumberSortValue: card.collectorNumberSortValue, cardSetName: card.setId, svg: undefined, rarity: card.rarity };
+  }
+
+  function getQuantityCallback(condition: string): (card: CollectionCardListViewmodel) => TextLookupResult {
+    return (card: CollectionCardListViewmodel) => {
+      const foil = card.ownedCards.find((ownedCard: OwnedCardDto) => ownedCard.condition_id == condition && ownedCard.is_foil == true)?.quantity || 0;
+      const nonFoil = card.ownedCards.find((ownedCard: OwnedCardDto) => ownedCard.condition_id == condition && ownedCard.is_foil == false)?.quantity || 0;
+      return { collectorNumberSortValue: card.collectorNumberSortValue, textValue: `${nonFoil} non-foil / ${foil} foil` };
     };
   }
   //#endregion

@@ -55,7 +55,7 @@ export function CollectionView(_props: CollectionViewProps) {
               <PanelResizeHandle />
               <Panel defaultSize={20}>
                 <CardView
-                  cardId={state.selectedCards ? state.selectedCards[0].cardId : null}
+                  cardId={state.selectedCards?.length > 0 ? state.selectedCards[0].cardId : null}
                   collectionId={state.selectedCollection?.id}
                   showOtherLanguages={false}
                 />

@@ -69,7 +69,7 @@ export class CardRepository extends BaseRepository implements ICardRepository {
           helpers.jsonArrayFrom<MtgCardColorDto>(
             eb.selectFrom("card_color_map")
               .innerJoin("color", "color.id", "card_color_map.color_id")
-              .select([...CARD_COLOR_MAP_TABLE_FIELDS, "color.mana_symbol"])
+              .select([...CARD_COLOR_MAP_TABLE_FIELDS, "color.sequence", "color.mana_symbol"])
               .whereRef("card_color_map.card_id", "=", "card.id")
               .$castTo<MtgCardColorDto>()
           ).as("cardColors")
@@ -156,7 +156,7 @@ export class CardRepository extends BaseRepository implements ICardRepository {
           helpers.jsonArrayFrom<MtgCardColorDto>(
             eb.selectFrom("card_color_map")
               .innerJoin("color", "color.id", "card_color_map.color_id")
-              .select([...CARD_COLOR_MAP_TABLE_FIELDS, "color.mana_symbol"])
+              .select([...CARD_COLOR_MAP_TABLE_FIELDS, "color.sequence", "color.mana_symbol"])
               .whereRef("card_color_map.card_id", "=", "card.id")
               .$castTo<MtgCardColorDto>()
           ).as("cardColors")

@@ -32,6 +32,24 @@ abstract class BaseCardViewmodel<T extends MtgCardListDto | MtgCardDetailDto | O
     return this.joinMultiCardFaceData(this._dtoCard.oracle.map((oracle: OracleDto) => oracle.type_line));
   }
 
+  /**
+   * The highest CMC of both cardfaces
+   * TODO: check if there are many cards in the db that have two faces, but the cmc on card level anyway
+   * Currently this happens with cards that have a cmc on only one of both faces.
+   */
+  public get convertedManaCostSortValue(): number {
+    return this._dtoCard.cardfaces
+      .map((cardFace: MtgCardfaceDto) => {
+        return cardFace.cmc ? cardFace.cmc : -1;
+      })
+      .reduce(
+        (prev: number, curr: number) => {
+          return (curr > prev) ? curr : prev;
+        },
+        -1
+      );
+  }
+
   public get rarity(): CardRarity {
     return this._dtoCard.rarity;
   }
@@ -90,6 +108,7 @@ abstract class BaseCardViewmodel<T extends MtgCardListDto | MtgCardDetailDto | O
   }
   //#endregion
 }
+
 abstract class MtgCardViewmodel<T extends MtgCardListDto | MtgCardDetailDto> extends BaseCardViewmodel<T> {
   //#region common getters ----------------------------------------------------
   public get otherCardLanguages(): Array<MtgCardLanguageDto> {
@@ -107,6 +126,8 @@ abstract class MtgCardViewmodel<T extends MtgCardListDto | MtgCardDetailDto> ext
 export class MtgCardListViewmodel extends MtgCardViewmodel<MtgCardListDto> {
   //#region private readonly fields -------------------------------------------
   private readonly _collectorNumberSortValue: string;
+  private readonly _colorIdentity: Array<string>;
+  private readonly _coloridentitySortValue: string;
   //#endregion
 
   //#region List Specific getters ---------------------------------------------
@@ -126,14 +147,16 @@ export class MtgCardListViewmodel extends MtgCardViewmodel<MtgCardListDto> {
     return this._dtoCard.collector_number;
   }
 
-  public get languages(): Array<MTGLanguage> {
-    return this._dtoCard.languages.map((language: MtgCardLanguageDto) => language.lang);
+  public get colorIdentity(): Array<string> {
+    return this._colorIdentity;
   }
 
-  public get colorIdentity(): Array<string> {
-    return this._dtoCard.cardColors
-      .filter((cardColor: MtgCardColorDto) => cardColor.color_type == "identity")
-      .map((cardColor: MtgCardColorDto) => cardColor.mana_symbol);
+  public get coloridentitySortValue(): string {
+    return this._coloridentitySortValue;
+  }
+
+  public get languages(): Array<MTGLanguage> {
+    return this._dtoCard.languages.map((language: MtgCardLanguageDto) => language.lang);
   }
   //#endregion
 
@@ -141,6 +164,17 @@ export class MtgCardListViewmodel extends MtgCardViewmodel<MtgCardListDto> {
   public constructor(dtoCard: MtgCardListDto) {
     super(dtoCard);
     this._collectorNumberSortValue = isNaN(Number(dtoCard.collector_number)) ? dtoCard.collector_number : dtoCard.collector_number.padStart(4, "0");
+    this._colorIdentity = dtoCard.cardColors
+      .filter((cardColor: MtgCardColorDto) => cardColor.color_type == "identity")
+      .sort((a: MtgCardColorDto, b: MtgCardColorDto) => a.sequence - b.sequence)
+      .map((cardColor: MtgCardColorDto) => cardColor.mana_symbol);
+    this._coloridentitySortValue = "";
+    const cardColors = this._dtoCard.cardColors
+      .filter((cardColor: MtgCardColorDto) => cardColor.color_type == "identity")
+      .sort((a: MtgCardColorDto, b: MtgCardColorDto) => a.sequence - b.sequence);
+    for (const item of cardColors) {
+      this._coloridentitySortValue = this._coloridentitySortValue + item.sequence.toString().padStart(2, "0");
+    }
   }
   //#endregion
 }
@@ -191,6 +225,8 @@ export class MtgCardDetailViewmodel extends MtgCardViewmodel<MtgCardDetailDto> {
 }
 
 export class CollectionCardListViewmodel extends BaseCardViewmodel<OwnedCardListDto> {
+  private readonly _collectorNumberSortValue: string;
+
   //#region Getters -----------------------------------------------------------
   public get cardPower(): string {
     return this.joinMultiCardFaceData(this._dtoCard.cardfaces.map((cardface: MtgCardfaceDto) => cardface.power));
@@ -202,6 +238,10 @@ export class CollectionCardListViewmodel extends BaseCardViewmodel<OwnedCardList
 
   public get collectorNumber(): string {
     return this._dtoCard.collector_number;
+  }
+
+  public get collectorNumberSortValue(): string {
+    return this._collectorNumberSortValue;
   }
 
   public get colorIdentity(): Array<string> {
@@ -229,6 +269,7 @@ export class CollectionCardListViewmodel extends BaseCardViewmodel<OwnedCardList
   //#region Constructor & C° --------------------------------------------------
   public constructor(dtoCard: OwnedCardListDto) {
     super(dtoCard);
+    this._collectorNumberSortValue = isNaN(Number(dtoCard.collector_number)) ? dtoCard.collector_number : dtoCard.collector_number.padStart(4, "0");
   }
   //#endregion
 }

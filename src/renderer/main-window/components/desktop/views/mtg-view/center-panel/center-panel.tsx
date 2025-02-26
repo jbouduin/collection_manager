@@ -35,11 +35,22 @@ export function CenterPanel(props: CenterPanelProps) {
             },
             (_cardResult: Array<MtgCardListDto>) => setCards(new Array<MtgCardListViewmodel>())
           );
+      } else if (props.queryString) {
+        void ipcProxyService
+          .getData(`/card/query?${props.queryString}`)
+          .then(
+            (cardResult: Array<MtgCardListDto>) => {
+              setCards(cardResult
+                .map((card: MtgCardListDto) => new MtgCardListViewmodel(card))
+                .sort((a: MtgCardListViewmodel, b: MtgCardListViewmodel) => a.collectorNumberSortValue.localeCompare(b.collectorNumberSortValue)));
+            },
+            (_cardResult: Array<MtgCardListDto>) => setCards(new Array<MtgCardListViewmodel>())
+          );
       } else {
         setCards(new Array<MtgCardListViewmodel>());
       }
     },
-    [props.selectedSets]
+    [props.selectedSets, props.queryString]
   );
   //#endregion
 

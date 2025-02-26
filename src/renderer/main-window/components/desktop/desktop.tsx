@@ -57,7 +57,9 @@ export function Desktop(_props: Props) {
             ipcProxyService.getData<Array<CardConditionDto>>("/card-condition")
           ]).then(([cardSymbols, cardSets, languages, cardConditions]) => {
             newState.symbolSvgs = cardSymbols;
-            newState.cardSets = cardSets.map((cardSet: MtgCardSetDto) => new CardSetViewmodel(cardSet));
+            newState.cardSets = cardSets
+              .sort((a: MtgCardSetDto, b: MtgCardSetDto) => a.name.localeCompare(b.name))
+              .map((cardSet: MtgCardSetDto) => new CardSetViewmodel(cardSet));
             newState.languages = languages;
             newState.cardConditions = cardConditions.map((condition: CardConditionDto) => new CardConditionViewmodel(condition));
             newState.initialized = true;
@@ -112,7 +114,9 @@ export function Desktop(_props: Props) {
       if (desktopState.afterSplashScreenClose.includes("CardSets")) {
         newState.cardSets = await ipcProxyService
           .getData<Array<MtgCardSetDto>>("/card-set")
-          .then((r: Array<MtgCardSetDto>) => r.map((cardSet: MtgCardSetDto) => new CardSetViewmodel(cardSet)));
+          .then((r: Array<MtgCardSetDto>) => r
+            .sort((a: MtgCardSetDto, b: MtgCardSetDto) => a.name.localeCompare(b.name))
+            .map((cardSet: MtgCardSetDto) => new CardSetViewmodel(cardSet)));
       }
       setDesktopState(newState);
     } else {

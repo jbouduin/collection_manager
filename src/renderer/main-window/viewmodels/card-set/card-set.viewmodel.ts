@@ -1,6 +1,9 @@
 import { MtgCardSetDto } from "../../../../common/dto";
 import { CardSetType } from "../../../../common/types";
 
+/**
+ * Use a view model for MtgCardSet, so we do not assign something by accident
+ */
 export class CardSetViewmodel {
   //#region private readonly fields -------------------------------------------
   private readonly _dtoCardSet: MtgCardSetDto;

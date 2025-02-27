@@ -1,9 +1,12 @@
-import { CardLegality, CardSetGroupBy, CardSetSort, CardSetType, CardSyncType, CatalogType, GameFormat, ImageStatus, RulingSyncType, TimespanUnit } from "../../../common/types";
+import { CardLegality, CardRarity, CardSetGroupBy, CardSetSort, CardSetType, CardSyncType, CatalogType, GameFormat, ImageStatus, RulingSyncType, TimespanUnit } from "../../../common/types";
 
-
+/**
+ * The display service is using maps to make sure we add new display values if new key's are added
+ */
 export class DisplayValueService {
   //#region private fields ----------------------------------------------------
   private readonly _cardLegalityDisplayValues: Record<CardLegality, string>;
+  private readonly _cardRarityDisplayValues: Record<CardRarity, string>;
   private readonly _cardSetGroupByDisplayValues: Record<CardSetGroupBy, string>;
   private readonly _cardSetSortDisplayValues: Record<CardSetSort, string>;
   private readonly _cardSetTypeDisplayValues: Record<CardSetType, string>;
@@ -18,6 +21,10 @@ export class DisplayValueService {
   //#region public properties -------------------------------------------------
   public get cardLegalityDisplayValues(): Record<CardLegality, string> {
     return this._cardLegalityDisplayValues;
+  }
+
+  public get cardRarityDisplayValues(): Record<CardRarity, string> {
+    return this._cardRarityDisplayValues;
   }
 
   public get cardSetGroupByDisplayValues(): Record<CardSetGroupBy, string> {
@@ -60,10 +67,19 @@ export class DisplayValueService {
   //#region constructor & C° --------------------------------------------------
   public constructor() {
     this._cardLegalityDisplayValues = {
-      banned: "Banned",
       legal: "Legal",
+      banned: "Banned",
       not_legal: "Not legal",
       restricted: "Restricted"
+    };
+
+    this._cardRarityDisplayValues = {
+      mythic: "Mythic",
+      rare: "Rare",
+      uncommon: "Uncommon",
+      common: "Common",
+      bonus: "Bonus",
+      special: "Special"
     };
 
     this._cardSetGroupByDisplayValues = {
@@ -182,4 +198,5 @@ export class DisplayValueService {
       vintage: "Vintage"
     };
   }
+  //#endregion
 }

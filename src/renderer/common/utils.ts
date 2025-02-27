@@ -22,11 +22,11 @@ export function handleNumberChange(handler: (value: number) => void) {
 
 export type SelectOption<T> = { value: T; label: string };
 
-export function displayValueRecordToSelectOptions(map: Record<string, string>): Array<SelectOption<string>> {
-  const result = new Array<SelectOption<string>>();
-  Object.keys(map).forEach((key: string) => {
-    if (map[key]) {
-      result.push({ value: key, label: map[key] });
+export function displayValueRecordToSelectOptions<T extends string>(record: Record<T, string>): Array<SelectOption<T>> {
+  const result = new Array<SelectOption<T>>();
+  Object.keys(record).forEach((key: T) => {
+    if (record[key]) {
+      result.push({ value: key, label: record[key] });
     }
   });
   return result;

@@ -47,7 +47,7 @@ export function MtgView(props: MtgViewProps) {
               <PanelResizeHandle />
               <Panel>
                 <CenterPanelMemo
-                  onCardsSelected={(cards?: Array<MtgCardListViewmodel>) => setState({ selectedCards: cards, selectedSets: state.selectedSets })}
+                  onCardsSelected={(cards?: Array<MtgCardListViewmodel>) => setState({ selectedCards: cards, selectedSets: state.selectedSets, queryString: state.queryString })}
                   queryString={state.queryString}
                   selectedSets={state.selectedSets}
                 />

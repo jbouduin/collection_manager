@@ -24,9 +24,9 @@ export function createTable<TB extends string>(db: Kysely<any>, options: CreateT
 
   result = result.addColumn("created_at", "text", (col: ColumnDefinitionBuilder) => col.notNull());
   if (options.isSynced) {
-    result = result.addColumn("last_synced_at", "text", (col: ColumnDefinitionBuilder) => col.notNull());
+    result = result.addColumn("last_synced_at", "text");
   } else {
-    result = result.addColumn("modified_at", "text", (col: ColumnDefinitionBuilder) => col.notNull());
+    result = result.addColumn("modified_at", "text");
   }
 
   return result;

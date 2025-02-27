@@ -1,15 +1,7 @@
-import { CardRarity, GameFormat } from "../../../../common/types";
+import { CardSearchDto, CatalogItemDto } from "../../../../common/dto";
+import { CardRarity, CatalogType, GameFormat } from "../../../../common/types";
 import { BaseViewmodel } from "../../../common/viewmodels/base.viewmodel";
 
-
-/**
- * Define a dto, se we can later save searches
- */
-export interface CardSearchDto {
-  selectedGameFormats: Array<GameFormat>;
-  selectedRarities: Array<CardRarity>;
-  selectedSets: Array<string>;
-}
 
 export class CardSearchViewmodel extends BaseViewmodel<CardSearchDto> {
   //#region Getters - Setters ---------------------------------------------------
@@ -30,6 +22,7 @@ export class CardSearchViewmodel extends BaseViewmodel<CardSearchDto> {
   //#region Constructor -------------------------------------------------------
   public constructor() {
     const initial: CardSearchDto = {
+      selectedCatalogItems: new Array<CatalogItemDto>(),
       selectedGameFormats: new Array<GameFormat>(),
       selectedRarities: ["mythic", "rare", "uncommon", "common"],
       selectedSets: new Array<string>()
@@ -84,6 +77,37 @@ export class CardSearchViewmodel extends BaseViewmodel<CardSearchDto> {
 
   public clearCardSetSelection(): void {
     this._dto.selectedSets.splice(0);
+  }
+  //#endregion
+
+  //#region Catalogs ----------------------------------------------------------
+  public addCatalogItem(item: CatalogItemDto): void {
+    this._dto.selectedCatalogItems.push(item);
+    this._dto.selectedCatalogItems.sort((a: CatalogItemDto, b: CatalogItemDto) => {
+      const compareType = a.catalog_name.localeCompare(b.catalog_name);
+      if (compareType == 0) {
+        return a.item.localeCompare(b.item);
+      } else {
+        return compareType;
+      }
+    });
+  }
+
+  public removeCatalogItem(item: CatalogItemDto): void {
+    const idx = this._dto.selectedCatalogItems.indexOf(item);
+    this._dto.selectedCatalogItems.splice(idx, 1);
+  }
+
+  public getSelectedCatalogItems(catalogType: CatalogType): Array<CatalogItemDto> {
+    return this._dto.selectedCatalogItems.filter((item: CatalogItemDto) => item.catalog_name == catalogType);
+  }
+
+  public clearCatalogSelection(catalogType: CatalogType): void {
+    let idx = this._dto.selectedCatalogItems.findIndex((item: CatalogItemDto) => item.catalog_name == catalogType);
+    while (idx >= 0) {
+      this._dto.selectedCatalogItems.splice(idx, 1);
+      idx = this._dto.selectedCatalogItems.findIndex((item: CatalogItemDto) => item.catalog_name == catalogType);
+    }
   }
   //#endregion
 

@@ -126,7 +126,7 @@ export class BootstrapService implements IBootstrapService {
       cardSetCodeToSyncCardsFor: undefined,
       cardSyncType: "none",
       // FEATURE Advanced search: add more catalogs to the array below when we need them to search
-      catalogTypesToSync: ["AbilityWords", "LandTypes", "ArtifactTypes"],
+      catalogTypesToSync: ["ability-words", "land-types", "artifact-types"],
       changedImageStatusAction: undefined,
       oracleId: undefined,
       rulingSyncType: "none",

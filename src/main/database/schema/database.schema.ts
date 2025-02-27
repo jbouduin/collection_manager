@@ -7,7 +7,8 @@ import {
   CardColorMapTable,
   CollectionTable,
   CardConditionTable,
-  OwnedCardTable
+  OwnedCardTable,
+  CatalogTypeTable
 } from ".";
 import { OwnedCardCollectionMapTable } from "./collection/owned-card-collection-map.table";
 
@@ -34,6 +35,7 @@ export interface DatabaseSchema {
   //#region master data -------------------------------------------------------
   card_set: CardSetTable;
   catalog_item: CatalogItemTable;
+  catalog_type: CatalogTypeTable;
   color: ColorTable;
   language: LanguageTable;
   //#endregion

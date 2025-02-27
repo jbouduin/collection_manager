@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { dirname, join } from "path";
 import { inject, singleton } from "tsyringe";
 import { ConfigurationDto, DtoScryfallConfiguration, RendererConfigurationDto, SyncParamDto } from "../../../../common/dto";
-import { CatalogType, ScryfallEndpoint } from "../../../../common/types";
+import { ScryfallEndpoint } from "../../../../common/types";
 import { BaseService, IResult } from "../../base";
 import { INFRASTRUCTURE } from "../../service.tokens";
 import { IConfigurationService, ILogService, IResultFactory } from "../interfaces";
@@ -103,26 +103,6 @@ export class ConfigurationService extends BaseService implements IConfigurationS
   }
 
   private createScryFallFactoryDefault(): DtoScryfallConfiguration {
-    const catalogPaths: Record<CatalogType, string> = {
-      AbilityWords: "ability-words",
-      ArtifactTypes: "artifact-types",
-      ArtistNames: "artist-names",
-      CardNames: "card-names",
-      CreatureTypes: "creature-types",
-      EnchantmentTypes: "enchantment-types",
-      KeywordAbilities: "keyword-abilities",
-      KeywordActions: "keyword-actions",
-      LandTypes: "land-types",
-      Loyalties: "loyalties",
-      PlaneswalkerTypes: "planeswalker-types",
-      Powers: "powers",
-      SpellTypes: "spell-types",
-      Supertypes: "super-types",
-      Toughnesses: "toughnesses",
-      Watermarks: "watermarks",
-      WordBank: "word-bank"
-    };
-
     const endpoints: Record<ScryfallEndpoint, string> = {
       cards: "card/:id",
       cardSet: "sets",
@@ -137,7 +117,7 @@ export class ConfigurationService extends BaseService implements IConfigurationS
       cardBackRoot: "https://backs.scryfall.io",
       scryfallApiRoot: "https://api.scryfall.com",
       scryfallEndpoints: endpoints,
-      scryfallCatalogPaths: catalogPaths,
+
       // Scryfall api requests 50-100 ms between calls, let's give it some slack
       minimumRequestTimeout: 60,
       dumpRetrievedData: false,

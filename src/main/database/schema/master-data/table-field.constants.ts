@@ -26,3 +26,10 @@ export const CARD_SET_TABLE_FIELDS: Array<AnyColumnWithTable<DatabaseSchema, "ca
   "card_set.tcgplayer_id",
   "card_set.uri"
 ];
+
+export const CATALOG_TYPE_TABLE_FIELDS: Array<AnyColumnWithTable<DatabaseSchema, "catalog_type">> = [
+  "catalog_type.catalog_name",
+  "catalog_type.created_at",
+  "catalog_type.display_label",
+  "catalog_type.last_synced_at"
+];

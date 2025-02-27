@@ -1,7 +1,8 @@
-import { Transaction } from "kysely";
+import { DeleteResult, Transaction, UpdateResult } from "kysely";
 import { inject, injectable } from "tsyringe";
 import { ProgressCallback } from "../../../../../common/ipc";
 import { CatalogType } from "../../../../../common/types";
+import { sqliteUTCTimeStamp } from "../../../../../common/util";
 import { DatabaseSchema } from "../../../../../main/database/schema";
 import { IConfigurationService, IDatabaseService, ILogService } from "../../../../../main/services/infra/interfaces";
 import { runSerial } from "../../../../../main/services/infra/util";
@@ -52,60 +53,7 @@ export class CatalogSyncService extends BaseSyncService<Array<CatalogType>> impl
   private async syncSingleCatalog(parameter: SyncSingleCatalogParameter): Promise<void> {
     parameter.progressCallback(`Synchronizing catalog '${parameter.catalogType}'`);
 
-    let catalog: Promise<ScryfallCatalog>;
-    switch (parameter.catalogType) {
-      case "AbilityWords":
-        catalog = this.scryfallclient.getCatalog("AbilityWords", parameter.progressCallback);
-        break;
-      case "ArtifactTypes":
-        catalog = this.scryfallclient.getCatalog("ArtifactTypes", parameter.progressCallback);
-        break;
-      case "ArtistNames":
-        catalog = this.scryfallclient.getCatalog("ArtistNames", parameter.progressCallback);
-        break;
-      case "CardNames":
-        catalog = this.scryfallclient.getCatalog("CardNames", parameter.progressCallback);
-        break;
-      case "CreatureTypes":
-        catalog = this.scryfallclient.getCatalog("CreatureTypes", parameter.progressCallback);
-        break;
-      case "EnchantmentTypes":
-        catalog = this.scryfallclient.getCatalog("EnchantmentTypes", parameter.progressCallback);
-        break;
-      case "KeywordAbilities":
-        catalog = this.scryfallclient.getCatalog("KeywordAbilities", parameter.progressCallback);
-        break;
-      case "KeywordActions":
-        catalog = this.scryfallclient.getCatalog("KeywordActions", parameter.progressCallback);
-        break;
-      case "LandTypes":
-        catalog = this.scryfallclient.getCatalog("LandTypes", parameter.progressCallback);
-        break;
-      case "Loyalties":
-        catalog = this.scryfallclient.getCatalog("Loyalties", parameter.progressCallback);
-        break;
-      case "PlaneswalkerTypes":
-        catalog = this.scryfallclient.getCatalog("PlaneswalkerTypes", parameter.progressCallback);
-        break;
-      case "Powers":
-        catalog = this.scryfallclient.getCatalog("Powers", parameter.progressCallback);
-        break;
-      case "SpellTypes":
-        catalog = this.scryfallclient.getCatalog("SpellTypes", parameter.progressCallback);
-        break;
-      case "Supertypes":
-        catalog = this.scryfallclient.getCatalog("Supertypes", parameter.progressCallback);
-        break;
-      case "Toughnesses":
-        catalog = this.scryfallclient.getCatalog("Toughnesses", parameter.progressCallback);
-        break;
-      case "Watermarks":
-        catalog = this.scryfallclient.getCatalog("Watermarks", parameter.progressCallback);
-        break;
-      case "WordBank":
-        catalog = this.scryfallclient.getCatalog("WordBank", parameter.progressCallback);
-        break;
-    }
+    const catalog: Promise<ScryfallCatalog> = this.scryfallclient.getCatalog(parameter.catalogType, parameter.progressCallback);
     return catalog.then((fetched: ScryfallCatalog) => {
       this.dumpScryFallData(`catalog-${parameter.catalogType}.json`, fetched);
       return this.processSync(parameter, fetched);
@@ -116,15 +64,19 @@ export class CatalogSyncService extends BaseSyncService<Array<CatalogType>> impl
     if (parameter.progressCallback) {
       parameter.progressCallback(`Saving ${catalog.total_values} items for catalog '${parameter.catalogType}'`);
     }
-    return await this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
-      await trx
-        .deleteFrom("catalog_item").where("catalog_item.catalog_name", "=", parameter.catalogType)
-        .execute();
-      await trx
-        .insertInto("catalog_item")
-        .values(catalog.data.map((item: string) => this.catalogAdapter.toInsert({ catalogType: parameter.catalogType, item: item })))
-        .executeTakeFirstOrThrow();
-    });
+    return await this.database.transaction()
+      .execute(async (trx: Transaction<DatabaseSchema>) => {
+        await trx
+          .deleteFrom("catalog_item").where("catalog_item.catalog_name", "=", parameter.catalogType)
+          .execute()
+          .then((_r: Array<DeleteResult>) => trx.updateTable("catalog_type")
+            .set({ last_synced_at: sqliteUTCTimeStamp() })
+            .where("catalog_type.catalog_name", "=", parameter.catalogType)
+            .executeTakeFirst())
+          .then((_r: UpdateResult) => trx.insertInto("catalog_item")
+            .values(catalog.data.map((item: string) => this.catalogAdapter.toInsert({ catalogType: parameter.catalogType, item: item })))
+            .executeTakeFirstOrThrow());
+      });
   }
   //#endregion
 }

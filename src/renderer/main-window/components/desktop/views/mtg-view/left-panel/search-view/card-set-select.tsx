@@ -1,22 +1,18 @@
-import { FormGroup, MenuItem, Props } from "@blueprintjs/core";
-import { CardSetViewmodel } from "../../../../../../viewmodels";
-import * as React from "react";
+import { FormGroup, MenuItem } from "@blueprintjs/core";
 import { ItemRendererProps, MultiSelect } from "@blueprintjs/select";
-import { SvgProvider } from "../../../../../common/svg-provider/svg-provider";
-import { highlightText } from "../../../../../../../common/components/highlight-text";
 import { cloneDeep } from "lodash";
+import * as React from "react";
+import { highlightText } from "../../../../../../../common/components/highlight-text";
+import { CardSetViewmodel } from "../../../../../../viewmodels";
+import { SvgProvider } from "../../../../../common/svg-provider/svg-provider";
+import { CardSetSelectProps } from "./card-set-select.props";
 
-export interface CardSetSelectProps extends Props {
-  cardSets: Array<CardSetViewmodel>;
-  selectedCardSets: Array<string>;
 
-  onOptionAdded: (cardSetId: string) => void;
-  onOptionRemoved: (cardSetId: string) => void;
-  onClearOptions: () => void;
-}
 export function CardSetSelect(props: CardSetSelectProps) {
+  //#region State -------------------------------------------------------------
   const initialState = props.selectedCardSets.map((id: string) => props.cardSets.find((f: CardSetViewmodel) => f.id == id));
   const [state, setState] = React.useState<Array<CardSetViewmodel>>(initialState);
+  //#endregion
 
   //#region Event handling ----------------------------------------------------
   function onClear(): void {

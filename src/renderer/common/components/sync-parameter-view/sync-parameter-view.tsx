@@ -1,6 +1,7 @@
 import { Checkbox, Divider, FormGroup, H4, HTMLSelect, HTMLTable, NumericInput, SectionCard } from "@blueprintjs/core";
 import * as React from "react";
-import { CardSyncType, CatalogType, ImageStatus, RulingSyncType, TimespanUnit } from "../../../../common/types";
+import { CatalogTypeDto } from "../../../../common/dto";
+import { CardSyncType, ImageStatus, RulingSyncType, TimespanUnit } from "../../../../common/types";
 import { DisplayValueService, DisplayValueServiceContext } from "../../context";
 import { displayValueRecordToSelectOptions, handleBooleanChange, handleValueChange } from "../../utils";
 import { SyncParameterViewProps } from "./sync-parameter-view.props";
@@ -11,7 +12,6 @@ export function SyncParameterView(props: SyncParameterViewProps) {
     <DisplayValueServiceContext.Consumer>
       {
         (displayValueService: DisplayValueService) => (
-
           <SectionCard padded={false} >
             <H4>Cards</H4>
             <FormGroup label="Cards" labelFor="card-sync-type">
@@ -88,8 +88,6 @@ export function SyncParameterView(props: SyncParameterViewProps) {
             <Divider className="ruling-divider" key="divider" />
 
             <H4>Master data</H4>
-            {/* <FormGroup label="Master data" key="master-data"> */}
-            {/* <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}> */}
             <Checkbox
               checked={props.syncParam.syncCardSets}
               key="card-sets"
@@ -123,7 +121,7 @@ export function SyncParameterView(props: SyncParameterViewProps) {
               </thead>
               <tbody>
                 {
-                  renderCatalogs(displayValueService)
+                  renderCatalogs()
                 }
               </tbody>
             </HTMLTable >
@@ -133,30 +131,30 @@ export function SyncParameterView(props: SyncParameterViewProps) {
     </DisplayValueServiceContext.Consumer>
   );
 
-  function renderCatalogs(displayValueService: DisplayValueService): Array<React.JSX.Element> {
+  function renderCatalogs(): Array<React.JSX.Element> {
     const table = new Array<React.JSX.Element>();
     let currentRow: Array<React.JSX.Element>;
     let idx = 0;
-    Object.keys(displayValueService.catalogTypeDisplayValues).forEach((key: CatalogType) => {
-      if (idx % 3 == 0) {
+    props.catalogs.forEach((catalog: CatalogTypeDto) => {
+      if (idx % 2 == 0) {
         currentRow = new Array<React.JSX.Element>();
       }
       currentRow.push((
-        <td key={`cell-${key}`} style={{ paddingLeft: "0px" }} >
+        <td key={`cell-${catalog.catalog_name}`} style={{ paddingLeft: "0px" }} >
           <Checkbox
-            checked={props.syncParam.getCatalogToSync(key)}
-            key={key}
-            label={displayValueService.catalogTypeDisplayValues[key]}
+            checked={props.syncParam.getCatalogToSync(catalog.catalog_name)}
+            key={catalog.catalog_name}
+            label={`${catalog.display_label} (last synced: ${catalog.last_synced_at ? catalog.last_synced_at.toLocaleString() : "Never"})`}
             onChange={
               handleBooleanChange((value: boolean) => {
-                props.syncParam.setCatalogToSync(key, value);
+                props.syncParam.setCatalogToSync(catalog.catalog_name, value);
                 props.onSyncParamChanged(props.syncParam);
               })
             }
           />
         </td>
       ));
-      if (idx % 3 == 1) {
+      if (idx % 2 == 1) {
         table.push((
           <tr key={`row-${idx}`}>
             {currentRow}
@@ -166,6 +164,7 @@ export function SyncParameterView(props: SyncParameterViewProps) {
       idx = idx + 1;
     });
     return table;
+    return undefined;
   }
 
   function renderImageStatus(displayValueService: DisplayValueService): Array<React.JSX.Element> {

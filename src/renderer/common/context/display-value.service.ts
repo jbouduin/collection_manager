@@ -1,4 +1,4 @@
-import { CardLegality, CardRarity, CardSetGroupBy, CardSetSort, CardSetType, CardSyncType, CatalogType, GameFormat, ImageStatus, RulingSyncType, TimespanUnit } from "../../../common/types";
+import { CardLegality, CardRarity, CardSetGroupBy, CardSetSort, CardSetType, CardSyncType, GameFormat, ImageStatus, RulingSyncType, TimespanUnit } from "../../../common/types";
 
 /**
  * The display service is using maps to make sure we add new display values if new key's are added
@@ -11,7 +11,6 @@ export class DisplayValueService {
   private readonly _cardSetSortDisplayValues: Record<CardSetSort, string>;
   private readonly _cardSetTypeDisplayValues: Record<CardSetType, string>;
   private readonly _cardSyncTypeDisplayValues: Record<CardSyncType, string>;
-  private readonly _catalogTypeDisplayValues: Record<CatalogType, string>;
   private readonly _imageStatusDisplayValues: Record<ImageStatus, string>;
   private readonly _gameFormatDisplayValues: Record<GameFormat, string>;
   private readonly _rulingSyncTypeDisplayValues: Record<RulingSyncType, string>;
@@ -41,10 +40,6 @@ export class DisplayValueService {
 
   public get cardSyncTypeDisplayValues(): Record<CardSyncType, string> {
     return this._cardSyncTypeDisplayValues;
-  }
-
-  public get catalogTypeDisplayValues(): Record<CatalogType, string> {
-    return this._catalogTypeDisplayValues;
   }
 
   public get imageStatusDisplayValues(): Record<ImageStatus, string> {
@@ -129,26 +124,6 @@ export class DisplayValueService {
       byImageStatus: "Select by image status",
       byLastSynchronized: "Last synchronized before",
       collection: undefined // => not to be shown in the front end
-    };
-
-    this._catalogTypeDisplayValues = {
-      AbilityWords: "Abilities",
-      ArtifactTypes: "Artifact types",
-      ArtistNames: "Artist names",
-      CardNames: "Nontoken English card names",
-      CreatureTypes: "Creature types",
-      EnchantmentTypes: "Enchantment types",
-      KeywordActions: "Action keywords",
-      KeywordAbilities: "Ability keywords",
-      LandTypes: "Land types",
-      Loyalties: "Loyalites",
-      PlaneswalkerTypes: "Planeswalker types",
-      Powers: "All possible powers",
-      SpellTypes: "Spell types",
-      Supertypes: "Super types",
-      Toughnesses: "All possible thoughnesses",
-      Watermarks: "Watermarks",
-      WordBank: "Words that could appear in a card name"
     };
 
     this._imageStatusDisplayValues = {

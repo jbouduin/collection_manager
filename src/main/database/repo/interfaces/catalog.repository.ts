@@ -1,7 +1,9 @@
-import { CatalogItemDto } from "../../../../common/dto";
+import { CatalogItemDto, CatalogTypeDto } from "../../../../common/dto";
 import { CatalogType } from "../../../../common/types";
+import { IResult } from "../../../services/base";
 
 
 export interface ICatalogRepository {
-  getAll(name: CatalogType): Promise<Array<CatalogItemDto>>;
+  getCatalogItems(name: CatalogType, query: string): Promise<IResult<Array<CatalogItemDto>>>;
+  getCatalogs(): Promise<IResult<Array<CatalogTypeDto>>>;
 }

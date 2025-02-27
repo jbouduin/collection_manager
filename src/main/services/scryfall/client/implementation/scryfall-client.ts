@@ -57,7 +57,7 @@ export class ScryfallClient implements IScryfallClient {
 
   public async getCatalog(type: CatalogType, progressCallback: ProgressCallback): Promise<ScryfallCatalog> {
     progressCallback(`Fetching catalog '${type}' from Scryfall`);
-    const uri = `${this.scryfallConfiguration.scryfallApiRoot}/${this.scryfallConfiguration.scryfallEndpoints["catalog"]}/${this.scryfallConfiguration.scryfallCatalogPaths[type]}`;
+    const uri = `${this.scryfallConfiguration.scryfallApiRoot}/${this.scryfallConfiguration.scryfallEndpoints.catalog}/${type}`;
     return this
       .tryFetch(uri)
       .then((fetchResult: Response) => fetchResult.json() as Promise<ScryfallCatalog>);

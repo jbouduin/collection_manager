@@ -117,24 +117,6 @@ export type CardSetType =
   "token" |
   "memorabilia" |
   "minigame";
-export type CatalogType =
-  "AbilityWords" |
-  "ArtifactTypes" |
-  "ArtistNames" |
-  "CardNames" |
-  "CreatureTypes" |
-  "EnchantmentTypes" |
-  "KeywordActions" |
-  "KeywordAbilities" |
-  "LandTypes" |
-  "Loyalties" |
-  "PlaneswalkerTypes" |
-  "Powers" |
-  "SpellTypes" |
-  "Supertypes" |
-  "Toughnesses" |
-  "Watermarks" |
-  "WordBank";
 export type GameFormat =
   "alchemy" |
   "brawl" |

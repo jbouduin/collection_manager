@@ -1,10 +1,10 @@
-import { Button } from "@blueprintjs/core";
+import { Button, Checkbox } from "@blueprintjs/core";
 import { cloneDeep, isEmpty, xor } from "lodash";
 import * as React from "react";
 import { CatalogTypeDto } from "../../../../../../../../common/dto";
 import { CardRarity, GameFormat } from "../../../../../../../../common/types";
 import { DisplayValueService, DisplayValueServiceContext, IpcProxyService, IpcProxyServiceContext } from "../../../../../../../common/context";
-import { displayValueRecordToSelectOptions, SelectOption } from "../../../../../../../common/utils";
+import { displayValueRecordToSelectOptions, handleBooleanChange, SelectOption } from "../../../../../../../common/utils";
 import { CardSetViewmodel } from "../../../../../../viewmodels";
 import { CardSearchViewmodel } from "../../../../../../viewmodels/card/card-search.viewmodel";
 import { CardSetContext } from "../../../../../context";
@@ -90,6 +90,12 @@ export function SearchView(props: SearchViewProps) {
   //#region Rendering ---------------------------------------------------------
   return (
     <>
+      <Checkbox
+        checked={state.ownedCards}
+        key="owned-cards"
+        label="Cards I own"
+        onChange={handleBooleanChange((value: boolean) => onSelectOptionEvent((v: CardSearchViewmodel) => v.ownedCards = value))}
+      />
       <CardSetMemo
         cardSets={cardSetContext}
         key="card-set-select"
@@ -116,7 +122,6 @@ export function SearchView(props: SearchViewProps) {
         onOptionRemoved={(newOption) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeGameFormat(newOption))}
         selectedItems={state.selectedGameFormats}
       />
-
       {
         catalogs.filter((c: CatalogTypeDto) => c.count > 0)
           .map((c: CatalogTypeDto) => {

@@ -13,15 +13,23 @@ export class CardSearchViewmodel extends BaseViewmodel<CardSearchDto> {
     return this._dto.selectedRarities;
   }
 
-
   public get selectedSets(): Array<string> {
     return this._dto.selectedSets;
+  }
+
+  public get ownedCards(): boolean {
+    return this._dto.ownedCards;
+  }
+
+  public set ownedCards(value: boolean) {
+    this._dto.ownedCards = value;
   }
   //#endregion
 
   //#region Constructor -------------------------------------------------------
   public constructor() {
     const initial: CardSearchDto = {
+      ownedCards: false,
       selectedCatalogItems: new Array<CatalogItemDto>(),
       selectedGameFormats: new Array<GameFormat>(),
       selectedRarities: ["mythic", "rare", "uncommon", "common"],

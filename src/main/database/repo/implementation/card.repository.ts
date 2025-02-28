@@ -165,7 +165,7 @@ export class CardRepository extends BaseRepository implements ICardRepository {
         ])
         .$if(params.selectedSets?.length > 0, (qb) => qb.where("card.set_id", "in", params.selectedSets))
         .$if(params.selectedRarities?.length > 0, (qb) => qb.where("card.rarity", "in", params.selectedRarities))
-        .$if(
+        .$if( // catalogs referring to oracle
           this.hasAnyCatalogItem(params.selectedCatalogItems, "card-names") ||
           this.hasAnyCatalogItem(params.selectedCatalogItems, "word-bank") ||
           this.hasAnyCatalogItem(params.selectedCatalogItems, "supertypes") ||
@@ -178,36 +178,50 @@ export class CardRepository extends BaseRepository implements ICardRepository {
           this.hasAnyCatalogItem(params.selectedCatalogItems, "spell-types") ||
           this.hasAnyCatalogItem(params.selectedCatalogItems, "keyword-abilities") ||
           this.hasAnyCatalogItem(params.selectedCatalogItems, "keyword-actions"),
-          // NOW use where(exists)
-          (sqb) => sqb.innerJoin("oracle", "oracle.oracle_id", "card.oracle_id").where(
-            (eb) => eb.or([
-              ...this.extractCatalogItems(params.selectedCatalogItems, "card-names").map((item: string) => eb("oracle.oracle_name", "=", item)),
-              ...this.extractCatalogItems(params.selectedCatalogItems, "word-bank").map((item: string) => eb("oracle.oracle_name", "like", `%${item}%`)),
-              ...this.extractCatalogItems(params.selectedCatalogItems, "supertypes").map((item: string) => eb("oracle.type_line", "like", `%${item}%`)),
-              ...this.extractCatalogItems(params.selectedCatalogItems, "card-types").map((item: string) => eb("oracle.type_line", "like", `%${item}%`)),
-              ...this.extractCatalogItems(params.selectedCatalogItems, "artifact-types").map((item: string) => eb("oracle.type_line", "like", `%${item}%`)),
-              ...this.extractCatalogItems(params.selectedCatalogItems, "creature-types").map((item: string) => eb("oracle.type_line", "like", `%${item}%`)),
-              ...this.extractCatalogItems(params.selectedCatalogItems, "enchantment-types").map((item: string) => eb("oracle.type_line", "like", `%${item}%`)),
-              ...this.extractCatalogItems(params.selectedCatalogItems, "land-types").map((item: string) => eb("oracle.type_line", "like", `%${item}%`)),
-              ...this.extractCatalogItems(params.selectedCatalogItems, "planeswalker-types").map((item: string) => eb("oracle.type_line", "like", `%${item}%`)),
-              ...this.extractCatalogItems(params.selectedCatalogItems, "spell-types").map((item: string) => eb("oracle.type_line", "like", `%${item}%`)),
-              ...this.extractCatalogItems(params.selectedCatalogItems, "keyword-abilities").map((item: string) => eb("oracle.oracle_text", "like", `%${item}%`)),
-              ...this.extractCatalogItems(params.selectedCatalogItems, "keyword-actions").map((item: string) => eb("oracle.oracle_text", "like", `%${item}%`))
-            ])
-          )
+          (sqb) => sqb.where((eb) => eb.exists(eb
+            .selectFrom("oracle as o2")
+            .select("o2.oracle_id")
+            .whereRef("o2.oracle_id", "=", "card.oracle_id")
+            .where((eb) => eb.or([
+              ...this.extractCatalogItems(params.selectedCatalogItems, "card-names").map((item: string) => eb("o2.oracle_name", "=", item)),
+              ...this.extractCatalogItems(params.selectedCatalogItems, "word-bank").map((item: string) => eb("o2.oracle_name", "like", `%${item}%`)),
+              ...this.extractCatalogItems(params.selectedCatalogItems, "supertypes").map((item: string) => eb("o2.type_line", "like", `%${item}%`)),
+              ...this.extractCatalogItems(params.selectedCatalogItems, "card-types").map((item: string) => eb("o2.type_line", "like", `%${item}%`)),
+              ...this.extractCatalogItems(params.selectedCatalogItems, "artifact-types").map((item: string) => eb("o2.type_line", "like", `%${item}%`)),
+              ...this.extractCatalogItems(params.selectedCatalogItems, "creature-types").map((item: string) => eb("o2.type_line", "like", `%${item}%`)),
+              ...this.extractCatalogItems(params.selectedCatalogItems, "enchantment-types").map((item: string) => eb("o2.type_line", "like", `%${item}%`)),
+              ...this.extractCatalogItems(params.selectedCatalogItems, "land-types").map((item: string) => eb("o2.type_line", "like", `%${item}%`)),
+              ...this.extractCatalogItems(params.selectedCatalogItems, "planeswalker-types").map((item: string) => eb("o2.type_line", "like", `%${item}%`)),
+              ...this.extractCatalogItems(params.selectedCatalogItems, "spell-types").map((item: string) => eb("o2.type_line", "like", `%${item}%`)),
+              ...this.extractCatalogItems(params.selectedCatalogItems, "keyword-abilities").map((item: string) => eb("o2.oracle_text", "like", `%${item}%`)),
+              ...this.extractCatalogItems(params.selectedCatalogItems, "keyword-actions").map((item: string) => eb("o2.oracle_text", "like", `%${item}%`))
+            ]))
+          ))
+        )
+        .$if( // catalogs referring to cardfaces
+          this.hasAnyCatalogItem(params.selectedCatalogItems, "artist-names") || this.hasAnyCatalogItem(params.selectedCatalogItems, "watermarks"),
+          (sqb) => sqb.where((eb) => eb.exists(eb
+            .selectFrom("cardface as c2")
+            .select("c2.card_id")
+            .whereRef("c2.card_id", "=", "card.id")
+            .where((eb) => eb.or([
+              eb("c2.artist", "in", this.extractCatalogItems(params.selectedCatalogItems, "artist-names")),
+              eb("c2.watermark", "in", this.extractCatalogItems(params.selectedCatalogItems, "watermarks"))
+            ]))
+          ))
         )
         .$if(
-          this.hasAnyCatalogItem(params.selectedCatalogItems, "artist-names") || this.hasAnyCatalogItem(params.selectedCatalogItems, "watermarks"),
-          (sqb) => sqb.innerJoin("cardface", "cardface.card_id", "card.id").where(
-            (eb) => eb.or([
-              eb("cardface.artist", "in", this.extractCatalogItems(params.selectedCatalogItems, "artist-names")),
-              eb("cardface.watermark", "in", this.extractCatalogItems(params.selectedCatalogItems, "watermarks"))
-            ])
-          )
+          params.selectedGameFormats?.length > 0,
+          (sqb) => sqb.where((eb) => eb.exists(eb
+            .selectFrom("oracle_legality as ol")
+            .select("ol.legality")
+            .whereRef("ol.oracle_id", "=", "card.oracle_id")
+            .where("ol.format", "in", params.selectedGameFormats)
+            .where("ol.legality", "in", ["legal", "restricted"])
+          ))
         )
         /*
          * NOW cards I own => should we go for oracle_id I own - or just on the print I own ???
-         * NOW game format
          */
         .$call((sqb) => logCompilable(this.logService, sqb))
         .$castTo<MtgCardListDto>()

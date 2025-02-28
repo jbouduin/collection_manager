@@ -1,9 +1,9 @@
-import { CardSearchDto, CatalogItemDto } from "../../../../common/dto";
+import { CardQueryDto, CatalogItemDto, QUERY_PARAM_LIST_SEPARATOR, QueryParamToken } from "../../../../common/dto";
 import { CardRarity, CatalogType, GameFormat } from "../../../../common/types";
 import { BaseViewmodel } from "../../../common/viewmodels/base.viewmodel";
 
-
-export class CardSearchViewmodel extends BaseViewmodel<CardSearchDto> {
+// NOW add card color (color identity) - be aware that artifacts most probably have no color identity
+export class CardSearchViewmodel extends BaseViewmodel<CardQueryDto> {
   //#region Getters - Setters ---------------------------------------------------
   public get selectedGameFormats(): Array<GameFormat> {
     return this._dto.selectedGameFormats;
@@ -28,7 +28,7 @@ export class CardSearchViewmodel extends BaseViewmodel<CardSearchDto> {
 
   //#region Constructor -------------------------------------------------------
   public constructor() {
-    const initial: CardSearchDto = {
+    const initial: CardQueryDto = {
       ownedCards: false,
       selectedCatalogItems: new Array<CatalogItemDto>(),
       selectedGameFormats: new Array<GameFormat>(),
@@ -123,15 +123,38 @@ export class CardSearchViewmodel extends BaseViewmodel<CardSearchDto> {
   public toQueryString(): string {
     const queryParts = new Array<string>();
     if (this._dto.selectedSets.length > 0) {
-      queryParts.push(`sets=${this._dto.selectedSets.join(",")}`);
+      this.appendToQueryParam(queryParts, "sets", this._dto.selectedSets);
     }
     if (this._dto.selectedGameFormats.length > 0) {
-      queryParts.push(`gameformats=${this._dto.selectedGameFormats.join(",")}`);
+      this.appendToQueryParam(queryParts, "gameformats", this._dto.selectedGameFormats);
     }
     if (this._dto.selectedRarities.length > 0) {
-      queryParts.push(`rarities=${this._dto.selectedRarities.join(",")}`);
+      this.appendToQueryParam(queryParts, "rarities", this._dto.selectedRarities);
     }
+    const catalogItems = this._dto.selectedCatalogItems.reduce(
+      (prev: Map<CatalogType, Array<string>>, current: CatalogItemDto) => {
+        const catalog = prev.get(current.catalog_name);
+        if (!catalog) {
+          prev.set(current.catalog_name, new Array<string>(current.item));
+        } else {
+          catalog.push(current.item);
+        }
+        return prev;
+      },
+      new Map<CatalogType, Array<string>>()
+    );
+    if (this._dto.ownedCards) {
+      this.appendToQueryParam(queryParts, "own", ["true"]);
+    }
+    catalogItems.forEach((items: Array<string>, catalog: CatalogType) => this.appendToQueryParam(queryParts, catalog, items));
     return queryParts.join("&");
+  }
+  //#endregion
+
+  //#region Auxiliary methods -------------------------------------------------
+  private appendToQueryParam(queryParts: Array<string>, token: QueryParamToken, values: Array<string>): Array<string> {
+    queryParts.push(`${token}=${values.join(QUERY_PARAM_LIST_SEPARATOR)}`);
+    return queryParts;
   }
   //#endregion
 }

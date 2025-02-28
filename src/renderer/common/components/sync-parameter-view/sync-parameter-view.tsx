@@ -161,11 +161,18 @@ export function SyncParameterView(props: SyncParameterViewProps) {
             {currentRow}
           </tr>
         ));
+        currentRow = undefined;
       }
       idx = idx + 1;
     });
+    if (currentRow) {
+      table.push((
+        <tr key={`row-${idx}`}>
+          {currentRow}
+        </tr>
+      ));
+    }
     return table;
-    return undefined;
   }
 
   function renderImageStatus(displayValueService: DisplayValueService): Array<React.JSX.Element> {

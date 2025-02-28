@@ -31,5 +31,6 @@ export const CATALOG_TYPE_TABLE_FIELDS: Array<AnyColumnWithTable<DatabaseSchema,
   "catalog_type.catalog_name",
   "catalog_type.created_at",
   "catalog_type.display_label",
-  "catalog_type.last_synced_at"
+  "catalog_type.last_synced_at",
+  "catalog_type.is_used"
 ];

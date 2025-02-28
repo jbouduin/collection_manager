@@ -1,10 +1,12 @@
 import * as fs from "fs";
 import * as helpers from "kysely/helpers/sqlite";
 import { inject, injectable } from "tsyringe";
-import { CardfaceColorDto, MtgCardColorDto, MtgCardDetailDto, MtgCardfaceDto, MtgCardImageDataDto, MtgCardListDto, OracleDto } from "../../../../common/dto";
+import { CardfaceColorDto, CardQueryDto, CatalogItemDto, MtgCardColorDto, MtgCardDetailDto, MtgCardfaceDto, MtgCardImageDataDto, MtgCardListDto, OracleDto } from "../../../../common/dto";
+import { CatalogType } from "../../../../common/types";
 import { IResult } from "../../../services/base";
 import { IDatabaseService, ILogService, IResultFactory } from "../../../services/infra/interfaces";
 import { INFRASTRUCTURE } from "../../../services/service.tokens";
+import { logCompilable } from "../../log-compilable";
 import { CARD_COLOR_MAP_TABLE_FIELDS, CARD_TABLE_FIELDS, CARDFACE_COLOR_MAP_TABLE_FIELDS, CARDFACE_TABLE_FIELDS } from "../../schema";
 import { ORACLE_TABLE_FIELDS } from "../../schema/oracle/table-field.constants";
 import { ICardRepository } from "../interfaces";
@@ -112,7 +114,7 @@ export class CardRepository extends BaseRepository implements ICardRepository {
     }
   }
 
-  public async queryCards(setIds?: Array<string>): Promise<IResult<Array<MtgCardListDto>>> {
+  public async queryCards(params: CardQueryDto): Promise<IResult<Array<MtgCardListDto>>> {
     try {
       return await this.database
         .selectFrom("card")
@@ -161,8 +163,53 @@ export class CardRepository extends BaseRepository implements ICardRepository {
               .$castTo<MtgCardColorDto>()
           ).as("cardColors")
         ])
-        .$if(setIds?.length > 0, (qb) => qb.where("card.set_id", "in", setIds))
-        // .$call(this.logCompilable)
+        .$if(params.selectedSets?.length > 0, (qb) => qb.where("card.set_id", "in", params.selectedSets))
+        .$if(params.selectedRarities?.length > 0, (qb) => qb.where("card.rarity", "in", params.selectedRarities))
+        .$if(
+          this.hasAnyCatalogItem(params.selectedCatalogItems, "card-names") ||
+          this.hasAnyCatalogItem(params.selectedCatalogItems, "word-bank") ||
+          this.hasAnyCatalogItem(params.selectedCatalogItems, "supertypes") ||
+          this.hasAnyCatalogItem(params.selectedCatalogItems, "card-types") ||
+          this.hasAnyCatalogItem(params.selectedCatalogItems, "artifact-types") ||
+          this.hasAnyCatalogItem(params.selectedCatalogItems, "creature-types") ||
+          this.hasAnyCatalogItem(params.selectedCatalogItems, "enchantment-types") ||
+          this.hasAnyCatalogItem(params.selectedCatalogItems, "land-types") ||
+          this.hasAnyCatalogItem(params.selectedCatalogItems, "planeswalker-types") ||
+          this.hasAnyCatalogItem(params.selectedCatalogItems, "spell-types") ||
+          this.hasAnyCatalogItem(params.selectedCatalogItems, "keyword-abilities") ||
+          this.hasAnyCatalogItem(params.selectedCatalogItems, "keyword-actions"),
+          // NOW use where(exists)
+          (sqb) => sqb.innerJoin("oracle", "oracle.oracle_id", "card.oracle_id").where(
+            (eb) => eb.or([
+              ...this.extractCatalogItems(params.selectedCatalogItems, "card-names").map((item: string) => eb("oracle.oracle_name", "=", item)),
+              ...this.extractCatalogItems(params.selectedCatalogItems, "word-bank").map((item: string) => eb("oracle.oracle_name", "like", `%${item}%`)),
+              ...this.extractCatalogItems(params.selectedCatalogItems, "supertypes").map((item: string) => eb("oracle.type_line", "like", `%${item}%`)),
+              ...this.extractCatalogItems(params.selectedCatalogItems, "card-types").map((item: string) => eb("oracle.type_line", "like", `%${item}%`)),
+              ...this.extractCatalogItems(params.selectedCatalogItems, "artifact-types").map((item: string) => eb("oracle.type_line", "like", `%${item}%`)),
+              ...this.extractCatalogItems(params.selectedCatalogItems, "creature-types").map((item: string) => eb("oracle.type_line", "like", `%${item}%`)),
+              ...this.extractCatalogItems(params.selectedCatalogItems, "enchantment-types").map((item: string) => eb("oracle.type_line", "like", `%${item}%`)),
+              ...this.extractCatalogItems(params.selectedCatalogItems, "land-types").map((item: string) => eb("oracle.type_line", "like", `%${item}%`)),
+              ...this.extractCatalogItems(params.selectedCatalogItems, "planeswalker-types").map((item: string) => eb("oracle.type_line", "like", `%${item}%`)),
+              ...this.extractCatalogItems(params.selectedCatalogItems, "spell-types").map((item: string) => eb("oracle.type_line", "like", `%${item}%`)),
+              ...this.extractCatalogItems(params.selectedCatalogItems, "keyword-abilities").map((item: string) => eb("oracle.oracle_text", "like", `%${item}%`)),
+              ...this.extractCatalogItems(params.selectedCatalogItems, "keyword-actions").map((item: string) => eb("oracle.oracle_text", "like", `%${item}%`))
+            ])
+          )
+        )
+        .$if(
+          this.hasAnyCatalogItem(params.selectedCatalogItems, "artist-names") || this.hasAnyCatalogItem(params.selectedCatalogItems, "watermarks"),
+          (sqb) => sqb.innerJoin("cardface", "cardface.card_id", "card.id").where(
+            (eb) => eb.or([
+              eb("cardface.artist", "in", this.extractCatalogItems(params.selectedCatalogItems, "artist-names")),
+              eb("cardface.watermark", "in", this.extractCatalogItems(params.selectedCatalogItems, "watermarks"))
+            ])
+          )
+        )
+        /*
+         * NOW cards I own => should we go for oracle_id I own - or just on the print I own ???
+         * NOW game format
+         */
+        .$call((sqb) => logCompilable(this.logService, sqb))
         .$castTo<MtgCardListDto>()
         .groupBy(["card.set_id", "card.collector_number"])
         .orderBy(["card.set_id", "card.collector_number"])
@@ -176,4 +223,12 @@ export class CardRepository extends BaseRepository implements ICardRepository {
     }
   }
   //#endregion
+
+  private hasAnyCatalogItem(allSelected: Array<CatalogItemDto>, catalog: CatalogType): boolean {
+    return allSelected.findIndex((f: CatalogItemDto) => f.catalog_name == catalog) >= 0;
+  }
+
+  private extractCatalogItems(allSelected: Array<CatalogItemDto>, catalog: CatalogType): Array<string> {
+    return allSelected.filter((f: CatalogItemDto) => f.catalog_name == catalog).map((f: CatalogItemDto) => f.item);
+  }
 }

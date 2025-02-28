@@ -30,32 +30,33 @@ async function createV0_0_1_CatalogType(db: Kysely<any>): Promise<void> {
   };
   await createTable(db, options)
     .addColumn("display_label", "text", (col: ColumnDefinitionBuilder) => col.notNull())
+    .addColumn("is_used", "integer", (col: ColumnDefinitionBuilder) => col.notNull())
     .execute();
 }
 
 async function populateV0_0_1_CatalogType(db: Kysely<any>): Promise<Array<InsertResult>> {
   const values = new Array<Insertable<CatalogTypeTable>>();
   const now = sqliteUTCTimeStamp();
-  values.push({ created_at: now, catalog_name: "card-names", display_label: "Non-token English card names" });
-  values.push({ created_at: now, catalog_name: "artist-names", display_label: "Artist names" });
-  values.push({ created_at: now, catalog_name: "word-bank", display_label: "Words that could appear in a card name" });
-  values.push({ created_at: now, catalog_name: "supertypes", display_label: "Super types" });
-  values.push({ created_at: now, catalog_name: "card-types", display_label: "Super types" });
-  values.push({ created_at: now, catalog_name: "artifact-types", display_label: "Artifact types" });
-  values.push({ created_at: now, catalog_name: "battle-types", display_label: "Super types" });
-  values.push({ created_at: now, catalog_name: "creature-types", display_label: "Creature types" });
-  values.push({ created_at: now, catalog_name: "enchantment-types", display_label: "Enchantment types" });
-  values.push({ created_at: now, catalog_name: "land-types", display_label: "land-types" });
-  values.push({ created_at: now, catalog_name: "planeswalker-types", display_label: "Planeswalker-types" });
-  values.push({ created_at: now, catalog_name: "spell-types", display_label: "Spell types" });
-  values.push({ created_at: now, catalog_name: "powers", display_label: "Powers" });
-  values.push({ created_at: now, catalog_name: "toughnesses", display_label: "Thoughnesses" });
-  values.push({ created_at: now, catalog_name: "loyalties", display_label: "loyalties" });
-  values.push({ created_at: now, catalog_name: "keyword-abilities", display_label: "Ability keywords" });
-  values.push({ created_at: now, catalog_name: "keyword-actions", display_label: "Action keywords" });
-  values.push({ created_at: now, catalog_name: "ability-words", display_label: "Abilities" });
-  values.push({ created_at: now, catalog_name: "flavor-words", display_label: "Flavor words" });
-  values.push({ created_at: now, catalog_name: "watermarks", display_label: "Watermarks" });
+  values.push({ created_at: now, catalog_name: "card-names", display_label: "Non-token English card names", is_used: 1 });
+  values.push({ created_at: now, catalog_name: "artist-names", display_label: "Artist names", is_used: 1 });
+  values.push({ created_at: now, catalog_name: "word-bank", display_label: "Words that could appear in a card name", is_used: 1 });
+  values.push({ created_at: now, catalog_name: "supertypes", display_label: "Super types", is_used: 1 });
+  values.push({ created_at: now, catalog_name: "card-types", display_label: "Card types", is_used: 1 });
+  values.push({ created_at: now, catalog_name: "artifact-types", display_label: "Artifact types", is_used: 1 });
+  values.push({ created_at: now, catalog_name: "battle-types", display_label: "Battle types", is_used: 0 });
+  values.push({ created_at: now, catalog_name: "creature-types", display_label: "Creature types", is_used: 1 });
+  values.push({ created_at: now, catalog_name: "enchantment-types", display_label: "Enchantment types", is_used: 1 });
+  values.push({ created_at: now, catalog_name: "land-types", display_label: "Land types", is_used: 1 });
+  values.push({ created_at: now, catalog_name: "planeswalker-types", display_label: "Planeswalker types", is_used: 1 });
+  values.push({ created_at: now, catalog_name: "spell-types", display_label: "Spell types", is_used: 1 });
+  values.push({ created_at: now, catalog_name: "powers", display_label: "Powers", is_used: 0 });
+  values.push({ created_at: now, catalog_name: "toughnesses", display_label: "Thoughnesses", is_used: 0 });
+  values.push({ created_at: now, catalog_name: "loyalties", display_label: "loyalties", is_used: 0 });
+  values.push({ created_at: now, catalog_name: "keyword-abilities", display_label: "Ability keywords", is_used: 1 });
+  values.push({ created_at: now, catalog_name: "keyword-actions", display_label: "Action keywords", is_used: 1 });
+  values.push({ created_at: now, catalog_name: "ability-words", display_label: "Abilities", is_used: 0 });
+  values.push({ created_at: now, catalog_name: "flavor-words", display_label: "Flavor words", is_used: 0 });
+  values.push({ created_at: now, catalog_name: "watermarks", display_label: "Watermarks", is_used: 1 });
 
   return db.insertInto("catalog_type")
     .values(values)

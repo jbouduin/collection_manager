@@ -64,7 +64,7 @@ export class CatalogSyncService extends BaseSyncService<Array<CatalogType>> impl
     if (parameter.progressCallback) {
       parameter.progressCallback(`Saving ${catalog.total_values} items for catalog '${parameter.catalogType}'`);
     }
-    /***
+    /*
      * huge catalogs have to splitted, otherwise we get an error
      * error during handling sync task SqliteError: too many SQL variables
      */
@@ -72,7 +72,6 @@ export class CatalogSyncService extends BaseSyncService<Array<CatalogType>> impl
     const chunkSize = 100;
     for (let i = 0; i < catalog.data.length; i += chunkSize) {
       chunks.push(catalog.data.slice(i, i + chunkSize));
-
     }
     return await this.database.transaction()
       .execute(async (trx: Transaction<DatabaseSchema>) => {
@@ -83,10 +82,10 @@ export class CatalogSyncService extends BaseSyncService<Array<CatalogType>> impl
             .set({ last_synced_at: sqliteUTCTimeStamp() })
             .where("catalog_type.catalog_name", "=", parameter.catalogType)
             .executeTakeFirst())
-          .then(async (_r: UpdateResult) =>
-            await Promise.all(chunks.map((chunk: Array<string>) => trx.insertInto("catalog_item")
+          .then(async (_r: UpdateResult) => await Promise
+            .all(chunks.map((chunk: Array<string>) => trx.insertInto("catalog_item")
               .values(chunk.map((item: string) => this.catalogAdapter.toInsert({ catalogType: parameter.catalogType, item: item })))
-              .executeTakeFirstOrThrow())))
+              .executeTakeFirstOrThrow())));
       });
   }
   //#endregion

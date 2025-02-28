@@ -26,7 +26,10 @@ export class CatalogRepository extends BaseRepository implements ICatalogReposit
         .selectFrom("catalog_item")
         .selectAll()
         .where("catalog_item.catalog_name", "=", name)
-        .where("catalog_item.item", "like", `%${query}%`)
+        .$if(
+          query?.length > 0,
+          (eb) => eb.where("catalog_item.item", "like", `%${query}%`)
+        )
         .limit(50)
         .$castTo<CatalogItemDto>()
         .$call((q) => logCompilable(this.logService, q))
@@ -50,7 +53,8 @@ export class CatalogRepository extends BaseRepository implements ICatalogReposit
         ])
         .$castTo<CatalogTypeDto>()
         .execute()
-        .then((r: Array<CatalogTypeDto>) => this.resultFactory.createSuccessResult(r));
+        // filter after retrieving -> kysely + sqlite does not allow filtering on booleans
+        .then((r: Array<CatalogTypeDto>) => this.resultFactory.createSuccessResult(r.filter((f: CatalogTypeDto) => f.is_used)));
     } catch (err) {
       return this.resultFactory.createExceptionResultPromise<Array<CatalogTypeDto>>(err);
     }

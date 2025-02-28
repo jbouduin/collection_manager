@@ -1,4 +1,4 @@
-export * from "./card-search.dto";
+export * from "./card-query.dto";
 export * from "./mtg-card-color.dto";
 export * from "./mtg-card-face.dto";
 export * from "./mtg-card-image.dto";

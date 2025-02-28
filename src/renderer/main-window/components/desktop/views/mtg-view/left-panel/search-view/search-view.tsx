@@ -1,5 +1,5 @@
 import { Button, Checkbox } from "@blueprintjs/core";
-import { cloneDeep, isEmpty, xor } from "lodash";
+import { cloneDeep } from "lodash";
 import * as React from "react";
 import { CatalogTypeDto } from "../../../../../../../../common/dto";
 import { CardRarity, GameFormat } from "../../../../../../../../common/types";
@@ -9,13 +9,12 @@ import { CardSetViewmodel } from "../../../../../../viewmodels";
 import { CardSearchViewmodel } from "../../../../../../viewmodels/card/card-search.viewmodel";
 import { CardSetContext } from "../../../../../context";
 import { CardSetSelect } from "./card-set-select";
-import { CardSetSelectProps } from "./card-set-select.props";
 import { CatalogSelect } from "./catalog-select.";
-import { CatalogSelectProps } from "./catalog-select.props";
 import { SearchViewProps } from "./search-view.props";
 import { SelectSelectOption } from "./select-select-option";
-import { SelectSelectOptionProps } from "./select-select-option.props";
 
+/* eslint-disable @stylistic/multiline-comment-style */
+/* TODO check why this did not work as expected
 const RaritySelectMemo = React.memo(
   SelectSelectOption<CardRarity>,
   (prev: SelectSelectOptionProps<CardRarity>, current: SelectSelectOptionProps<CardRarity>) => {
@@ -43,6 +42,8 @@ const CatalogMemo = React.memo(
     return prev.catalog === current.catalog;
   }
 );
+*/
+/* eslint-enable @stylistic/multiline-comment-style */
 
 export function SearchView(props: SearchViewProps) {
   //#region State -----------------------------------------------------------------------
@@ -90,13 +91,14 @@ export function SearchView(props: SearchViewProps) {
   //#region Rendering ---------------------------------------------------------
   return (
     <>
+      <p>{ state.toQueryString()}</p>
       <Checkbox
         checked={state.ownedCards}
         key="owned-cards"
         label="Cards I own"
         onChange={handleBooleanChange((value: boolean) => onSelectOptionEvent((v: CardSearchViewmodel) => v.ownedCards = value))}
       />
-      <CardSetMemo
+      <CardSetSelect
         cardSets={cardSetContext}
         key="card-set-select"
         onClearOptions={() => onSelectOptionEvent((v: CardSearchViewmodel) => v.clearCardSetSelection())}
@@ -104,7 +106,7 @@ export function SearchView(props: SearchViewProps) {
         onOptionRemoved={(newOption) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeCardSet(newOption))}
         selectedCardSets={state.selectedSets}
       />
-      <RaritySelectMemo
+      <SelectSelectOption<CardRarity>
         items={rarityItems}
         key="rarity-select"
         label="Rarity"
@@ -113,7 +115,7 @@ export function SearchView(props: SearchViewProps) {
         onOptionRemoved={(newOption) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeRarity(newOption))}
         selectedItems={state.selectedRarities}
       />
-      <GameFormatMemo
+      <SelectSelectOption<GameFormat>
         items={gameFormats}
         key="game-format-select"
         label="Game Format"
@@ -126,8 +128,9 @@ export function SearchView(props: SearchViewProps) {
         catalogs.filter((c: CatalogTypeDto) => c.count > 0)
           .map((c: CatalogTypeDto) => {
             return (
-              <CatalogMemo
+              <CatalogSelect
                 catalog={c}
+                key={c.catalog_name}
                 onClearOptions={() => onSelectOptionEvent((v: CardSearchViewmodel) => v.clearCatalogSelection(c.catalog_name))}
                 onOptionAdded={(newItem) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addCatalogItem(newItem))}
                 onOptionRemoved={(removedItem) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeCatalogItem(removedItem))}

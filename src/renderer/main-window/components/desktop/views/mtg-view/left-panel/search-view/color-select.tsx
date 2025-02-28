@@ -2,35 +2,35 @@ import { FormGroup, MenuItem } from "@blueprintjs/core";
 import { ItemRendererProps, MultiSelect } from "@blueprintjs/select";
 import { cloneDeep } from "lodash";
 import * as React from "react";
+import { ColorDto } from "../../../../../../../../common/dto";
 import { highlightText } from "../../../../../../../common/components/highlight-text";
-import { CardSetViewmodel } from "../../../../../../viewmodels";
-import { SvgProvider } from "../../../../../common/svg-provider/svg-provider";
-import { CardSetSelectProps } from "./card-set-select.props";
+import { CardSymbolRenderer } from "../../../../../common/card-symbol-renderer";
+import { ColorSelectProps } from "./color-select.props ";
 
 
-export function CardSetSelect(props: CardSetSelectProps) {
+export function ColorSelect(props: ColorSelectProps) {
   //#region State -------------------------------------------------------------
-  const initialState = props.selectedCardSets.map((id: string) => props.cardSets.find((f: CardSetViewmodel) => f.id == id));
-  const [state, setState] = React.useState<Array<CardSetViewmodel>>(initialState);
+  const initialState = props.selectedColors.map((id: string) => props.colors.find((f: ColorDto) => f.id == id));
+  const [state, setState] = React.useState<Array<ColorDto>>(initialState);
   //#endregion
 
   //#region Event handling ----------------------------------------------------
   function onClear(): void {
     props.onClearOptions();
-    setState(new Array<CardSetViewmodel>());
+    setState(new Array<ColorDto>());
   }
 
-  function onRemove(item: CardSetViewmodel): void {
+  function onRemove(item: ColorDto): void {
     const newState = cloneDeep(state);
-    const indexOfSelected = newState.findIndex((value: CardSetViewmodel) => value.id == item.id);
+    const indexOfSelected = newState.findIndex((value: ColorDto) => value.id == item.id);
     newState.splice(indexOfSelected, 1);
     props.onOptionRemoved(item.id);
     setState(newState);
   }
 
-  function onSelect(item: CardSetViewmodel): void {
+  function onSelect(item: ColorDto): void {
     const newState = cloneDeep(state);
-    const indexOfSelected = newState.findIndex((value: CardSetViewmodel) => value.id == item.id);
+    const indexOfSelected = newState.findIndex((value: ColorDto) => value.id == item.id);
     if (indexOfSelected >= 0) {
       newState.splice(indexOfSelected, 1);
       props.onOptionRemoved(item.id);
@@ -45,30 +45,30 @@ export function CardSetSelect(props: CardSetSelectProps) {
   //#region Rendering ---------------------------------------------------------
   return (
     <FormGroup
-      key="card-sets"
-      label="Card Sets"
+      key={props.colorType}
+      label={props.label}
       labelFor="card-sets-multi-select"
     >
-      <MultiSelect<CardSetViewmodel>
+      <MultiSelect<ColorDto>
         initialContent={null}
-        itemPredicate={filterCardSet}
-        itemRenderer={(item: CardSetViewmodel, itemProps: ItemRendererProps) => cardSetItemRenderer(item, itemProps)}
-        items={props.cardSets}
-        itemsEqual="id"
+        itemPredicate={filterColor}
+        itemRenderer={(item: ColorDto, itemProps: ItemRendererProps) => colorItemRenderer(item, itemProps)}
+        items={props.colors}
+        // itemsEqual="id"
         key="card-sets-multi-select"
         noResults={<MenuItem disabled={true} roleStructure="listoption" text="No results." />}
         onClear={() => onClear()}
-        onItemSelect={(item: CardSetViewmodel) => onSelect(item)}
-        onRemove={(item: CardSetViewmodel) => onRemove(item)}
+        onItemSelect={(item: ColorDto) => onSelect(item)}
+        onRemove={(item: ColorDto) => onRemove(item)}
         popoverProps={{ matchTargetWidth: true, minimal: true }}
         resetOnSelect={true}
         selectedItems={state}
-        tagRenderer={(item: CardSetViewmodel) => cardSetTagRenderer(item)}
+        tagRenderer={(item: ColorDto) => colorTagRenderer(item)}
       />
     </FormGroup>
   );
 
-  function cardSetItemRenderer(item: CardSetViewmodel, itemProps: ItemRendererProps): React.JSX.Element | null {
+  function colorItemRenderer(item: ColorDto, itemProps: ItemRendererProps): React.JSX.Element | null {
     if (!itemProps.modifiers.matchesPredicate) {
       return null;
     }
@@ -77,7 +77,7 @@ export function CardSetSelect(props: CardSetSelectProps) {
         active={itemProps.modifiers.active}
         disabled={itemProps.modifiers.disabled}
         key={item.id}
-        label={item.setCode}
+        // labelElement={item.setCode}
         onClick={itemProps.handleClick}
         onFocus={itemProps.handleFocus}
         ref={itemProps.ref}
@@ -86,27 +86,27 @@ export function CardSetSelect(props: CardSetSelectProps) {
         shouldDismissPopover={false}
         text={(
           <div>
-            <SvgProvider svg={item.cardSetSvg} />
-            {highlightText(item.cardSetName, itemProps.query)}
+            <CardSymbolRenderer cardSymbols={[item.mana_symbol]} />
+            {highlightText(item.display_text, itemProps.query)}
           </div>
         )}
       />
     );
   }
 
-  function cardSetTagRenderer(item: CardSetViewmodel): React.ReactNode {
+  function colorTagRenderer(item: ColorDto): React.ReactNode {
     return (
       <div key={item.id}>
-        <SvgProvider svg={item.cardSetSvg} />
-        {item.cardSetName}
+        <CardSymbolRenderer cardSymbols={[item.mana_symbol]} />
+        {/* {item.cardSetName} */}
       </div>
     );
   }
   //#endregion
 
   //#region Auxiliary methods -------------------------------------------------
-  function filterCardSet(query: string, item: CardSetViewmodel, index?: number, exactMatch?: boolean): boolean {
-    const normalizedTitle = item.cardSetName.toLowerCase();
+  function filterColor(query: string, item: ColorDto, index?: number, exactMatch?: boolean): boolean {
+    const normalizedTitle = item.display_text.toLowerCase();
     const normalizedQuery = query.toLowerCase();
 
     if (exactMatch) {

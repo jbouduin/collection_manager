@@ -5,7 +5,7 @@ import { ICollectionRepository } from "../../../database/repo/interfaces/collect
 import { BaseRouter, IResult, IRouter, RouteCallback, RoutedRequest } from "../../base";
 import { ILogService, IResultFactory, IRouterService } from "../../infra/interfaces";
 import { INFRASTRUCTURE, REPOSITORIES } from "../../service.tokens";
-import { CardRarity, CatalogType, ECatalogType, GameFormat } from "../../../../common/types";
+import { CardRarity, CatalogType, ECatalogType, GameFormat, MTGColor } from "../../../../common/types";
 
 
 @singleton()
@@ -46,11 +46,15 @@ export class CardRouter extends BaseRouter implements IRouter {
   private queryCards(request: RoutedRequest<void>): Promise<IResult<Array<MtgCardListDto>>> {
     const queryParams: CardQueryDto = {
       ownedCards: this.extractQueryParam(request.queryParams, "own") ? true : false,
+      selectedCardColors: this.extractQueryParam(request.queryParams, "cc")?.split(QUERY_PARAM_LIST_SEPARATOR) as Array<MTGColor>,
       selectedCatalogItems: this.extractCatalogQueryParams(request.queryParams),
-      selectedGameFormats: this.extractQueryParam(request.queryParams, "gameformats")?.split(QUERY_PARAM_LIST_SEPARATOR) as Array<GameFormat>,
-      selectedRarities: this.extractQueryParam(request.queryParams, "rarities")?.split(QUERY_PARAM_LIST_SEPARATOR) as Array<CardRarity>,
-      selectedSets: this.extractQueryParam(request.queryParams, "sets")?.split(QUERY_PARAM_LIST_SEPARATOR)
+      selectedIdentityColors: this.extractQueryParam(request.queryParams, "ic")?.split(QUERY_PARAM_LIST_SEPARATOR) as Array<MTGColor>,
+      selectedGameFormats: this.extractQueryParam(request.queryParams, "format")?.split(QUERY_PARAM_LIST_SEPARATOR) as Array<GameFormat>,
+      selectedProducedManaColors: this.extractQueryParam(request.queryParams, "format")?.split(QUERY_PARAM_LIST_SEPARATOR) as Array<MTGColor>,
+      selectedRarities: this.extractQueryParam(request.queryParams, "rarity")?.split(QUERY_PARAM_LIST_SEPARATOR) as Array<CardRarity>,
+      selectedSets: this.extractQueryParam(request.queryParams, "set")?.split(QUERY_PARAM_LIST_SEPARATOR)
     };
+    this.logService.debug("Main", JSON.stringify(queryParams, null, 2));
     return container.resolve<ICardRepository>(REPOSITORIES.CardRepository).queryCards(queryParams);
   }
 

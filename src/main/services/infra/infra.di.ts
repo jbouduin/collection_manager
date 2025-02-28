@@ -17,7 +17,7 @@ import { AssetRouter } from "./routers/asset.router";
 
 
 export class InfraDi {
-  public static registerInfrastructure() {
+  public static register() {
     container.register<IBootstrapService>(INFRASTRUCTURE.BootstrapService, { useClass: BootstrapService }, { lifecycle: Lifecycle.Singleton });
     container.register<IConfigurationService>(INFRASTRUCTURE.ConfigurationService, { useClass: ConfigurationService }, { lifecycle: Lifecycle.Singleton });
     container.register<IDatabaseService>(INFRASTRUCTURE.DatabaseService, { useClass: DatabaseService }, { lifecycle: Lifecycle.Singleton });

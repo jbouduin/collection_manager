@@ -1,7 +1,7 @@
 import { Button, Checkbox } from "@blueprintjs/core";
 import { cloneDeep } from "lodash";
 import * as React from "react";
-import { CatalogTypeDto } from "../../../../../../../../common/dto";
+import { CatalogTypeDto, ColorDto } from "../../../../../../../../common/dto";
 import { CardRarity, GameFormat } from "../../../../../../../../common/types";
 import { DisplayValueService, DisplayValueServiceContext, IpcProxyService, IpcProxyServiceContext } from "../../../../../../../common/context";
 import { displayValueRecordToSelectOptions, handleBooleanChange, SelectOption } from "../../../../../../../common/utils";
@@ -10,6 +10,7 @@ import { CardSearchViewmodel } from "../../../../../../viewmodels/card/card-sear
 import { CardSetContext } from "../../../../../context";
 import { CardSetSelect } from "./card-set-select";
 import { CatalogSelect } from "./catalog-select.";
+import { ColorSelect } from "./color-select";
 import { SearchViewProps } from "./search-view.props";
 import { SelectSelectOption } from "./select-select-option";
 
@@ -49,6 +50,7 @@ export function SearchView(props: SearchViewProps) {
   //#region State -----------------------------------------------------------------------
   const [state, setState] = React.useState<CardSearchViewmodel>(new CardSearchViewmodel());
   const [catalogs, setCatalogs] = React.useState<Array<CatalogTypeDto>>(new Array<CatalogTypeDto>());
+  const [colors, setColors] = React.useState<Array<ColorDto>>(new Array<ColorDto>());
   //#endregion
 
   //#region Context ---------------------------------------------------------------------
@@ -70,7 +72,15 @@ export function SearchView(props: SearchViewProps) {
 
   React.useEffect(
     () => {
-      void ipcProxyService.getData<Array<CatalogTypeDto>>("/catalog").then((r: Array<CatalogTypeDto>) => setCatalogs(r));
+      void Promise
+        .all([
+          ipcProxyService.getData<Array<CatalogTypeDto>>("/catalog"),
+          ipcProxyService.getData<Array<ColorDto>>("/colors")
+        ])
+        .then((value: [Array<CatalogTypeDto>, Array<ColorDto>]) => {
+          setCatalogs(value[0]);
+          setColors(value[1]);
+        });
     },
     []
   );
@@ -91,12 +101,21 @@ export function SearchView(props: SearchViewProps) {
   //#region Rendering ---------------------------------------------------------
   return (
     <>
-      <p>{ state.toQueryString()}</p>
+      <p>{state.toQueryString()}</p>
       <Checkbox
         checked={state.ownedCards}
         key="owned-cards"
         label="Cards I own"
         onChange={handleBooleanChange((value: boolean) => onSelectOptionEvent((v: CardSearchViewmodel) => v.ownedCards = value))}
+      />
+      <ColorSelect
+        colorType="card"
+        colors={colors}
+        label="Card color"
+        onClearOptions={() => onSelectOptionEvent((v: CardSearchViewmodel) => v.clearCardColorSelection())}
+        onOptionAdded={(newOption) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addCardColor(newOption))}
+        onOptionRemoved={(newOption) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeCardColor(newOption))}
+        selectedColors={state.selectedCardColors}
       />
       <CardSetSelect
         cardSets={cardSetContext}

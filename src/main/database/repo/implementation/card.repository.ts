@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as helpers from "kysely/helpers/sqlite";
 import { inject, injectable } from "tsyringe";
 import { CardfaceColorDto, CardQueryDto, CatalogItemDto, MtgCardColorDto, MtgCardDetailDto, MtgCardfaceDto, MtgCardImageDataDto, MtgCardListDto, OracleDto } from "../../../../common/dto";
-import { CatalogType } from "../../../../common/types";
+import { CatalogType, MTGColor } from "../../../../common/types";
 import { IResult } from "../../../services/base";
 import { IDatabaseService, ILogService, IResultFactory } from "../../../services/infra/interfaces";
 import { INFRASTRUCTURE } from "../../../services/service.tokens";
@@ -163,8 +163,8 @@ export class CardRepository extends BaseRepository implements ICardRepository {
               .$castTo<MtgCardColorDto>()
           ).as("cardColors")
         ])
-        .$if(params.selectedSets?.length > 0, (qb) => qb.where("card.set_id", "in", params.selectedSets))
-        .$if(params.selectedRarities?.length > 0, (qb) => qb.where("card.rarity", "in", params.selectedRarities))
+        .$if(params.selectedSets?.length > 0, (sqb) => sqb.where("card.set_id", "in", params.selectedSets))
+        .$if(params.selectedRarities?.length > 0, (sqb) => sqb.where("card.rarity", "in", params.selectedRarities))
         .$if( // catalogs referring to oracle
           this.hasAnyCatalogItem(params.selectedCatalogItems, "card-names") ||
           this.hasAnyCatalogItem(params.selectedCatalogItems, "word-bank") ||
@@ -201,16 +201,16 @@ export class CardRepository extends BaseRepository implements ICardRepository {
         .$if( // catalogs referring to cardfaces
           this.hasAnyCatalogItem(params.selectedCatalogItems, "artist-names") || this.hasAnyCatalogItem(params.selectedCatalogItems, "watermarks"),
           (sqb) => sqb.where((eb) => eb.exists(eb
-            .selectFrom("cardface as c2")
-            .select("c2.card_id")
-            .whereRef("c2.card_id", "=", "card.id")
+            .selectFrom("cardface as cf2")
+            .select("cf2.card_id")
+            .whereRef("cf2.card_id", "=", "card.id")
             .where((eb) => eb.or([
-              eb("c2.artist", "in", this.extractCatalogItems(params.selectedCatalogItems, "artist-names")),
-              eb("c2.watermark", "in", this.extractCatalogItems(params.selectedCatalogItems, "watermarks"))
+              eb("cf2.artist", "in", this.extractCatalogItems(params.selectedCatalogItems, "artist-names")),
+              eb("cf2.watermark", "in", this.extractCatalogItems(params.selectedCatalogItems, "watermarks"))
             ]))
           ))
         )
-        .$if(
+        .$if( // game format
           params.selectedGameFormats?.length > 0,
           (sqb) => sqb.where((eb) => eb.exists(eb
             .selectFrom("oracle_legality as ol")
@@ -220,9 +220,115 @@ export class CardRepository extends BaseRepository implements ICardRepository {
             .where("ol.legality", "in", ["legal", "restricted"])
           ))
         )
-        /*
-         * NOW cards I own => should we go for oracle_id I own - or just on the print I own ???
-         */
+        .$if( // owned cards
+          params.ownedCards,
+          (sqb) => sqb.where((eb) => eb.exists(eb
+            .selectFrom("owned_card as oc2")
+            .select("oc2.card_id")
+            .whereRef("oc2.card_id", "=", "card.id")
+          ))
+        )
+        .$if( // params.selectedCardColors?.length == 1 && params.selectedCardColors[0] == "C"
+          params.selectedCardColors?.length == 1 && params.selectedCardColors[0] == "C",
+          (sqb) => sqb.where((eb) => eb.not(eb.exists(eb
+            .selectFrom("card_color_map as ccm")
+            .select("ccm.color_id")
+            .whereRef("ccm.card_id", "=", "card.id")
+            .where("ccm.color_type", "=", "identity"))))
+        )
+        .$if( // params.selectedCardColors?.length == 1 && params.selectedCardColors[0] != "C"
+          params.selectedCardColors?.length == 1 && params.selectedCardColors[0] != "C",
+          (sqb) => sqb.where((eb) => eb
+            .exists(eb
+              .selectFrom("card_color_map as ccm")
+              .select("ccm.color_id")
+              .whereRef("ccm.card_id", "=", "card.id")
+              .where("ccm.color_type", "=", "identity")
+              .where("ccm.color_id", "=", params.selectedCardColors[0])))
+        )
+        .$if( // params.selectedCardColors?.length > 1 && !params.selectedCardColors.includes("C")
+          params.selectedCardColors?.length > 1 && !params.selectedCardColors.includes("C"),
+          (sqb) => sqb.where((eb) => eb.exists(eb
+            .selectFrom("card_color_map as ccm")
+            .select("ccm.color_id")
+            .whereRef("ccm.card_id", "=", "card.id")
+            .where("ccm.color_type", "=", "identity")
+            .where("ccm.color_id", "in", params.selectedCardColors)))
+        )
+        .$if( // params.selectedCardColors?.length > 1 && params.selectedCardColors.includes("C")
+          params.selectedCardColors?.length > 1 && params.selectedCardColors.includes("C"),
+          (sqb) => sqb.where((eb) => eb
+            .or([
+              eb.exists(eb
+                .selectFrom("card_color_map as ccm")
+                .select("ccm.color_id")
+                .whereRef("ccm.card_id", "=", "card.id")
+                .where("ccm.color_type", "=", "identity")
+                .where("ccm.color_id", "in", params.selectedCardColors.filter((c: MTGColor) => c != "C"))),
+              eb.not(eb.exists(eb
+                .selectFrom("card_color_map as ccm")
+                .select("ccm.color_id")
+                .whereRef("ccm.card_id", "=", "card.id")
+                .where("ccm.color_type", "=", "identity")))
+            ])
+          )
+        )
+        .$if( // params.selectedIdentityColors?.length == 1 && params.selectedIdentityColors[0] == "C"
+          params.selectedIdentityColors?.length == 1 && params.selectedIdentityColors[0] == "C",
+          (sqb) => sqb.where((eb) => eb.not(eb.exists(eb
+            .selectFrom("card_color_map as ccm")
+            .select("ccm.color_id")
+            .whereRef("ccm.card_id", "=", "card.id")
+            .where("ccm.color_type", "=", "identity"))))
+        )
+        .$if( // params.selectedIdentityColors?.length == 1 && params.selectedIdentityColors[0] != "C"
+          params.selectedIdentityColors?.length == 1 && params.selectedIdentityColors[0] != "C",
+          (sqb) => sqb.where((eb) => eb
+            .exists(eb
+              .selectFrom("card_color_map as ccm")
+              .select("ccm.color_id")
+              .whereRef("ccm.card_id", "=", "card.id")
+              .where("ccm.color_type", "=", "identity")
+              .where("ccm.color_id", "=", params.selectedCardColors[0])))
+        )
+        .$if( // params.selectedIdentityColors?.length > 1 && !params.selectedIdentityColors.includes("C")
+          params.selectedIdentityColors?.length > 1 && !params.selectedIdentityColors.includes("C"),
+          (sqb) => sqb.where((eb) => eb.exists(eb
+            .selectFrom("card_color_map as ccm")
+            .select("ccm.color_id")
+            .whereRef("ccm.card_id", "=", "card.id")
+            .where("ccm.color_type", "=", "identity")
+            .where("ccm.color_id", "in", params.selectedIdentityColors)))
+        )
+        .$if( // params.selectedIdentityColors?.length > 1 && params.selectedIdentityColors.includes("C")
+          params.selectedIdentityColors?.length > 1 && params.selectedIdentityColors.includes("C"),
+          (sqb) => sqb.where((eb) => eb
+            .or([
+              eb.exists(eb
+                .selectFrom("card_color_map as ccm")
+                .select("ccm.color_id")
+                .whereRef("ccm.card_id", "=", "card.id")
+                .where("ccm.color_type", "=", "identity")
+                .where("ccm.color_id", "in", params.selectedIdentityColors.filter((c: MTGColor) => c != "C"))),
+              eb.not(eb.exists(eb
+                .selectFrom("card_color_map as ccm")
+                .select("ccm.color_id")
+                .whereRef("ccm.card_id", "=", "card.id")
+                .where("ccm.color_type", "=", "identity")))
+            ])
+          )
+        )
+        .$if( // params.selectedProducedManaColors?.length > 0
+          params.selectedProducedManaColors?.length > 0,
+          (sqb) => sqb.where((eb) => eb
+            .exists(eb
+              .selectFrom("card_color_map as ccm")
+              .select("ccm.color_id")
+              .whereRef("ccm.card_id", "=", "card.id")
+              .where("ccm.color_type", "=", "produced_mana")
+              .where("ccm.color_id", "in", params.selectedProducedManaColors))
+          )
+        )
         .$call((sqb) => logCompilable(this.logService, sqb))
         .$castTo<MtgCardListDto>()
         .groupBy(["card.set_id", "card.collector_number"])
@@ -238,6 +344,7 @@ export class CardRepository extends BaseRepository implements ICardRepository {
   }
   //#endregion
 
+  //#region Auxiliary methods -------------------------------------------------
   private hasAnyCatalogItem(allSelected: Array<CatalogItemDto>, catalog: CatalogType): boolean {
     return allSelected.findIndex((f: CatalogItemDto) => f.catalog_name == catalog) >= 0;
   }
@@ -245,4 +352,5 @@ export class CardRepository extends BaseRepository implements ICardRepository {
   private extractCatalogItems(allSelected: Array<CatalogItemDto>, catalog: CatalogType): Array<string> {
     return allSelected.filter((f: CatalogItemDto) => f.catalog_name == catalog).map((f: CatalogItemDto) => f.item);
   }
+  //#endregion
 }

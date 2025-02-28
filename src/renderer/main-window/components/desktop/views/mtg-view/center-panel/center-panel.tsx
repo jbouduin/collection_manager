@@ -25,8 +25,7 @@ export function CenterPanel(props: CenterPanelProps) {
     () => {
       if (props.selectedSets) {
         void ipcProxyService
-          // FEATURE: nultiselect sets in tree .getData(`/card/query?sets=${props.selectedSets.map((set: CardSetViewmodel) => set.id).join(",")}`)
-          .getData(`/card/query?sets=${props.selectedSets[0].id}`)
+          .getData(`/card/query?set=${props.selectedSets[0].id}`)
           .then(
             (cardResult: Array<MtgCardListDto>) => {
               setCards(cardResult

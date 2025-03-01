@@ -1,5 +1,5 @@
 import { Button, Classes, Dialog, DialogBody, DialogFooter, Section } from "@blueprintjs/core";
-import { cloneDeep } from "lodash";
+import { cloneDeep, noop } from "lodash";
 import * as React from "react";
 import { CollectionDto, OwnedCardCollectionMapDto, OwnedCardQuantityDto } from "../../../../../common/dto";
 import { CardCondition } from "../../../../../common/types";
@@ -47,12 +47,15 @@ export function OwnedCardDialog(props: OwnedCardDialogProps) {
   function onSave(): void {
     void ipcProxyService
       .postData<Array<OwnedCardQuantityDto>, Array<OwnedCardQuantityDto>>(`/card/${props.cardId}/collection`, buildRequestBody())
-      .then((result: Array<OwnedCardQuantityDto>) => {
-        if (result) {
-          setViewmodels(buildViemmodels(result, collections));
-          props.onClose(result);
-        }
-      });
+      .then(
+        (result: Array<OwnedCardQuantityDto>) => {
+          if (result) {
+            setViewmodels(buildViemmodels(result, collections));
+            props.onClose(result);
+          }
+        },
+        noop
+      );
   }
 
   function onCancel(): void {

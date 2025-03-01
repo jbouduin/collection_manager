@@ -64,7 +64,7 @@ export function OwnedCardPanel(props: OwnedCardPanelProps) {
             setState(buildEditableState(cardConditionContext, props.cardId, props.collectionId, saved));
           }
         },
-        (_saved: Array<OwnedCardQuantityDto>) => noop
+        noop
       );
   }
 

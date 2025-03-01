@@ -51,33 +51,36 @@ export function LeftPanel(props: LeftPanelProps) {
   //#endregion
 
   //#region Event handling ----------------------------------------------------
-  async function onSave(collection: CollectionTreeViewmodel): Promise<void> {
-    const savedDto: CollectionDto = dialogData.dialogAction == "edit"
-      ? await ipcProxyService.putData<CollectionDto, CollectionDto>(`/collection/${collection.id}`, collection.dto)
-      : await ipcProxyService.postData<CollectionDto, CollectionDto>("/collection", collection.dto);
-    if (savedDto) {
-      collections.forEach((c: CollectionTreeViewmodel) => c.isSelected = false);
-      const newCollectionList = cloneDeep(collections);
-      if (dialogData.dialogAction == "edit") {
-        const indexOf = newCollectionList.findIndex((coll: CollectionTreeViewmodel) => collection.id == coll.id);
-        const savedCollection = new CollectionTreeViewmodel(savedDto, true, newCollectionList[indexOf].isExpanded);
-        newCollectionList[indexOf] = savedCollection;
-      } else {
-        newCollectionList.push(new CollectionTreeViewmodel(savedDto, true, false));
-      }
-      // expand the parents
-      let parentCollection = savedDto.parent_id != null
-        ? newCollectionList.find((c: CollectionTreeViewmodel) => c.id == savedDto.parent_id)
-        : null;
-      while (parentCollection != null) {
-        parentCollection.isExpanded = true;
-        parentCollection = parentCollection.parentId != null
-          ? newCollectionList.find((c: CollectionTreeViewmodel) => c.id == parentCollection.parentId)
+  function onSave(collection: CollectionTreeViewmodel): void {
+    const savedDtoPromise: Promise<CollectionDto> = dialogData.dialogAction == "edit"
+      ? ipcProxyService.putData<CollectionDto, CollectionDto>(`/collection/${collection.id}`, collection.dto)
+      : ipcProxyService.postData<CollectionDto, CollectionDto>("/collection", collection.dto);
+    void savedDtoPromise.then(
+      (savedDto: CollectionDto) => {
+        collections.forEach((c: CollectionTreeViewmodel) => c.isSelected = false);
+        const newCollectionList = cloneDeep(collections);
+        if (dialogData.dialogAction == "edit") {
+          const indexOf = newCollectionList.findIndex((coll: CollectionTreeViewmodel) => collection.id == coll.id);
+          const savedCollection = new CollectionTreeViewmodel(savedDto, true, newCollectionList[indexOf].isExpanded);
+          newCollectionList[indexOf] = savedCollection;
+        } else {
+          newCollectionList.push(new CollectionTreeViewmodel(savedDto, true, false));
+        }
+        // expand the parents
+        let parentCollection = savedDto.parent_id != null
+          ? newCollectionList.find((c: CollectionTreeViewmodel) => c.id == savedDto.parent_id)
           : null;
-      }
-      setCollections(newCollectionList);
-      setDialogData(null);
-    }
+        while (parentCollection != null) {
+          parentCollection.isExpanded = true;
+          parentCollection = parentCollection.parentId != null
+            ? newCollectionList.find((c: CollectionTreeViewmodel) => c.id == parentCollection.parentId)
+            : null;
+        }
+        setCollections(newCollectionList);
+        setDialogData(null);
+      },
+      noop
+    );
   }
 
   function onCollectionSelected(collections: Array<CollectionTreeViewmodel>): void {
@@ -152,9 +155,8 @@ export function LeftPanel(props: LeftPanelProps) {
             setCollections(newCollectionList);
           }
         },
-        (_r: Error) => noop
+        noop
       );
-
   }
 
   function onCancelDialog(): void {

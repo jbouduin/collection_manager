@@ -16,7 +16,9 @@ import { SelectSelectOption } from "./select-select-option";
 
 /* eslint-disable @stylistic/multiline-comment-style */
 /* TODO check why this did not work as expected
+ do this when implementing saved searches, because there is something strange witht he selects anyway
  if there is no way to get it working -> rethink state in the selects
+
 const RaritySelectMemo = React.memo(
   SelectSelectOption<CardRarity>,
   (prev: SelectSelectOptionProps<CardRarity>, current: SelectSelectOptionProps<CardRarity>) => {
@@ -121,7 +123,7 @@ export function SearchView(props: SearchViewProps) {
         colors={colors}
         label="Card color"
         onClearOptions={() => onSelectOptionEvent((v: CardSearchViewmodel) => v.clearColorSelection("card"))}
-        onOptionAdded={(color: MTGColor) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addColor("card", color))}
+        onOptionAdded={(color: MTGColor) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addColor("card", color, colors))}
         onOptionRemoved={(color) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeColor("card", color))}
         selectedColors={state.selectedCardColors}
       />
@@ -130,18 +132,18 @@ export function SearchView(props: SearchViewProps) {
         colors={colors}
         label="Produced mana color"
         onClearOptions={() => onSelectOptionEvent((v: CardSearchViewmodel) => v.clearColorSelection("produced_mana"))}
-        onOptionAdded={(color: MTGColor) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addColor("produced_mana", color))}
+        onOptionAdded={(color: MTGColor) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addColor("produced_mana", color, colors))}
         onOptionRemoved={(color: MTGColor) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeColor("produced_mana", color))}
-        selectedColors={state.selectedCardColors}
+        selectedColors={state.selectedProducedManaColors}
       />
       <ColorSelect
         colorType="identity"
         colors={colors}
         label="Identity color"
         onClearOptions={() => onSelectOptionEvent((v: CardSearchViewmodel) => v.clearColorSelection("identity"))}
-        onOptionAdded={(color: MTGColor) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addColor("identity", color))}
+        onOptionAdded={(color: MTGColor) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addColor("identity", color, colors))}
         onOptionRemoved={(color: MTGColor) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeColor("identity", color))}
-        selectedColors={state.selectedCardColors}
+        selectedColors={state.selectedIdentityColors}
       />
       <SelectSelectOption<CardRarity>
         items={rarityItems}

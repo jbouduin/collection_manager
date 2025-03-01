@@ -228,7 +228,6 @@ export class CardRepository extends BaseRepository implements ICardRepository {
             .whereRef("oc2.card_id", "=", "card.id")
           ))
         )
-        //#region cardcolors --------------------------------------------------
         .$if( // params.selectedCardColors?.length == 1 && params.selectedCardColors[0] == "C"
           params.selectedCardColors?.length == 1 && params.selectedCardColors[0] == "C",
           (sqb) => sqb.where((eb) => eb.not(eb.exists(eb
@@ -274,8 +273,6 @@ export class CardRepository extends BaseRepository implements ICardRepository {
             ])
           )
         )
-        //#endregion
-        //#region identity colors ---------------------------------------------
         .$if( // params.selectedIdentityColors?.length == 1 && params.selectedIdentityColors[0] == "C"
           params.selectedIdentityColors?.length == 1 && params.selectedIdentityColors[0] == "C",
           (sqb) => sqb.where((eb) => eb.not(eb.exists(eb
@@ -321,8 +318,6 @@ export class CardRepository extends BaseRepository implements ICardRepository {
             ])
           )
         )
-        //#endregion
-        //#region produced mana colors ----------------------------------------
         .$if( // params.selectedProducedManaColors?.length == 1 && params.selectedProducedManaColors[0] == "C"
           params.selectedProducedManaColors?.length == 1 && params.selectedProducedManaColors[0] == "C",
           (sqb) => sqb.where((eb) => eb.not(eb.exists(eb
@@ -379,7 +374,6 @@ export class CardRepository extends BaseRepository implements ICardRepository {
               .where("ccm.color_id", "in", params.selectedProducedManaColors))
           )
         )
-        //#endregion
         .$call((sqb) => logCompilable(this.logService, sqb))
         .$castTo<MtgCardListDto>()
         .groupBy(["card.set_id", "card.collector_number"])

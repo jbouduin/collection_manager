@@ -31,8 +31,10 @@ export class IpcProxyService {
     };
 
     return window.ipc.data("DELETE", request)
-      .then((response: IpcResponse<never>) => this.processIpcResponse(response))
-      .catch((reason: Error) => this.processIpcRejection(reason));
+      .then(
+        (response: IpcResponse<never>) => this.processIpcResponse(response),
+        (reason: Error) => this.processIpcRejection(reason)
+      );
   }
 
   public getData<T extends object | string>(path: string): Promise<T> {
@@ -41,8 +43,10 @@ export class IpcProxyService {
       path: path
     };
     return window.ipc.data("GET", request)
-      .then((response: IpcResponse<T>) => this.processIpcResponse(response))
-      .catch((reason: Error) => this.processIpcRejection(reason));
+      .then(
+        (response: IpcResponse<T>) => this.processIpcResponse(response),
+        (reason: Error) => this.processIpcRejection(reason)
+      );
   }
 
   public postData<T extends object, U extends object>(path: string, data: T): Promise<U> {
@@ -52,8 +56,10 @@ export class IpcProxyService {
       data: data
     };
     return window.ipc.data("POST", request)
-      .then((response: IpcResponse<U>) => this.processIpcResponse(response))
-      .catch((reason: Error) => this.processIpcRejection<U>(reason));
+      .then(
+        (response: IpcResponse<U>) => this.processIpcResponse(response),
+        (reason: Error) => this.processIpcRejection<U>(reason)
+      );
   }
 
   public putData<T extends object, U extends object>(path: string, data: T): Promise<U> {
@@ -63,8 +69,10 @@ export class IpcProxyService {
       data: data
     };
     return window.ipc.data("PUT", request)
-      .then((response: IpcResponse<U>) => this.processIpcResponse(response))
-      .catch((reason: Error) => this.processIpcRejection(reason));
+      .then(
+        (response: IpcResponse<U>) => this.processIpcResponse(response),
+        (reason: Error) => this.processIpcRejection(reason)
+      );
   }
 
   public patchData<T extends object, U extends object>(path: string, data: T): Promise<U> {
@@ -74,8 +82,10 @@ export class IpcProxyService {
       data: data
     };
     return window.ipc.data("PATCH", request)
-      .then((response: IpcResponse<U>) => this.processIpcResponse(response))
-      .catch((reason: Error) => this.processIpcRejection(reason));
+      .then(
+        (response: IpcResponse<U>) => this.processIpcResponse(response),
+        (reason: Error) => this.processIpcRejection(reason)
+      );
   }
   //#endregion
 
@@ -143,7 +153,7 @@ export class IpcProxyService {
       },
       `POST-${this.getRequestCounter}`
     );
-    return Promise.resolve<T>(undefined);
+    return Promise.reject<T>(reason);
   }
   //#endregion
 }

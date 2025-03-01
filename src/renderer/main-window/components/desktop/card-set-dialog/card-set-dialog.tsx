@@ -10,7 +10,7 @@ import { CardSetDialogProps } from "./card-set-dialog.props";
 
 export function CardSetDialog(props: CardSetDialogProps) {
   //#region State -------------------------------------------------------------
-  const [cardSetDetails, setCardSetDetails] = React.useState<CardSetDetailsViewmodel>(undefined);
+  const [cardSetDetails, setCardSetDetails] = React.useState<CardSetDetailsViewmodel>(null);
   //#endregion
 
   //#region Context -----------------------------------------------------------
@@ -22,11 +22,11 @@ export function CardSetDialog(props: CardSetDialogProps) {
   React.useEffect(
     () => {
       if (props.cardSetId) {
-        void ipcProxyService
-          .getData(`/card-set/${props.cardSetId}`)
-          .then((cardSetDetails: MtgCardSetDetailsDto) => {
-            setCardSetDetails(new CardSetDetailsViewmodel(cardSetDetails));
-          });
+        void ipcProxyService.getData(`/card-set/${props.cardSetId}`)
+          .then(
+            (cardSetDetails: MtgCardSetDetailsDto) => setCardSetDetails(new CardSetDetailsViewmodel(cardSetDetails)),
+            (_r: Error) => setCardSetDetails(null)
+          );
       }
     },
     [props.cardSetId]

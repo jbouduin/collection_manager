@@ -21,7 +21,10 @@ export function LegalitiesView(props: LegalitiesViewProps) {
     () => {
       if (props.oracleId) {
         void ipcProxyService.getData(`/oracle/${props.oracleId}/legality`)
-          .then((queryResult: Array<LegalityDto>) => setLegalities(queryResult));
+          .then(
+            (queryResult: Array<LegalityDto>) => setLegalities(queryResult),
+            (_r: Error) => setLegalities(new Array<LegalityDto>())
+          );
       } else {
         setLegalities(new Array<LegalityDto>());
       }

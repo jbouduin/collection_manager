@@ -11,7 +11,8 @@ import { CenterPanelProps } from "./center-panel.props";
 
 export function CenterPanel(props: CenterPanelProps) {
   //#region State -------------------------------------------------------------
-  const [cards, setCards] = React.useState(new Array<MtgCardListViewmodel>());
+  const initialState = new Array<MtgCardListViewmodel>();
+  const [cards, setCards] = React.useState<Array<MtgCardListViewmodel>>(initialState);
   //#endregion
 
   //#region Context ---------------------------------------------------------------------
@@ -27,26 +28,22 @@ export function CenterPanel(props: CenterPanelProps) {
         void ipcProxyService
           .getData(`/card/query?set=${props.selectedSets[0].id}`)
           .then(
-            (cardResult: Array<MtgCardListDto>) => {
-              setCards(cardResult
-                .map((card: MtgCardListDto) => new MtgCardListViewmodel(card))
-                .sort((a: MtgCardListViewmodel, b: MtgCardListViewmodel) => a.collectorNumberSortValue.localeCompare(b.collectorNumberSortValue)));
-            },
-            (_cardResult: Array<MtgCardListDto>) => setCards(new Array<MtgCardListViewmodel>())
+            (cardResult: Array<MtgCardListDto>) => setCards(cardResult
+              .map((card: MtgCardListDto) => new MtgCardListViewmodel(card))
+              .sort((a: MtgCardListViewmodel, b: MtgCardListViewmodel) => a.collectorNumberSortValue.localeCompare(b.collectorNumberSortValue))),
+            (_r: Error) => setCards(initialState)
           );
       } else if (props.queryString) {
         void ipcProxyService
           .getData(`/card/query?${props.queryString}`)
           .then(
-            (cardResult: Array<MtgCardListDto>) => {
-              setCards(cardResult
-                .map((card: MtgCardListDto) => new MtgCardListViewmodel(card))
-                .sort((a: MtgCardListViewmodel, b: MtgCardListViewmodel) => a.collectorNumberSortValue.localeCompare(b.collectorNumberSortValue)));
-            },
-            (_cardResult: Array<MtgCardListDto>) => setCards(new Array<MtgCardListViewmodel>())
+            (cardResult: Array<MtgCardListDto>) => setCards(cardResult
+              .map((card: MtgCardListDto) => new MtgCardListViewmodel(card))
+              .sort((a: MtgCardListViewmodel, b: MtgCardListViewmodel) => a.collectorNumberSortValue.localeCompare(b.collectorNumberSortValue))),
+            (_r: Error) => setCards(initialState)
           );
       } else {
-        setCards(new Array<MtgCardListViewmodel>());
+        setCards(initialState);
       }
     },
     [props.selectedSets, props.queryString]

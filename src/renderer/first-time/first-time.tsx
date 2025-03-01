@@ -25,17 +25,28 @@ void (async () => {
   const ipcProxyService = new IpcProxyService((props: ToastProps, key?: string) => appToaster.show(props, key));
 
   await ipcProxyService.getData<ConfigurationDto>("/configuration")
-    .then((configuration: ConfigurationDto) => new ConfigurationViewModel(configuration, true))
+    .then(
+      (configuration: ConfigurationDto) => new ConfigurationViewModel(configuration, true),
+      (_r: Error) => undefined as ConfigurationDto
+    )
     .then((configurationViewmodel: ConfigurationViewModel) => {
       const container = document.getElementById("root");
       const root = createRoot(container);
-      /* eslint-disable @stylistic/function-paren-newline */
-      root.render(
-        <BlueprintProvider>
-          <IpcProxyServiceContext.Provider value={ipcProxyService}>
-            <FirstTimeView className={configurationViewmodel.theme} configuration={configurationViewmodel} />
-          </IpcProxyServiceContext.Provider>
-        </BlueprintProvider>
-      );
+      if (configurationViewmodel) {
+        const container = document.getElementById("root");
+        const root = createRoot(container);
+        /* eslint-disable @stylistic/function-paren-newline */
+        root.render(
+          <BlueprintProvider>
+            <IpcProxyServiceContext.Provider value={ipcProxyService}>
+              <FirstTimeView className={configurationViewmodel.theme} configuration={configurationViewmodel} />
+            </IpcProxyServiceContext.Provider>
+          </BlueprintProvider>
+        );
+      } else {
+        root.render(
+          <p>Unable to retrieve a default configuration.</p>
+        );
+      }
     });
 })();

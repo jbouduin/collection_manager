@@ -36,7 +36,10 @@ export function SyncDialog(props: SyncDialogProps) {
   //#region Effects -----------------------------------------------------------
   React.useEffect(
     () => {
-      void ipcProxyService.getData<Array<CatalogTypeDto>>("/catalog").then((r: Array<CatalogTypeDto>) => setCatalogs(r));
+      void ipcProxyService.getData<Array<CatalogTypeDto>>("/catalog").then(
+        (r: Array<CatalogTypeDto>) => setCatalogs(r),
+        (_r: Error) => setCatalogs(new Array<CatalogTypeDto>())
+      );
     },
     []
   );

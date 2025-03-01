@@ -55,16 +55,19 @@ export function Desktop(_props: Props) {
             ipcProxyService.getData<Array<MtgCardSetDto>>("/card-set"),
             ipcProxyService.getData<Array<LanguageDto>>("/language"),
             ipcProxyService.getData<Array<CardConditionDto>>("/card-condition")
-          ]).then(([cardSymbols, cardSets, languages, cardConditions]) => {
-            newState.symbolSvgs = cardSymbols;
-            newState.cardSets = cardSets
-              .sort((a: MtgCardSetDto, b: MtgCardSetDto) => a.name.localeCompare(b.name))
-              .map((cardSet: MtgCardSetDto) => new CardSetViewmodel(cardSet));
-            newState.languages = languages;
-            newState.cardConditions = cardConditions.map((condition: CardConditionDto) => new CardConditionViewmodel(condition));
-            newState.initialized = true;
-            setDesktopState(newState);
-          });
+          ]).then(
+            ([cardSymbols, cardSets, languages, cardConditions]) => {
+              newState.symbolSvgs = cardSymbols;
+              newState.cardSets = cardSets
+                .sort((a: MtgCardSetDto, b: MtgCardSetDto) => a.name.localeCompare(b.name))
+                .map((cardSet: MtgCardSetDto) => new CardSetViewmodel(cardSet));
+              newState.languages = languages;
+              newState.cardConditions = cardConditions.map((condition: CardConditionDto) => new CardConditionViewmodel(condition));
+              newState.initialized = true;
+              setDesktopState(newState);
+            },
+            (_r: Error) => setDesktopState(initialState)
+          );
         });
     },
     []

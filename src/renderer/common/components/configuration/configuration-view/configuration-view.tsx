@@ -20,7 +20,11 @@ export function ConfigurationView(props: ConfigurationViewProps) {
   //#region Effects -----------------------------------------------------------
   React.useEffect(
     () => {
-      void ipcProxyService.getData<Array<CatalogTypeDto>>("/catalog").then((r: Array<CatalogTypeDto>) => setState(r));
+      void ipcProxyService.getData<Array<CatalogTypeDto>>("/catalog")
+        .then(
+          (r: Array<CatalogTypeDto>) => setState(r),
+          (_r: Error) => setState(new Array<CatalogTypeDto>())
+        );
     },
     []
   );

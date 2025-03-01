@@ -8,7 +8,7 @@ import { ButtonBarButtonProps } from "./button-bar-button.props";
 
 export function ButtonBarButton(props: ButtonBarButtonProps) {
   //#region State -------------------------------------------------------------
-  const [svg, setSvg] = React.useState<string>(undefined);
+  const [svg, setSvg] = React.useState<string>(null);
   //#endregion
 
   //#region Context ---------------------------------------------------------------------
@@ -25,7 +25,10 @@ export function ButtonBarButton(props: ButtonBarButtonProps) {
   React.useEffect(
     () => {
       void ipcProxyService.getData<string>(`/asset?path=${props.assetPath}`)
-        .then((response: string) => setSvg(response));
+        .then(
+          (response: string) => setSvg(response),
+          (_r: Error) => setSvg(null)
+        );
     },
     [props.assetPath]
   );

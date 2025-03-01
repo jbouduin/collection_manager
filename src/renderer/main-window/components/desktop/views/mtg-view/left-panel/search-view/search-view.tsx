@@ -80,10 +80,16 @@ export function SearchView(props: SearchViewProps) {
           ipcProxyService.getData<Array<CatalogTypeDto>>("/catalog"),
           ipcProxyService.getData<Array<ColorDto>>("/colors")
         ])
-        .then((value: [Array<CatalogTypeDto>, Array<ColorDto>]) => {
-          setCatalogs(value[0]);
-          setColors(value[1]);
-        });
+        .then(
+          (value: [Array<CatalogTypeDto>, Array<ColorDto>]) => {
+            setCatalogs(value[0]);
+            setColors(value[1]);
+          },
+          (_r: Error) => {
+            setCatalogs(new Array<CatalogTypeDto>());
+            setColors(new Array<ColorDto>());
+          }
+        );
     },
     []
   );

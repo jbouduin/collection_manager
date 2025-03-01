@@ -12,8 +12,8 @@ import { OwnedCardDialogProps } from "./owned-card-dialog.props";
 
 export function OwnedCardDialog(props: OwnedCardDialogProps) {
   //#region State -------------------------------------------------------------
-  const [viewmodels, setViewmodels] = React.useState<Map<number, Array<OwnedCardQuantityViewmodel>>>(undefined);
-  const [collections, setCollections] = React.useState<Array<CollectionDto>>(undefined);
+  const [viewmodels, setViewmodels] = React.useState<Map<number, Array<OwnedCardQuantityViewmodel>>>(null);
+  const [collections, setCollections] = React.useState<Array<CollectionDto>>(null);
   //#endregion
 
   //#region Context -----------------------------------------------------------
@@ -28,10 +28,16 @@ export function OwnedCardDialog(props: OwnedCardDialogProps) {
         ipcProxyService.getData<Array<CollectionDto>>("/collection"),
         ipcProxyService.getData<Array<OwnedCardQuantityDto>>(`/card/${props.cardId}/collection`)
       ])
-        .then((result: [Array<CollectionDto>, Array<OwnedCardQuantityDto>]) => {
-          setCollections(result[0]);
-          setViewmodels(buildViemmodels(result[1], result[0]));
-        });
+        .then(
+          (result: [Array<CollectionDto>, Array<OwnedCardQuantityDto>]) => {
+            setCollections(result[0]);
+            setViewmodels(buildViemmodels(result[1], result[0]));
+          },
+          (_r: Error) => {
+            setViewmodels(null);
+            setCollections(null);
+          }
+        );
     },
     []
   );

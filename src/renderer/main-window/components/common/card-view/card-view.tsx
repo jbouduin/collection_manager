@@ -165,7 +165,10 @@ export function CardView(props: CardViewProps) {
   async function loadCard(cardId: string): Promise<void> {
     if (cardId) {
       await ipcProxyService.getData<MtgCardDetailDto>(`/card/${cardId}`)
-        .then((cardResult: MtgCardDetailDto) => setCardViewState({ card: new MtgCardDetailViewmodel(cardResult), cardfaceSequence: 0 }));
+        .then(
+          (cardResult: MtgCardDetailDto) => setCardViewState({ card: new MtgCardDetailViewmodel(cardResult), cardfaceSequence: 0 }),
+          (_r: Error) => setCardViewState(null)
+        );
     } else {
       setCardViewState(undefined);
     }

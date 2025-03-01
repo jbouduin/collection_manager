@@ -8,7 +8,7 @@ import { CardRulingsViewProps } from "./card-rulings-view.props";
 
 export function CardRulingsView(props: CardRulingsViewProps) {
   //#region State -------------------------------------------------------------
-  const [rulings, setRulings] = React.useState(null as Array<RulingLineDto>);
+  const [rulings, setRulings] = React.useState<Array<RulingLineDto>>(null);
   //#endregion
 
   //#region Context ---------------------------------------------------------------------
@@ -20,7 +20,10 @@ export function CardRulingsView(props: CardRulingsViewProps) {
     () => {
       if (props.oracleId) {
         void ipcProxyService.getData(`/oracle/${props.oracleId}/ruling`)
-          .then((queryResult: Array<RulingLineDto>) => setRulings(queryResult));
+          .then(
+            (queryResult: Array<RulingLineDto>) => setRulings(queryResult),
+            (_r: Error) => setRulings(null)
+          );
       } else {
         setRulings(null);
       }

@@ -18,7 +18,8 @@ const Treeview = React.memo(
 
 export function LeftPanel(props: LeftPanelProps) {
   //#region State -----------------------------------------------------------
-  const [collections, setCollections] = React.useState<Array<CollectionTreeViewmodel>>(new Array<CollectionTreeViewmodel>());
+  const initialCollectionState = new Array<CollectionTreeViewmodel>();
+  const [collections, setCollections] = React.useState<Array<CollectionTreeViewmodel>>(initialCollectionState);
   const [dialogData, setDialogData] = React.useState<DialogData>(null);
   //#endregion
 
@@ -31,7 +32,10 @@ export function LeftPanel(props: LeftPanelProps) {
     () => {
       void ipcProxyService
         .getData<Array<CollectionDto>>("/collection")
-        .then((result: Array<CollectionDto>) => setCollections(result.map((collection: CollectionDto) => new CollectionTreeViewmodel(collection, false, false))));
+        .then(
+          (result: Array<CollectionDto>) => setCollections(result.map((collection: CollectionDto) => new CollectionTreeViewmodel(collection, false, false))),
+          (_r: Error) => setCollections(initialCollectionState)
+        );
     },
     []
   );
@@ -182,7 +186,7 @@ export function LeftPanel(props: LeftPanelProps) {
             </Menu>
           }
           key="root"
-          style={{height: "100vh"}}
+          style={{ height: "100vh" }}
         >
           <Treeview
             buildTree={buildTree}

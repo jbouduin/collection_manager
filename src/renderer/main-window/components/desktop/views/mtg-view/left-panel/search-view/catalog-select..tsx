@@ -119,7 +119,10 @@ export function CatalogSelect(props: CatalogSelectProps) {
   function onQueryChange(query: string, _event?: React.ChangeEvent<HTMLInputElement>): void {
     void ipcProxyService
       .getData<Array<CatalogItemDto>>(`/catalog/${props.catalog.catalog_name}?item=${query}`)
-      .then((r: Array<CatalogItemDto>) => setItems(r));
+      .then(
+        (r: Array<CatalogItemDto>) => setItems(r),
+        (_r: Error) => setItems(new Array<CatalogItemDto>())
+      );
   }
   //#endregion
 }

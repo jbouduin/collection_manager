@@ -29,11 +29,17 @@ export function OwnedCardPanel(props: OwnedCardPanelProps) {
       if (props.collectionId) {
         void ipcProxyService
           .getData<Array<OwnedCardQuantityDto>>(`/collection/${props.collectionId}/card/${props.cardId}`)
-          .then((r: Array<OwnedCardQuantityDto>) => setState(buildEditableState(cardConditionContext, props.cardId, props.collectionId, r)));
+          .then(
+            (r: Array<OwnedCardQuantityDto>) => setState(buildEditableState(cardConditionContext, props.cardId, props.collectionId, r)),
+            (_r: Error) => setState(new Array<OwnedCardQuantityViewmodel>())
+          );
       } else {
         void ipcProxyService
           .getData<Array<OwnedCardQuantityDto>>(`/card/${props.cardId}/collection`)
-          .then((r: Array<OwnedCardQuantityDto>) => setState(r.map((qty: OwnedCardQuantityDto) => new OwnedCardQuantityViewmodel(qty))));
+          .then(
+            (r: Array<OwnedCardQuantityDto>) => setState(r.map((qty: OwnedCardQuantityDto) => new OwnedCardQuantityViewmodel(qty))),
+            (_r: Error) => setState(new Array<OwnedCardQuantityViewmodel>())
+          );
       }
     },
     [props.cardId, props.collectionId]

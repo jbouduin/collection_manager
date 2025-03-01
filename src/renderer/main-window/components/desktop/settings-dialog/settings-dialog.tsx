@@ -12,7 +12,7 @@ import { SettingsDialogProps } from "./settings-dialog.props";
 
 export function SettingsDialog(props: SettingsDialogProps) {
   //#region State -----------------------------------------------------------------------
-  const [configuration, setConfiguration] = React.useState<ConfigurationViewModel>(undefined);
+  const [configuration, setConfiguration] = React.useState<ConfigurationViewModel>(null);
   //#endregion
 
   //#region Context ---------------------------------------------------------------------
@@ -25,7 +25,10 @@ export function SettingsDialog(props: SettingsDialogProps) {
       if (props.isOpen) {
         void ipcProxyService
           .getData("/configuration")
-          .then((configuration: ConfigurationDto) => setConfiguration(new ConfigurationViewModel(configuration, false)));
+          .then(
+            (configuration: ConfigurationDto) => setConfiguration(new ConfigurationViewModel(configuration, false)),
+            (_r: Error) => setConfiguration(null)
+          );
       }
     },
     [props.isOpen]

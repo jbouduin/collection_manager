@@ -26,12 +26,10 @@ export function CenterPanel(props: CenterPanelProps) {
         void ipcProxyService
           .getData<Array<OwnedCardListDto>>(`/collection/${props.selectedCollection.id}/card`)
           .then(
-            (result: Array<OwnedCardListDto>) => {
-              setCards(result
-                .map((c: OwnedCardListDto) => new CollectionCardListViewmodel(c))
-                .sort((a: CollectionCardListViewmodel, b: CollectionCardListViewmodel) => a.dateSortValue.localeCompare(b.dateSortValue)));
-            },
-            (_result: Array<OwnedCardListDto>) => setCards(new Array<CollectionCardListViewmodel>())
+            (result: Array<OwnedCardListDto>) => setCards(result
+              .map((c: OwnedCardListDto) => new CollectionCardListViewmodel(c))
+              .sort((a: CollectionCardListViewmodel, b: CollectionCardListViewmodel) => a.dateSortValue.localeCompare(b.dateSortValue))),
+            (_r: Error) => setCards(new Array<CollectionCardListViewmodel>())
           );
       } else {
         setCards(new Array<CollectionCardListViewmodel>());

@@ -155,7 +155,7 @@ export function LeftPanel(props: LeftPanelProps) {
   //#region Main --------------------------------------------------------------
   return (
     <>
-      <div className="card-set-tree-wrapper">
+      <div>
         <ContextMenu
           content={
             <Menu>
@@ -182,6 +182,7 @@ export function LeftPanel(props: LeftPanelProps) {
             </Menu>
           }
           key="root"
+          style={{height: "100vh"}}
         >
           <Treeview
             buildTree={buildTree}

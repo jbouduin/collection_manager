@@ -85,8 +85,8 @@ export function ColorSelect(props: ColorSelectProps) {
         selected={state.includes(item)}
         shouldDismissPopover={false}
         text={(
-          <div>
-            <CardSymbolRenderer cardSymbols={[item.mana_symbol]} />
+          <div style={{ display: "flex"}}>
+            <CardSymbolRenderer cardSymbols={[item.mana_symbol]} className="mana-cost-image-in-text" />
             {highlightText(item.display_text, itemProps.query)}
           </div>
         )}

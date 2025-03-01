@@ -1,5 +1,5 @@
 import { CardQueryDto, CatalogItemDto, QUERY_PARAM_LIST_SEPARATOR, QueryParamToken } from "../../../../common/dto";
-import { CardRarity, CatalogType, GameFormat, MTGColor } from "../../../../common/types";
+import { CardRarity, CatalogType, GameFormat, MTGColor, MTGColorType } from "../../../../common/types";
 import { BaseViewmodel } from "../../../common/viewmodels/base.viewmodel";
 
 // NOW add card color (color identity) - be aware that artifacts most probably have no color identity
@@ -58,6 +58,61 @@ export class CardSearchViewmodel extends BaseViewmodel<CardQueryDto> {
   //#endregion
 
   //#region CardColors --------------------------------------------------------
+  public addColor(type: MTGColorType, color: MTGColor): void {
+    switch (type) {
+      case "card":
+        this._dto.selectedCardColors.push(color);
+        // NOW  this._dto.selectedGameFormats.sort((a: GameFormat, b: GameFormat) => a.localeCompare(b));
+        break;
+      case "identity":
+        this._dto.selectedIdentityColors.push(color);
+        // NOW  this._dto.selectedGameFormats.sort((a: GameFormat, b: GameFormat) => a.localeCompare(b));
+        break;
+      case "produced_mana":
+        this._dto.selectedProducedManaColors.push(color);
+        // NOW  this._dto.selectedGameFormats.sort((a: GameFormat, b: GameFormat) => a.localeCompare(b));
+        break;
+    }
+
+  }
+
+  public removeColor(type: MTGColorType, color: MTGColor): void {
+    switch (type) {
+      case "card": {
+        const idx = this._dto.selectedCardColors.indexOf(color);
+        this._dto.selectedCardColors.splice(idx, 1);
+        break;
+      }
+      case "identity": {
+        const idx = this._dto.selectedIdentityColors.indexOf(color);
+        this._dto.selectedIdentityColors.splice(idx, 1);
+        break;
+      }
+      case "produced_mana": {
+        const idx = this._dto.selectedProducedManaColors.indexOf(color);
+        this._dto.selectedProducedManaColors.splice(idx, 1);
+        break;
+      }
+    }
+  }
+
+  public clearColorSelection(type: MTGColorType): void {
+    switch (type) {
+      case "card":
+        this._dto.selectedCardColors.splice(0);
+        break;
+      case "identity":
+        this._dto.selectedIdentityColors.splice(0);
+        break;
+      case "produced_mana":
+        this._dto.selectedIdentityColors.splice(0);
+        break;
+    }
+  }
+  //#endregion
+
+  /*
+  //#region CardColors --------------------------------------------------------
   public addCardColor(color: MTGColor): void {
     this._dto.selectedCardColors.push(color);
     // NOW  this._dto.selectedGameFormats.sort((a: GameFormat, b: GameFormat) => a.localeCompare(b));
@@ -72,23 +127,38 @@ export class CardSearchViewmodel extends BaseViewmodel<CardQueryDto> {
     this._dto.selectedCardColors.splice(0);
   }
   //#endregion
-
   //#region Identity Colors ---------------------------------------------------
-  public addColorIdentity(color: MTGColor): void {
+  public addIdentityColor(color: MTGColor): void {
     this._dto.selectedIdentityColors.push(color);
     // NOW this._dto.selectedGameFormats.sort((a: GameFormat, b: GameFormat) => a.localeCompare(b));
   }
 
-  public removeColorIdentity(color: MTGColor): void {
+  public removeIdentityColore(color: MTGColor): void {
     const idx = this._dto.selectedIdentityColors.indexOf(color);
     this._dto.selectedIdentityColors.splice(idx, 1);
   }
 
-  public clearColorIdentitySelection(): void {
+  public clearIdentityColorSelection(): void {
     this._dto.selectedIdentityColors.splice(0);
   }
   //#endregion
 
+  //#region Produced man Colors -----------------------------------------------
+  public addProducedManaColor(color: MTGColor): void {
+    this._dto.selectedProducedManaColors.push(color);
+    // NOW  this._dto.selectedGameFormats.sort((a: GameFormat, b: GameFormat) => a.localeCompare(b));
+  }
+
+  public removeProducedManaColor(color: MTGColor): void {
+    const idx = this._dto.selectedProducedManaColors.indexOf(color);
+    this._dto.selectedProducedManaColors.splice(idx, 1);
+  }
+
+  public clearProducedManaColorSelection(): void {
+    this._dto.selectedProducedManaColors.splice(0);
+  }
+  //#endregion
+*/
   //#region GameFormat --------------------------------------------------------
   public addGameFormat(gameFormat: GameFormat): void {
     this._dto.selectedGameFormats.push(gameFormat);
@@ -175,13 +245,16 @@ export class CardSearchViewmodel extends BaseViewmodel<CardQueryDto> {
       this.appendToQueryParam(queryParts, "cc", this._dto.selectedCardColors);
     }
     if (this._dto.selectedIdentityColors.length > 0) {
-      this.appendToQueryParam(queryParts, "ic", this._dto.selectedCardColors);
+      this.appendToQueryParam(queryParts, "ic", this._dto.selectedIdentityColors);
     }
     if (this._dto.selectedSets.length > 0) {
       this.appendToQueryParam(queryParts, "set", this._dto.selectedSets);
     }
     if (this._dto.selectedGameFormats.length > 0) {
       this.appendToQueryParam(queryParts, "format", this._dto.selectedGameFormats);
+    }
+    if (this._dto.selectedProducedManaColors.length > 0) {
+      this.appendToQueryParam(queryParts, "pm", this._dto.selectedProducedManaColors);
     }
     if (this._dto.selectedRarities.length > 0) {
       this.appendToQueryParam(queryParts, "rarity", this._dto.selectedRarities);

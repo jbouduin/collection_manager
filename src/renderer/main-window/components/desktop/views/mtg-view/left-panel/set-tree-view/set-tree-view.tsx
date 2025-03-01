@@ -93,7 +93,7 @@ export function SetTreeView(props: LeftPanelProps) {
 
   //#region Main --------------------------------------------------------------
   return (
-    <div className="card-set-tree-wrapper">
+    <>
       <HeaderView
         cardSetGroupBy={state.cardSetGroupBy}
         cardSetSort={state.cardSetSort}
@@ -109,7 +109,7 @@ export function SetTreeView(props: LeftPanelProps) {
             <Treeview
               buildTree={buildTree}
               data={cardSets}
-              filterProps={{filter: state, applyFilterProps: applyFilterProps}}
+              filterProps={{ filter: state, applyFilterProps: applyFilterProps }}
               onDataSelected={(sets: Array<CardSetViewmodel>) => props.onSetsSelected(sets)}
             />
           )
@@ -124,7 +124,7 @@ export function SetTreeView(props: LeftPanelProps) {
           onDialogClose={() => setSelectedCardSetForDialog(null)}
         />
       }
-    </div>
+    </>
   );
   //#endregion
 

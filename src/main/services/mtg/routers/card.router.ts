@@ -50,7 +50,7 @@ export class CardRouter extends BaseRouter implements IRouter {
       selectedCatalogItems: this.extractCatalogQueryParams(request.queryParams),
       selectedIdentityColors: this.extractQueryParam(request.queryParams, "ic")?.split(QUERY_PARAM_LIST_SEPARATOR) as Array<MTGColor>,
       selectedGameFormats: this.extractQueryParam(request.queryParams, "format")?.split(QUERY_PARAM_LIST_SEPARATOR) as Array<GameFormat>,
-      selectedProducedManaColors: this.extractQueryParam(request.queryParams, "format")?.split(QUERY_PARAM_LIST_SEPARATOR) as Array<MTGColor>,
+      selectedProducedManaColors: this.extractQueryParam(request.queryParams, "pm")?.split(QUERY_PARAM_LIST_SEPARATOR) as Array<MTGColor>,
       selectedRarities: this.extractQueryParam(request.queryParams, "rarity")?.split(QUERY_PARAM_LIST_SEPARATOR) as Array<CardRarity>,
       selectedSets: this.extractQueryParam(request.queryParams, "set")?.split(QUERY_PARAM_LIST_SEPARATOR)
     };

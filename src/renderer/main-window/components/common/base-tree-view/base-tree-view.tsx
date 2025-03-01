@@ -1,9 +1,8 @@
+import { Tree, TreeNodeInfo } from "@blueprintjs/core";
 import * as React from "react";
 import { BaseTreeViewProps } from "./base-tree-view.props";
 import { BaseTreeViewReducer, getTreeNodeItemsRecursive } from "./base-tree-view.reducer";
-import { Classes, Tree, TreeNodeInfo } from "@blueprintjs/core";
 import { NodePath } from "./types";
-import classNames from "classnames";
 
 export function BaseTreeView<TData, TFilter>(props: BaseTreeViewProps<TData, TFilter>) {
   //#region State -------------------------------------------------------------
@@ -61,16 +60,14 @@ export function BaseTreeView<TData, TFilter>(props: BaseTreeViewProps<TData, TFi
 
   //#region Main --------------------------------------------------------------
   return (
-    <>
-      <Tree
-        className={classNames(Classes.ELEVATION_0, "card-set-tree")}
-        compact={true}
-        contents={nodes}
-        onNodeClick={handleNodeClick}
-        onNodeCollapse={handleNodeCollapse}
-        onNodeExpand={handleNodeExpand}
-      />
-    </>
+    <Tree
+      className="base-tree"
+      compact={true}
+      contents={nodes}
+      onNodeClick={handleNodeClick}
+      onNodeCollapse={handleNodeCollapse}
+      onNodeExpand={handleNodeExpand}
+    />
   );
   //#endregion
 }

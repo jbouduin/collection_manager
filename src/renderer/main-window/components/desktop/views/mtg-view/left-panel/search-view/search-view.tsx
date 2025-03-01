@@ -2,7 +2,7 @@ import { Button, Checkbox } from "@blueprintjs/core";
 import { cloneDeep } from "lodash";
 import * as React from "react";
 import { CatalogTypeDto, ColorDto } from "../../../../../../../../common/dto";
-import { CardRarity, GameFormat } from "../../../../../../../../common/types";
+import { CardRarity, GameFormat, MTGColor } from "../../../../../../../../common/types";
 import { DisplayValueService, DisplayValueServiceContext, IpcProxyService, IpcProxyServiceContext } from "../../../../../../../common/context";
 import { displayValueRecordToSelectOptions, handleBooleanChange, SelectOption } from "../../../../../../../common/utils";
 import { CardSetViewmodel } from "../../../../../../viewmodels";
@@ -16,6 +16,7 @@ import { SelectSelectOption } from "./select-select-option";
 
 /* eslint-disable @stylistic/multiline-comment-style */
 /* TODO check why this did not work as expected
+ if there is no way to get it working -> rethink state in the selects
 const RaritySelectMemo = React.memo(
   SelectSelectOption<CardRarity>,
   (prev: SelectSelectOptionProps<CardRarity>, current: SelectSelectOptionProps<CardRarity>) => {
@@ -100,30 +101,47 @@ export function SearchView(props: SearchViewProps) {
 
   //#region Rendering ---------------------------------------------------------
   return (
-    <>
-      <p>{state.toQueryString()}</p>
+    <div className="left-panel-search-panel">
       <Checkbox
         checked={state.ownedCards}
         key="owned-cards"
         label="Cards I own"
         onChange={handleBooleanChange((value: boolean) => onSelectOptionEvent((v: CardSearchViewmodel) => v.ownedCards = value))}
       />
-      <ColorSelect
-        colorType="card"
-        colors={colors}
-        label="Card color"
-        onClearOptions={() => onSelectOptionEvent((v: CardSearchViewmodel) => v.clearCardColorSelection())}
-        onOptionAdded={(newOption) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addCardColor(newOption))}
-        onOptionRemoved={(newOption) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeCardColor(newOption))}
-        selectedColors={state.selectedCardColors}
-      />
       <CardSetSelect
         cardSets={cardSetContext}
         key="card-set-select"
         onClearOptions={() => onSelectOptionEvent((v: CardSearchViewmodel) => v.clearCardSetSelection())}
-        onOptionAdded={(newOption) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addCardSet(newOption))}
-        onOptionRemoved={(newOption) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeCardSet(newOption))}
+        onOptionAdded={(cardSet: string) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addCardSet(cardSet))}
+        onOptionRemoved={(cardSet: string) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeCardSet(cardSet))}
         selectedCardSets={state.selectedSets}
+      />
+      <ColorSelect
+        colorType="card"
+        colors={colors}
+        label="Card color"
+        onClearOptions={() => onSelectOptionEvent((v: CardSearchViewmodel) => v.clearColorSelection("card"))}
+        onOptionAdded={(color: MTGColor) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addColor("card", color))}
+        onOptionRemoved={(color) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeColor("card", color))}
+        selectedColors={state.selectedCardColors}
+      />
+      <ColorSelect
+        colorType="produced_mana"
+        colors={colors}
+        label="Produced mana color"
+        onClearOptions={() => onSelectOptionEvent((v: CardSearchViewmodel) => v.clearColorSelection("produced_mana"))}
+        onOptionAdded={(color: MTGColor) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addColor("produced_mana", color))}
+        onOptionRemoved={(color: MTGColor) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeColor("produced_mana", color))}
+        selectedColors={state.selectedCardColors}
+      />
+      <ColorSelect
+        colorType="identity"
+        colors={colors}
+        label="Identity color"
+        onClearOptions={() => onSelectOptionEvent((v: CardSearchViewmodel) => v.clearColorSelection("identity"))}
+        onOptionAdded={(color: MTGColor) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addColor("identity", color))}
+        onOptionRemoved={(color: MTGColor) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeColor("identity", color))}
+        selectedColors={state.selectedCardColors}
       />
       <SelectSelectOption<CardRarity>
         items={rarityItems}
@@ -165,7 +183,7 @@ export function SearchView(props: SearchViewProps) {
       >
         Search
       </Button>
-    </>
+    </div>
   );
   //#endregion
 }

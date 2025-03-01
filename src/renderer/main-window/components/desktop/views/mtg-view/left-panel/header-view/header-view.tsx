@@ -40,7 +40,7 @@ function headerView(props: HeaderViewProps) {
 
   //#region Main --------------------------------------------------------------
   return (
-    <ButtonGroup fill={true} minimal={true} >
+    <ButtonGroup className="left-panel-button-group" fill={true} minimal={true} >
       <InputGroup
         fill={true}
         leftIcon="filter"

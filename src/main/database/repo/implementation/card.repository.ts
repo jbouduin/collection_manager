@@ -228,6 +228,7 @@ export class CardRepository extends BaseRepository implements ICardRepository {
             .whereRef("oc2.card_id", "=", "card.id")
           ))
         )
+        //#region cardcolors --------------------------------------------------
         .$if( // params.selectedCardColors?.length == 1 && params.selectedCardColors[0] == "C"
           params.selectedCardColors?.length == 1 && params.selectedCardColors[0] == "C",
           (sqb) => sqb.where((eb) => eb.not(eb.exists(eb
@@ -273,6 +274,8 @@ export class CardRepository extends BaseRepository implements ICardRepository {
             ])
           )
         )
+        //#endregion
+        //#region identity colors ---------------------------------------------
         .$if( // params.selectedIdentityColors?.length == 1 && params.selectedIdentityColors[0] == "C"
           params.selectedIdentityColors?.length == 1 && params.selectedIdentityColors[0] == "C",
           (sqb) => sqb.where((eb) => eb.not(eb.exists(eb
@@ -289,7 +292,7 @@ export class CardRepository extends BaseRepository implements ICardRepository {
               .select("ccm.color_id")
               .whereRef("ccm.card_id", "=", "card.id")
               .where("ccm.color_type", "=", "identity")
-              .where("ccm.color_id", "=", params.selectedCardColors[0])))
+              .where("ccm.color_id", "=", params.selectedIdentityColors[0])))
         )
         .$if( // params.selectedIdentityColors?.length > 1 && !params.selectedIdentityColors.includes("C")
           params.selectedIdentityColors?.length > 1 && !params.selectedIdentityColors.includes("C"),
@@ -318,6 +321,53 @@ export class CardRepository extends BaseRepository implements ICardRepository {
             ])
           )
         )
+        //#endregion
+        //#region produced mana colors ----------------------------------------
+        .$if( // params.selectedProducedManaColors?.length == 1 && params.selectedProducedManaColors[0] == "C"
+          params.selectedProducedManaColors?.length == 1 && params.selectedProducedManaColors[0] == "C",
+          (sqb) => sqb.where((eb) => eb.not(eb.exists(eb
+            .selectFrom("card_color_map as ccm")
+            .select("ccm.color_id")
+            .whereRef("ccm.card_id", "=", "card.id")
+            .where("ccm.color_type", "=", "produced_mana"))))
+        )
+        .$if( // params.selectedProducedManaColors?.length == 1 && params.selectedProducedManaColors[0] != "C"
+          params.selectedProducedManaColors?.length == 1 && params.selectedProducedManaColors[0] != "C",
+          (sqb) => sqb.where((eb) => eb
+            .exists(eb
+              .selectFrom("card_color_map as ccm")
+              .select("ccm.color_id")
+              .whereRef("ccm.card_id", "=", "card.id")
+              .where("ccm.color_type", "=", "produced_mana")
+              .where("ccm.color_id", "=", params.selectedProducedManaColors[0])))
+        )
+        .$if( // params.selectedProducedManaColors?.length > 1 && !params.selectedProducedManaColors.includes("C")
+          params.selectedProducedManaColors?.length > 1 && !params.selectedProducedManaColors.includes("C"),
+          (sqb) => sqb.where((eb) => eb.exists(eb
+            .selectFrom("card_color_map as ccm")
+            .select("ccm.color_id")
+            .whereRef("ccm.card_id", "=", "card.id")
+            .where("ccm.color_type", "=", "produced_mana")
+            .where("ccm.color_id", "in", params.selectedProducedManaColors)))
+        )
+        .$if( // params.selectedProducedManaColors?.length > 1 && params.selectedProducedManaColors.includes("C")
+          params.selectedProducedManaColors?.length > 1 && params.selectedProducedManaColors.includes("C"),
+          (sqb) => sqb.where((eb) => eb
+            .or([
+              eb.exists(eb
+                .selectFrom("card_color_map as ccm")
+                .select("ccm.color_id")
+                .whereRef("ccm.card_id", "=", "card.id")
+                .where("ccm.color_type", "=", "produced_mana")
+                .where("ccm.color_id", "in", params.selectedProducedManaColors.filter((c: MTGColor) => c != "C"))),
+              eb.not(eb.exists(eb
+                .selectFrom("card_color_map as ccm")
+                .select("ccm.color_id")
+                .whereRef("ccm.card_id", "=", "card.id")
+                .where("ccm.color_type", "=", "produced_mana")))
+            ])
+          )
+        )
         .$if( // params.selectedProducedManaColors?.length > 0
           params.selectedProducedManaColors?.length > 0,
           (sqb) => sqb.where((eb) => eb
@@ -329,6 +379,7 @@ export class CardRepository extends BaseRepository implements ICardRepository {
               .where("ccm.color_id", "in", params.selectedProducedManaColors))
           )
         )
+        //#endregion
         .$call((sqb) => logCompilable(this.logService, sqb))
         .$castTo<MtgCardListDto>()
         .groupBy(["card.set_id", "card.collector_number"])

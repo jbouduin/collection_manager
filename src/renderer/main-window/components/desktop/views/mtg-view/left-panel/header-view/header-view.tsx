@@ -40,7 +40,7 @@ function headerView(props: HeaderViewProps) {
 
   //#region Main --------------------------------------------------------------
   return (
-    <ButtonGroup fill={true} minimal={true} >
+    <ButtonGroup className="left-panel-button-group" fill={true} minimal={true} >
       <InputGroup
         fill={true}
         leftIcon="filter"
@@ -196,7 +196,7 @@ function headerView(props: HeaderViewProps) {
         onClick={() => props.onCardSetTypeFilterChanged(setType)}
         roleStructure="listoption"
         selected={props.cardSetTypeFilter.indexOf(setType) >= 0}
-        text={displayValueService.cardSetTypeDisplayValues.get(setType)}
+        text={displayValueService.cardSetTypeDisplayValues[setType]}
       />
     );
   }

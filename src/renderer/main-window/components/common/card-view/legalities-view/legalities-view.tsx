@@ -1,7 +1,7 @@
 import { HTMLTable, Intent, Tag } from "@blueprintjs/core";
 import * as React from "react";
 import { LegalityDto } from "../../../../../../common/dto";
-import { IpcProxyService, IpcProxyServiceContext } from "../../../../../common/context";
+import { DisplayValueService, DisplayValueServiceContext, IpcProxyService, IpcProxyServiceContext } from "../../../../../common/context";
 import { LegalitiesViewProps } from "./legalities-view.props";
 
 
@@ -12,6 +12,7 @@ export function LegalitiesView(props: LegalitiesViewProps) {
   //#endregion
 
   //#region Context ---------------------------------------------------------------------
+  const displayValueService = React.useContext<DisplayValueService>(DisplayValueServiceContext);
   const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
   //#endregion
 
@@ -52,28 +53,24 @@ export function LegalitiesView(props: LegalitiesViewProps) {
     legalities.forEach((legality: LegalityDto, idx: number) => {
       if (idx % 2 == 0) {
         currentRow = new Array<React.JSX.Element>();
-        currentRow.push(<td style={{ paddingLeft: "0px" }}>{legality.format}</td>);
+        currentRow.push(<td style={{ paddingLeft: "0px" }}>{displayValueService.gameFormatDisplayValues[legality.format]}</td>);
       } else {
-        currentRow.push(<td>{legality.format}</td>);
+        currentRow.push(<td>{displayValueService.gameFormatDisplayValues[legality.format]}</td>);
       }
       let intent: Intent;
-      let label: string;
+      let label: string = displayValueService.cardLegalityDisplayValues[legality.legality];
       switch (legality.legality) {
         case "banned":
           intent = "danger";
-          label = "Banned";
           break;
         case "not_legal":
           intent = "danger";
-          label = "Not legal";
           break;
         case "legal":
           intent = "success";
-          label = "Legal";
           break;
         case "restricted":
           intent = "warning";
-          label = "Restricted";
           break;
         default:
           intent = "none";

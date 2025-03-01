@@ -1,10 +1,11 @@
 import { container, inject, singleton } from "tsyringe";
-import { MtgCardDetailDto, MtgCardListDto, OwnedCardQuantityDto } from "../../../../common/dto";
+import { CardQueryDto, CatalogItemDto, MtgCardDetailDto, MtgCardListDto, OwnedCardQuantityDto, QUERY_PARAM_LIST_SEPARATOR, QueryParamToken } from "../../../../common/dto";
 import { ICardRepository } from "../../../database/repo/interfaces";
 import { ICollectionRepository } from "../../../database/repo/interfaces/collection.repository";
 import { BaseRouter, IResult, IRouter, RouteCallback, RoutedRequest } from "../../base";
 import { ILogService, IResultFactory, IRouterService } from "../../infra/interfaces";
 import { INFRASTRUCTURE, REPOSITORIES } from "../../service.tokens";
+import { CardRarity, CatalogType, ECatalogType, GameFormat, MTGColor } from "../../../../common/types";
 
 
 @singleton()
@@ -43,7 +44,18 @@ export class CardRouter extends BaseRouter implements IRouter {
   }
 
   private queryCards(request: RoutedRequest<void>): Promise<IResult<Array<MtgCardListDto>>> {
-    return container.resolve<ICardRepository>(REPOSITORIES.CardRepository).queryCards(request.queryParams["sets"].split(","));
+    const queryParams: CardQueryDto = {
+      ownedCards: this.extractQueryParam(request.queryParams, "own") ? true : false,
+      selectedCardColors: this.extractQueryParam(request.queryParams, "cc")?.split(QUERY_PARAM_LIST_SEPARATOR) as Array<MTGColor>,
+      selectedCatalogItems: this.extractCatalogQueryParams(request.queryParams),
+      selectedIdentityColors: this.extractQueryParam(request.queryParams, "ic")?.split(QUERY_PARAM_LIST_SEPARATOR) as Array<MTGColor>,
+      selectedGameFormats: this.extractQueryParam(request.queryParams, "format")?.split(QUERY_PARAM_LIST_SEPARATOR) as Array<GameFormat>,
+      selectedProducedManaColors: this.extractQueryParam(request.queryParams, "pm")?.split(QUERY_PARAM_LIST_SEPARATOR) as Array<MTGColor>,
+      selectedRarities: this.extractQueryParam(request.queryParams, "rarity")?.split(QUERY_PARAM_LIST_SEPARATOR) as Array<CardRarity>,
+      selectedSets: this.extractQueryParam(request.queryParams, "set")?.split(QUERY_PARAM_LIST_SEPARATOR)
+    };
+    this.logService.debug("Main", JSON.stringify(queryParams, null, 2));
+    return container.resolve<ICardRepository>(REPOSITORIES.CardRepository).queryCards(queryParams);
   }
 
   private updateQuantities(request: RoutedRequest<Array<OwnedCardQuantityDto>>): Promise<IResult<Array<OwnedCardQuantityDto>>> {
@@ -51,4 +63,17 @@ export class CardRouter extends BaseRouter implements IRouter {
       .saveQuantitiesForCard(request.params["id"], request.data);
   }
   //#endregion
+
+  private extractQueryParam(queryParams: Record<string, string>, token: QueryParamToken): string | null {
+    return queryParams[token];
+  }
+
+  private extractCatalogQueryParams(queryParams: Record<string, string>): Array<CatalogItemDto> {
+    const result = new Array<CatalogItemDto>();
+    Object.keys(ECatalogType).forEach((catalog: CatalogType) => {
+      this.extractQueryParam(queryParams, catalog)?.split(QUERY_PARAM_LIST_SEPARATOR)
+        .forEach((item: string) => result.push({ catalog_name: catalog, item: item }));
+    });
+    return result;
+  }
 }

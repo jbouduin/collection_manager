@@ -4,9 +4,28 @@ import { SyncParameterView } from "../../sync-parameter-view/sync-parameter-view
 import { DataConfigurationView } from "../data-configuration-view/data-configuration-view";
 import { DatabaseViewConfigurationView } from "../database-view-configuration-view/database-view-configuration-view";
 import { ConfigurationViewProps } from "./configuration-view.props";
+import { IpcProxyService, IpcProxyServiceContext } from "../../../context";
+import { CatalogTypeDto } from "../../../../../common/dto";
 
 // LATER add logServerResponses and debuglevel (consider adding a different part in configurationdto for system settings)
 export function ConfigurationView(props: ConfigurationViewProps) {
+  //#region State -----------------------------------------------------------------------
+  const [state, setState] = React.useState<Array<CatalogTypeDto>>(new Array<CatalogTypeDto>());
+  //#endregion
+
+  //#region Context -----------------------------------------------------------
+  const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
+  //#endregion
+
+  //#region Effects -----------------------------------------------------------
+  React.useEffect(
+    () => {
+      void ipcProxyService.getData<Array<CatalogTypeDto>>("/catalog").then((r: Array<CatalogTypeDto>) => setState(r));
+    },
+    []
+  );
+  //#endregion
+
   //#region Event handling ----------------------------------------------------
   const onSyncParamChanged = () => props.configurationChanged(props.configuration);
 
@@ -59,6 +78,7 @@ export function ConfigurationView(props: ConfigurationViewProps) {
           key="sync-at-startup"
           panel={
             <SyncParameterView
+              catalogs={state}
               onSyncParamChanged={onSyncParamChanged}
               syncParam={props.configuration.syncParamViewmodel}
             />

@@ -46,4 +46,28 @@ export type ScryfallEndpoint =
   "search";
 
 export type TimespanUnit = "day" | "week" | "month" | "year";
+
+export enum ECatalogType {
+  "card-names",
+  "artist-names",
+  "word-bank",
+  supertypes,
+  "card-types",
+  "artifact-types",
+  "battle-types",
+  "creature-types",
+  "enchantment-types",
+  "land-types",
+  "planeswalker-types",
+  "spell-types",
+  powers,
+  toughnesses,
+  loyalties,
+  "keyword-abilities",
+  "keyword-actions",
+  "ability-words",
+  "flavor-words",
+  watermarks
+}
+export type CatalogType = keyof typeof ECatalogType;
 //#endregion

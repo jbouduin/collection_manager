@@ -3,12 +3,12 @@ import { Cell, CellRenderer } from "@blueprintjs/table";
 import * as React from "react";
 import { getRarityColorClassname } from "../../../../../common/utils";
 import { SvgProvider } from "../../svg-provider/svg-provider";
-import { CardSetLooupResult } from "./card-set-lookup-result";
+import { CardSetLookupResult } from "./card-set-lookup-result";
 import { BaseColumn } from "./base-column";
 import { CellLookup, SortCallback } from "./types";
 
 
-export class CardSetColumn<T> extends BaseColumn<T, CardSetLooupResult> {
+export class CardSetColumn<T> extends BaseColumn<T, CardSetLookupResult> {
   //#region SortableColumn abstract methods implementationm -------------------
   protected renderMenu(sortColumn: SortCallback<T>): React.JSX.Element {
     const sortAsc = () => sortColumn((a, b) => this.compare(a, b));
@@ -21,7 +21,7 @@ export class CardSetColumn<T> extends BaseColumn<T, CardSetLooupResult> {
     );
   }
 
-  protected getCellRenderer(getCellData: CellLookup<T, CardSetLooupResult>): CellRenderer {
+  protected getCellRenderer(getCellData: CellLookup<T, CardSetLookupResult>): CellRenderer {
     return (rowIdx: number, _colIdx: number) => {
       const cellValue = getCellData(rowIdx, this.valueCallBack);
       return (

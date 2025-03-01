@@ -142,7 +142,7 @@ export function CardSetDialog(props: CardSetDialogProps) {
     table.push((
       <tr>
         <td style={{ paddingLeft: "0px" }}>Type:</td>
-        <td style={{ paddingLeft: "0px" }}>{displayValueService.cardSetTypeDisplayValues.get(cardSetDetails.cardSetType)}</td>
+        <td style={{ paddingLeft: "0px" }}>{displayValueService.cardSetTypeDisplayValues[cardSetDetails.cardSetType]}</td>
       </tr>
     ));
     table.push((

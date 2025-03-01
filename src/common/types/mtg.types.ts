@@ -117,45 +117,29 @@ export type CardSetType =
   "token" |
   "memorabilia" |
   "minigame";
-export type CatalogType =
-  "AbilityWords" |
-  "ArtifactTypes" |
-  "ArtistNames" |
-  "CardNames" |
-  "CreatureTypes" |
-  "EnchantmentTypes" |
-  "KeywordActions" |
-  "KeywordAbilities" |
-  "LandTypes" |
-  "Loyalties" |
-  "PlaneswalkerTypes" |
-  "Powers" |
-  "SpellTypes" |
-  "Supertypes" |
-  "Toughnesses" |
-  "Watermarks" |
-  "WordBank";
 export type GameFormat =
-  "standard" |
-  "future" |
-  "historic" |
-  "gladiator" |
-  "pioneer" |
-  "explorer" |
-  "modern" |
-  "legacy" |
-  "pauper" |
-  "vintage" |
-  "penny" |
-  "commander" |
-  "oathbreaker" |
-  "brawl" |
-  "historicbrawl" |
   "alchemy" |
-  "paupercommander" |
+  "brawl" |
+  "commander" |
   "duel" |
+  "explorer" |
+  "future" |
+  "gladiator" |
+  "historic" |
+  "legacy" |
+  "modern" |
+  "oathbreaker" |
+  "oldschool" |
+  "pauper" |
+  "paupercommander" |
+  "penny" |
+  "pioneer" |
+  "predh" |
   "premodern" |
-  "oldschool";
+  "standard" |
+  "standardbrawl" |
+  "timeless" |
+  "vintage";
 export type Game = "paper" | "arena" | "mtgo";
 export type MTGColorType =
   "card" |

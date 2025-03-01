@@ -1,5 +1,5 @@
 import { ContextMenu, Icon, Menu, MenuDivider, MenuItem, TreeNodeInfo } from "@blueprintjs/core";
-import { cloneDeep, isEqual } from "lodash";
+import { cloneDeep, isEqual, noop } from "lodash";
 import * as React from "react";
 import { CollectionDto } from "../../../../../../../common/dto";
 import { IpcProxyService, IpcProxyServiceContext } from "../../../../../../common/context";
@@ -134,21 +134,27 @@ export function LeftPanel(props: LeftPanelProps) {
     setDialogData(newDialogData);
   }
 
-  async function onDelete(id: number): Promise<void> {
+  function onDelete(id: number): void {
     // TODO ask confirmation
-    const deletedRows = await ipcProxyService.deleteData(`/collection/${id}`);
-    if (deletedRows > 0) {
-      const newCollectionList = cloneDeep(collections);
-      const indexOf = newCollectionList.findIndex((collection: CollectionTreeViewmodel) => collection.id == id);
-      newCollectionList.splice(indexOf, 1);
-      /*
-       * LATER recursively delete children from list
-       * they will not be displayed, as they have no more parent, but they remain in memory
-       * and we have a FK restraint on the database (no cascade)
-       * which make the option not to allow delete if there are children also legit
-       */
-      setCollections(newCollectionList);
-    }
+    void ipcProxyService.deleteData(`/collection/${id}`)
+      .then(
+        (numDeletedRows: number) => {
+          if (numDeletedRows > 0) {
+            const newCollectionList = cloneDeep(collections);
+            const indexOf = newCollectionList.findIndex((collection: CollectionTreeViewmodel) => collection.id == id);
+            newCollectionList.splice(indexOf, 1);
+            /*
+             * LATER recursively delete children from list
+             * they will not be displayed, as they have no more parent, but they remain in memory
+             * and we have a FK restraint on the database (no cascade)
+             * which make the option not to allow delete if there are children also legit
+             */
+            setCollections(newCollectionList);
+          }
+        },
+        (_r: Error) => noop
+      );
+
   }
 
   function onCancelDialog(): void {

@@ -24,7 +24,7 @@ export class IpcProxyService {
   //#endregion
 
   //#region IPC-proxy methods -------------------------------------------------
-  public deleteData(path: string): Promise<never> {
+  public deleteData(path: string): Promise<number> {
     const request: IpcRequest<never> = {
       id: ++this.deleteRequestCounter,
       path: path

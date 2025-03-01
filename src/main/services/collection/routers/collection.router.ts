@@ -1,7 +1,7 @@
 import { container, inject, singleton } from "tsyringe";
 import { CollectionDto, OwnedCardListDto, OwnedCardQuantityDto } from "../../../../common/dto";
 import { ICollectionRepository } from "../../../database/repo/interfaces/collection.repository";
-import { BaseRouter, IResult, IRouter, RouteCallback, RoutedRequest } from "../../base";
+import { BaseRouter, DeleteRouteCallback, IResult, IRouter, RouteCallback, RoutedRequest } from "../../base";
 import { ILogService, IResultFactory, IRouterService } from "../../infra/interfaces";
 import { INFRASTRUCTURE, REPOSITORIES } from "../../service.tokens";
 
@@ -20,7 +20,7 @@ export class CollectionRouter extends BaseRouter implements IRouter {
 
   //#region IRouteDestinationService methods ----------------------------------
   public setRoutes(router: IRouterService): void {
-    router.registerDeleteRoute("/collection/:id", this.deleteCollection.bind(this) as RouteCallback);
+    router.registerDeleteRoute("/collection/:id", this.deleteCollection.bind(this) as DeleteRouteCallback);
     router.registerGetRoute("/collection", this.getAll.bind(this) as RouteCallback);
     router.registerGetRoute("/collection/:id/card", this.getCardsOfCollection.bind(this) as RouteCallback);
     router.registerGetRoute("/collection/:collectionid/card/:cardid", this.getOwnershipOfCardInCollection.bind(this) as RouteCallback);

@@ -1,17 +1,16 @@
 import { Button, DialogFooter } from "@blueprintjs/core";
 import { cloneDeep, noop } from "lodash";
 import * as React from "react";
-import { OwnedCardQuantityDto } from "../../../../../common/dto";
-import { CardCondition } from "../../../../../common/types";
-import { IpcProxyService, IpcProxyServiceContext } from "../../../../common/context";
-import { CardConditionViewmodel, OwnedCardQuantityViewmodel } from "../../../viewmodels";
-import { CardConditionContext } from "../../context";
-import { buildEditableState } from "./build-editable-state";
-import { OwnedCardPanelProps } from "./own-card-panel.props";
-import { OwnedCardTable } from "./own-card-table";
-import { OwnedCardDialog } from "./owned-card-dialog";
+import { OwnedCardQuantityDto } from "../../../../../../common/dto";
+import { CardCondition } from "../../../../../../common/types";
+import { IpcProxyService, IpcProxyServiceContext } from "../../../../../common/context";
+import { CardConditionViewmodel, OwnedCardQuantityViewmodel } from "../../../../viewmodels";
+import { CardConditionContext } from "../../../context";
+import { buildEditableState, OwnedCardDialog, OwnedCardTable } from "../../owned-card";
+import { CardOwnerShipViewProps } from "./card-ownership-view.props";
 
-export function OwnedCardPanel(props: OwnedCardPanelProps) {
+
+export function CardOwnerShipView(props: CardOwnerShipViewProps) {
   //#region State -------------------------------------------------------------
   const [state, setState] = React.useState<Array<OwnedCardQuantityViewmodel>>(new Array<OwnedCardQuantityViewmodel>());
   const [showDialog, setShowDialog] = React.useState<boolean>(false);

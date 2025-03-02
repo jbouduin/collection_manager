@@ -1,5 +1,5 @@
 import { Props } from "@blueprintjs/core";
-import { MtgCardLanguageDto } from "../../../../../common/dto";
+import { MtgCardLanguageDto } from "../../../../../../common/dto";
 
 export interface LanguageButtonBarButtonProps extends Props {
   language: MtgCardLanguageDto;

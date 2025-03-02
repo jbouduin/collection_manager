@@ -1,4 +1,4 @@
-import { Button, Card } from "@blueprintjs/core";
+import { Button, Card, H1, Section } from "@blueprintjs/core";
 import * as React from "react";
 import { DeckViewProps } from "./deck-view.props";
 import { IpcProxyService, IpcProxyServiceContext } from "../../../../../common/context";
@@ -38,10 +38,12 @@ export function DeckView(props: DeckViewProps) {
 
   //#region Main --------------------------------------------------------------
   return (
-    <Card>
-      <h1>Collection View</h1>
-      <Button onClick={() => synchronizeCollection(getIds())}>Sync every possible layout</Button>
-    </Card>
+    <>
+      <Section collapsible={true} collapseProps={{ defaultIsOpen: false }} title="Temporary">
+        <Button onClick={() => synchronizeCollection(getIds())}>Sync every possible layout</Button>
+      </Section>
+      <Section><H1>Here comes the deck-table</H1></Section>
+    </>
   );
   //#endregion
 

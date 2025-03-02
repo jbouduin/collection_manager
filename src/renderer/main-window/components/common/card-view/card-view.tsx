@@ -2,43 +2,17 @@ import { H5, Section, SectionCard, Tab, Tabs } from "@blueprintjs/core";
 import * as React from "react";
 import { MtgCardDetailDto, MtgCardLanguageDto } from "../../../../../common/dto";
 import { IpcProxyService, IpcProxyServiceContext } from "../../../../common/context";
-import { compareClassNameProp } from "../../../../common/utils";
 import { MtgCardDetailViewmodel } from "../../../viewmodels";
 import { CardSymbolRenderer } from "../card-symbol-renderer";
-import { LanguageButtonBar } from "../language-button-bar/language-button-bar";
-import { OwnedCardPanel } from "../owned-card/own-card-panel";
+import { LanguageButtonBar } from "./language-button-bar";
 import { CardfaceView } from "./card-face-view/card-face-view";
-import { CardHeaderView } from "./card-header-view/card-header-view";
-import { CardHeaderViewProps } from "./card-header-view/card-header-view.props";
-import { CardImageView } from "./card-image-view/card-image-viewr";
-import { CardRulingsView } from "./card-rulings-view/card-rulings-view";
-import { CardRulingsViewProps } from "./card-rulings-view/card-rulings-view.props";
+import { CardHeaderView } from "./card-header-view";
+import { CardImageView } from "./card-image-view";
+import { CardRulingsView } from "./card-rulings-view";
 import { CardViewState } from "./card-view-state";
 import { CardViewProps } from "./card-view.props";
-import { LegalitiesView } from "./legalities-view/legalities-view";
-import { LegalitiesViewProps } from "./legalities-view/legalities-view.props";
-
-
-const CardHeaderViewMemo = React.memo(
-  CardHeaderView,
-  (prev: CardHeaderViewProps, next: CardHeaderViewProps) => {
-    return prev.card.cardName == next.card.cardName && compareClassNameProp(prev.className, next.className);
-  }
-);
-
-const LegalitiesViewMemo = React.memo(
-  LegalitiesView,
-  (prev: LegalitiesViewProps, next: LegalitiesViewProps) => {
-    return prev.oracleId == next.oracleId && compareClassNameProp(prev.className, next.className);
-  }
-);
-
-const CardRulingsViewMemo = React.memo(
-  CardRulingsView,
-  (prev: CardRulingsViewProps, next: CardRulingsViewProps) => {
-    return prev.oracleId == next.oracleId && compareClassNameProp(prev.className, next.className);
-  }
-);
+import { LegalitiesView } from "./legalities-view";
+import { CardOwnerShipView } from "./card-ownership-view/card-ownership-view";
 
 
 export function CardView(props: CardViewProps) {
@@ -84,7 +58,7 @@ export function CardView(props: CardViewProps) {
         collapsible={true}
         compact={true}
         rightElement={<CardSymbolRenderer cardSymbols={cardViewState.card.cardManacost} className="mana-cost-image-in-title" />}
-        title={<CardHeaderViewMemo card={cardViewState.card} />}
+        title={<CardHeaderView card={cardViewState.card} />}
       >
         {
           props.showOtherLanguages && cardViewState.card.isMultipleLanguage &&
@@ -97,7 +71,8 @@ export function CardView(props: CardViewProps) {
           </SectionCard>
         }
         <CardImageView
-          card={cardViewState.card}
+          cardId={cardViewState.card?.cardId}
+          cardLayout={cardViewState.card?.cardLayout}
         />
       </Section>
     );
@@ -142,19 +117,19 @@ export function CardView(props: CardViewProps) {
             <Tab
               id="Rulings"
               key="Rulings"
-              panel={<CardRulingsViewMemo oracleId={cardViewState.card.oracleId} />}
+              panel={<CardRulingsView oracleId={cardViewState.card.oracleId} />}
               title="Rulings"
             />
             <Tab
               id="Legality"
               key="Legality"
-              panel={<LegalitiesViewMemo oracleId={cardViewState.card.oracleId} />}
+              panel={<LegalitiesView oracleId={cardViewState.card.oracleId} />}
               title="Legality"
             />
             <Tab
               id="Owned"
               key="Owned"
-              panel={<OwnedCardPanel cardId={cardViewState.card.cardId} className={props.className} collectionId={props.collectionId} />}
+              panel={<CardOwnerShipView cardId={cardViewState.card.cardId} className={props.className} collectionId={props.collectionId} />}
               title="Ownership"
             />
           </Tabs>

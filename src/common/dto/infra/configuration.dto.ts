@@ -9,4 +9,10 @@ export interface ConfigurationDto {
   rendererConfiguration: RendererConfigurationDto;
   scryfallConfiguration: ScryfallConfigurationDto;
   syncAtStartupConfiguration: SyncParamDto;
+  /*
+   * TODO deck-picking configuration
+   * - condition order
+   * - foil/non-foil first
+   * - oldest/newst first
+   */
 }

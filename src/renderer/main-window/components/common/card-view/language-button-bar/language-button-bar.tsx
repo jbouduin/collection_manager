@@ -1,7 +1,7 @@
 import { ButtonGroup } from "@blueprintjs/core";
 import * as React from "react";
-import { MtgCardLanguageDto, LanguageDto } from "../../../../../common/dto";
-import { LanguagesContext } from "../../context";
+import { MtgCardLanguageDto, LanguageDto } from "../../../../../../common/dto";
+import { LanguagesContext } from "../../../context";
 import { LanguageButtonBarButton } from "./language-button-bar-button";
 import { LanguageButtonBarProps } from "./language-button-bar.props";
 

@@ -4,5 +4,4 @@ import { CardfaceViewmodel, OracleViewmodel } from "../../../../../main-window/v
 export interface CardfaceViewProps extends Props {
   cardface: CardfaceViewmodel;
   oracle: OracleViewmodel;
-
 }

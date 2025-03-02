@@ -63,7 +63,7 @@ export function ConfigurationView(props: ConfigurationViewProps) {
               onConfigurationChanged={onDatabaseViewTreeConfigurationChanged}
             />
           }
-          title="Database view defaults"
+          title="MTG view defaults"
         />
         <Tab
           id="collection-view"

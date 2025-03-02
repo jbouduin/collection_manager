@@ -139,13 +139,17 @@ export function SyncParameterView(props: SyncParameterViewProps) {
       if (idx % 2 == 0) {
         currentRow = new Array<React.JSX.Element>();
       }
-      // TODO use labelElement instead of label so we can display synced in grey and a (*) to indicate which catalogs are huge
+
       currentRow.push((
         <td key={`cell-${catalog.catalog_name}`} style={{ paddingLeft: "0px" }} >
           <Checkbox
             checked={props.syncParam.getCatalogToSync(catalog.catalog_name)}
             key={catalog.catalog_name}
-            label={`${catalog.display_label} (last synced: ${catalog.last_synced_at ? catalog.last_synced_at.toLocaleString() : "Never"})`}
+            labelElement={(
+              <>
+                {catalog.display_label} <small>(last synced: {catalog.last_synced_at ? catalog.last_synced_at.toLocaleString() : "Never"})</small>
+              </>
+            )}
             onChange={
               handleBooleanChange((value: boolean) => {
                 props.syncParam.setCatalogToSync(catalog.catalog_name, value);

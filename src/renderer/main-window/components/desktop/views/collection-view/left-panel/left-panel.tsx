@@ -8,6 +8,7 @@ import { BaseTreeView, BaseTreeViewProps } from "../../../../common/base-tree-vi
 import { CollectionDialog } from "./collection-dialog/collection-dialog";
 import { DialogData } from "./dialog-data";
 import { LeftPanelProps } from "./left-panel.props";
+import { SvgProvider } from "../../../../common/svg-provider/svg-provider";
 
 const Treeview = React.memo(
   BaseTreeView<CollectionTreeViewmodel, TreeConfigurationViewmodel>,
@@ -21,6 +22,7 @@ export function LeftPanel(props: LeftPanelProps) {
   const initialCollectionState = new Array<CollectionTreeViewmodel>();
   const [collections, setCollections] = React.useState<Array<CollectionTreeViewmodel>>(initialCollectionState);
   const [dialogData, setDialogData] = React.useState<DialogData>(null);
+  const [collectionSvg, setCollectionSvg] = React.useState<string>(null);
   //#endregion
 
   //#region Context -----------------------------------------------------------
@@ -35,6 +37,17 @@ export function LeftPanel(props: LeftPanelProps) {
         .then(
           (result: Array<CollectionDto>) => setCollections(result.map((collection: CollectionDto) => new CollectionTreeViewmodel(collection, false, false))),
           (_r: Error) => setCollections(initialCollectionState)
+        );
+    },
+    []
+  );
+
+  React.useEffect(
+    () => {
+      void ipcProxyService.getData<string>("/asset?path=assets/img/collection.svg")
+        .then(
+          (response: string) => setCollectionSvg(response),
+          (_r: Error) => setCollectionSvg(null)
         );
     },
     []
@@ -164,7 +177,7 @@ export function LeftPanel(props: LeftPanelProps) {
   }
   //#endregion
 
-  //#region Main --------------------------------------------------------------
+  //#region Rendering ---------------------------------------------------------
   return (
     <>
       <div>
@@ -209,6 +222,7 @@ export function LeftPanel(props: LeftPanelProps) {
         <CollectionDialog
           className={props.className}
           collection={dialogData.selectedCollection}
+          collectionSvg={collectionSvg}
           dialogAction={dialogData.dialogAction}
           isOpen={true}
           onCancel={onCancelDialog}
@@ -219,6 +233,7 @@ export function LeftPanel(props: LeftPanelProps) {
   );
   //#endregion
 
+  //#region Auxiliary methods -------------------------------------------------
   function buildTreeByParentRecursive(collections: Array<CollectionTreeViewmodel>, id: number | null): Array<TreeNodeInfo<CollectionTreeViewmodel>> {
     return collections
       .filter((item: CollectionTreeViewmodel) => item.parentId === id)
@@ -303,7 +318,15 @@ export function LeftPanel(props: LeftPanelProps) {
           }
           key={collection.id}
         >
-          <Icon icon={collection.isFolder ? "folder-close" : "layers"} key="icon" style={{ width: "26px", height: "26px", alignContent: "center", paddingRight: "5px" }} />
+          {
+            collection.isFolder &&
+            <Icon icon="folder-close" key="icon" style={{ width: "26px", height: "26px", alignContent: "center", paddingRight: "5px" }} />
+          }
+          {
+            !collection.isFolder &&
+            <SvgProvider height={16} svg={collectionSvg} width={16} />
+          }
+
           <div key="name" style={{ alignContent: "center" }}>
             {collection.name}
           </div>
@@ -315,4 +338,5 @@ export function LeftPanel(props: LeftPanelProps) {
     };
     return node;
   }
+  //#endregion
 }

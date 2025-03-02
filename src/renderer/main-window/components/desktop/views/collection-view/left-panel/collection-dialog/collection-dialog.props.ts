@@ -5,6 +5,7 @@ import { DialogAction } from "../dialog-action";
 
 export interface CollectionDialogProps extends Props {
   collection?: CollectionTreeViewmodel;
+  collectionSvg: string;
   dialogAction: DialogAction;
   isOpen: boolean;
   onCancel: () => void;

@@ -1,8 +1,9 @@
-import { Button, Dialog, DialogBody, DialogFooter, FormGroup, IconName, InputGroup, SectionCard, TextArea } from "@blueprintjs/core";
+import { Button, Dialog, DialogBody, DialogFooter, FormGroup, Icon, InputGroup, SectionCard, TextArea } from "@blueprintjs/core";
 import { cloneDeep } from "lodash";
 import * as React from "react";
 import { handleStringChange } from "../../../../../../../common/utils";
 import { CollectionTreeViewmodel } from "../../../../../../viewmodels";
+import { SvgProvider } from "../../../../../common/svg-provider/svg-provider";
 import { CollectionDialogProps } from "./collection-dialog.props";
 
 export function CollectionDialog(props: CollectionDialogProps) {
@@ -25,7 +26,7 @@ export function CollectionDialog(props: CollectionDialogProps) {
   return (
     <Dialog
       className={props.className}
-      icon={getIconName()}
+      icon={getDialogIcon()}
       isOpen={props.isOpen}
       title={getTitle()}
     >
@@ -70,7 +71,6 @@ export function CollectionDialog(props: CollectionDialogProps) {
           <InputGroup
             id="collection-name"
             inputMode="text"
-            // rightElement={<Icon icon="folder-open" />}
             onChange={
               handleStringChange((value: string) => {
                 const newViewmodel = cloneDeep(collection);
@@ -102,16 +102,16 @@ export function CollectionDialog(props: CollectionDialogProps) {
     );
   }
 
-  function getIconName(): IconName {
+  function getDialogIcon(): React.JSX.Element {
     if (props.collection) {
       if (props.collection.isFolder) {
         if (props.dialogAction == "create") {
-          return "folder-new";
+          return (<Icon icon="folder-new" />);
         } else {
-          return "folder-close";
+          return (<Icon icon="folder-close" />);
         }
       } else {
-        return "document";
+        return (<SvgProvider svg={props.collectionSvg} />);
       }
     } else {
       return undefined;

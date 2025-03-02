@@ -8,11 +8,14 @@ import { CenterPanel, CenterPanelProps } from "./center-panel";
 import { LeftPanel } from "./left-panel/left-panel";
 import { MtgViewProps } from "./mtg-view.props";
 import { MtgViewState } from "./mtg-view.state";
+import { compareClassNameProp } from "../../../../../common/utils";
 
 const CenterPanelMemo = React.memo(
   CenterPanel,
   (prev: CenterPanelProps, next: CenterPanelProps) => {
-    return prev.selectedSet?.id == next.selectedSet?.id && prev.queryString == next.queryString;
+    return prev.selectedSet?.id == next.selectedSet?.id &&
+      prev.queryString == next.queryString &&
+      compareClassNameProp(prev.className, next.className);
   }
 );
 
@@ -53,6 +56,7 @@ export function MtgView(props: MtgViewProps) {
               <Panel defaultSize={20}>
                 <CardView
                   cardId={state.selectedCards?.length > 0 ? calculateCardToDisplay() : null}
+                  className={props.className}
                   collectionId={null}
                   showOtherLanguages={true}
                 />

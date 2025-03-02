@@ -1,7 +1,8 @@
 import { Props } from "@blueprintjs/core";
-import { DatabaseViewTreeConfigurationViewmodel } from "../../../viewmodels/configuration/database-view-tree-configuration.viewmodel";
+import { MtgViewTreeConfigurationViewmodel } from "../../../viewmodels";
+
 
 export interface DatabaseViewConfigurationViewProps extends Props {
-  configuration: DatabaseViewTreeConfigurationViewmodel;
+  configuration: MtgViewTreeConfigurationViewmodel;
   onConfigurationChanged: () => void;
 }

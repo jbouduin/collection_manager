@@ -1,6 +1,7 @@
 import { OwnedCardCollectionMapDto, OwnedCardQuantityDto } from "../../../../common/dto";
 import { CardCondition } from "../../../../common/types";
-import { BaseViewmodel } from "../../../common/viewmodels/base.viewmodel";
+import { BaseViewmodel } from "../../../common/viewmodels";
+
 
 export class OwnedCardQuantityViewmodel extends BaseViewmodel<OwnedCardQuantityDto> {
   //#region Getters -----------------------------------------------------------

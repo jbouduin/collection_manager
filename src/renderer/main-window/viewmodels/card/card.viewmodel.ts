@@ -1,6 +1,6 @@
 import { OwnedCardListDto, MtgCardColorDto, MtgCardDetailDto, MtgCardLanguageDto, MtgCardListDto, MtgCardfaceDto, OracleDto, OwnedCardDto } from "../../../../common/dto";
 import { CardLayout, CardRarity, MTGLanguage } from "../../../../common/types";
-import { OracleViewmodel } from "../oracle/oracle-viewmodel";
+import { OracleViewmodel } from "../oracle/oracle.viewmodel";
 import { CardfaceViewmodel } from "./cardface.viewmodel";
 
 /* eslint-disable  @typescript-eslint/no-duplicate-type-constituents */

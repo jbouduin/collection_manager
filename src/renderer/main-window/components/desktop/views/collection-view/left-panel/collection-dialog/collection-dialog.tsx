@@ -1,10 +1,8 @@
-import { Button, Classes, Dialog, DialogBody, DialogFooter, FormGroup, IconName, InputGroup, SectionCard, TextArea } from "@blueprintjs/core";
+import { Button, Dialog, DialogBody, DialogFooter, FormGroup, IconName, InputGroup, SectionCard, TextArea } from "@blueprintjs/core";
 import { cloneDeep } from "lodash";
 import * as React from "react";
-import { RendererConfigurationDto } from "../../../../../../../../common/dto";
 import { handleStringChange } from "../../../../../../../common/utils";
-import { ConfigurationContext } from "../../../../../../components/context";
-import { CollectionTreeViewmodel } from "../../../../../../viewmodels/collection/collection.viewmodel";
+import { CollectionTreeViewmodel } from "../../../../../../viewmodels";
 import { CollectionDialogProps } from "./collection-dialog.props";
 
 export function CollectionDialog(props: CollectionDialogProps) {
@@ -25,23 +23,17 @@ export function CollectionDialog(props: CollectionDialogProps) {
 
   //#region Main --------------------------------------------------------------
   return (
-    <ConfigurationContext.Consumer>
-      {
-        (configuration: RendererConfigurationDto) => (
-          <Dialog
-            className={configuration.useDarkTheme ? Classes.DARK : ""}
-            icon={getIconName()}
-            isOpen={props.isOpen}
-            title={getTitle()}
-          >
-            <DialogBody>
-              {collection && renderForm()}
-            </DialogBody>
-            <DialogFooter actions={renderActions()} />
-          </Dialog>
-        )
-      }
-    </ConfigurationContext.Consumer>
+    <Dialog
+      className={props.className}
+      icon={getIconName()}
+      isOpen={props.isOpen}
+      title={getTitle()}
+    >
+      <DialogBody>
+        {collection && renderForm()}
+      </DialogBody>
+      <DialogFooter actions={renderActions()} />
+    </Dialog>
   );
   //#endregion
 

@@ -3,7 +3,7 @@ import * as React from "react";
 import { createRoot } from "react-dom/client";
 import { ConfigurationDto } from "../../common/dto";
 import { IpcProxyService, IpcProxyServiceContext } from "../common/context";
-import { ConfigurationViewModel } from "../common/viewmodels/configuration/configuration.viewmodel";
+import { ConfigurationViewModel } from "../common/viewmodels";
 import { FirstTimeView } from "./first-time-view/first-time-view";
 
 

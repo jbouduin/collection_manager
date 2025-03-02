@@ -1,7 +1,6 @@
 import { Props } from "@blueprintjs/core";
-
-import { ConfigurationViewModel } from "../../../viewmodels/configuration/configuration.viewmodel";
 import { ConfigurationDto } from "../../../../../common/dto";
+import { ConfigurationViewModel } from "../../../viewmodels";
 
 export interface ConfigurationWrapperProps extends Props {
   configuration: ConfigurationViewModel;

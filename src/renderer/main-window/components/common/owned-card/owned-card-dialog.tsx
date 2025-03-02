@@ -1,4 +1,4 @@
-import { Button, Classes, Dialog, DialogBody, DialogFooter, Section } from "@blueprintjs/core";
+import { Button, Dialog, DialogBody, DialogFooter, Section } from "@blueprintjs/core";
 import { cloneDeep, noop } from "lodash";
 import * as React from "react";
 import { CollectionDto, OwnedCardCollectionMapDto, OwnedCardQuantityDto } from "../../../../../common/dto";
@@ -74,7 +74,7 @@ export function OwnedCardDialog(props: OwnedCardDialogProps) {
     <Dialog
       canEscapeKeyClose={true}
       canOutsideClickClose={true}
-      className={Classes.DARK}
+      className={props.className}
       isOpen={true}
       onClose={() => props.onClose(null)}
     >

@@ -3,13 +3,13 @@ import { Classes } from "@blueprintjs/core";
 import { ConfigurationDto } from "../../../../common/dto";
 import { BaseViewmodel } from "../base.viewmodel";
 import { SyncParamViewmodel } from "../sync-param/sync-param.viewmodel";
-import { DatabaseViewTreeConfigurationViewmodel } from "./database-view-tree-configuration.viewmodel";
+import { MtgViewTreeConfigurationViewmodel } from "./mtg-view-tree-configuration.viewmodel";
 import { DataConfigurationViewmodel } from "./data-configuration.viewmodel";
 
 export class ConfigurationViewModel extends BaseViewmodel<ConfigurationDto> {
   //#region private fields ----------------------------------------------------
   private _syncParamViewmodel: SyncParamViewmodel;
-  private _databaseViewTreeConfigurationViewmodel: DatabaseViewTreeConfigurationViewmodel;
+  private _databaseViewTreeConfigurationViewmodel: MtgViewTreeConfigurationViewmodel;
   private _dataConfigurationViewmodel: DataConfigurationViewmodel;
   private readonly _isFirstUse: boolean;
   //#endregion
@@ -38,11 +38,11 @@ export class ConfigurationViewModel extends BaseViewmodel<ConfigurationDto> {
     this._dto.syncAtStartupConfiguration = value.dto;
   }
 
-  public get databaseViewConfigurationViewmodel(): DatabaseViewTreeConfigurationViewmodel {
+  public get databaseViewConfigurationViewmodel(): MtgViewTreeConfigurationViewmodel {
     return this._databaseViewTreeConfigurationViewmodel;
   }
 
-  public set databaseViewConfigurationViewmodel(value: DatabaseViewTreeConfigurationViewmodel) {
+  public set databaseViewConfigurationViewmodel(value: MtgViewTreeConfigurationViewmodel) {
     this._databaseViewTreeConfigurationViewmodel = value;
     this._dto.rendererConfiguration.databaseViewTreeConfiguration = value.dto;
   }
@@ -62,7 +62,7 @@ export class ConfigurationViewModel extends BaseViewmodel<ConfigurationDto> {
     super(dtoConfiguration);
     this._isFirstUse = isFirstUse;
     this._syncParamViewmodel = new SyncParamViewmodel(dtoConfiguration.syncAtStartupConfiguration);
-    this._databaseViewTreeConfigurationViewmodel = new DatabaseViewTreeConfigurationViewmodel(dtoConfiguration.rendererConfiguration.databaseViewTreeConfiguration);
+    this._databaseViewTreeConfigurationViewmodel = new MtgViewTreeConfigurationViewmodel(dtoConfiguration.rendererConfiguration.databaseViewTreeConfiguration);
     this._dataConfigurationViewmodel = new DataConfigurationViewmodel(dtoConfiguration.dataConfiguration);
   }
   //#endregion

@@ -94,6 +94,7 @@ export function ButtonBar(props: ButtonBarProps) {
             props.afterSaveSettings(saved);
             setState(initialState);
           }}
+          className={props.className}
           isOpen={state.settingsDialogOpen}
           onDialogClose={() => setState(initialState)}
         />
@@ -101,6 +102,7 @@ export function ButtonBar(props: ButtonBarProps) {
       {
         state.syncDialogOpen &&
         <SyncDialog
+          className={props.className}
           isOpen={state.syncDialogOpen}
           onDialogClose={() => setState(initialState)}
           onOkClick={startSync}

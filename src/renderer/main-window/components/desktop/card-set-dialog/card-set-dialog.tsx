@@ -1,10 +1,10 @@
-import { AnchorButton, Button, Classes, Dialog, DialogBody, DialogFooter, HTMLTable, Icon, Tab, Tabs } from "@blueprintjs/core";
+import { AnchorButton, Button, Dialog, DialogBody, DialogFooter, HTMLTable, Icon, Tab, Tabs } from "@blueprintjs/core";
 import * as React from "react";
-import { MtgCardSetDetailsDto, MtgCardSetLanguageDto, LanguageDto, RendererConfigurationDto } from "../../../../../common/dto";
+import { LanguageDto, MtgCardSetDetailsDto, MtgCardSetLanguageDto } from "../../../../../common/dto";
 import { DisplayValueService, DisplayValueServiceContext, IpcProxyService, IpcProxyServiceContext } from "../../../../common/context";
-import { CardSetDetailsViewmodel } from "../../../viewmodels/card-set/card-set-details.viewmodel";
+import { CardSetDetailsViewmodel } from "../../../viewmodels";
 import { SvgProvider } from "../../common/svg-provider/svg-provider";
-import { ConfigurationContext, LanguagesContext } from "../../context";
+import { LanguagesContext } from "../../context";
 import { CardSetDialogProps } from "./card-set-dialog.props";
 
 
@@ -38,28 +38,23 @@ export function CardSetDialog(props: CardSetDialogProps) {
     <>
       {
         cardSetDetails &&
-        <ConfigurationContext.Consumer>
-          {
-            (configuration: RendererConfigurationDto) => (
-              <Dialog
-                canEscapeKeyClose={true}
-                className={configuration.useDarkTheme ? Classes.DARK : ""}
-                isCloseButtonShown={true}
-                isOpen={props.isOpen}
-                onClose={props.onDialogClose}
-                shouldReturnFocusOnClose={true}
-                title={renderTitle()}
-              >
-                <DialogBody>
-                  {
-                    renderBody()
-                  }
-                </DialogBody>
-                <DialogFooter actions={renderActions()} />
-              </Dialog>
-            )
-          }
-        </ConfigurationContext.Consumer>
+        <Dialog
+          canEscapeKeyClose={true}
+          className={props.className}
+          isCloseButtonShown={true}
+          isOpen={props.isOpen}
+          onClose={props.onDialogClose}
+          shouldReturnFocusOnClose={true}
+          title={renderTitle()}
+        >
+          <DialogBody>
+            {
+              renderBody()
+            }
+          </DialogBody>
+          <DialogFooter actions={renderActions()} />
+        </Dialog>
+
       }
     </>
   );

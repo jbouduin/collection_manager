@@ -1,7 +1,8 @@
 import { DatabaseTreeViewConfigurationDto } from "../../../../common/dto";
-import { DatabaseViewTreeConfigurationViewmodel } from "../../../common/viewmodels/configuration/database-view-tree-configuration.viewmodel";
+import { MtgViewTreeConfigurationViewmodel } from "../../../common/viewmodels";
 
-export class TreeConfigurationViewmodel extends DatabaseViewTreeConfigurationViewmodel {
+
+export class TreeConfigurationViewmodel extends MtgViewTreeConfigurationViewmodel {
   //#region Constructor -------------------------------------------------------
   public constructor(dto: DatabaseTreeViewConfigurationDto) {
     super(dto);

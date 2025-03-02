@@ -95,7 +95,7 @@ export function OwnedCardPanel(props: OwnedCardPanelProps) {
         readOnly={props.collectionId == null}
       />
       <DialogFooter actions={renderActions()} key="the_footer" />
-      {showDialog && <OwnedCardDialog cardId={props.cardId} onClose={onDialogClose} />}
+      {showDialog && <OwnedCardDialog cardId={props.cardId} className={props.className} onClose={onDialogClose} />}
     </>
   );
 

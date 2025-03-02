@@ -1,5 +1,5 @@
 import { MtgCardfaceDto } from "../../../../common/dto";
-import { OracleViewmodel } from "../oracle/oracle-viewmodel";
+import { OracleViewmodel } from "../oracle/oracle.viewmodel";
 
 export class CardfaceViewmodel {
   //#region private readonly fields -------------------------------------------

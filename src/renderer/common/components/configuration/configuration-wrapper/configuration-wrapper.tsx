@@ -1,6 +1,6 @@
 import { cloneDeep } from "lodash";
 import * as React from "react";
-import { ConfigurationViewModel } from "../../../../common/viewmodels/configuration/configuration.viewmodel";
+import { ConfigurationViewModel } from "../../../../common/viewmodels";
 import { ConfigurationView } from "../configuration-view/configuration-view";
 import { FooterView } from "../footer-view/footer-view";
 import { ConfigurationWrapperProps } from "./configuration-wrapper.props";

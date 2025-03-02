@@ -1,9 +1,10 @@
 import { Button, ButtonGroup, IconName, InputGroup, Menu, MenuDivider, MenuItem, Popover } from "@blueprintjs/core";
+import { isEmpty, xor } from "lodash";
 import * as React from "react";
 import { CardSetType } from "../../../../../../../../common/types";
-import { HeaderViewProps } from "./header-view-props";
 import { DisplayValueService, DisplayValueServiceContext } from "../../../../../../../common/context";
-import { isEmpty, xor } from "lodash";
+import { compareClassNameProp } from "../../../../../../../common/utils";
+import { HeaderViewProps } from "./header-view-props";
 
 type PopoverKey = "card-set-group-by-menu" | "card-set-sort-menu" | "card-set-type-filter-menu";
 
@@ -210,5 +211,6 @@ function headerView(props: HeaderViewProps) {
 export const HeaderView = React.memo(headerView, (prev: HeaderViewProps, next: HeaderViewProps) => {
   return prev.cardSetGroupBy == next.cardSetGroupBy &&
     prev.cardSetSort == next.cardSetSort &&
-    isEmpty(xor(prev.cardSetTypeFilter, next.cardSetTypeFilter));
+    isEmpty(xor(prev.cardSetTypeFilter, next.cardSetTypeFilter)) &&
+    compareClassNameProp(prev.className, next.className);
 });

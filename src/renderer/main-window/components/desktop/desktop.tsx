@@ -26,7 +26,8 @@ export function Desktop(props: Props) {
     languages: new Array<LanguageDto>(),
     rendererConfiguration: null,
     splashScreenOpen: false,
-    symbolSvgs: new Map<string, string>()
+    symbolSvgs: new Map<string, string>(),
+    themeClassName: ""
   };
   const [desktopState, setDesktopState] = React.useState<DesktopState>(initialState);
   //#endregion
@@ -43,6 +44,7 @@ export function Desktop(props: Props) {
           const newState = cloneDeep(initialState);
           newState.rendererConfiguration = configuration.rendererConfiguration;
           ipcProxyService.logServerResponses = configuration.rendererConfiguration.logServerResponses;
+          newState.themeClassName = configuration.rendererConfiguration.useDarkTheme ? Classes.DARK : "";
           return newState;
         })
         .then((newState: DesktopState) => {
@@ -82,6 +84,7 @@ export function Desktop(props: Props) {
   function afterSaveSettings(saved: ConfigurationDto): void {
     const newState = cloneDeep(desktopState);
     newState.rendererConfiguration = saved.rendererConfiguration;
+    newState.themeClassName = saved.rendererConfiguration.useDarkTheme ? Classes.DARK : "";
     setDesktopState(newState);
   }
   //#endregion
@@ -133,10 +136,11 @@ export function Desktop(props: Props) {
               <CardSymbolContext.Provider value={desktopState.symbolSvgs}>
                 <CardSetContext.Provider value={desktopState.cardSets}>
                   <CardConditionContext.Provider value={desktopState.cardConditions}>
-                    <Card className={classNames(desktopState.rendererConfiguration.useDarkTheme ? Classes.DARK : "", "desktop-wrapper")}>
+                    <Card className={classNames(desktopState.themeClassName, "desktop-wrapper")}>
                       <ButtonBar
                         {...props}
                         afterSaveSettings={(saved: ConfigurationDto) => afterSaveSettings(saved)}
+                        className={desktopState.themeClassName}
                         currentView={desktopState.currentView}
                         hideSplashScreen={(afterClose: Array<AfterSplashScreenClose>) => hideSplashScreen(afterClose)}
                         onDesktopViewSelectionClick={onDesktopViewSelectionClick}
@@ -147,18 +151,23 @@ export function Desktop(props: Props) {
                           desktopState.currentView == EDesktopView.Database &&
                           <MtgView
                             {...props}
+                            className={desktopState.themeClassName}
                             hideSplashScreen={(afterClose: Array<AfterSplashScreenClose>) => hideSplashScreen(afterClose)}
                             showSplashScreen={() => openSplashScreen()}
                           />
                         }
                         {
                           desktopState.currentView == EDesktopView.Collection &&
-                          <CollectionView {...props} />
+                          <CollectionView
+                            {...props}
+                            className={desktopState.themeClassName}
+                          />
                         }
                         {
                           desktopState.currentView == EDesktopView.Deck &&
                           <DeckView
                             {...props}
+                            className={desktopState.themeClassName}
                             hideSplashScreen={(afterClose: Array<AfterSplashScreenClose>) => hideSplashScreen(afterClose)}
                             showSplashScreen={() => openSplashScreen()}
                           />
@@ -169,6 +178,7 @@ export function Desktop(props: Props) {
                       desktopState.splashScreenOpen &&
                       <SplashScreen
                         {...props}
+                        className={desktopState.themeClassName}
                         isOpen={desktopState.splashScreenOpen}
                         onDialogClose={noop}
                       />

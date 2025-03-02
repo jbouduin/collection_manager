@@ -1,8 +1,9 @@
-import * as React from "react";
-import { CardSymbolRendererProps } from "./card-symbol-renderer.props";
-import { SvgProvider } from "../svg-provider/svg-provider";
-import { CardSymbolContext } from "../../context";
 import { isEmpty, xor } from "lodash";
+import * as React from "react";
+import { compareClassNameProp } from "../../../../common/utils";
+import { CardSymbolContext } from "../../context";
+import { SvgProvider } from "../svg-provider/svg-provider";
+import { CardSymbolRendererProps } from "./card-symbol-renderer.props";
 
 
 export const CardSymbolRenderer = React.memo(
@@ -40,6 +41,6 @@ export const CardSymbolRenderer = React.memo(
     //#endregion
   },
   (prev: CardSymbolRendererProps, next: CardSymbolRendererProps) => {
-    return isEmpty(xor(prev.cardSymbols, next.cardSymbols));
+    return isEmpty(xor(prev.cardSymbols, next.cardSymbols) && compareClassNameProp(prev.className, next.className));
   }
 );

@@ -12,4 +12,5 @@ export interface DesktopState {
   rendererConfiguration: RendererConfigurationDto;
   splashScreenOpen: boolean;
   symbolSvgs: Map<string, string>;
+  themeClassName: string;
 }

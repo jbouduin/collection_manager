@@ -127,6 +127,7 @@ export function SetTreeView(props: LeftPanelProps) {
         cardSetGroupBy={state.cardSetGroupBy}
         cardSetSort={state.cardSetSort}
         cardSetTypeFilter={state.cardSetTypeFilter}
+        className={props.className}
         onCardSetGroupByChanged={onCardSetGroupByChanged}
         onCardSetSortChanged={onCardSetSortChanged}
         onCardSetTypeFilterChanged={onCardSetTypeFilterChanged}
@@ -149,6 +150,7 @@ export function SetTreeView(props: LeftPanelProps) {
         <CardSetDialog
           cardSetId={selectedCardSetForDialog.id}
           cardSetSvg={selectedCardSetForDialog.cardSetSvg}
+          className={props.className}
           isOpen={true}
           onDialogClose={() => setSelectedCardSetForDialog(null)}
         />

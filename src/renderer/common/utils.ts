@@ -1,3 +1,4 @@
+import { isEmpty, isNil, xor } from "lodash";
 import { CardRarity } from "../../common/types";
 
 /** Event handler that exposes the target element's value as a boolean. */
@@ -43,4 +44,10 @@ export function getRarityColorClassname(rarity: CardRarity) {
     default:
       return "";
   }
+}
+
+export function compareClassNameProp(prev: string, current: string): boolean {
+  return (isNil(prev) && isNil(current)) ||
+    (!isNil(prev) && !isNil(current)) ||
+    isEmpty(xor(prev.split(" "), current.split(" ")));
 }

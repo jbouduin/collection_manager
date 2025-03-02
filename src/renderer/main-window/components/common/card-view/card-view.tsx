@@ -2,6 +2,7 @@ import { H5, Section, SectionCard, Tab, Tabs } from "@blueprintjs/core";
 import * as React from "react";
 import { MtgCardDetailDto, MtgCardLanguageDto } from "../../../../../common/dto";
 import { IpcProxyService, IpcProxyServiceContext } from "../../../../common/context";
+import { compareClassNameProp } from "../../../../common/utils";
 import { MtgCardDetailViewmodel } from "../../../viewmodels";
 import { CardSymbolRenderer } from "../card-symbol-renderer";
 import { LanguageButtonBar } from "../language-button-bar/language-button-bar";
@@ -11,32 +12,34 @@ import { CardHeaderView } from "./card-header-view/card-header-view";
 import { CardHeaderViewProps } from "./card-header-view/card-header-view.props";
 import { CardImageView } from "./card-image-view/card-image-viewr";
 import { CardRulingsView } from "./card-rulings-view/card-rulings-view";
+import { CardRulingsViewProps } from "./card-rulings-view/card-rulings-view.props";
 import { CardViewState } from "./card-view-state";
 import { CardViewProps } from "./card-view.props";
 import { LegalitiesView } from "./legalities-view/legalities-view";
 import { LegalitiesViewProps } from "./legalities-view/legalities-view.props";
-import { CardRulingsViewProps } from "./card-rulings-view/card-rulings-view.props";
+
 
 const CardHeaderViewMemo = React.memo(
   CardHeaderView,
   (prev: CardHeaderViewProps, next: CardHeaderViewProps) => {
-    return prev.card.cardName == next.card.cardName;
+    return prev.card.cardName == next.card.cardName && compareClassNameProp(prev.className, next.className);
   }
 );
 
 const LegalitiesViewMemo = React.memo(
   LegalitiesView,
   (prev: LegalitiesViewProps, next: LegalitiesViewProps) => {
-    return prev.oracleId == next.oracleId;
+    return prev.oracleId == next.oracleId && compareClassNameProp(prev.className, next.className);
   }
 );
 
 const CardRulingsViewMemo = React.memo(
   CardRulingsView,
   (prev: CardRulingsViewProps, next: CardRulingsViewProps) => {
-    return prev.oracleId == next.oracleId;
+    return prev.oracleId == next.oracleId && compareClassNameProp(prev.className, next.className);
   }
 );
+
 
 export function CardView(props: CardViewProps) {
   //#region State -------------------------------------------------------------
@@ -151,7 +154,7 @@ export function CardView(props: CardViewProps) {
             <Tab
               id="Owned"
               key="Owned"
-              panel={<OwnedCardPanel cardId={cardViewState.card.cardId} collectionId={props.collectionId} />}
+              panel={<OwnedCardPanel cardId={cardViewState.card.cardId} className={props.className} collectionId={props.collectionId} />}
               title="Ownership"
             />
           </Tabs>

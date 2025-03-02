@@ -2,7 +2,7 @@ import { DatabaseTreeViewConfigurationDto } from "../../../../common/dto";
 import { CardSetGroupBy, CardSetSort, CardSetType } from "../../../../common/types";
 import { BaseViewmodel } from "../base.viewmodel";
 
-export class DatabaseViewTreeConfigurationViewmodel extends BaseViewmodel<DatabaseTreeViewConfigurationDto> {
+export class MtgViewTreeConfigurationViewmodel extends BaseViewmodel<DatabaseTreeViewConfigurationDto> {
   //#region public fields -----------------------------------------------------
   public cardSetFilterValue: string;
   //#endregion

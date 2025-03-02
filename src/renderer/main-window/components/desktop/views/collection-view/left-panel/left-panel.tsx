@@ -207,6 +207,7 @@ export function LeftPanel(props: LeftPanelProps) {
       {
         dialogData &&
         <CollectionDialog
+          className={props.className}
           collection={dialogData.selectedCollection}
           dialogAction={dialogData.dialogAction}
           isOpen={true}

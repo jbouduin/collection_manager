@@ -1,6 +1,4 @@
-import { Props } from "@blueprintjs/core";
+import { CollectionManagerProps } from "../../../../../common/collection-manager.props";
 
 
-export interface MtgViewProps extends Props {
-  onSynchronizeSet: (setCode: string) => void;
-}
+export type MtgViewProps = CollectionManagerProps;

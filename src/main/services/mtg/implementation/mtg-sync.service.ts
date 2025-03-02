@@ -79,8 +79,6 @@ export class MtgSyncService implements IMtgSyncService {
       return await runSerial<SyncTaskParam<unknown>>(taskParams, this.handleTask.bind(this));
     } catch (error: unknown) {
       this.logService.error("Main", "error during handling sync task", error);
-    } finally {
-      webContents.send("splash-end");
     }
   }
   //#endregion

@@ -31,8 +31,13 @@ export class MtgSyncRouter extends BaseRouter implements IRouter {
 
   //#region Route callbacks ---------------------------------------------------
   private sync(request: RoutedRequest<SyncParamDto>): Promise<IResult<void>> {
-    void this.mtgSyncService.synchronize(request.data, request.sender);
-    return this.resultFactory.createSuccessResultPromise<void>(undefined);
+    try {
+      return this.mtgSyncService
+        .synchronize(request.data, request.sender)
+        .then(() => this.resultFactory.createSuccessResultPromise<void>(undefined));
+    } catch (err: unknown) {
+      return this.resultFactory.createExceptionResultPromise(err);
+    }
   }
   //#endregion
 }

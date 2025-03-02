@@ -24,9 +24,9 @@ export function CenterPanel(props: CenterPanelProps) {
   //#region Effects -----------------------------------------------------------
   React.useEffect(
     () => {
-      if (props.selectedSets) {
+      if (props.selectedSet) {
         void ipcProxyService
-          .getData(`/card/query?set=${props.selectedSets[0].id}`)
+          .getData(`/card/query?set=${props.selectedSet.id}`)
           .then(
             (cardResult: Array<MtgCardListDto>) => setCards(cardResult
               .map((card: MtgCardListDto) => new MtgCardListViewmodel(card))
@@ -46,7 +46,7 @@ export function CenterPanel(props: CenterPanelProps) {
         setCards(initialState);
       }
     },
-    [props.selectedSets, props.queryString]
+    [props.selectedSet, props.queryString]
   );
   //#endregion
 

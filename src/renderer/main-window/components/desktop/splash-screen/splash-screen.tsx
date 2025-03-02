@@ -7,10 +7,6 @@ import { SplashContent } from "../../../../common/components/splash/splash-conte
 import { ConfigurationContext } from "../../context";
 
 export function SplashScreen(props: BaseDialogProps) {
-  window.ipc.onEndProgress(() => {
-    props.onDialogClose();
-  });
-
   return (
     <>
       <ConfigurationContext.Consumer>
@@ -19,6 +15,7 @@ export function SplashScreen(props: BaseDialogProps) {
             <Dialog
               canEscapeKeyClose={true}
               canOutsideClickClose={false}
+              // TODO pass classname using the props
               className={classNames(configuration.useDarkTheme ? Classes.DARK : "", "splash-window")}
               enforceFocus={true}
               isOpen={props.isOpen}

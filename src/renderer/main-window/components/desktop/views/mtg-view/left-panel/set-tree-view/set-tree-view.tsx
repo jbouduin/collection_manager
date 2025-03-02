@@ -1,7 +1,9 @@
 import { ContextMenu, Menu, MenuItem, TreeNodeInfo } from "@blueprintjs/core";
 import { cloneDeep, isEqual, upperFirst } from "lodash";
 import * as React from "react";
+import { SyncParamDto } from "../../../../../../../../common/dto";
 import { CardSetGroupBy, CardSetSort, CardSetType } from "../../../../../../../../common/types";
+import { IpcProxyService, IpcProxyServiceContext } from "../../../../../../../common/context";
 import { CardSetViewmodel, TreeConfigurationViewmodel } from "../../../../../../viewmodels";
 import { BaseTreeView, BaseTreeViewProps } from "../../../../../common/base-tree-view";
 import { SvgProvider } from "../../../../../common/svg-provider/svg-provider";
@@ -21,6 +23,10 @@ export function SetTreeView(props: LeftPanelProps) {
   //#region State -------------------------------------------------------------
   const [state, setState] = React.useState<TreeConfigurationViewmodel>(new TreeConfigurationViewmodel(props.configuration));
   const [selectedCardSetForDialog, setSelectedCardSetForDialog] = React.useState<CardSetViewmodel>(undefined);
+  //#endregion
+
+  //#region Context ---------------------------------------------------------------------
+  const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
   //#endregion
 
   //#region event handling ----------------------------------------------------
@@ -50,6 +56,29 @@ export function SetTreeView(props: LeftPanelProps) {
     newState.toggleCardSetFilterType(cardSetType);
     setState(newState);
   };
+
+  function synchronizeSet(code: string): void {
+    props.showSplashScreen();
+    const params: SyncParamDto = {
+      catalogTypesToSync: [],
+      syncCardSymbols: false,
+      syncCardSets: false,
+      rulingSyncType: "none",
+      cardSyncType: "byCardSet",
+      cardSelectionToSync: [],
+      cardImageStatusToSync: [],
+      syncCardsSyncedBeforeNumber: undefined,
+      syncCardsSyncedBeforeUnit: undefined,
+      cardSetCodeToSyncCardsFor: code,
+      changedImageStatusAction: "delete",
+      oracleId: undefined
+    };
+    void ipcProxyService.postData<SyncParamDto, never>("/mtg-sync", params)
+      .then(
+        () => props.hideSplashScreen(null),
+        () => props.hideSplashScreen(null)
+      );
+  }
   //#endregion
 
   //#region Event handling ----------------------------------------------------
@@ -199,7 +228,7 @@ export function SetTreeView(props: LeftPanelProps) {
                 onClick={
                   (e) => {
                     e.preventDefault();
-                    props.onSynchronizeSet(cardSet.setCode);
+                    synchronizeSet(cardSet.setCode);
                   }
                 }
                 text="Synchronize cards"

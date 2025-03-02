@@ -1,16 +1,50 @@
 import { Button, Card } from "@blueprintjs/core";
 import * as React from "react";
 import { DeckViewProps } from "./deck-view.props";
+import { IpcProxyService, IpcProxyServiceContext } from "../../../../../common/context";
+import { SyncParamDto } from "../../../../../../common/dto";
+
 
 export function DeckView(props: DeckViewProps) {
+  //#region Context ---------------------------------------------------------------------
+  const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
+  //#endregion
+
+  //#region Event handling --------------------------------------------------------------
+  function synchronizeCollection(ids: Array<string>): void {
+    props.showSplashScreen();
+    const params: SyncParamDto = {
+      catalogTypesToSync: [],
+      syncCardSymbols: false,
+      syncCardSets: false,
+      rulingSyncType: "none",
+      cardSyncType: "collection",
+      cardSelectionToSync: ids,
+      cardImageStatusToSync: [],
+      syncCardsSyncedBeforeNumber: undefined,
+      syncCardsSyncedBeforeUnit: undefined,
+      cardSetCodeToSyncCardsFor: undefined,
+      changedImageStatusAction: "delete",
+      oracleId: undefined
+    };
+    void ipcProxyService
+      .postData<SyncParamDto, never>("/mtg-sync", params)
+      .then(
+        () => props.hideSplashScreen(null),
+        () => props.hideSplashScreen(null)
+      );
+  }
+  //#endregion
+
   //#region Main --------------------------------------------------------------
   return (
     <Card>
       <h1>Collection View</h1>
-      <Button onClick={() => props.onSynchronizeCollection(getIds())}>Sync every possible layout</Button>
+      <Button onClick={() => synchronizeCollection(getIds())}>Sync every possible layout</Button>
     </Card>
   );
   //#endregion
+
 
   //#region Auxiliary methods -------------------------------------------------
   function getIds(): Array<string> {

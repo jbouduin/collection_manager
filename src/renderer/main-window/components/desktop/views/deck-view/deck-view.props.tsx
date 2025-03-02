@@ -1,5 +1,3 @@
-import { Props } from "@blueprintjs/core";
+import { CollectionManagerProps } from "../../../../../common/collection-manager.props";
 
-export interface DeckViewProps extends Props {
-  onSynchronizeCollection: (ids: Array<string>) => void;
-}
+export type DeckViewProps = CollectionManagerProps;

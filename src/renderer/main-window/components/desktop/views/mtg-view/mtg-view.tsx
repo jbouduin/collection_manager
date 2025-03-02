@@ -1,4 +1,3 @@
-import { isEmpty, xor } from "lodash";
 import * as React from "react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { RendererConfigurationDto } from "../../../../../../common/dto";
@@ -13,19 +12,17 @@ import { MtgViewState } from "./mtg-view.state";
 const CenterPanelMemo = React.memo(
   CenterPanel,
   (prev: CenterPanelProps, next: CenterPanelProps) => {
-    const x = prev.selectedSets != null && next.selectedSets != null &&
-      isEmpty(xor(
-        prev.selectedSets.map((vm: CardSetViewmodel) => vm.id),
-        next.selectedSets.map((vm: CardSetViewmodel) => vm.id)
-      )) &&
-      prev.queryString == next.queryString;
-    return x;
+    return prev.selectedSet?.id == next.selectedSet?.id && prev.queryString == next.queryString;
   }
 );
 
 export function MtgView(props: MtgViewProps) {
   //#region State -------------------------------------------------------------
-  const initialState: MtgViewState = {};
+  const initialState: MtgViewState = {
+    selectedSet: null,
+    selectedCards: null,
+    queryString: null
+  };
   const [state, setState] = React.useState(initialState);
   //#endregion
 
@@ -38,18 +35,18 @@ export function MtgView(props: MtgViewProps) {
             <PanelGroup direction="horizontal">
               <Panel defaultSize={20}>
                 <LeftPanel
+                  {...props}
                   configuration={configuration.databaseViewTreeConfiguration}
-                  onSearch={(queryString: string) => setState({queryString: queryString, selectedSets: undefined})}
-                  onSetsSelected={(sets: Array<CardSetViewmodel>) => setState({ selectedSets: sets, queryString: undefined })}
-                  onSynchronizeSet={props.onSynchronizeSet}
+                  onSearch={(queryString: string) => setState({queryString: queryString, selectedSet: null, selectedCards: null})}
+                  onSetsSelected={(sets: Array<CardSetViewmodel>) => setState({ selectedSet: sets[0], queryString: null, selectedCards: null })}
                 />
               </Panel>
               <PanelResizeHandle />
               <Panel>
                 <CenterPanelMemo
-                  onCardsSelected={(cards?: Array<MtgCardListViewmodel>) => setState({ selectedCards: cards, selectedSets: state.selectedSets, queryString: state.queryString })}
+                  onCardsSelected={(cards?: Array<MtgCardListViewmodel>) => setState({ selectedCards: cards, selectedSet: state.selectedSet, queryString: state.queryString })}
                   queryString={state.queryString}
-                  selectedSets={state.selectedSets}
+                  selectedSet={state.selectedSet}
                 />
               </Panel>
               <PanelResizeHandle />

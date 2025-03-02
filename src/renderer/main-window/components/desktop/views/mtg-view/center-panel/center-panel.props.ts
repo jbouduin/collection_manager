@@ -3,7 +3,7 @@ import { CardSetViewmodel, MtgCardListViewmodel } from "../../../../../viewmodel
 
 
 export interface CenterPanelProps extends Props {
+  onCardsSelected: (cards?: Array<MtgCardListViewmodel>) => void;
   queryString: string;
-  selectedSets: Array<CardSetViewmodel>;
-  onCardsSelected(cards?: Array<MtgCardListViewmodel>): void;
+  selectedSet: CardSetViewmodel;
 }

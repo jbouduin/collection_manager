@@ -1,9 +1,9 @@
 import * as React from "react";
-import { LanguageDto, OwnedCardDto, OwnedCardListDto } from "../../../../../../../common/dto";
+import { LanguageDto, MtgCardSetDto, OwnedCardDto, OwnedCardListDto } from "../../../../../../../common/dto";
 import { IpcProxyService, IpcProxyServiceContext } from "../../../../../../common/context";
 import { BaseCardsTableView } from "../../../../../components/common/base-cards-table-view/base-cards-table-view";
 import { CardConditionContext, CardSetContext, LanguagesContext } from "../../../../../components/context";
-import { CardConditionViewmodel, CardSetViewmodel, CollectionCardListViewmodel } from "../../../../../viewmodels";
+import { CardConditionViewmodel, CollectionCardListViewmodel } from "../../../../../viewmodels";
 import { BaseLookupResult, CardSetColumn, CardSetLookupResult, IBaseColumn, TextColumn, TextLookupResult } from "../../../../common/base-cards-table-view/columns";
 import { CenterPanelProps } from "./center-panel.props";
 
@@ -14,7 +14,7 @@ export function CenterPanel(props: CenterPanelProps) {
   //#endregion
 
   //#region Context ---------------------------------------------------------------------
-  const cardSetContext = React.useContext<Array<CardSetViewmodel>>(CardSetContext);
+  const cardSetContext = React.useContext<Array<MtgCardSetDto>>(CardSetContext);
   const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
   const languagesContext = React.useContext<Array<LanguageDto>>(LanguagesContext);
   //#endregion
@@ -89,9 +89,9 @@ export function CenterPanel(props: CenterPanelProps) {
   }
 
   function cardSetCallback(card: CollectionCardListViewmodel): CardSetLookupResult {
-    const cardSet = cardSetContext.find((set: CardSetViewmodel) => set.id == card.setId);
+    const cardSet = cardSetContext.find((set: MtgCardSetDto) => set.id == card.setId);
     return cardSet
-      ? { collectorNumberSortValue: card.collectorNumberSortValue, cardSetName: cardSet.cardSetName, svg: cardSet.cardSetSvg, rarity: card.rarity }
+      ? { collectorNumberSortValue: card.collectorNumberSortValue, cardSetName: cardSet.name, svg: cardSet.svg, rarity: card.rarity }
       : { collectorNumberSortValue: card.collectorNumberSortValue, cardSetName: card.setId, svg: undefined, rarity: card.rarity };
   }
 

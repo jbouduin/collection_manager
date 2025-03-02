@@ -1,7 +1,7 @@
 import { Button, Checkbox } from "@blueprintjs/core";
 import { cloneDeep } from "lodash";
 import * as React from "react";
-import { CatalogTypeDto, ColorDto } from "../../../../../../../../common/dto";
+import { CatalogTypeDto, ColorDto, MtgCardSetDto } from "../../../../../../../../common/dto";
 import { CardRarity, GameFormat, MTGColor } from "../../../../../../../../common/types";
 import { DisplayValueService, DisplayValueServiceContext, IpcProxyService, IpcProxyServiceContext } from "../../../../../../../common/context";
 import { displayValueRecordToSelectOptions, handleBooleanChange, SelectOption } from "../../../../../../../common/utils";
@@ -56,7 +56,7 @@ export function SearchView(props: SearchViewProps) {
   //#endregion
 
   //#region Context ---------------------------------------------------------------------
-  const cardSetContext = React.useContext<Array<CardSetViewmodel>>(CardSetContext);
+  const cardSetContext = React.useContext<Array<MtgCardSetDto>>(CardSetContext);
   const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
   const displayValueService = React.useContext<DisplayValueService>(DisplayValueServiceContext);
   //#endregion
@@ -116,7 +116,7 @@ export function SearchView(props: SearchViewProps) {
         onChange={handleBooleanChange((value: boolean) => onSelectOptionEvent((v: CardSearchViewmodel) => v.ownedCards = value))}
       />
       <CardSetSelect
-        cardSets={cardSetContext}
+        cardSets={cardSetContext.map((c: MtgCardSetDto) => new CardSetViewmodel(c))}
         key="card-set-select"
         onClearOptions={() => onSelectOptionEvent((v: CardSearchViewmodel) => v.clearCardSetSelection())}
         onOptionAdded={(cardSet: string) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addCardSet(cardSet))}

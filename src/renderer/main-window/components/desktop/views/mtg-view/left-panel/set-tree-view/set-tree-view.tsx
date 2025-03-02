@@ -4,25 +4,25 @@ import * as React from "react";
 import { SyncParamDto } from "../../../../../../../../common/dto";
 import { CardSetGroupBy, CardSetSort, CardSetType } from "../../../../../../../../common/types";
 import { IpcProxyService, IpcProxyServiceContext } from "../../../../../../../common/context";
-import { CardSetViewmodel, TreeConfigurationViewmodel } from "../../../../../../viewmodels";
+import { TreeConfigurationViewmodel } from "../../../../../../viewmodels";
+import { CardSetTreeViewmodel } from "../../../../../../viewmodels/card-set/card-set-tree.viewmodel";
 import { BaseTreeView, BaseTreeViewProps } from "../../../../../common/base-tree-view";
 import { SvgProvider } from "../../../../../common/svg-provider/svg-provider";
-import { CardSetContext } from "../../../../../context";
 import { CardSetDialog } from "../../../../card-set-dialog/card-set-dialog";
 import { HeaderView } from "../header-view/header-view";
 import { LeftPanelProps } from "./set-tree-view.props";
 
 const Treeview = React.memo(
-  BaseTreeView<CardSetViewmodel, TreeConfigurationViewmodel>,
-  (prev: BaseTreeViewProps<CardSetViewmodel, TreeConfigurationViewmodel>, next: BaseTreeViewProps<CardSetViewmodel, TreeConfigurationViewmodel>) => {
-    return isEqual(prev.data, next.data) && isEqual(prev.filterProps, next.filterProps);
+  BaseTreeView<CardSetTreeViewmodel, TreeConfigurationViewmodel>,
+  (prev: BaseTreeViewProps<CardSetTreeViewmodel, TreeConfigurationViewmodel>, next: BaseTreeViewProps<CardSetTreeViewmodel, TreeConfigurationViewmodel>) => {
+    return isEqual(prev.data?.length, next.data?.length) && isEqual(prev.filterProps.filter, next.filterProps.filter);
   }
 );
 
 export function SetTreeView(props: LeftPanelProps) {
   //#region State -------------------------------------------------------------
   const [state, setState] = React.useState<TreeConfigurationViewmodel>(new TreeConfigurationViewmodel(props.configuration));
-  const [selectedCardSetForDialog, setSelectedCardSetForDialog] = React.useState<CardSetViewmodel>(undefined);
+  const [selectedCardSetForDialog, setSelectedCardSetForDialog] = React.useState<CardSetTreeViewmodel>(undefined);
   //#endregion
 
   //#region Context ---------------------------------------------------------------------
@@ -82,41 +82,48 @@ export function SetTreeView(props: LeftPanelProps) {
   //#endregion
 
   //#region Event handling ----------------------------------------------------
-  function applyFilterProps(data: Array<CardSetViewmodel>, filterProps: TreeConfigurationViewmodel): Array<CardSetViewmodel> {
-    const result = data.filter((cardSet: CardSetViewmodel) => {
+  function applyFilterProps(data: Array<CardSetTreeViewmodel>, filterProps: TreeConfigurationViewmodel): Array<CardSetTreeViewmodel> {
+    const result = data.filter((cardSet: CardSetTreeViewmodel) => {
       return (filterProps.cardSetFilterValue ? cardSet.cardSetName.toUpperCase().indexOf(filterProps.cardSetFilterValue.toUpperCase()) >= 0 : true) &&
         filterProps.cardSetTypeFilter.indexOf(cardSet.cardSetType) >= 0;
     });
     if (filterProps.cardSetGroupBy == "parent") {
       let parents = result
-        .filter((cardSet: CardSetViewmodel) => cardSet.parentSetCode != null)
-        .map((cardSet: CardSetViewmodel) => data.find((parent: CardSetViewmodel) => parent.setCode == cardSet.parentSetCode));
-      let uniqueParents = [...new Map(parents.map((parent: CardSetViewmodel) => [parent["setCode"], parent])).values()];
+        .filter((cardSet: CardSetTreeViewmodel) => cardSet.parentSetCode != null)
+        .map((cardSet: CardSetTreeViewmodel) => data.find((parent: CardSetTreeViewmodel) => parent.setCode == cardSet.parentSetCode));
+      let uniqueParents = [...new Map(parents.map((parent: CardSetTreeViewmodel) => [parent["setCode"], parent])).values()];
       while (uniqueParents.length > 0) {
         result.push(...uniqueParents);
         parents = parents
-          .filter((cardSet: CardSetViewmodel) => cardSet.parentSetCode != null)
-          .map((cardSet: CardSetViewmodel) => data.find((parent: CardSetViewmodel) => parent.setCode == cardSet.parentSetCode));
-        uniqueParents = [...new Map(parents.map((parent: CardSetViewmodel) => [parent["setCode"], parent])).values()];
+          .filter((cardSet: CardSetTreeViewmodel) => cardSet.parentSetCode != null)
+          .map((cardSet: CardSetTreeViewmodel) => data.find((parent: CardSetTreeViewmodel) => parent.setCode == cardSet.parentSetCode));
+        uniqueParents = [...new Map(parents.map((parent: CardSetTreeViewmodel) => [parent["setCode"], parent])).values()];
       }
-      const uniqueResult = [...new Map(result.map((r: CardSetViewmodel) => [r["setCode"], r])).values()];
+      const uniqueResult = [...new Map(result.map((r: CardSetTreeViewmodel) => [r["setCode"], r])).values()];
       return uniqueResult;
     } else {
       return result;
     }
   }
 
-  function buildTree(data: Array<CardSetViewmodel>, props: TreeConfigurationViewmodel): Array<TreeNodeInfo<string | CardSetViewmodel>> {
+  function buildTree(data: Array<CardSetTreeViewmodel>, props: TreeConfigurationViewmodel): Array<TreeNodeInfo<string | CardSetTreeViewmodel>> {
+    let result: Array<TreeNodeInfo<string | CardSetTreeViewmodel>>;
     switch (props.cardSetGroupBy) {
       case "parent":
-        return buildTreeByParent(data);
+        result = buildTreeByParent(data);
+        break;
       case "block":
-        return buildTreeByBlockOrType(data, (cardSet: CardSetViewmodel) => cardSet.block);
+        result = buildTreeByBlockOrType(data, (cardSet: CardSetTreeViewmodel) => cardSet.block);
+        break;
       case "none":
-        return buildTreeByNone(data);
+        result = buildTreeByNone(data);
+        break;
       case "setType":
-        return buildTreeByBlockOrType(data, (cardSet: CardSetViewmodel) => cardSet.cardSetType);
+        result = buildTreeByBlockOrType(data, (cardSet: CardSetTreeViewmodel) => cardSet.cardSetType);
+        break;
     }
+
+    return result;
   }
   //#endregion
 
@@ -133,18 +140,14 @@ export function SetTreeView(props: LeftPanelProps) {
         onCardSetTypeFilterChanged={onCardSetTypeFilterChanged}
         onTextFilterChanged={onTextFilterChanged}
       />
-      <CardSetContext.Consumer>
-        {
-          (cardSets: Array<CardSetViewmodel>) => (
-            <Treeview
-              buildTree={buildTree}
-              data={cardSets}
-              filterProps={{ filter: state, applyFilterProps: applyFilterProps }}
-              onDataSelected={(sets: Array<CardSetViewmodel>) => props.onSetsSelected(sets)}
-            />
-          )
-        }
-      </CardSetContext.Consumer>
+
+      <Treeview
+        buildTree={buildTree}
+        data={props.cardSets}
+        filterProps={{ filter: state, applyFilterProps: applyFilterProps }}
+        onDataSelected={(sets: Array<CardSetTreeViewmodel>) => props.onSetsSelected(sets)}
+      />
+
       {
         selectedCardSetForDialog &&
         <CardSetDialog
@@ -160,34 +163,34 @@ export function SetTreeView(props: LeftPanelProps) {
   //#endregion
 
   //#region Auxiliary tree related methods ------------------------------------
-  function buildTreeByParent(cardSets: Array<CardSetViewmodel>): Array<TreeNodeInfo<CardSetViewmodel>> {
+  function buildTreeByParent(cardSets: Array<CardSetTreeViewmodel>): Array<TreeNodeInfo<CardSetTreeViewmodel>> {
     return buildTreeByParentRecursive(cardSets, null);
   }
 
-  function buildTreeByParentRecursive(cardSets: Array<CardSetViewmodel>, id: string | null): Array<TreeNodeInfo<CardSetViewmodel>> {
+  function buildTreeByParentRecursive(cardSets: Array<CardSetTreeViewmodel>, id: string | null): Array<TreeNodeInfo<CardSetTreeViewmodel>> {
     return cardSets
-      .filter((item: CardSetViewmodel) => item.parentSetCode === id)
+      .filter((item: CardSetTreeViewmodel) => item.parentSetCode === id)
       .sort(sortViewmodelfunction)
-      .map((cardSet: CardSetViewmodel) => {
-        const childNodes: Array<TreeNodeInfo<CardSetViewmodel>> = buildTreeByParentRecursive(cardSets, cardSet.setCode);
+      .map((cardSet: CardSetTreeViewmodel) => {
+        const childNodes: Array<TreeNodeInfo<CardSetTreeViewmodel>> = buildTreeByParentRecursive(cardSets, cardSet.setCode);
         const node = mapViewModelToTreeItem(cardSet);
         node.childNodes = childNodes.length > 0 ? childNodes : null;
         return node;
       });
   }
 
-  function buildTreeByBlockOrType(cardSets: Array<CardSetViewmodel>, groupFieldFunction: (cardSet: CardSetViewmodel) => string): Array<TreeNodeInfo<CardSetViewmodel | string>> {
-    const groups = [...new Set(cardSets.map((cardSet: CardSetViewmodel) => groupFieldFunction(cardSet)))];
+  function buildTreeByBlockOrType(cardSets: Array<CardSetTreeViewmodel>, groupFieldFunction: (cardSet: CardSetTreeViewmodel) => string): Array<TreeNodeInfo<CardSetTreeViewmodel | string>> {
+    const groups = [...new Set(cardSets.map((cardSet: CardSetTreeViewmodel) => groupFieldFunction(cardSet)))];
     groups.sort((a: string, b: string) => (a ?? "zzz").toUpperCase().localeCompare((b ?? "zzz").toUpperCase()));
     return groups.map((group: string) => {
-      const groupNode: TreeNodeInfo<CardSetViewmodel | string> = {
+      const groupNode: TreeNodeInfo<CardSetTreeViewmodel | string> = {
         id: group ?? "none",
         label: group ? upperFirst(group).replace("_", " ") : "None",
         isExpanded: false,
         isSelected: false,
         nodeData: group ?? "none",
         childNodes: cardSets
-          .filter((cardSet: CardSetViewmodel) => groupFieldFunction(cardSet) == group)
+          .filter((cardSet: CardSetTreeViewmodel) => groupFieldFunction(cardSet) == group)
           .sort(sortViewmodelfunction)
           .map(mapViewModelToTreeItem)
       };
@@ -195,13 +198,13 @@ export function SetTreeView(props: LeftPanelProps) {
     });
   }
 
-  function buildTreeByNone(cardSets: Array<CardSetViewmodel>): Array<TreeNodeInfo<CardSetViewmodel>> {
+  function buildTreeByNone(cardSets: Array<CardSetTreeViewmodel>): Array<TreeNodeInfo<CardSetTreeViewmodel>> {
     return cardSets
       .sort(sortViewmodelfunction)
-      .map((cardSet: CardSetViewmodel) => mapViewModelToTreeItem(cardSet));
+      .map((cardSet: CardSetTreeViewmodel) => mapViewModelToTreeItem(cardSet));
   }
 
-  function sortViewmodelfunction(a: CardSetViewmodel, b: CardSetViewmodel): number {
+  function sortViewmodelfunction(a: CardSetTreeViewmodel, b: CardSetTreeViewmodel): number {
     switch (state.cardSetSort) {
       case "alphabeticallyAscending":
         return a.cardSetName.localeCompare(b.cardSetName);
@@ -218,8 +221,8 @@ export function SetTreeView(props: LeftPanelProps) {
    * TODO this creates as much virtual targets as there are sets in the tree
    * check how to put Contextmenu on tree itself and pass set under cursor to the methods
    */
-  function mapViewModelToTreeItem(cardSet: CardSetViewmodel): TreeNodeInfo<CardSetViewmodel> {
-    const node: TreeNodeInfo<CardSetViewmodel> = {
+  function mapViewModelToTreeItem(cardSet: CardSetTreeViewmodel): TreeNodeInfo<CardSetTreeViewmodel> {
+    const node: TreeNodeInfo<CardSetTreeViewmodel> = {
       id: cardSet.id,
       label: (
         <ContextMenu
@@ -256,8 +259,8 @@ export function SetTreeView(props: LeftPanelProps) {
           {cardSet.treeItemLabel}
         </ContextMenu>
       ),
-      isExpanded: false,
-      isSelected: false,
+      isExpanded: cardSet.isExpanded,
+      isSelected: cardSet.isSelected,
       nodeData: cardSet
     };
     return node;

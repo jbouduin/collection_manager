@@ -1,7 +1,7 @@
 import { H3, H5 } from "@blueprintjs/core";
 import * as React from "react";
+import { MtgCardSetDto } from "../../../../../../common/dto";
 import { getRarityColorClassname } from "../../../../../common/utils";
-import { CardSetViewmodel } from "../../../../viewmodels";
 import { CardSetContext } from "../../../context";
 import { SvgProvider } from "../../svg-provider/svg-provider";
 import { CardHeaderViewProps } from "./card-header-view.props";
@@ -12,13 +12,13 @@ export function CardHeaderView(props: CardHeaderViewProps) {
   return (
     <CardSetContext.Consumer>
       {
-        (cardSets: Array<CardSetViewmodel>) => (
+        (cardSets: Array<MtgCardSetDto>) => (
           <>
             <div className="card-header-line-1">
               <SvgProvider
                 className={getRarityColorClassname(props.card.rarity)}
                 height={25}
-                svg={cardSets.find((cardSet: CardSetViewmodel) => cardSet.id == props.card.setId)?.cardSetSvg}
+                svg={cardSets.find((cardSet: MtgCardSetDto) => cardSet.id == props.card.setId)?.svg}
                 width={25}
               />
               <H3>{props.card.cardName}</H3>

@@ -5,7 +5,7 @@ import * as React from "react";
 import { CardConditionDto, ConfigurationDto, LanguageDto, MtgCardSetDto } from "../../../../common/dto";
 import { AfterSplashScreenClose } from "../../../common/collection-manager.props";
 import { DisplayValueService, DisplayValueServiceContext, IpcProxyService, IpcProxyServiceContext } from "../../../common/context";
-import { CardConditionViewmodel, CardSetViewmodel } from "../../viewmodels";
+import { CardConditionViewmodel } from "../../viewmodels";
 import { CardConditionContext, CardSetContext, CardSymbolContext, ConfigurationContext, LanguagesContext } from "../context";
 import { ButtonBar } from "./button-bar/button-bar";
 import { EDesktopView } from "./desktop-view.enum";
@@ -21,7 +21,7 @@ export function Desktop(props: Props) {
   const initialState: DesktopState = {
     initialized: false,
     cardConditions: new Array<CardConditionViewmodel>(),
-    cardSets: new Array<CardSetViewmodel>(),
+    cardSets: new Array<MtgCardSetDto>(),
     currentView: EDesktopView.Database,
     languages: new Array<LanguageDto>(),
     rendererConfiguration: null,
@@ -56,9 +56,7 @@ export function Desktop(props: Props) {
           ]).then(
             ([cardSymbols, cardSets, languages, cardConditions]) => {
               newState.symbolSvgs = cardSymbols;
-              newState.cardSets = cardSets
-                .sort((a: MtgCardSetDto, b: MtgCardSetDto) => a.name.localeCompare(b.name))
-                .map((cardSet: MtgCardSetDto) => new CardSetViewmodel(cardSet));
+              newState.cardSets = cardSets.sort((a: MtgCardSetDto, b: MtgCardSetDto) => a.name.localeCompare(b.name));
               newState.languages = languages;
               newState.cardConditions = cardConditions.map((condition: CardConditionDto) => new CardConditionViewmodel(condition));
               newState.initialized = true;
@@ -103,9 +101,7 @@ export function Desktop(props: Props) {
       if (afterSplashScreenClose.includes("CardSets")) {
         promises.push(ipcProxyService
           .getData<Array<MtgCardSetDto>>("/card-set")
-          .then((r: Array<MtgCardSetDto>) => newState.cardSets = r
-            .sort((a: MtgCardSetDto, b: MtgCardSetDto) => a.name.localeCompare(b.name))
-            .map((cardSet: MtgCardSetDto) => new CardSetViewmodel(cardSet))));
+          .then((r: Array<MtgCardSetDto>) => newState.cardSets = r.sort((a: MtgCardSetDto, b: MtgCardSetDto) => a.name.localeCompare(b.name))));
       }
       Promise.all(promises).then(
         () => setDesktopState(newState),

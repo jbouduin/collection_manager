@@ -3,8 +3,9 @@ import * as React from "react";
 import { BaseTreeViewProps } from "./base-tree-view.props";
 import { BaseTreeViewReducer, getTreeNodeItemsRecursive } from "./base-tree-view.reducer";
 import { NodePath } from "./types";
+import { BaseTreeNodeViewmodel } from "./base-tree-node.viewmodel";
 
-export function BaseTreeView<TData, TFilter>(props: BaseTreeViewProps<TData, TFilter>) {
+export function BaseTreeView<TData extends BaseTreeNodeViewmodel, TFilter>(props: BaseTreeViewProps<TData, TFilter>) {
   //#region State -------------------------------------------------------------
   const [nodes, dispatch] = React.useReducer(BaseTreeViewReducer, undefined);
   //#endregion

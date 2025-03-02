@@ -1,11 +1,11 @@
-import { LanguageDto, RendererConfigurationDto } from "../../../../common/dto";
-import { CardConditionViewmodel, CardSetViewmodel } from "../../viewmodels";
+import { LanguageDto, MtgCardSetDto, RendererConfigurationDto } from "../../../../common/dto";
+import { CardConditionViewmodel } from "../../viewmodels";
 import { EDesktopView } from "./desktop-view.enum";
 
 
 export interface DesktopState {
   cardConditions: Array<CardConditionViewmodel>;
-  cardSets: Array<CardSetViewmodel>;
+  cardSets: Array<MtgCardSetDto>;
   currentView: EDesktopView;
   initialized: boolean;
   languages: Array<LanguageDto>;

@@ -47,18 +47,3 @@ export class CollectionViewmodel extends BaseViewmodel<CollectionDto> {
     super(dto);
   }
 }
-
-export class CollectionTreeViewmodel extends CollectionViewmodel {
-  //#region Pbulic fields -----------------------------------------------------
-  public isSelected: boolean;
-  public isExpanded: boolean;
-  //#endregion
-
-  //#region Constructor -------------------------------------------------------
-  public constructor(dto: CollectionDto, isSelected: boolean, isExpanded: boolean) {
-    super(dto);
-    this.isSelected = isSelected;
-    this.isExpanded = isExpanded;
-  }
-  //#endregion
-}

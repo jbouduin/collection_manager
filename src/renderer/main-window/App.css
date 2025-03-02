@@ -23,7 +23,6 @@ body {
 }
 
 .button-bar {
-  /* float: inline-start; */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -187,14 +186,6 @@ img.rotate-180 {
   height: 100%;
 }
 
-/* .no-left-padding {
-  padding-left: 0px;
-}
-
-.zero-padding-left {
-  padding-left: 0px;
-} */
-
 .splash-window {
   width: 900px;
 }
@@ -209,9 +200,6 @@ img.rotate-180 {
   color: white;
 }
 
-
-
-
-.bp5-tree-node:last-child {
+.bp5-tree-root:last-child {
   margin-bottom: 10px;
 }

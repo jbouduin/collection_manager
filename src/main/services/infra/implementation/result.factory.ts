@@ -74,12 +74,12 @@ export class ResultFactory implements IResultFactory {
     return Promise.resolve(this.createNotFoundResult(resource));
   }
 
-  public createNotImplementedResult<T>(data: T): IResult<T> {
-    return new Result<T>(EIpcStatus.NotImplemented, data);
+  public createNotImplementedResult<T>(): IResult<T> {
+    return new Result<T>(EIpcStatus.NotImplemented);
   }
 
-  public createNotImplementedResultPromise<T>(data: T): Promise<IResult<T>> {
-    return Promise.resolve(this.createNotImplementedResult(data));
+  public createNotImplementedResultPromise<T>(): Promise<IResult<T>> {
+    return Promise.resolve(this.createNotImplementedResult());
   }
 
   public createSuccessResult<T>(data: T): IResult<T> {

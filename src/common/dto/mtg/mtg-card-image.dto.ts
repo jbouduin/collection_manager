@@ -1,4 +1,4 @@
-import { CardSide, ImageSize } from "../../../types";
+import { CardSide, ImageSize } from "../../types";
 
 
 export interface MtgCardImageDataDto {

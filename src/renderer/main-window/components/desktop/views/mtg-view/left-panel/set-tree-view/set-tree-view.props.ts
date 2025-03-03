@@ -1,4 +1,4 @@
-import { DatabaseTreeViewConfigurationDto } from "../../../../../../../../common/dto";
+import { MtgSetTreeViewConfigurationDto } from "../../../../../../../../common/dto";
 import { CollectionManagerProps } from "../../../../../../../common/collection-manager.props";
 import { CardSetViewmodel } from "../../../../../../viewmodels";
 import { CardSetTreeViewmodel } from "../../../../../../viewmodels/card-set/card-set-tree.viewmodel";
@@ -6,6 +6,6 @@ import { CardSetTreeViewmodel } from "../../../../../../viewmodels/card-set/card
 
 export interface LeftPanelProps extends CollectionManagerProps {
   cardSets: Array<CardSetTreeViewmodel>;
-  configuration: DatabaseTreeViewConfigurationDto;
+  configuration: MtgSetTreeViewConfigurationDto;
   onSetsSelected: (sets: Array<CardSetViewmodel>) => void;
 }

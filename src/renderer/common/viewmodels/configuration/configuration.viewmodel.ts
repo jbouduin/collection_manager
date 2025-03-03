@@ -44,7 +44,7 @@ export class ConfigurationViewModel extends BaseViewmodel<ConfigurationDto> {
 
   public set databaseViewConfigurationViewmodel(value: MtgViewTreeConfigurationViewmodel) {
     this._databaseViewTreeConfigurationViewmodel = value;
-    this._dto.rendererConfiguration.databaseViewTreeConfiguration = value.dto;
+    this._dto.rendererConfiguration.mtgSetTreeViewConfiguration = value.dto;
   }
 
   public get dataConfigurationViewmodel(): DataConfigurationViewmodel {
@@ -62,7 +62,7 @@ export class ConfigurationViewModel extends BaseViewmodel<ConfigurationDto> {
     super(dtoConfiguration);
     this._isFirstUse = isFirstUse;
     this._syncParamViewmodel = new SyncParamViewmodel(dtoConfiguration.syncAtStartupConfiguration);
-    this._databaseViewTreeConfigurationViewmodel = new MtgViewTreeConfigurationViewmodel(dtoConfiguration.rendererConfiguration.databaseViewTreeConfiguration);
+    this._databaseViewTreeConfigurationViewmodel = new MtgViewTreeConfigurationViewmodel(dtoConfiguration.rendererConfiguration.mtgSetTreeViewConfiguration);
     this._dataConfigurationViewmodel = new DataConfigurationViewmodel(dtoConfiguration.dataConfiguration);
   }
   //#endregion

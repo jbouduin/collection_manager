@@ -39,7 +39,7 @@ export function MtgView(props: MtgViewProps) {
               <Panel defaultSize={20}>
                 <LeftPanel
                   {...props}
-                  configuration={configuration.databaseViewTreeConfiguration}
+                  configuration={configuration.mtgSetTreeViewConfiguration}
                   onSearch={(queryString: string) => setState({queryString: queryString, selectedSet: null, selectedCards: null})}
                   onSetsSelected={(sets: Array<CardSetViewmodel>) => setState({ selectedSet: sets[0], queryString: null, selectedCards: null })}
                 />

@@ -149,7 +149,7 @@ export class ConfigurationService extends BaseService implements IConfigurationS
     const result: RendererConfigurationDto = {
       useDarkTheme: useDarkTheme,
       logServerResponses: false,
-      databaseViewTreeConfiguration: {
+      mtgSetTreeViewConfiguration: {
         cardSetSort: "releaseDateDescending",
         cardSetGroupBy: "parent",
         cardSetTypeFilter: [

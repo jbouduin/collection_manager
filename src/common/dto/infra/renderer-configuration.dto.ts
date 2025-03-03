@@ -1,9 +1,9 @@
-import { DatabaseTreeViewConfigurationDto } from "./database-view-tree-configuration.dto";
+import { MtgSetTreeViewConfigurationDto } from "../mtg/mtg-set-tree-configuration.dto";
 
 export interface RendererConfigurationDto {
   useDarkTheme: boolean;
   logServerResponses: boolean;
-  databaseViewTreeConfiguration: DatabaseTreeViewConfigurationDto;
+  mtgSetTreeViewConfiguration: MtgSetTreeViewConfigurationDto;
   /*
    * FEATURE settings for all center panels
    * for all views ->

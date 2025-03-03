@@ -1,5 +1,5 @@
 import { Selectable } from "kysely";
-import { CardfaceTable } from "../../../../main/database/schema";
+import { CardfaceTable } from "../../../main/database/schema";
 import { CardfaceColorDto, OracleDto } from "./types";
 
 

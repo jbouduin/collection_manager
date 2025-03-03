@@ -1,4 +1,4 @@
-import { CardRarity, CatalogType, GameFormat, MTGColor } from "../../../types";
+import { CardRarity, CatalogType, GameFormat, MTGColor } from "../../types";
 import { CatalogItemDto } from "../master-data";
 
 export type QueryParamToken =

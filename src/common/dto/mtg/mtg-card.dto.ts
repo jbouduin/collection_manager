@@ -1,5 +1,5 @@
 import { Selectable } from "kysely";
-import { CardTable } from "../../../../main/database/schema";
+import { CardTable } from "../../../main/database/schema";
 import { MtgCardColorDto } from "./mtg-card-color.dto";
 import { MtgCardfaceDto } from "./mtg-card-face.dto";
 import { MtgCardLanguageDto } from "./mtg-card-language.dto";

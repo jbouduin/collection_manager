@@ -1,8 +1,8 @@
-import { DatabaseTreeViewConfigurationDto } from "../../../../common/dto";
+import { MtgSetTreeViewConfigurationDto } from "../../../../common/dto";
 import { CardSetGroupBy, CardSetSort, CardSetType } from "../../../../common/types";
 import { BaseViewmodel } from "../base.viewmodel";
 
-export class MtgViewTreeConfigurationViewmodel extends BaseViewmodel<DatabaseTreeViewConfigurationDto> {
+export class MtgViewTreeConfigurationViewmodel extends BaseViewmodel<MtgSetTreeViewConfigurationDto> {
   //#region public fields -----------------------------------------------------
   public cardSetFilterValue: string;
   //#endregion
@@ -30,7 +30,7 @@ export class MtgViewTreeConfigurationViewmodel extends BaseViewmodel<DatabaseTre
   //#endregion
 
   //#region Constructor -------------------------------------------------------
-  public constructor(dtoConfiguration: DatabaseTreeViewConfigurationDto) {
+  public constructor(dtoConfiguration: MtgSetTreeViewConfigurationDto) {
     super(dtoConfiguration);
   }
   //#endregion

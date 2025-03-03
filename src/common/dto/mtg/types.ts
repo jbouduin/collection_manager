@@ -1,5 +1,5 @@
 import { Selectable } from "kysely";
-import { CardFaceColorMapTable, LanguageTable, OracleLegalityTable, OracleRulingLineTable, OracleTable } from "../../../../main/database/schema";
+import { CardFaceColorMapTable, LanguageTable, OracleLegalityTable, OracleRulingLineTable, OracleTable } from "../../../main/database/schema";
 
 
 export type CardfaceColorDto = Selectable<CardFaceColorMapTable>;

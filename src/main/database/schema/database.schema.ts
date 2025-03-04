@@ -1,16 +1,10 @@
-import {
-  CardTable, CardCardMapTable, CardGameTable, CardMultiverseIdTable,
-  CardfaceTable, CardFaceColorMapTable,
-  OracleTable, OracleKeywordTable, OracleLegalityTable, OracleRulingTable, OracleRulingLineTable,
-  CardSetTable, CatalogItemTable, ColorTable, LanguageTable,
-  CardSymbolAlternativeTable, CardSymbolColorMapTable, CardSymbolTable,
-  CardColorMapTable,
-  CollectionTable,
-  CardConditionTable,
-  OwnedCardTable,
-  CatalogTypeTable
-} from ".";
-import { OwnedCardCollectionMapTable } from "./collection/owned-card-collection-map.table";
+
+import { CardCardMapTable, CardColorMapTable, CardFaceColorMapTable, CardfaceTable, CardGameTable, CardMultiverseIdTable, CardTable } from "./card";
+import { CardSymbolAlternativeTable, CardSymbolColorMapTable, CardSymbolTable } from "./card-symbol";
+import { CardConditionTable, CollectionTable, OwnedCardCollectionMapTable, OwnedCardTable } from "./collection";
+import { DeckCardTable, DeckTable } from "./deck";
+import { CardSetTable, CatalogItemTable, CatalogTypeTable, ColorTable, LanguageTable } from "./master-data";
+import { OracleKeywordTable, OracleLegalityTable, OracleRulingLineTable, OracleRulingTable, OracleTable } from "./oracle";
 
 
 export interface DatabaseSchema {
@@ -51,5 +45,10 @@ export interface DatabaseSchema {
   collection: CollectionTable;
   owned_card: OwnedCardTable;
   owned_card_collection_map: OwnedCardCollectionMapTable;
+  //#endregion
+
+  //#region Deck --------------------------------------------------------------
+  deck: DeckTable;
+  deck_card: DeckCardTable;
   //#endregion
 }

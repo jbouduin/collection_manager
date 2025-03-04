@@ -3,8 +3,7 @@ import { ItemRendererProps, MultiSelect } from "@blueprintjs/select";
 import { cloneDeep } from "lodash";
 import * as React from "react";
 import { ColorDto } from "../../../../../../../../common/dto";
-import { highlightText } from "../../../../../../../common/components/highlight-text";
-import { CardSymbolRenderer } from "../../../../../common/card-symbol-renderer";
+import { CardSymbolRenderer, highlightText } from "../../../../../../../shared/components";
 import { ColorSelectProps } from "./color-select.props ";
 
 

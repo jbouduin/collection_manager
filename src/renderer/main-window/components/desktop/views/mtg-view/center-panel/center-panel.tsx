@@ -1,11 +1,10 @@
 import * as React from "react";
 import { LanguageDto, MtgCardListDto, MtgCardSetDto } from "../../../../../../../common/dto";
 import { MTGLanguage } from "../../../../../../../common/types";
-import { IpcProxyService, IpcProxyServiceContext } from "../../../../../../common/context";
-import { BaseCardsTableView } from "../../../../../components/common/base-cards-table-view/base-cards-table-view";
+import { BaseCardsTableView, BaseLookupResult, CardSetColumn, CardSetLookupResult, CollectiorNumberColumn, ColorIdentityColumn, GenericTextColumn, GenericTextLookupResult, IBaseColumn, ManaCostColumn } from "../../../../../../shared/components";
+import { IpcProxyService, IpcProxyServiceContext } from "../../../../../../shared/context";
 import { CardSetContext, LanguagesContext } from "../../../../../components/context";
 import { MtgCardListViewmodel } from "../../../../../viewmodels";
-import { BaseLookupResult, CardSetColumn, CardSetLookupResult, CollectiorNumberColumn, ColorIdentityColumn, IBaseColumn, ManaCostColumn, TextColumn, TextLookupResult } from "../../../../common/base-cards-table-view/columns";
 import { CenterPanelProps } from "./center-panel.props";
 
 
@@ -15,7 +14,7 @@ export function CenterPanel(props: CenterPanelProps) {
   const [cards, setCards] = React.useState<Array<MtgCardListViewmodel>>(initialState);
   //#endregion
 
-  //#region Context ---------------------------------------------------------------------
+  //#region Context -----------------------------------------------------------
   const cardSetContext = React.useContext<Array<MtgCardSetDto>>(CardSetContext);
   const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
   const languagesContext = React.useContext<Array<LanguageDto>>(LanguagesContext);
@@ -50,98 +49,105 @@ export function CenterPanel(props: CenterPanelProps) {
   );
   //#endregion
 
-  //#region Rednering ---------------------------------------------------------
+  //#region Memo --------------------------------------------------------------
+  const sortableColumnDefinitions = React.useMemo(
+    () => {
+      const result = new Array<IBaseColumn<MtgCardListViewmodel, BaseLookupResult>>();
+      result.push(new CollectiorNumberColumn<MtgCardListViewmodel>(
+        0,
+        "Number",
+        (card: MtgCardListViewmodel) => {
+          return { defaultSortColumn: card.collectorNumberSortValue, displayValue: card.collectorNumber };
+        }
+      ));
+      result.push(new GenericTextColumn<MtgCardListViewmodel>(
+        1,
+        "Rarity",
+        (card: MtgCardListViewmodel) => {
+          return { defaultSortColumn: card.collectorNumberSortValue, textValue: card.rarity };
+        }
+      ));
+      result.push(new GenericTextColumn<MtgCardListViewmodel>(
+        2,
+        "Name",
+        (card: MtgCardListViewmodel) => {
+          return { defaultSortColumn: card.collectorNumberSortValue, textValue: card.cardName };
+        }
+      ));
+      result.push(new GenericTextColumn<MtgCardListViewmodel>(
+        3,
+        "Type",
+        (card: MtgCardListViewmodel) => {
+          return { defaultSortColumn: card.collectorNumberSortValue, textValue: card.cardTypeLine };
+        }
+      ));
+      result.push(new ManaCostColumn<MtgCardListViewmodel>(
+        5,
+        "Mana cost",
+        (card: MtgCardListViewmodel) => {
+          return { defaultSortColumn: card.collectorNumberSortValue, convertedManaCost: card.convertedManaCostSortValue, symbols: card.cardManacost };
+        }
+      ));
+      result.push(new CardSetColumn<MtgCardListViewmodel>(6, "Set", (card: MtgCardListViewmodel) => cardSetCallback(card)));
+      result.push(new GenericTextColumn<MtgCardListViewmodel>(
+        6,
+        "Power",
+        (card: MtgCardListViewmodel) => {
+          return { defaultSortColumn: card.collectorNumberSortValue, textValue: card.cardPower };
+        }
+      ));
+      result.push(new GenericTextColumn<MtgCardListViewmodel>(
+        7,
+        "Thoughness",
+        (card: MtgCardListViewmodel) => {
+          return { defaultSortColumn: card.collectorNumberSortValue, textValue: card.cardThoughness };
+        }
+      ));
+      result.push(new ColorIdentityColumn<MtgCardListViewmodel>(
+        8,
+        "CI",
+        (card: MtgCardListViewmodel) => {
+          return {
+            defaultSortColumn: card.collectorNumberSortValue,
+            colorIdentitySortValue: card.coloridentitySortValue,
+            symbols: card.colorIdentity
+          };
+        }
+      ));
+      result.push(new GenericTextColumn<MtgCardListViewmodel>(
+        9,
+        "Languages",
+        (card: MtgCardListViewmodel) => languageCallback(card)
+      ));
+      return result;
+    },
+    []
+  );
+  //#endregion
+
+  //#region Rendering ---------------------------------------------------------
   return (
     <BaseCardsTableView<MtgCardListViewmodel>
       data={cards}
       onCardsSelected={(cards?: Array<MtgCardListViewmodel>) => props.onCardsSelected(cards)}
-      sortableColumnDefintions={getSortableColumnDefinitions()}
+      sortableColumnDefintions={sortableColumnDefinitions}
     />
   );
   //#endregion
 
   //#region Auxiliary methods -------------------------------------------------
-  function getSortableColumnDefinitions(): Array<IBaseColumn<MtgCardListViewmodel, BaseLookupResult>> {
-    const result = new Array<IBaseColumn<MtgCardListViewmodel, BaseLookupResult>>();
-    result.push(new CollectiorNumberColumn<MtgCardListViewmodel>(
-      0,
-      "Number",
-      (card: MtgCardListViewmodel) => {
-        return { collectorNumberSortValue: card.collectorNumberSortValue, displayValue: card.collectorNumber };
-      }
-    ));
-    result.push(new TextColumn<MtgCardListViewmodel>(
-      1,
-      "Rarity",
-      (card: MtgCardListViewmodel) => {
-        return { collectorNumberSortValue: card.collectorNumberSortValue, textValue: card.rarity };
-      }
-    ));
-    result.push(new TextColumn<MtgCardListViewmodel>(
-      2,
-      "Name",
-      (card: MtgCardListViewmodel) => {
-        return { collectorNumberSortValue: card.collectorNumberSortValue, textValue: card.cardName };
-      }
-    ));
-    result.push(new TextColumn<MtgCardListViewmodel>(
-      3,
-      "Type",
-      (card: MtgCardListViewmodel) => {
-        return { collectorNumberSortValue: card.collectorNumberSortValue, textValue: card.cardTypeLine };
-      }
-    ));
-    result.push(new ManaCostColumn<MtgCardListViewmodel>(
-      5,
-      "Mana cost",
-      (card: MtgCardListViewmodel) => {
-        return { collectorNumberSortValue: card.collectorNumberSortValue, convertedManaCost: card.convertedManaCostSortValue, symbols: card.cardManacost };
-      }
-    ));
-    result.push(new CardSetColumn<MtgCardListViewmodel>(6, "Set", (card: MtgCardListViewmodel) => cardSetCallback(card)));
-    result.push(new TextColumn<MtgCardListViewmodel>(
-      6,
-      "Power",
-      (card: MtgCardListViewmodel) => {
-        return { collectorNumberSortValue: card.collectorNumberSortValue, textValue: card.cardPower };
-      }
-    ));
-    result.push(new TextColumn<MtgCardListViewmodel>(
-      7,
-      "Thoughness",
-      (card: MtgCardListViewmodel) => {
-        return { collectorNumberSortValue: card.collectorNumberSortValue, textValue: card.cardThoughness };
-      }
-    ));
-    result.push(new ColorIdentityColumn<MtgCardListViewmodel>(
-      8,
-      "CI",
-      (card: MtgCardListViewmodel) => {
-        return {
-          collectorNumberSortValue: card.collectorNumberSortValue,
-          colorIdentitySortValue: card.coloridentitySortValue,
-          symbols: card.colorIdentity
-        };
-      }
-    ));
-    result.push(new TextColumn<MtgCardListViewmodel>(
-      9,
-      "Languages",
-      (card: MtgCardListViewmodel) => languageCallback(card)
-    ));
-    return result;
-  }
+
 
   function cardSetCallback(card: MtgCardListViewmodel): CardSetLookupResult {
     const cardSet = cardSetContext.find((set: MtgCardSetDto) => set.id == card.setId);
     return cardSet
-      ? { collectorNumberSortValue: card.collectorNumberSortValue, cardSetName: cardSet.name, svg: undefined, rarity: card.rarity }
-      : { collectorNumberSortValue: card.collectorNumberSortValue, cardSetName: card.setId, svg: undefined, rarity: card.rarity };
+      ? { defaultSortColumn: card.collectorNumberSortValue, cardSetName: cardSet.name, svg: undefined, rarity: card.rarity }
+      : { defaultSortColumn: card.collectorNumberSortValue, cardSetName: card.setId, svg: undefined, rarity: card.rarity };
   }
 
-  function languageCallback(card: MtgCardListViewmodel): TextLookupResult {
+  function languageCallback(card: MtgCardListViewmodel): GenericTextLookupResult {
     return {
-      collectorNumberSortValue: card.collectorNumberSortValue,
+      defaultSortColumn: card.collectorNumberSortValue,
       textValue: card.languages
         .map((language: MTGLanguage) => {
           const languageDef = languagesContext.find((lng: LanguageDto) => lng.id == language);

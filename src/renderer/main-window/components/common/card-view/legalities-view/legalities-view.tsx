@@ -1,9 +1,9 @@
 import { HTMLTable, Intent, Tag } from "@blueprintjs/core";
 import * as React from "react";
 import { LegalityDto } from "../../../../../../common/dto";
-import { DisplayValueService, DisplayValueServiceContext, IpcProxyService, IpcProxyServiceContext } from "../../../../../common/context";
+import { DisplayValueService, DisplayValueServiceContext, IpcProxyService, IpcProxyServiceContext } from "../../../../../shared/context";
 import { LegalitiesViewProps } from "./legalities-view.props";
-import { compareClassNameProp } from "../../../../../common/utils";
+import { compareClassNameProp } from "../../../../../shared/components";
 
 export const LegalitiesView = React.memo(
   (props: LegalitiesViewProps) => {

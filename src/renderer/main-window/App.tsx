@@ -1,7 +1,7 @@
 import { BlueprintProvider, FocusStyleManager, OverlayToaster, Position, ToastProps } from "@blueprintjs/core";
 import * as React from "react";
 import { createRoot } from "react-dom/client";
-import { IpcProxyService, IpcProxyServiceContext } from "../common/context";
+import { IpcProxyService, IpcProxyServiceContext } from "../shared/context";
 import { Desktop } from "./components/desktop/desktop";
 
 

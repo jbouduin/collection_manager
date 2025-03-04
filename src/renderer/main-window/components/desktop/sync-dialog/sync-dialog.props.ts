@@ -1,5 +1,5 @@
 import { SyncParamDto } from "../../../../../common/dto";
-import { BaseDialogProps } from "../../../../common/components/base-dialog-props";
+import { BaseDialogProps } from "../../../../shared/components";
 
 
 export interface SyncDialogProps extends BaseDialogProps {

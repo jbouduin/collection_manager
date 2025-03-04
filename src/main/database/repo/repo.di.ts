@@ -9,8 +9,9 @@ import { CollectionRepository } from "./implementation/collection.repository";
 import { ColorRepository } from "./implementation/color-repository";
 import { LanguageRepository } from "./implementation/language.repository";
 import { OracleRepository } from "./implementation/oracle.repository";
-import { ICardConditionRepository, ICardRepository, ICardSetRepository, ICardSymbolRepository, ICatalogRepository, IColorRepository, ILanguageRepository, IOracleRepository } from "./interfaces";
+import { ICardConditionRepository, ICardRepository, ICardSetRepository, ICardSymbolRepository, ICatalogRepository, IColorRepository, IDeckRepository, ILanguageRepository, IOracleRepository } from "./interfaces";
 import { ICollectionRepository } from "./interfaces/collection.repository";
+import { DeckRepository } from "./implementation/deck.repository";
 
 
 export class RepositoryDi {
@@ -21,6 +22,7 @@ export class RepositoryDi {
     container.register<ICatalogRepository>(REPOSITORIES.CatalogRepository, { useClass: CatalogRepository });
     container.register<IColorRepository>(REPOSITORIES.ColorRepository, { useClass: ColorRepository });
     container.register<ICollectionRepository>(REPOSITORIES.CollectionRepository, { useClass: CollectionRepository });
+    container.register<IDeckRepository>(REPOSITORIES.DeckRepository, { useClass: DeckRepository });
     container.register<ILanguageRepository>(REPOSITORIES.LanguageRepository, { useClass: LanguageRepository });
     container.register<IOracleRepository>(REPOSITORIES.OracleRepository, { useClass: OracleRepository });
     container.register<ICardSymbolRepository>(REPOSITORIES.CardSymbolRepository, { useClass: CardSymbolRepository });

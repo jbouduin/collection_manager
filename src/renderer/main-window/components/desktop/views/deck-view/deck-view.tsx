@@ -1,16 +1,87 @@
-import { Button, Card, H1, Section } from "@blueprintjs/core";
+import { Button } from "@blueprintjs/core";
+import { Region, SelectionModes, Table2, Utils } from "@blueprintjs/table";
 import * as React from "react";
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
+import { DeckListDto, SyncParamDto } from "../../../../../../common/dto";
+import { BaseLookupResult, GenericTextColumn, IBaseColumn } from "../../../../../shared/components";
+import { DisplayValueService, DisplayValueServiceContext, IpcProxyService, IpcProxyServiceContext } from "../../../../../shared/context";
+import { DeckListViewmodel } from "../../../../viewmodels";
 import { DeckViewProps } from "./deck-view.props";
-import { IpcProxyService, IpcProxyServiceContext } from "../../../../../common/context";
-import { SyncParamDto } from "../../../../../../common/dto";
 
 
 export function DeckView(props: DeckViewProps) {
-  //#region Context ---------------------------------------------------------------------
+  //#region State -----------------------------------------------------------------------
+  const [decks, SetDecks] = React.useState<Array<DeckListViewmodel>>(new Array<DeckListViewmodel>());
+  // NOW this also exists in base card view table -> create a baseState for this
+  const [sortedIndexMap, setSortedIndexMap] = React.useState<Array<number>>(new Array<number>());
+  //#endregion
+
+  //#region Context -----------------------------------------------------------
   const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
   //#endregion
 
+  //#region Effects -----------------------------------------------------------
+  // NOW use a callback once we are filtering and refreshing table
+  React.useEffect(
+    () => {
+      void ipcProxyService
+        .getData<Array<DeckListDto>>("/deck")
+        .then(
+          (r: Array<DeckListDto>) => SetDecks(r.map((deck: DeckListDto) => new DeckListViewmodel(deck))),
+          (_r: Error) => SetDecks(new Array<DeckListViewmodel>())
+        );
+    },
+    []
+  );
+  //#region
+
+  //#region Callbacks ---------------------------------------------------------
+  const sortableColumnDefinitions = React.useCallback(
+    (displayServiceValueService: DisplayValueService) => {
+      const result = new Array<IBaseColumn<unknown, BaseLookupResult>>();
+      result.push(new GenericTextColumn<DeckListViewmodel>(
+        1,
+        "Name",
+        (deck: DeckListViewmodel) => {
+          return { defaultSortColumn: deck.name, textValue: deck.name };
+        }
+      ));
+      result.push(new GenericTextColumn<DeckListViewmodel>(
+        2,
+        "Target format",
+        (deck: DeckListViewmodel) => {
+          return { defaultSortColumn: deck.name, textValue: displayServiceValueService.gameFormatDisplayValues[deck.targetFormat] ?? deck.targetFormat };
+        }
+      ));
+      return result;
+    },
+    []
+  );
+  //#endregion
+
   //#region Event handling --------------------------------------------------------------
+  function selectedRegionTransform(region: Region): Region {
+    if (region.cols) {
+      return { rows: region.rows };
+    } else {
+      return region;
+    }
+  }
+
+  function onSelection(selectedRegions: Array<Region>): void {
+    const selectedDecks = new Array<DeckListViewmodel>();
+    selectedRegions
+      .filter((region: Region) => region.rows)
+      .forEach((region: Region) => {
+        const firstRow = region.rows[0];
+        const lastRow = region.rows[1];
+        for (let cnt = firstRow; cnt <= lastRow; cnt++) {
+          selectedDecks.push(decks[cnt]);
+        }
+      });
+    // NOW props.onCardsSelected(selectedCards);
+  }
+
   function synchronizeCollection(ids: Array<string>): void {
     props.showSplashScreen();
     const params: SyncParamDto = {
@@ -36,14 +107,34 @@ export function DeckView(props: DeckViewProps) {
   }
   //#endregion
 
-  //#region Main --------------------------------------------------------------
+  //#region Rendering ---------------------------------------------------------
   return (
-    <>
-      <Section collapsible={true} collapseProps={{ defaultIsOpen: false }} title="Temporary">
-        <Button onClick={() => synchronizeCollection(getIds())}>Sync every possible layout</Button>
-      </Section>
-      <Section><H1>Here comes the deck-table</H1></Section>
-    </>
+    <DisplayValueServiceContext.Consumer>
+      {
+        (displayServiceValueService: DisplayValueService) => (
+          <PanelGroup direction="horizontal">
+            <Panel defaultSize={20}>
+              <Button onClick={() => synchronizeCollection(getIds())} style={{ margin: "10px" }}>Sync every possible layout</Button>
+            </Panel>
+            <PanelResizeHandle />
+            <Panel>
+              <Table2
+                cellRendererDependencies={[decks, sortedIndexMap]}
+                children={sortableColumnDefinitions(displayServiceValueService).map((c) => c.getColumn(getCellData, sortColumn))}
+                numRows={decks.length}
+                onSelection={onSelection}
+                selectedRegionTransform={selectedRegionTransform}
+                selectionModes={SelectionModes.ROWS_AND_CELLS}
+              />
+            </Panel>
+            <PanelResizeHandle />
+            <Panel defaultSize={20}>
+              Here comes the deck details view
+            </Panel>
+          </PanelGroup>
+        )
+      }
+    </DisplayValueServiceContext.Consumer>
   );
   //#endregion
 
@@ -125,6 +216,22 @@ export function DeckView(props: DeckViewProps) {
       "b18132eb-d4ff-4505-ae07-6876fdc85a19",
       "6cfbc008-21c8-4345-b5ec-e4e360473aaa"
     ];
+  }
+
+  function getCellData<U>(rowIndex: number, valueCallBack: (row: DeckListViewmodel) => U): U {
+    const sortedRowIndex = sortedIndexMap[rowIndex];
+    if (sortedRowIndex != null) {
+      rowIndex = sortedRowIndex;
+    }
+    return valueCallBack(decks[rowIndex]);
+  }
+
+  function sortColumn(comparator: (a: DeckListViewmodel, b: DeckListViewmodel) => number) {
+    const sortedIndexMap = Utils.times(decks.length, (i: number) => i);
+    sortedIndexMap.sort((a: number, b: number) => {
+      return comparator(decks[a], decks[b]);
+    });
+    setSortedIndexMap(sortedIndexMap);
   }
   //#endregion
 }

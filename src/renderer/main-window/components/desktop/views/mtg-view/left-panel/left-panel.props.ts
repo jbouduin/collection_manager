@@ -1,5 +1,5 @@
 import { MtgSetTreeViewConfigurationDto } from "../../../../../../../common/dto";
-import { CollectionManagerProps } from "../../../../../../common/collection-manager.props";
+import { CollectionManagerProps } from "../../../../../../shared/collection-manager.props";
 import { CardSetViewmodel } from "../../../../../viewmodels";
 
 

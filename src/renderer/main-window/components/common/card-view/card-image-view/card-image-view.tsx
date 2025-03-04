@@ -1,9 +1,9 @@
 import { Button, SectionCard } from "@blueprintjs/core";
 import classNames from "classnames";
 import * as React from "react";
+import { compareClassNameProp } from "../../../../../shared/components";
 import { CardImageViewProps } from "./card-image-view.props";
 import { CardImageViewState } from "./card-image-view.state";
-import { compareClassNameProp } from "../../../../../common/utils";
 
 export const CardImageView = React.memo(
   (props: CardImageViewProps) => {
@@ -100,4 +100,4 @@ export const CardImageView = React.memo(
   (prev: CardImageViewProps, next: CardImageViewProps) => {
     return prev.cardId == next.cardId && prev.cardLayout == next.cardLayout && compareClassNameProp(prev.className, next.className);
   }
-)
+);

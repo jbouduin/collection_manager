@@ -8,7 +8,7 @@ import { CenterPanel, CenterPanelProps } from "./center-panel";
 import { LeftPanel } from "./left-panel/left-panel";
 import { MtgViewProps } from "./mtg-view.props";
 import { MtgViewState } from "./mtg-view.state";
-import { compareClassNameProp } from "../../../../../common/utils";
+import { compareClassNameProp } from "../../../../../shared/components";
 
 const CenterPanelMemo = React.memo(
   CenterPanel,

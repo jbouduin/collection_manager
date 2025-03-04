@@ -1,9 +1,9 @@
 import { H5, Section, SectionCard, Tab, Tabs } from "@blueprintjs/core";
 import * as React from "react";
 import { MtgCardDetailDto, MtgCardLanguageDto } from "../../../../../common/dto";
-import { IpcProxyService, IpcProxyServiceContext } from "../../../../common/context";
+import { IpcProxyService, IpcProxyServiceContext } from "../../../../shared/context";
 import { MtgCardDetailViewmodel } from "../../../viewmodels";
-import { CardSymbolRenderer } from "../card-symbol-renderer";
+import { CardSymbolRenderer } from "../../../../shared/components/card-symbol-renderer";
 import { LanguageButtonBar } from "./language-button-bar";
 import { CardfaceView } from "./card-face-view/card-face-view";
 import { CardHeaderView } from "./card-header-view";

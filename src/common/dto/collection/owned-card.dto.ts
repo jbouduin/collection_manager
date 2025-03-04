@@ -1,5 +1,5 @@
 import { Selectable } from "kysely";
-import { OwnedCardTable } from "../../../../main/database/schema";
+import { OwnedCardTable } from "../../../main/database/schema";
 import { MtgCardColorDto, MtgCardDto, MtgCardfaceDto, OracleDto } from "../mtg";
 
 

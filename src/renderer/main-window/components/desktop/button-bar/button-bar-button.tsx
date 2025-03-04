@@ -1,7 +1,7 @@
 import { Button, Popover, Tooltip } from "@blueprintjs/core";
 import * as React from "react";
-import { IpcProxyService, IpcProxyServiceContext } from "../../../../common/context";
-import { SvgProvider } from "../../common/svg-provider/svg-provider";
+import { IpcProxyService, IpcProxyServiceContext } from "../../../../shared/context";
+import { SvgProvider } from "../../../../shared/components/svg-provider/svg-provider";
 import { EButtonBarButtonType } from "./button-bar-button-type.enum";
 import { ButtonBarButtonProps } from "./button-bar-button.props";
 

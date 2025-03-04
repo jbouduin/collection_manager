@@ -1,5 +1,5 @@
 import { EDesktopView } from "../desktop-view.enum";
-import { CollectionManagerProps } from "../../../../common/collection-manager.props";
+import { CollectionManagerProps } from "../../../../shared/collection-manager.props";
 import { ConfigurationDto } from "../../../../../common/dto";
 
 

@@ -1,11 +1,11 @@
 import { Card, Section } from "@blueprintjs/core";
 import classNames from "classnames";
-import * as React from "react";
-import { ConfigurationWrapper } from "../../common/components/configuration/configuration-wrapper/configuration-wrapper";
-import { FirstTimeViewProps } from "./first-time-view.props";
-import { DisplayValueService, DisplayValueServiceContext, IpcProxyService, IpcProxyServiceContext } from "../../common/context";
-import { ConfigurationDto } from "../../../common/dto";
 import { noop } from "lodash";
+import * as React from "react";
+import { ConfigurationDto } from "../../../common/dto";
+import { ConfigurationWrapper } from "../../shared/components";
+import { DisplayValueService, DisplayValueServiceContext, IpcProxyService, IpcProxyServiceContext } from "../../shared/context";
+import { FirstTimeViewProps } from "./first-time-view.props";
 
 export function FirstTimeView(props: FirstTimeViewProps) {
   //#region Rendering ---------------------------------------------------------

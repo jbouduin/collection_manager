@@ -1,3 +1,3 @@
-import { CollectionManagerProps } from "../../../../../common/collection-manager.props";
+import { CollectionManagerProps } from "../../../../../shared/collection-manager.props";
 
 export type DeckViewProps = CollectionManagerProps;

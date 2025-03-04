@@ -1,6 +1,6 @@
 import { CardConditionDto } from "../../../../common/dto";
 import { CardCondition } from "../../../../common/types";
-import { BaseViewmodel } from "../../../common/viewmodels";
+import { BaseViewmodel } from "../../../shared/viewmodels";
 
 
 export class CardConditionViewmodel extends BaseViewmodel<CardConditionDto> {

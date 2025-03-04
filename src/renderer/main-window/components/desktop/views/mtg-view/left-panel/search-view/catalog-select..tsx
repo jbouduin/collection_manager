@@ -3,9 +3,9 @@ import { ItemRendererProps, MultiSelect } from "@blueprintjs/select";
 import { cloneDeep } from "lodash";
 import * as React from "react";
 import { CatalogItemDto } from "../../../../../../../../common/dto";
-import { highlightText } from "../../../../../../../common/components/highlight-text";
+import { highlightText } from "../../../../../../../shared/components";
 import { CatalogSelectProps } from "./catalog-select.props";
-import { IpcProxyService, IpcProxyServiceContext } from "../../../../../../../common/context";
+import { IpcProxyService, IpcProxyServiceContext } from "../../../../../../../shared/context";
 
 export function CatalogSelect(props: CatalogSelectProps) {
   //#region State -------------------------------------------------------------

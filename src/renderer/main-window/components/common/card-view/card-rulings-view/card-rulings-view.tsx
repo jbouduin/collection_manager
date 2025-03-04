@@ -2,9 +2,9 @@ import { Classes, SectionCard } from "@blueprintjs/core";
 import classNames from "classnames";
 import * as React from "react";
 import { RulingLineDto } from "../../../../../../common/dto";
-import { IpcProxyService, IpcProxyServiceContext } from "../../../../../common/context";
+import { IpcProxyService, IpcProxyServiceContext } from "../../../../../shared/context";
 import { CardRulingsViewProps } from "./card-rulings-view.props";
-import { compareClassNameProp } from "../../../../../common/utils";
+import { compareClassNameProp } from "../../../../../shared/components";
 
 export const CardRulingsView = React.memo(
   (props: CardRulingsViewProps) => {

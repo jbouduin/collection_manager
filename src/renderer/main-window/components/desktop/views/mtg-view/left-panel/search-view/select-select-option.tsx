@@ -1,9 +1,9 @@
 import * as React from "react";
 import { SelectSelectOptionProps } from "./select-select-option.props";
-import { SelectOption } from "../../../../../../../common/utils";
+import { SelectOption } from "../../../../../../../shared/components";
 import { ItemRendererProps, MultiSelect } from "@blueprintjs/select";
 import { FormGroup, MenuItem } from "@blueprintjs/core";
-import { highlightText } from "../../../../../../../common/components/highlight-text";
+import { highlightText } from "../../../../../../../shared/components";
 import { cloneDeep } from "lodash";
 
 export function SelectSelectOption<T extends string>(props: SelectSelectOptionProps<T>) {

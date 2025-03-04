@@ -4,5 +4,6 @@ export * from "./card-symbol.repository";
 export * from "./card.repository";
 export * from "./catalog.repository";
 export * from "./color-repository";
+export * from "./deck-repository";
 export * from "./language.repository";
 export * from "./oracle.respository";

@@ -2,9 +2,9 @@ import { Button, Dialog, DialogBody, DialogFooter } from "@blueprintjs/core";
 import { cloneDeep } from "lodash";
 import * as React from "react";
 import { CatalogTypeDto } from "../../../../../common/dto";
-import { SyncParameterView } from "../../../../common/components/sync-parameter-view/sync-parameter-view";
-import { IpcProxyService, IpcProxyServiceContext } from "../../../../common/context";
-import { SyncParamViewmodel } from "../../../../common/viewmodels";
+import { SyncParameterView } from "../../../../shared/components";
+import { IpcProxyService, IpcProxyServiceContext } from "../../../../shared/context";
+import { SyncParamViewmodel } from "../../../../shared/viewmodels";
 import { SyncDialogProps } from "./sync-dialog.props";
 
 

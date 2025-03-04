@@ -1,5 +1,5 @@
 import { CollectionDto } from "../../../../common/dto";
-import { BaseViewmodel } from "../../../common/viewmodels";
+import { BaseViewmodel } from "../../../shared/viewmodels";
 
 
 export class CollectionViewmodel extends BaseViewmodel<CollectionDto> {

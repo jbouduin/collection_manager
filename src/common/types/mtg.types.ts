@@ -1,3 +1,9 @@
+/*
+ * TODO eventually move types that have to be sortable and could extend over time to the database
+ * - Gameformat: can easily extend over time
+ * - Legality: should be sortable
+ *
+ */
 export type BasicLandType = "Plains" | "Island" | "Swamp" | "Mountain" | "Forest";
 export type CardBorderColor = "black" | "borderless" | "gold" | "silver" | "white";
 export type CardFinish = "foil" | "nonfoil" | "etched" | "glossy";

@@ -1,5 +1,5 @@
 import { MtgSetTreeViewConfigurationDto } from "../../../../common/dto";
-import { MtgViewTreeConfigurationViewmodel } from "../../../common/viewmodels";
+import { MtgViewTreeConfigurationViewmodel } from "../../../shared/viewmodels";
 
 
 export class TreeConfigurationViewmodel extends MtgViewTreeConfigurationViewmodel {

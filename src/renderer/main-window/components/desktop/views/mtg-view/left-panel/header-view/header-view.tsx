@@ -2,8 +2,8 @@ import { Button, ButtonGroup, IconName, InputGroup, Menu, MenuDivider, MenuItem,
 import { isEmpty, xor } from "lodash";
 import * as React from "react";
 import { CardSetType } from "../../../../../../../../common/types";
-import { DisplayValueService, DisplayValueServiceContext } from "../../../../../../../common/context";
-import { compareClassNameProp } from "../../../../../../../common/utils";
+import { DisplayValueService, DisplayValueServiceContext } from "../../../../../../../shared/context";
+import { compareClassNameProp } from "../../../../../../../shared/components";
 import { HeaderViewProps } from "./header-view-props";
 
 type PopoverKey = "card-set-group-by-menu" | "card-set-sort-menu" | "card-set-type-filter-menu";

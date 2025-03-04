@@ -2,8 +2,8 @@ import { BlueprintProvider, FocusStyleManager, OverlayToaster, Position, ToastPr
 import * as React from "react";
 import { createRoot } from "react-dom/client";
 import { ConfigurationDto } from "../../common/dto";
-import { IpcProxyService, IpcProxyServiceContext } from "../common/context";
-import { ConfigurationViewModel } from "../common/viewmodels";
+import { IpcProxyService, IpcProxyServiceContext } from "../shared/context";
+import { ConfigurationViewModel } from "../shared/viewmodels";
 import { FirstTimeView } from "./first-time-view/first-time-view";
 
 

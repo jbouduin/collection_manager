@@ -1,5 +1,5 @@
 import { Props } from "@blueprintjs/core";
-import { SelectOption } from "../../../../../../../common/utils";
+import { SelectOption } from "../../../../../../../shared/components";
 
 export interface SelectSelectOptionProps<T extends string> extends Props {
   items: Array<SelectOption<T>>;

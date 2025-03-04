@@ -206,7 +206,13 @@ export class CollectionRepository extends BaseRepository implements ICollectionR
             .deleteFrom("collection")
             .where("collection.id", "=", id)
             .executeTakeFirstOrThrow()
-            .then((r: DeleteResult) => this.resultFactory.createSuccessResult<number>(Number(r.numDeletedRows)));
+            .then((r: DeleteResult) => {
+              if (r.numDeletedRows > 0) {
+                this.resultFactory.createSuccessResult<number>(Number(r.numDeletedRows));
+              } else {
+                return this.resultFactory.createNotFoundResult(`Collection with id '${id}'`);
+              }
+            });
         });
     } catch (err) {
       return this.resultFactory.createExceptionResultPromise<number>(err);

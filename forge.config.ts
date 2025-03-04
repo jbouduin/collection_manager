@@ -53,7 +53,7 @@ const config: ForgeConfig = {
             js: "./src/renderer/main-window/main-window-renderer.ts",
             name: "main_window",
             preload: {
-              js: "./src/renderer/common/preload.ts",
+              js: "./src/renderer/shared/preload.ts",
             },
           },
           {
@@ -61,7 +61,7 @@ const config: ForgeConfig = {
             js: "./src/renderer/first-time/first-time-renderer.ts",
             name: "first_time",
             preload: {
-              js: "./src/renderer/common/preload.ts",
+              js: "./src/renderer/shared/preload.ts",
             },
           },
           {
@@ -69,7 +69,7 @@ const config: ForgeConfig = {
             js: "./src/renderer/splash-window/splash-window-renderer.ts",
             name: "splash_window",
             preload: {
-              js: "./src/renderer/common/preload.ts",
+              js: "./src/renderer/shared/preload.ts",
             },
           },
         ],

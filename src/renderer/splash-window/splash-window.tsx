@@ -1,11 +1,8 @@
-// import "./splash-window.css";
-
 import * as React from "react";
-
 import { BlueprintProvider, FocusStyleManager } from "@blueprintjs/core";
 import { createRoot } from "react-dom/client";
-import { SplashContent } from "../common/components/splash/splash-contents";
-// import { Desktop } from "./components/desktop/desktop";
+import { SplashContent } from "../shared/components";
+
 
 FocusStyleManager.onlyShowFocusOnTabs();
 

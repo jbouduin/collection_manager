@@ -2,9 +2,8 @@ import { FormGroup, MenuItem } from "@blueprintjs/core";
 import { ItemRendererProps, MultiSelect } from "@blueprintjs/select";
 import { cloneDeep } from "lodash";
 import * as React from "react";
-import { highlightText } from "../../../../../../../common/components/highlight-text";
+import { highlightText, SvgProvider } from "../../../../../../../shared/components";
 import { CardSetViewmodel } from "../../../../../../viewmodels";
-import { SvgProvider } from "../../../../../common/svg-provider/svg-provider";
 import { CardSetSelectProps } from "./card-set-select.props";
 
 

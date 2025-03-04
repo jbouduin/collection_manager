@@ -1,9 +1,9 @@
 import { H5, Section, SectionCard, Tab, Tabs } from "@blueprintjs/core";
 import classNames from "classnames";
 import * as React from "react";
-import { CardSymbolRenderer } from "../../card-symbol-renderer";
-import { CardTextView } from "../card-text-view";
+import { CardSymbolRenderer } from "../../../../../shared/components";
 import { CardfaceViewProps } from "./card-face-view.props";
+import { CardTextView } from "../card-text-view";
 
 export function CardfaceView(props: CardfaceViewProps) {
   //#region Rendering ---------------------------------------------------------

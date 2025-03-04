@@ -3,10 +3,6 @@ export const DATABASE = Object.freeze({
   Migration: Symbol("Migration")
 });
 
-export const COLLECTION = Object.freeze({
-  CardQuantityService: "CardQuantityService"
-});
-
 export const INFRASTRUCTURE = Object.freeze({
   BootstrapService: "BootstrapService",
   ConfigurationService: "ConfigurationService",
@@ -31,6 +27,7 @@ export const REPOSITORIES = Object.freeze({
   CatalogRepository: "CatalogRepository",
   CollectionRepository: "CollectionRepository",
   ColorRepository: "ColorRepository",
+  DeckRepository: "DeckRepository",
   LanguageRepository: "LanguageRepository",
   OracleRepository: "OracleRepository"
 });

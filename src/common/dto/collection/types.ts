@@ -1,5 +1,5 @@
 import { Selectable } from "kysely";
-import { CardConditionTable, CollectionTable, OwnedCardCollectionMapTable } from "../../../../main/database/schema";
+import { CardConditionTable, CollectionTable, OwnedCardCollectionMapTable } from "../../../main/database/schema";
 
 
 export type CardConditionDto = Selectable<CardConditionTable>;

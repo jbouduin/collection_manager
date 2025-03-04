@@ -2,13 +2,13 @@ import { ContextMenu, Icon, Menu, MenuDivider, MenuItem, TreeNodeInfo } from "@b
 import { cloneDeep, isEqual, noop } from "lodash";
 import * as React from "react";
 import { CollectionDto } from "../../../../../../../common/dto";
-import { IpcProxyService, IpcProxyServiceContext } from "../../../../../../common/context";
+import { IpcProxyService, IpcProxyServiceContext } from "../../../../../../shared/context";
 import { CollectionTreeViewmodel, TreeConfigurationViewmodel } from "../../../../../viewmodels";
-import { BaseTreeView, BaseTreeViewProps } from "../../../../common/base-tree-view";
+import { BaseTreeView, BaseTreeViewProps } from "../../../../../../shared/components/base-tree-view";
 import { CollectionDialog } from "./collection-dialog/collection-dialog";
 import { DialogData } from "./dialog-data";
 import { LeftPanelProps } from "./left-panel.props";
-import { SvgProvider } from "../../../../common/svg-provider/svg-provider";
+import { SvgProvider } from "../../../../../../shared/components/svg-provider/svg-provider";
 
 const Treeview = React.memo(
   BaseTreeView<CollectionTreeViewmodel, TreeConfigurationViewmodel>,

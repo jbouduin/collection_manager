@@ -3,7 +3,7 @@ import { cloneDeep, noop } from "lodash";
 import * as React from "react";
 import { CollectionDto, OwnedCardCollectionMapDto, OwnedCardQuantityDto } from "../../../../../common/dto";
 import { CardCondition } from "../../../../../common/types";
-import { IpcProxyService, IpcProxyServiceContext } from "../../../../common/context";
+import { IpcProxyService, IpcProxyServiceContext } from "../../../../shared/context";
 import { CardConditionViewmodel, OwnedCardQuantityViewmodel } from "../../../viewmodels";
 import { CardConditionContext } from "../../context";
 import { buildEditableState } from "./build-editable-state";

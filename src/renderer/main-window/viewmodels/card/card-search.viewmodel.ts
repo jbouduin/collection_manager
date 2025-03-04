@@ -1,6 +1,6 @@
 import { CardQueryDto, CatalogItemDto, ColorDto, QUERY_PARAM_LIST_SEPARATOR, QueryParamToken } from "../../../../common/dto";
 import { CardRarity, CatalogType, GameFormat, MTGColor, MTGColorType } from "../../../../common/types";
-import { BaseViewmodel } from "../../../common/viewmodels";
+import { BaseViewmodel } from "../../../shared/viewmodels";
 
 
 export class CardSearchViewmodel extends BaseViewmodel<CardQueryDto> {

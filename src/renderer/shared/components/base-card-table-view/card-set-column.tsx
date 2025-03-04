@@ -1,10 +1,10 @@
 import { Menu, MenuItem } from "@blueprintjs/core";
 import { Cell, CellRenderer } from "@blueprintjs/table";
 import * as React from "react";
-import { BaseColumn, CellLookup, SortCallback } from "../../base-table";
+import { BaseColumn, CellLookup, SortCallback } from "../base-table";
 import { CardSetLookupResult } from "./card-set-lookup-result";
-import { getRarityColorClassname } from "../../utils";
-import { SvgProvider } from "../../svg-provider";
+import { getRarityColorClassname } from "../utils";
+import { SvgProvider } from "../svg-provider";
 
 
 export class CardSetColumn<T> extends BaseColumn<T, CardSetLookupResult> {

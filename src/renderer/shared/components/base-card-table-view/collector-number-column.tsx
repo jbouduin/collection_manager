@@ -1,7 +1,7 @@
 import { Menu, MenuItem } from "@blueprintjs/core";
 import { Cell, CellRenderer } from "@blueprintjs/table";
 import * as React from "react";
-import { BaseColumn, CellLookup, SortCallback } from "../../base-table";
+import { BaseColumn, CellLookup, SortCallback } from "../base-table";
 import { CollectiorNumberLookupResult } from "./collector-number-lookup-result";
 
 

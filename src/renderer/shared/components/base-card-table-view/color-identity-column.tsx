@@ -1,8 +1,8 @@
 import { Menu, MenuItem } from "@blueprintjs/core";
 import { Cell, CellRenderer } from "@blueprintjs/table";
 import * as React from "react";
-import { CardSymbolRenderer } from "../../card-symbol-renderer";
-import { BaseColumn, CellLookup, SortCallback } from "../../base-table";
+import { CardSymbolRenderer } from "../card-symbol-renderer";
+import { BaseColumn, CellLookup, SortCallback } from "../base-table";
 import { ColorIdentityLookupResult } from "./color-identity-lookup-result";
 
 

@@ -6,6 +6,10 @@ export class DeckListViewmodel {
   private readonly _deck: DeckListDto;
   //#endregion
 
+  public get id(): number {
+    return this._deck.id;
+  }
+
   public get name(): string {
     return this._deck.name;
   }

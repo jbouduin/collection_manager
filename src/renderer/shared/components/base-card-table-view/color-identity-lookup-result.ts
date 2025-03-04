@@ -1,4 +1,4 @@
-import { BaseLookupResult } from "../../base-table";
+import { BaseLookupResult } from "../base-table";
 
 
 export interface ColorIdentityLookupResult extends BaseLookupResult {

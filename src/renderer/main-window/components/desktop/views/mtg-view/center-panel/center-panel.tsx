@@ -1,7 +1,7 @@
 import * as React from "react";
 import { LanguageDto, MtgCardListDto, MtgCardSetDto } from "../../../../../../../common/dto";
 import { MTGLanguage } from "../../../../../../../common/types";
-import { BaseCardsTableView, BaseLookupResult, CardSetColumn, CardSetLookupResult, CollectiorNumberColumn, ColorIdentityColumn, GenericTextColumn, GenericTextLookupResult, IBaseColumn, ManaCostColumn } from "../../../../../../shared/components";
+import { BaseCardTableView, BaseLookupResult, CardSetColumn, CardSetLookupResult, CollectiorNumberColumn, ColorIdentityColumn, GenericTextColumn, GenericTextLookupResult, IBaseColumn, ManaCostColumn } from "../../../../../../shared/components";
 import { IpcProxyService, IpcProxyServiceContext } from "../../../../../../shared/context";
 import { CardSetContext, LanguagesContext } from "../../../../../components/context";
 import { MtgCardListViewmodel } from "../../../../../viewmodels";
@@ -127,9 +127,11 @@ export function CenterPanel(props: CenterPanelProps) {
 
   //#region Rendering ---------------------------------------------------------
   return (
-    <BaseCardsTableView<MtgCardListViewmodel>
+    <BaseCardTableView<MtgCardListViewmodel>
       data={cards}
-      onCardsSelected={(cards?: Array<MtgCardListViewmodel>) => props.onCardsSelected(cards)}
+      hideSplashScreen={undefined}
+      onDataSelected={(cards?: Array<MtgCardListViewmodel>) => props.onCardsSelected(cards)}
+      showSplashScreen={undefined}
       sortableColumnDefintions={sortableColumnDefinitions}
     />
   );

@@ -1,40 +1,17 @@
 import { Region, SelectionModes, Table2, Utils } from "@blueprintjs/table";
 import * as React from "react";
-import { BaseCardsTableViewState } from "./base-card-table-view.state";
-import { BaseCardsTableViewProps } from "./base-cards-table-view.props";
+import { BaseTableViewProps } from "../base-table";
+import { onDataSelected, selectedRegionTransformToRowSelection } from "../base-table/base";
+import { BaseCardTableViewState } from "./base-card-table-view.state";
 
-
-export function BaseCardsTableView<T>(props: BaseCardsTableViewProps<T>) {
+export function BaseCardTableView<T>(props: BaseTableViewProps<T>) {
   //#region State -------------------------------------------------------------
   const initialState = {
     sortableColumnDefintions: props.sortableColumnDefintions,
     sortedIndexMap: new Array<number>()
   };
-  const [state, setState] = React.useState<BaseCardsTableViewState>(initialState);
+  const [state, setState] = React.useState<BaseCardTableViewState>(initialState);
   //#endregion
-
-  //#region event handling ----------------------------------------------------
-  function selectedRegionTransform(region: Region): Region {
-    if (region.cols) {
-      return { rows: region.rows };
-    } else {
-      return region;
-    }
-  }
-
-  function onSelection(selectedRegions: Array<Region>): void {
-    const selectedCards = new Array<T>();
-    selectedRegions
-      .filter((region: Region) => region.rows)
-      .forEach((region: Region) => {
-        const firstRow = region.rows[0];
-        const lastRow = region.rows[1];
-        for (let cnt = firstRow; cnt <= lastRow; cnt++) {
-          selectedCards.push(props.data[cnt]);
-        }
-      });
-    props.onCardsSelected(selectedCards);
-  }
 
   //#region Rendering ---------------------------------------------------------
   return (
@@ -43,8 +20,8 @@ export function BaseCardsTableView<T>(props: BaseCardsTableViewProps<T>) {
         cellRendererDependencies={[props.data, state.sortedIndexMap]}
         children={state.sortableColumnDefintions.map((c) => c.getColumn(getCellData, sortColumn))}
         numRows={props.data?.length ?? 0}
-        onSelection={onSelection}
-        selectedRegionTransform={selectedRegionTransform}
+        onSelection={(selectedRegions: Array<Region>) => onDataSelected(selectedRegions, props.data, (selected: Array<T>) => props.onDataSelected(selected))}
+        selectedRegionTransform={(region: Region) => selectedRegionTransformToRowSelection(region)}
         selectionModes={SelectionModes.ROWS_AND_CELLS}
       />
     </div>

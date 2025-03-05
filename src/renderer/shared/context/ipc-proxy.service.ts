@@ -32,7 +32,13 @@ export class IpcProxyService {
 
     return window.ipc.data("DELETE", request)
       .then(
-        (response: IpcResponse<never>) => this.processIpcResponse(response),
+        (response: IpcResponse<number>) => {
+          if (response.status >= EIpcStatus.BadRequest) {
+            return this.processIpcErrorResponse(response);
+          } else {
+            return this.processIpcResponse(response)
+          }
+        },
         (reason: Error) => this.processIpcRejection(reason)
       );
   }
@@ -44,7 +50,13 @@ export class IpcProxyService {
     };
     return window.ipc.data("GET", request)
       .then(
-        (response: IpcResponse<T>) => this.processIpcResponse(response),
+        (response: IpcResponse<T>) => {
+          if (response.status >= EIpcStatus.BadRequest) {
+            return this.processIpcErrorResponse(response);
+          } else {
+            return this.processIpcResponse(response)
+          }
+        },
         (reason: Error) => this.processIpcRejection(reason)
       );
   }
@@ -57,7 +69,13 @@ export class IpcProxyService {
     };
     return window.ipc.data("POST", request)
       .then(
-        (response: IpcResponse<U>) => this.processIpcResponse(response),
+        (response: IpcResponse<U>) => {
+          if (response.status >= EIpcStatus.BadRequest) {
+            return this.processIpcErrorResponse(response);
+          } else {
+            return this.processIpcResponse(response)
+          }
+        },
         (reason: Error) => this.processIpcRejection<U>(reason)
       );
   }
@@ -70,7 +88,13 @@ export class IpcProxyService {
     };
     return window.ipc.data("PUT", request)
       .then(
-        (response: IpcResponse<U>) => this.processIpcResponse(response),
+        (response: IpcResponse<U>) => {
+          if (response.status >= EIpcStatus.BadRequest) {
+            return this.processIpcErrorResponse(response);
+          } else {
+            return this.processIpcResponse(response)
+          }
+        },
         (reason: Error) => this.processIpcRejection(reason)
       );
   }
@@ -83,18 +107,20 @@ export class IpcProxyService {
     };
     return window.ipc.data("PATCH", request)
       .then(
-        (response: IpcResponse<U>) => this.processIpcResponse(response),
+        (response: IpcResponse<U>) => {
+          if (response.status >= EIpcStatus.BadRequest) {
+            return this.processIpcErrorResponse(response);
+          } else {
+            return this.processIpcResponse(response)
+          }
+        },
         (reason: Error) => this.processIpcRejection(reason)
       );
   }
   //#endregion
 
   //#region Auxiliary methods -------------------------------------------------
-  private processIpcResponse<T>(response: IpcResponse<T>): T {
-    if (this.logServerResponses) {
-      // eslint-disable-next-line no-console
-      console.log(response);
-    }
+  private processIpcErrorResponse<T>(response: IpcResponse<T>): Promise<never> {
     let errorMessage: string = undefined;
     switch (response.status) {
       case EIpcStatus.BadRequest:
@@ -139,6 +165,14 @@ export class IpcProxyService {
         },
         `POST-${this.getRequestCounter}`
       );
+    }
+    return Promise.reject(new Error(`Server error: ${response.status}`));
+  }
+
+  private processIpcResponse<T>(response: IpcResponse<T>): T {
+    if (this.logServerResponses) {
+      // eslint-disable-next-line no-console
+      console.log(response);
     }
     return response.data;
   }

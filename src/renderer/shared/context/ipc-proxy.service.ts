@@ -36,7 +36,7 @@ export class IpcProxyService {
           if (response.status >= EIpcStatus.BadRequest) {
             return this.processIpcErrorResponse(response);
           } else {
-            return this.processIpcResponse(response)
+            return this.processIpcResponse(response);
           }
         },
         (reason: Error) => this.processIpcRejection(reason)
@@ -54,7 +54,7 @@ export class IpcProxyService {
           if (response.status >= EIpcStatus.BadRequest) {
             return this.processIpcErrorResponse(response);
           } else {
-            return this.processIpcResponse(response)
+            return this.processIpcResponse(response);
           }
         },
         (reason: Error) => this.processIpcRejection(reason)
@@ -73,7 +73,7 @@ export class IpcProxyService {
           if (response.status >= EIpcStatus.BadRequest) {
             return this.processIpcErrorResponse(response);
           } else {
-            return this.processIpcResponse(response)
+            return this.processIpcResponse(response);
           }
         },
         (reason: Error) => this.processIpcRejection<U>(reason)
@@ -92,7 +92,7 @@ export class IpcProxyService {
           if (response.status >= EIpcStatus.BadRequest) {
             return this.processIpcErrorResponse(response);
           } else {
-            return this.processIpcResponse(response)
+            return this.processIpcResponse(response);
           }
         },
         (reason: Error) => this.processIpcRejection(reason)
@@ -111,7 +111,7 @@ export class IpcProxyService {
           if (response.status >= EIpcStatus.BadRequest) {
             return this.processIpcErrorResponse(response);
           } else {
-            return this.processIpcResponse(response)
+            return this.processIpcResponse(response);
           }
         },
         (reason: Error) => this.processIpcRejection(reason)

@@ -16,6 +16,7 @@ export function DatabaseViewConfigurationView(props: DatabaseViewConfigurationVi
             <FormGroup label="Sort sets in tree by" labelFor="sort-sets-by">
               <HTMLSelect
                 id="sort-sets-by"
+                minimal={true}
                 onChange={
                   handleValueChange((value: CardSetSort) => {
                     props.configuration.cardSetSort = value;
@@ -29,6 +30,7 @@ export function DatabaseViewConfigurationView(props: DatabaseViewConfigurationVi
             <FormGroup label="Group sets in tree by" labelFor="group-sets-by">
               <HTMLSelect
                 id="group-sets-by"
+                minimal={true}
                 onChange={
                   handleValueChange((value: CardSetGroupBy) => {
                     props.configuration.cardSetGroupBy = value;

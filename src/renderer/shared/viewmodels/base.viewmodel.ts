@@ -9,7 +9,7 @@ export abstract class BaseViewmodel<T extends object> {
   //#endregion
 
   //#region Auxiliary getters -------------------------------------------------
-  public get dto(): T {
+  public get dto(): Readonly<T> {
     return this._dto;
   }
 

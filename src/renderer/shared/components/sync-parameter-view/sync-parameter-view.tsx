@@ -17,6 +17,7 @@ export function SyncParameterView(props: SyncParameterViewProps) {
             <FormGroup label="Cards" labelFor="card-sync-type">
               <HTMLSelect
                 id="card-sync-type"
+                minimal={true}
                 onChange={
                   handleValueChange((value: CardSyncType) => {
                     props.syncParam.cardSyncType = value;
@@ -38,7 +39,6 @@ export function SyncParameterView(props: SyncParameterViewProps) {
                 </div>
               </FormGroup>
             }
-
             {
               props.syncParam.cardSyncType == "byLastSynchronized" &&
               <FormGroup key="sync-by-last-sync">
@@ -58,6 +58,7 @@ export function SyncParameterView(props: SyncParameterViewProps) {
                     value={props.syncParam.syncCardsSyncedBeforeNumber}
                   />
                   <HTMLSelect
+                    minimal={true}
                     onChange={
                       handleValueChange((value: TimespanUnit) => {
                         props.syncParam.syncCardsSyncedBeforeUnit = value;
@@ -74,6 +75,7 @@ export function SyncParameterView(props: SyncParameterViewProps) {
             <FormGroup label="Rulings" labelFor="rulings-sync-type">
               <HTMLSelect
                 id="rulings-sync-type"
+                minimal={true}
                 onChange={
                   handleValueChange((value: RulingSyncType) => {
                     props.syncParam.rulingSyncType = value;

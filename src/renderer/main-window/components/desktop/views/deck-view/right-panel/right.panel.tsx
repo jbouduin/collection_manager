@@ -5,8 +5,8 @@ import { H2, H3 } from "@blueprintjs/core";
 export function RightPanel(props: RightPanelProps) {
   return (
     <>
-    {
-      props.selectedDeckId != undefined &&
+      {
+        props.selectedDeckId != undefined &&
         <H2>{props.selectedDeckId}</H2>
       }
       {
@@ -14,5 +14,5 @@ export function RightPanel(props: RightPanelProps) {
         <H3>Select a deck to view details</H3>
       }
     </>
-  )
+  );
 }

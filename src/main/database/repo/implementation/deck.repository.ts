@@ -2,7 +2,7 @@ import * as fs from "fs";
 import { DeleteResult, Insertable, InsertResult, sql, Transaction } from "kysely";
 import * as helpers from "kysely/helpers/sqlite";
 import { inject, injectable } from "tsyringe";
-import { DeckListDto } from "../../../../common/dto";
+import { DeckFolderDto, DeckListDto } from "../../../../common/dto";
 import { DeckLegalityDto } from "../../../../common/dto/deck/deck-legalitydto.";
 import { sqliteUTCTimeStamp } from "../../../../common/util";
 import { IResult } from "../../../services/base";
@@ -84,7 +84,22 @@ export class DeckRepository extends BaseRepository implements IDeckRepository {
     }
   }
 
-  public getAll(): Promise<IResult<Array<DeckListDto>>> {
+  public getAllFolders(): Promise<IResult<Array<DeckFolderDto>>> {
+    try {
+      return this.database
+        .selectFrom("deck")
+        .selectAll()
+        // NOW create a helper for this
+        .where(sql`deck.is_folder`, "=", sql`1`)
+        .$castTo<DeckFolderDto>()
+        .execute()
+        .then((qryResult: Array<DeckFolderDto>) => this.resultFactory.createSuccessResult(qryResult));
+    } catch (err) {
+      return this.resultFactory.createExceptionResultPromise<Array<DeckFolderDto>>(err);
+    }
+  }
+
+  public getAllDecksInFolder(folderId: number): Promise<IResult<Array<DeckListDto>>> {
     try {
       return this.database
         .selectFrom("deck")
@@ -107,7 +122,7 @@ export class DeckRepository extends BaseRepository implements IDeckRepository {
                 .$castTo<number>(),
               sql<number>`0`)
             .as("sideBoardSize"),
-          // NOW this logic is not correct - in order to solve it we should be able to sort legality (store in the db ?)
+          // NOW this logic is not correct - in order to solve it we should be able to sort legality (store in the db ?) and game format
           // moreover we should check that restricted cards only are once in the deck
           helpers.jsonArrayFrom(
             eb.selectFrom("deck_card")
@@ -120,6 +135,9 @@ export class DeckRepository extends BaseRepository implements IDeckRepository {
               .where("oracle_legality.legality", "in", ["legal", "restricted"])
           ).as("calculatedFormats")
         ])
+        .where("deck.parent_id", "=", folderId)
+        // NOW create a helper for this
+        .where(sql`deck.is_folder`, "=", sql`0`)
         .$call((sqb) => logCompilable(this.logService, sqb))
         .$castTo<DeckListDto>()
         .execute()

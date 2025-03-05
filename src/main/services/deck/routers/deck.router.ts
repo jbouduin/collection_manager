@@ -1,5 +1,5 @@
 import { container, inject, singleton } from "tsyringe";
-import { DeckListDto } from "../../../../common/dto";
+import { DeckFolderDto, DeckListDto } from "../../../../common/dto";
 import { BaseRouter, DeleteRouteCallback, IResult, IRouter, RouteCallback, RoutedRequest } from "../../base";
 import { ILogService, IResultFactory, IRouterService } from "../../infra/interfaces";
 import { INFRASTRUCTURE, REPOSITORIES } from "../../service.tokens";
@@ -19,8 +19,9 @@ export class DeckRouter extends BaseRouter implements IRouter {
 
   //#region IRouteDestinationService methods ----------------------------------
   public setRoutes(router: IRouterService): void {
-    router.registerDeleteRoute("/deck", this.deleteDeck.bind(this) as DeleteRouteCallback);
-    router.registerGetRoute("/deck", this.getAllDecks.bind(this) as RouteCallback);
+    router.registerDeleteRoute("/deck/:id", this.deleteDeck.bind(this) as DeleteRouteCallback);
+    router.registerGetRoute("/deck/folder", this.getAllFolders.bind(this) as RouteCallback);
+    router.registerGetRoute("/deck/folder/:id/decks", this.getAllDecksInFolder.bind(this) as RouteCallback);
     router.registerGetRoute("/deck/:id", this.getDeckDetails.bind(this) as RouteCallback);
     router.registerPatchRoute("/deck/:id", this.patchDeck.bind(this) as RouteCallback);
     router.registerPostRoute("/deck", this.createDeck.bind(this) as RouteCallback);
@@ -40,8 +41,16 @@ export class DeckRouter extends BaseRouter implements IRouter {
       );
   }
 
-  private getAllDecks(_request: RoutedRequest<void>): Promise<IResult<Array<DeckListDto>>> {
-    return container.resolve<IDeckRepository>(REPOSITORIES.DeckRepository).getAll();
+  private getAllFolders(_request: RoutedRequest<void>): Promise<IResult<Array<DeckFolderDto>>> {
+    return container.resolve<IDeckRepository>(REPOSITORIES.DeckRepository).getAllFolders();
+  }
+
+  private getAllDecksInFolder(request: RoutedRequest<void>): Promise<IResult<Array<DeckListDto>>> {
+    return this.parseIntegerUrlParameter(request.params["id"], "Folder ID")
+      .continueAsync<Array<DeckListDto>>(
+        (r: IResult<number>) => container.resolve<IDeckRepository>(REPOSITORIES.DeckRepository).getAllDecksInFolder(r.data),
+        (r: IResult<number>) => r.castAsync<Array<DeckListDto>>(undefined)
+      );
   }
 
   // NOW create a DTO for this

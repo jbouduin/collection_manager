@@ -4,6 +4,8 @@ import { DeckLegalityDto } from "./deck-legalitydto.";
 
 type DeckDto = Selectable<DeckTable>;
 
+export type DeckFolderDto = DeckDto;
+
 export interface DeckListDto extends DeckDto {
   calculatedFormats: Array<DeckLegalityDto>;
   deckSize: number;

@@ -11,14 +11,14 @@ type TModified = {
   /**
    * Timestamp of last update
    */
-  modified_at: ColumnType<Date, string | undefined, string>;
+  modified_at?: ColumnType<Date, string | undefined, string | undefined>;
 };
 
 type TSynchronized = {
   /**
    * Timestamp of last synchronization
    */
-  last_synced_at: ColumnType<Date, string | undefined, string>;
+  last_synced_at?: ColumnType<Date, string | undefined, string | undefined>;
 };
 
 type TWithStringIdField = {

@@ -23,11 +23,11 @@ export function CenterPanel(props: CenterPanelProps) {
   //#endregion
 
   //#region Effects -----------------------------------------------------------
-  // NOW use a callback once we are filtering and refreshing table
   React.useEffect(
     () => {
       void ipcProxyService
-        .getData<Array<DeckListDto>>("/deck")
+        // NOW
+        .getData<Array<DeckListDto>>("/deck/folder/1/decks")
         .then(
           (r: Array<DeckListDto>) => setState({
             decks: r.map((deck: DeckListDto) => new DeckListViewmodel(deck)),

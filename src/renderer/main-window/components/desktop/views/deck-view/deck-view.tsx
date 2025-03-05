@@ -63,7 +63,7 @@ export function DeckView(props: DeckViewProps) {
             </Panel>
             <PanelResizeHandle />
             <Panel defaultSize={20}>
-              <RightPanel selectedDeckId={selectedDecks.length > 0 ? selectedDecks[0].id : undefined}/>
+              <RightPanel selectedDeckId={selectedDecks.length > 0 ? selectedDecks[0].id : undefined} />
             </Panel>
           </PanelGroup>
         )

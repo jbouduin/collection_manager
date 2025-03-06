@@ -20,7 +20,11 @@ export class GenericTextColumn<T> extends BaseColumn<T, GenericTextLookupResult>
   }
 
   protected getCellRenderer(getCellData: CellLookup<T, GenericTextLookupResult>): CellRenderer {
-    return (rowIdx: number, _colIdx: number) => (<Cell>{getCellData(rowIdx, this.valueCallBack).textValue}</Cell>);
+    return (rowIdx: number, _colIdx: number) => (
+      <Cell>
+        {getCellData(rowIdx, this.valueCallBack).textValue}
+      </Cell>
+    );
   }
   //#endregion
 

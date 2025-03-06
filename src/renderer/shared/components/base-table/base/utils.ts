@@ -9,6 +9,7 @@ export function selectedRegionTransformToRowSelection(region: Region): Region {
 }
 
 export function onDataSelected<T>(selectedRegions: Array<Region>, data: Array<T>, callback: (selected: Array<T>) => void): void {
+  // NOW this gives the wrong result if columns have been sorted
   const selectedData = new Array<T>();
   selectedRegions
     .filter((region: Region) => region.rows)

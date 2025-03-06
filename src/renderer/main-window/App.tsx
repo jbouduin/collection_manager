@@ -1,4 +1,4 @@
-import { BlueprintProvider, FocusStyleManager, OverlayToaster, Position, ToastProps } from "@blueprintjs/core";
+import { FocusStyleManager, OverlaysProvider, OverlayToaster, PortalProvider, Position, ToastProps } from "@blueprintjs/core";
 import * as React from "react";
 import { createRoot } from "react-dom/client";
 import { IpcProxyService, IpcProxyServiceContext } from "../shared/context";
@@ -25,10 +25,12 @@ void (async () => {
   const root = createRoot(container);
   /* eslint-disable @stylistic/function-paren-newline */
   root.render(
-    <BlueprintProvider>
-      <IpcProxyServiceContext.Provider value={ipcProxyService}>
-        <Desktop />
-      </IpcProxyServiceContext.Provider>
-    </BlueprintProvider>
+    <OverlaysProvider>
+      <PortalProvider>
+        <IpcProxyServiceContext.Provider value={ipcProxyService}>
+          <Desktop />
+        </IpcProxyServiceContext.Provider>
+      </PortalProvider>
+    </OverlaysProvider>
   );
 })();

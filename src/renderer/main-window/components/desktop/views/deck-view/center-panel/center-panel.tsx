@@ -41,7 +41,7 @@ export function CenterPanel(props: CenterPanelProps) {
   //#region Rendering ---------------------------------------------------------
   return (
     <div className="cards-table-wrapper">
-      // LATER Check why blueprint hotkeys are not working
+      {/* LATER Check why blueprint hotkeys are not working */}
       <Table2
         bodyContextMenuRenderer={(context: MenuContext) => contextMenu(context)}
         cellRendererDependencies={[props.decks, state]}

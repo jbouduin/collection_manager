@@ -1,10 +1,10 @@
 import { Button, DialogFooter } from "@blueprintjs/core";
 import { cloneDeep, noop } from "lodash";
 import * as React from "react";
-import { OwnedCardQuantityDto } from "../../../../../../common/dto";
+import { CardConditionDto, OwnedCardQuantityDto } from "../../../../../../common/dto";
 import { CardCondition } from "../../../../../../common/types";
 import { IpcProxyService, IpcProxyServiceContext } from "../../../../../shared/context";
-import { CardConditionViewmodel, OwnedCardQuantityViewmodel } from "../../../../viewmodels";
+import { OwnedCardQuantityViewmodel } from "../../../../viewmodels";
 import { CardConditionContext } from "../../../context";
 import { buildEditableState, OwnedCardDialog, OwnedCardTable } from "../../owned-card";
 import { CardOwnerShipViewProps } from "./card-ownership-view.props";
@@ -18,7 +18,7 @@ export function CardOwnerShipView(props: CardOwnerShipViewProps) {
 
   //#region Context -----------------------------------------------------------
   const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
-  const cardConditionContext = React.useContext<Array<CardConditionViewmodel>>(CardConditionContext);
+  const cardConditionContext = React.useContext<Array<CardConditionDto>>(CardConditionContext);
   //#endregion
 
   //#region Effects -----------------------------------------------------------

@@ -1,9 +1,9 @@
-import { OwnedCardQuantityDto } from "../../../../../common/dto";
-import { CardConditionViewmodel, OwnedCardQuantityViewmodel } from "../../../viewmodels";
+import { CardConditionDto, OwnedCardQuantityDto } from "../../../../../common/dto";
+import { OwnedCardQuantityViewmodel } from "../../../viewmodels";
 
-export function buildEditableState(conditions: Array<CardConditionViewmodel>, cardId: string, collectionId: number, quantities: Array<OwnedCardQuantityDto>): Array<OwnedCardQuantityViewmodel> {
+export function buildEditableState(conditions: Array<CardConditionDto>, cardId: string, collectionId: number, quantities: Array<OwnedCardQuantityDto>): Array<OwnedCardQuantityViewmodel> {
   const result: Array<OwnedCardQuantityViewmodel> = quantities.map((qty: OwnedCardQuantityDto) => new OwnedCardQuantityViewmodel(qty));
-  conditions.forEach((condition: CardConditionViewmodel) => {
+  conditions.forEach((condition: CardConditionDto) => {
     [true, false].forEach((foil: boolean) => {
       const existing = quantities.find((qty: OwnedCardQuantityDto) => qty.condition_id == condition.id && qty.is_foil == foil);
       if (!existing) {

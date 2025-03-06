@@ -1,13 +1,10 @@
-import { CardConditionDto, LanguageDto, MtgCardSetDto, RendererConfigurationDto } from "../../../../common/dto";
-
-import { EDesktopView } from "./desktop-view.enum";
+import { CardConditionDto, DeckDetailsDto, LanguageDto, MtgCardSetDto, RendererConfigurationDto } from "../../../../common/dto";
 
 
 export interface DesktopState {
-  // NOW switch to Dto
   cardConditions: Array<CardConditionDto>;
   cardSets: Array<MtgCardSetDto>;
-  currentView: EDesktopView;
+  deck: DeckDetailsDto;
   initialized: boolean;
   languages: Array<LanguageDto>;
   rendererConfiguration: RendererConfigurationDto;

@@ -7,4 +7,5 @@ export interface IWindowsService {
   createFirstTimeWindow(): BrowserWindow;
   createMainWindow(): BrowserWindow;
   createSplashWindow(): BrowserWindow;
+  getDeckWindow(deckId: number): void;
 }

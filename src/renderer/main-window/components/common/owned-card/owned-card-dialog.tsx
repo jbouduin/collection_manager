@@ -1,10 +1,10 @@
 import { Button, Dialog, DialogBody, DialogFooter, Section } from "@blueprintjs/core";
 import { cloneDeep, noop } from "lodash";
 import * as React from "react";
-import { CollectionDto, OwnedCardCollectionMapDto, OwnedCardQuantityDto } from "../../../../../common/dto";
+import { CardConditionDto, CollectionDto, OwnedCardCollectionMapDto, OwnedCardQuantityDto } from "../../../../../common/dto";
 import { CardCondition } from "../../../../../common/types";
 import { IpcProxyService, IpcProxyServiceContext } from "../../../../shared/context";
-import { CardConditionViewmodel, OwnedCardQuantityViewmodel } from "../../../viewmodels";
+import { OwnedCardQuantityViewmodel } from "../../../viewmodels";
 import { CardConditionContext } from "../../context";
 import { buildEditableState } from "./build-editable-state";
 import { OwnedCardTable } from "./own-card-table";
@@ -17,7 +17,7 @@ export function OwnedCardDialog(props: OwnedCardDialogProps) {
   //#endregion
 
   //#region Context -----------------------------------------------------------
-  const cardConditionContext = React.useContext<Array<CardConditionViewmodel>>(CardConditionContext);
+  const cardConditionContext = React.useContext<Array<CardConditionDto>>(CardConditionContext);
   const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
   //#endregion
 

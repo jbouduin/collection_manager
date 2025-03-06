@@ -1,27 +1,26 @@
-import { Card, Classes, Props } from "@blueprintjs/core";
+import { Card, Classes } from "@blueprintjs/core";
 import classNames from "classnames";
 import { cloneDeep, noop } from "lodash";
 import * as React from "react";
-import { CardConditionDto, ConfigurationDto, LanguageDto, MtgCardSetDto } from "../../../../common/dto";
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
+import { CardConditionDto, ConfigurationDto, DeckDetailsDto, LanguageDto, MtgCardSetDto } from "../../../../common/dto";
+import { CardConditionContext, CardSetContext, CardSymbolContext, ConfigurationContext, LanguagesContext } from "../../../main-window/components/context";
+import { SplashScreen } from "../../../main-window/components/desktop/splash-screen/splash-screen";
 import { AfterSplashScreenClose } from "../../../shared/collection-manager.props";
 import { DisplayValueService, DisplayValueServiceContext, IpcProxyService, IpcProxyServiceContext } from "../../../shared/context";
-import { CardConditionContext, CardSetContext, CardSymbolContext, ConfigurationContext, LanguagesContext } from "../context";
-import { ButtonBar } from "./button-bar/button-bar";
-import { EDesktopView } from "./desktop-view.enum";
+import { DesktopProps } from "./desktop.props";
 import { DesktopState } from "./desktop.state";
-import { SplashScreen } from "./splash-screen/splash-screen";
-import { CollectionView } from "./views/collection-view/collection-view";
-import { DeckView } from "./views/deck-view/deck-view";
-import { MtgView } from "./views/mtg-view/mtg-view";
+import { LeftPanel } from "./left-panel/left-panel";
+import { RightPanel } from "./right-panel/right-panel";
 
 
-export function Desktop(props: Props) {
+export function Desktop(props: DesktopProps) {
   //#region State -------------------------------------------------------------
   const initialState: DesktopState = {
     initialized: false,
     cardConditions: new Array<CardConditionDto>(),
     cardSets: new Array<MtgCardSetDto>(),
-    currentView: EDesktopView.Database,
+    deck: null,
     languages: new Array<LanguageDto>(),
     rendererConfiguration: null,
     splashScreenOpen: false,
@@ -51,13 +50,15 @@ export function Desktop(props: Props) {
             ipcProxyService.getData<Map<string, string>>("/card-symbol/svg"),
             ipcProxyService.getData<Array<MtgCardSetDto>>("/card-set"),
             ipcProxyService.getData<Array<LanguageDto>>("/language"),
-            ipcProxyService.getData<Array<CardConditionDto>>("/card-condition")
+            ipcProxyService.getData<Array<CardConditionDto>>("/card-condition"),
+            ipcProxyService.getData<DeckDetailsDto>(`/deck/${props.deckId}`)
           ]).then(
-            ([cardSymbols, cardSets, languages, cardConditions]) => {
+            ([cardSymbols, cardSets, languages, cardConditions, deck]) => {
               newState.symbolSvgs = cardSymbols;
               newState.cardSets = cardSets.sort((a: MtgCardSetDto, b: MtgCardSetDto) => a.name.localeCompare(b.name));
               newState.languages = languages;
               newState.cardConditions = cardConditions;
+              newState.deck = deck;
               newState.initialized = true;
               setDesktopState(newState);
             },
@@ -67,23 +68,6 @@ export function Desktop(props: Props) {
     },
     []
   );
-  //#endregion
-
-  //#region Event handling -> view selection ----------------------------------
-  function onDesktopViewSelectionClick(desktopView: EDesktopView): void {
-    const newState = cloneDeep(desktopState);
-    newState.currentView = desktopView;
-    setDesktopState(newState);
-  }
-  //#endregion
-
-  //#region Event handling -> Settings Dialog ---------------------------------
-  function afterSaveSettings(saved: ConfigurationDto): void {
-    const newState = cloneDeep(desktopState);
-    newState.rendererConfiguration = saved.rendererConfiguration;
-    newState.themeClassName = saved.rendererConfiguration.useDarkTheme ? Classes.DARK : "";
-    setDesktopState(newState);
-  }
   //#endregion
 
   //#region Event handling -> Splashscreen -----------------------------------
@@ -118,9 +102,8 @@ export function Desktop(props: Props) {
     newState.splashScreenOpen = true;
     setDesktopState(newState);
   }
-  //#endregion
 
-  //#region Main --------------------------------------------------------------
+  //#endregion
   return (
     <>
       {
@@ -132,42 +115,19 @@ export function Desktop(props: Props) {
                 <CardSetContext.Provider value={desktopState.cardSets}>
                   <CardConditionContext.Provider value={desktopState.cardConditions}>
                     <Card className={classNames(desktopState.themeClassName, "desktop-wrapper")}>
-                      <ButtonBar
-                        {...props}
-                        afterSaveSettings={(saved: ConfigurationDto) => afterSaveSettings(saved)}
-                        className={desktopState.themeClassName}
-                        currentView={desktopState.currentView}
-                        hideSplashScreen={(afterClose: Array<AfterSplashScreenClose>) => hideSplashScreen(afterClose)}
-                        onDesktopViewSelectionClick={onDesktopViewSelectionClick}
-                        showSplashScreen={() => openSplashScreen()}
-                      />
-                      <div className="main-panel">
-                        {
-                          desktopState.currentView == EDesktopView.Database &&
-                          <MtgView
+                      <PanelGroup direction="horizontal">
+                        <Panel defaultSize={80}>
+                          <LeftPanel
                             {...props}
-                            className={desktopState.themeClassName}
-                            hideSplashScreen={(afterClose: Array<AfterSplashScreenClose>) => hideSplashScreen(afterClose)}
-                            showSplashScreen={() => openSplashScreen()}
+                            hideSplashScreen={hideSplashScreen}
+                            showSplashScreen={openSplashScreen}
                           />
-                        }
-                        {
-                          desktopState.currentView == EDesktopView.Collection &&
-                          <CollectionView
-                            {...props}
-                            className={desktopState.themeClassName}
-                          />
-                        }
-                        {
-                          desktopState.currentView == EDesktopView.Deck &&
-                          <DeckView
-                            {...props}
-                            className={desktopState.themeClassName}
-                            hideSplashScreen={(afterClose: Array<AfterSplashScreenClose>) => hideSplashScreen(afterClose)}
-                            showSplashScreen={() => openSplashScreen()}
-                          />
-                        }
-                      </div>
+                        </Panel>
+                        <PanelResizeHandle />
+                        <Panel>
+                          <RightPanel cardId={null} />
+                        </Panel>
+                      </PanelGroup>
                     </Card>
                     {
                       desktopState.splashScreenOpen &&

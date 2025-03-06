@@ -14,6 +14,7 @@ import { IBootstrapService, IConfigurationService, IDatabaseService, IImageCache
 import { ILogService } from "./interfaces/log.service";
 import { ConfigurationRouter, LogRouter } from "./routers";
 import { AssetRouter } from "./routers/asset.router";
+import { WindowsRouter } from "./routers/window.router";
 
 
 export class InfraDi {
@@ -28,7 +29,8 @@ export class InfraDi {
     container.register<IWindowsService>(INFRASTRUCTURE.WindowsService, { useClass: WindowsService }, { lifecycle: Lifecycle.Singleton });
 
     container.register<IRouter>(INFRASTRUCTURE.Router, { useClass: AssetRouter }, { lifecycle: Lifecycle.Singleton });
-    container.register<IRouter>(INFRASTRUCTURE.Router, { useClass: LogRouter }, { lifecycle: Lifecycle.Singleton });
     container.register<IRouter>(INFRASTRUCTURE.Router, { useClass: ConfigurationRouter }, { lifecycle: Lifecycle.Singleton });
+    container.register<IRouter>(INFRASTRUCTURE.Router, { useClass: LogRouter }, { lifecycle: Lifecycle.Singleton });
+    container.register<IRouter>(INFRASTRUCTURE.Router, { useClass: WindowsRouter }, { lifecycle: Lifecycle.Singleton });
   }
 }

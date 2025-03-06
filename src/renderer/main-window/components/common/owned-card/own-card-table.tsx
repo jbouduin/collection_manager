@@ -1,13 +1,14 @@
 import { HTMLTable, NumericInput } from "@blueprintjs/core";
 import * as React from "react";
+import { CardConditionDto } from "../../../../../common/dto";
 import { CardCondition } from "../../../../../common/types";
-import { CardConditionViewmodel, OwnedCardQuantityViewmodel } from "../../../viewmodels";
+import { OwnedCardQuantityViewmodel } from "../../../viewmodels";
 import { CardConditionContext } from "../../context";
 import { OwnedCardTableProps } from "./own-card-table.props";
 
 export function OwnedCardTable(props: OwnedCardTableProps) {
   //#region Context -----------------------------------------------------------
-  const cardConditionContext = React.useContext<Array<CardConditionViewmodel>>(CardConditionContext);
+  const cardConditionContext = React.useContext<Array<CardConditionDto>>(CardConditionContext);
   //#endregion
 
   //#region Rendering ---------------------------------------------------------
@@ -35,22 +36,22 @@ export function OwnedCardTable(props: OwnedCardTableProps) {
     </>
   );
 
-  function getTable(conditions: Array<CardConditionViewmodel>): Array<React.JSX.Element> {
+  function getTable(conditions: Array<CardConditionDto>): Array<React.JSX.Element> {
     const table: Array<React.JSX.Element> = conditions
-      .sort((a: CardConditionViewmodel, b: CardConditionViewmodel) => a.sequence - b.sequence)
-      .map((condition: CardConditionViewmodel) => {
+      .sort((a: CardConditionDto, b: CardConditionDto) => a.sequence - b.sequence)
+      .map((condition: CardConditionDto) => {
         return (
           <tr key={condition.id}>
             <td key="col1" style={{ paddingLeft: "0px" }}>{condition.expression}</td>
             {
               props.readOnly
-                ? <td key="col2" style={{ paddingLeft: "0px" }}>{accumulateQuantities(condition.code, false)}</td>
-                : <td key="col2" style={{ paddingLeft: "0px" }}>{renderQuantityEditor(condition.code, false)}</td>
+                ? <td key="col2" style={{ paddingLeft: "0px" }}>{accumulateQuantities(condition.id, false)}</td>
+                : <td key="col2" style={{ paddingLeft: "0px" }}>{renderQuantityEditor(condition.id, false)}</td>
             }
             {
               props.readOnly
-                ? <td key="col3" style={{ paddingLeft: "0px" }}>{accumulateQuantities(condition.code, true)}</td>
-                : <td key="col3" style={{ paddingLeft: "0px" }}>{renderQuantityEditor(condition.code, true)}</td>
+                ? <td key="col3" style={{ paddingLeft: "0px" }}>{accumulateQuantities(condition.id, true)}</td>
+                : <td key="col3" style={{ paddingLeft: "0px" }}>{renderQuantityEditor(condition.id, true)}</td>
             }
           </tr>
         );

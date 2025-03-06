@@ -57,6 +57,14 @@ const config: ForgeConfig = {
             },
           },
           {
+            html: "./src/renderer/deck-window/deck-window.html",
+            js: "./src/renderer/deck-window/deck-window-renderer.ts",
+            name: "deck_window",
+            preload: {
+              js: "./src/renderer/shared/preload.ts",
+            },
+          },
+          {
             html: "./src/renderer/first-time/first-time.html",
             js: "./src/renderer/first-time/first-time-renderer.ts",
             name: "first_time",

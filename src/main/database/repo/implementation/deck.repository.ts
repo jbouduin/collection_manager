@@ -1,8 +1,8 @@
 import * as fs from "fs";
-import { DeleteResult, Insertable, InsertResult, sql, Transaction } from "kysely";
+import { DeleteResult, InsertResult, sql, Transaction, Updateable } from "kysely";
 import * as helpers from "kysely/helpers/sqlite";
 import { inject, injectable } from "tsyringe";
-import { DeckFolderDto, DeckListDto } from "../../../../common/dto";
+import { DeckDetailsDto, DeckDto, DeckFolderDto, DeckListDto } from "../../../../common/dto";
 import { DeckLegalityDto } from "../../../../common/dto/deck/deck-legalitydto.";
 import { sqliteUTCTimeStamp } from "../../../../common/util";
 import { IResult } from "../../../services/base";
@@ -29,7 +29,7 @@ export class DeckRepository extends BaseRepository implements IDeckRepository {
 
   //#region IDeckRepository methods ------------------------------------------
   /* eslint-disable @stylistic/function-paren-newline */
-  public createDeck(deck: DeckListDto): Promise<IResult<DeckListDto>> {
+  public createDeck(deck: DeckDto): Promise<IResult<DeckDto>> {
     try {
       const now = sqliteUTCTimeStamp();
       return this.database.transaction()
@@ -37,11 +37,14 @@ export class DeckRepository extends BaseRepository implements IDeckRepository {
           return trx
             .insertInto("deck")
             .values({
+              parent_id: deck.parent_id,
               name: deck.name,
               description: deck.description,
               target_format: deck.target_format,
               created_at: now,
-              modified_at: now
+              is_system: deck.is_system ? 1 : 0,
+              is_folder: deck.is_folder ? 1 : 0,
+              modified_at: null
             })
             // .$call((q) => logCompilable(this.logService, q))
             .executeTakeFirstOrThrow()
@@ -50,16 +53,16 @@ export class DeckRepository extends BaseRepository implements IDeckRepository {
               .where("deck.id", "=", Number(r.insertId))
               .$castTo<DeckListDto>()
               // .$call((q) => logCompilable(this.logService, q))
-              .executeTakeFirst())
+              .executeTakeFirstOrThrow())
             .then((r: DeckListDto) => {
               r.deckSize = 0;
               r.sideBoardSize = 0;
               r.calculatedFormats = new Array<DeckLegalityDto>();
-              return this.resultFactory.createSuccessResult<DeckListDto>(r);
+              return this.resultFactory.createSuccessResult<DeckDto>(r);
             });
         });
     } catch (err) {
-      return this.resultFactory.createExceptionResultPromise<DeckListDto>(err);
+      return this.resultFactory.createExceptionResultPromise<DeckDto>(err);
     }
   }
 
@@ -122,8 +125,10 @@ export class DeckRepository extends BaseRepository implements IDeckRepository {
                 .$castTo<number>(),
               sql<number>`0`)
             .as("sideBoardSize"),
-          // NOW this logic is not correct - in order to solve it we should be able to sort legality (store in the db ?) and game format
-          // moreover we should check that restricted cards only are once in the deck
+          /*
+           * NOW this logic is not correct - in order to solve it we should be able to sort legality (store in the db ?) and game format
+           * moreover we should check that restricted cards only are once in the deck
+           */
           helpers.jsonArrayFrom(
             eb.selectFrom("deck_card")
               .innerJoin("card", "card.id", "deck_card.card_id")
@@ -150,14 +155,38 @@ export class DeckRepository extends BaseRepository implements IDeckRepository {
     }
   }
 
-  public patchDeck(deck: Partial<DeckListDto>): Promise<IResult<DeckListDto>> {
+  public getDeckDetails(id: number): Promise<IResult<DeckDetailsDto>> {
     try {
-      const toUpdate: Insertable<DeckTable> = {
-        modified_at: sqliteUTCTimeStamp(),
-        name: deck?.name,
-        description: deck?.description,
-        target_format: deck?.target_format
-      };
+      return this.database
+        .selectFrom("deck")
+        .selectAll()
+        .where("deck.id", "=", id)
+        .$castTo<DeckDetailsDto>()
+        .executeTakeFirst()
+        .then((dto: DeckDetailsDto) => {
+          if (dto) {
+            return this.resultFactory.createSuccessResult<DeckDetailsDto>(dto);
+          } else {
+            return this.resultFactory.createNotFoundResult<DeckListDto>(`Deck with ID '${id}'`);
+          }
+        });
+    } catch (err) {
+      return this.resultFactory.createExceptionResultPromise<DeckDetailsDto>(err);
+    }
+  }
+
+  public patchDeck(deck: Partial<DeckDto>): Promise<IResult<DeckDto>> {
+    try {
+      const toUpdate: Updateable<DeckTable> = { modified_at: sqliteUTCTimeStamp() };
+      if (Object.keys(deck).includes("name")) {
+        toUpdate.name = deck.name;
+      }
+      if (Object.keys(deck).includes("description")) {
+        toUpdate.description = deck.description;
+      }
+      if (Object.keys(deck).includes("target_format")) {
+        toUpdate.target_format = deck.target_format;
+      }
 
       return this.database.transaction()
         .execute(async (trx: Transaction<DatabaseSchema>) => {
@@ -166,44 +195,15 @@ export class DeckRepository extends BaseRepository implements IDeckRepository {
             .where("deck.id", "=", deck.id)
             .executeTakeFirstOrThrow()
             .then(() => trx.selectFrom("deck")
-              .select((eb) => [
-                ...DECK_TABLE_FIELDS,
-                eb.fn
-                  .coalesce(
-                    eb.selectFrom("deck_card as dcd")
-                      .select((eb) => [eb.fn.sum<number>("dcd.deck_quantity").as("deckSize")])
-                      .whereRef("dcd.deck_id", "=", "deck.id")
-                      .$castTo<number>(),
-                    sql<number>`0`)
-                  .as("deckSize"),
-                eb.fn
-                  .coalesce(
-                    eb.selectFrom("deck_card as dcd")
-                      .select((eb) => [eb.fn.sum<number>("dcd.side_board_quantity").as("sideBoardSize")])
-                      .whereRef("dcd.deck_id", "=", "deck.id")
-                      .$castTo<number>(),
-                    sql<number>`0`)
-                  .as("sideBoardSize"),
-                // NOW this logic is not correct - in order to solve it we should be able to sort legality (store in the db ?)
-                helpers.jsonArrayFrom(
-                  eb.selectFrom("deck_card")
-                    .innerJoin("card", "card.id", "deck_card.card_id")
-                    .innerJoin("oracle_legality", "oracle_legality.oracle_id", "card.oracle_id")
-                    .select(["oracle_legality.format", "oracle_legality.legality"])
-                    .distinct()
-                    .$castTo<DeckLegalityDto>()
-                    .whereRef("deck_card.deck_id", "=", "deck.id")
-                    .where("oracle_legality.legality", "in", ["legal", "restricted"])
-                ).as("calculatedFormats")
-              ])
+              .selectAll()
               .where("deck.id", "=", Number(deck.id))
-              .$castTo<DeckListDto>()
+              .$castTo<DeckDto>()
               // .$call((q) => logCompilable(this.logService, q))
               .executeTakeFirst())
-            .then((r: DeckListDto) => this.resultFactory.createSuccessResult<DeckListDto>(r));
+            .then((r: DeckDto) => this.resultFactory.createSuccessResult<DeckDto>(r));
         });
     } catch (err) {
-      return this.resultFactory.createExceptionResultPromise<DeckListDto>(err);
+      return this.resultFactory.createExceptionResultPromise<DeckDto>(err);
     }
   }
   //#endregion

@@ -1,5 +1,5 @@
 import { container, inject, singleton } from "tsyringe";
-import { DeckFolderDto, DeckListDto } from "../../../../common/dto";
+import { DeckDetailsDto, DeckDto, DeckFolderDto, DeckListDto } from "../../../../common/dto";
 import { BaseRouter, DeleteRouteCallback, IResult, IRouter, RouteCallback, RoutedRequest } from "../../base";
 import { ILogService, IResultFactory, IRouterService } from "../../infra/interfaces";
 import { INFRASTRUCTURE, REPOSITORIES } from "../../service.tokens";
@@ -21,7 +21,7 @@ export class DeckRouter extends BaseRouter implements IRouter {
   public setRoutes(router: IRouterService): void {
     router.registerDeleteRoute("/deck/:id", this.deleteDeck.bind(this) as DeleteRouteCallback);
     router.registerGetRoute("/deck/folder", this.getAllFolders.bind(this) as RouteCallback);
-    router.registerGetRoute("/deck/folder/:id/decks", this.getAllDecksInFolder.bind(this) as RouteCallback);
+    router.registerGetRoute("/deck/folder/:id/deck", this.getAllDecksInFolder.bind(this) as RouteCallback);
     router.registerGetRoute("/deck/:id", this.getDeckDetails.bind(this) as RouteCallback);
     router.registerPatchRoute("/deck/:id", this.patchDeck.bind(this) as RouteCallback);
     router.registerPostRoute("/deck", this.createDeck.bind(this) as RouteCallback);
@@ -29,7 +29,7 @@ export class DeckRouter extends BaseRouter implements IRouter {
   //#endregion
 
   //#region Route callbacks ---------------------------------------------------
-  private createDeck(request: RoutedRequest<DeckListDto>): Promise<IResult<DeckListDto>> {
+  private createDeck(request: RoutedRequest<DeckListDto>): Promise<IResult<DeckDto>> {
     return container.resolve<IDeckRepository>(REPOSITORIES.DeckRepository).createDeck(request.data);
   }
 
@@ -53,14 +53,17 @@ export class DeckRouter extends BaseRouter implements IRouter {
       );
   }
 
-  // NOW create a DTO for this
-  private getDeckDetails(_request: RoutedRequest<void>): Promise<IResult<DeckListDto>> {
-    return this.resultFactory.createNotImplementedResultPromise<DeckListDto>();
+  private getDeckDetails(request: RoutedRequest<void>): Promise<IResult<DeckDetailsDto>> {
+    return this.parseIntegerUrlParameter(request.params["id"], "Deck ID")
+      .continueAsync<DeckDetailsDto>(
+        (r: IResult<number>) => container.resolve<IDeckRepository>(REPOSITORIES.DeckRepository).getDeckDetails(r.data),
+        (r: IResult<number>) => r.castAsync<DeckListDto>(undefined)
+      );
   }
 
-  private patchDeck(request: RoutedRequest<Partial<DeckListDto>>): Promise<IResult<DeckListDto>> {
+  private patchDeck(request: RoutedRequest<Partial<DeckListDto>>): Promise<IResult<DeckDto>> {
     return this.parseIntegerUrlParameter(request.params["id"], "Deck ID")
-      .continueAsync<DeckListDto>(
+      .continueAsync<DeckDto>(
         (r: IResult<number>) => {
           if (r.data != request.data.id) {
             return this.resultFactory.createBadRequestResultPromise<DeckListDto>("Datafield ID in the body does not correspond to the URL");

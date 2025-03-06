@@ -2,8 +2,7 @@ import { Selectable } from "kysely";
 import { DeckTable } from "../../../main/database/schema/deck/deck.table";
 import { DeckLegalityDto } from "./deck-legalitydto.";
 
-type DeckDto = Selectable<DeckTable>;
-
+export type DeckDto = Selectable<DeckTable>;
 export type DeckFolderDto = DeckDto;
 
 export interface DeckListDto extends DeckDto {
@@ -11,3 +10,8 @@ export interface DeckListDto extends DeckDto {
   deckSize: number;
   sideBoardSize: number;
 }
+
+export type DeckDetailsDto = DeckDto;
+// export interface DeckDetailsDto extends DeckListDto {
+
+// }

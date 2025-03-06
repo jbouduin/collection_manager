@@ -1,8 +1,8 @@
-import { CollectionTreeViewmodel } from "../../../../../viewmodels";
 import { DialogAction } from "../../../../../../shared/components";
+import { DeckViewmodel } from "../../../../../viewmodels";
 
 
 export interface DialogData {
   dialogAction: DialogAction;
-  selectedCollection: CollectionTreeViewmodel;
+  selectedDeck: DeckViewmodel;
 }

@@ -3,12 +3,12 @@ import { cloneDeep, noop } from "lodash";
 import * as React from "react";
 import { CardConditionDto, CollectionDto, OwnedCardCollectionMapDto, OwnedCardQuantityDto } from "../../../../../common/dto";
 import { CardCondition } from "../../../../../common/types";
-import { IpcProxyService, IpcProxyServiceContext } from "../../../../shared/context";
+import { CardConditionContext, IpcProxyService, IpcProxyServiceContext } from "../../../../shared/context";
 import { OwnedCardQuantityViewmodel } from "../../../viewmodels";
-import { CardConditionContext } from "../../context";
 import { buildEditableState } from "./build-editable-state";
 import { OwnedCardTable } from "./own-card-table";
 import { OwnedCardDialogProps } from "./owned-card-dialog.props";
+
 
 export function OwnedCardDialog(props: OwnedCardDialogProps) {
   //#region State -------------------------------------------------------------

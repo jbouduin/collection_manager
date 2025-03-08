@@ -19,7 +19,7 @@ export class ColorRouter extends BaseRouter implements IRouter {
 
   //#region IRouteDestinationService methods ----------------------------------
   public setRoutes(router: IRouterService): void {
-    router.registerGetRoute("/colors", this.getAll.bind(this) as RouteCallback);
+    router.registerGetRoute("/color", this.getAll.bind(this) as RouteCallback);
   }
   //#endregion
 

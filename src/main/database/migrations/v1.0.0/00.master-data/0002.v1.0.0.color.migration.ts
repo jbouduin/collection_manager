@@ -1,19 +1,18 @@
 
-/* eslint-disable  @typescript-eslint/no-explicit-any */
 import { ColumnDefinitionBuilder, InsertResult, Insertable, Kysely } from "kysely";
+import { ColorTable } from "../../../schema";
+import { IBaseMigration, CreateTableOptions, createTable } from "../../base-migration";
+import { sqliteUTCTimeStamp } from "../../../../../common/util";
 
-import { ColorTable } from "../../schema";
-import { IBaseMigration, CreateTableOptions, createTable } from "../base-migration";
-import { sqliteUTCTimeStamp } from "../../../../common/util";
-
-export class V0_0_1_Color_Migration implements IBaseMigration {
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+export class V1_0_0_Color_Migration implements IBaseMigration {
   public get keyName(): string {
-    return "0004: v.0.0.1.Color";
+    return "0002: v.1.0.0.Color";
   }
 
   public async up(db: Kysely<any>): Promise<void> {
-    return createV0_0_1_Color(db)
-      .then(() => populateV0_0_1_Color(db))
+    return createV1_0_0_Color(db)
+      .then(() => populateV1_0_0_Color(db))
       .then(() => Promise.resolve());
   }
 
@@ -22,7 +21,7 @@ export class V0_0_1_Color_Migration implements IBaseMigration {
   }
 }
 
-async function createV0_0_1_Color(db: Kysely<any>): Promise<void> {
+async function createV1_0_0_Color(db: Kysely<any>): Promise<void> {
   const options: CreateTableOptions = {
     isSynced: false,
     tableName: "color",
@@ -36,7 +35,7 @@ async function createV0_0_1_Color(db: Kysely<any>): Promise<void> {
     .execute();
 }
 
-async function populateV0_0_1_Color(db: Kysely<any>): Promise<Array<InsertResult>> {
+async function populateV1_0_0_Color(db: Kysely<any>): Promise<Array<InsertResult>> {
   const values = new Array<Insertable<ColorTable>>();
   const now = sqliteUTCTimeStamp();
   values.push({ created_at: now, id: "W", sequence: 0, display_text: "White", land_type: "Plains", mana_symbol: "{W}" });

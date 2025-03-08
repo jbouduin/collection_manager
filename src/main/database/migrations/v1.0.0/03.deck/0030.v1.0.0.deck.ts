@@ -1,17 +1,18 @@
 import { ColumnDefinitionBuilder, InsertResult, Kysely } from "kysely";
-import { CreateTableOptions, IBaseMigration, createTable } from "../base-migration";
-import { sqliteUTCTimeStamp } from "../../../../common/util";
+import { CreateTableOptions, IBaseMigration, createTable } from "../../base-migration";
+import { sqliteUTCTimeStamp } from "../../../../../common/util";
+
 
 /* eslint-disable  @typescript-eslint/no-explicit-any, @stylistic/newline-per-chained-call */
-export class V0_1_0_Deck implements IBaseMigration {
+export class V1_0_0_Deck_Migration implements IBaseMigration {
   get keyName(): string {
-    return "0010: v.0.1.0.Deck";
+    return "0030: v.1.0.0.Deck";
   }
 
   public up(db: Kysely<any>): Promise<void> {
-    return createV0_1_0_Deck(db)
-      .then(() => populateV0_1_0_Deck(db))
-      .then(async () => createV0_1_0_DeckCard(db));
+    return createV1_0_0_Deck(db)
+      .then(() => populateV1_0_0_Deck(db))
+      .then(async () => createV1_0_0_DeckCard(db));
   }
 
   public down(db: Kysely<any>): Promise<void> {
@@ -20,7 +21,7 @@ export class V0_1_0_Deck implements IBaseMigration {
   }
 }
 
-function createV0_1_0_Deck(db: Kysely<any>) {
+function createV1_0_0_Deck(db: Kysely<any>) {
   const options: CreateTableOptions = {
     tableName: "deck",
     isSynced: false,
@@ -37,7 +38,7 @@ function createV0_1_0_Deck(db: Kysely<any>) {
     .execute();
 }
 
-function populateV0_1_0_Deck(db: Kysely<any>): Promise<InsertResult> {
+function populateV1_0_0_Deck(db: Kysely<any>): Promise<InsertResult> {
   /*
    * add one single system value, which will be the parent for all folders and decks created in the root.
    * This value will not be retrieved
@@ -54,7 +55,7 @@ function populateV0_1_0_Deck(db: Kysely<any>): Promise<InsertResult> {
     .executeTakeFirst();
 }
 
-function createV0_1_0_DeckCard(db: Kysely<any>) {
+function createV1_0_0_DeckCard(db: Kysely<any>) {
   const options: CreateTableOptions = {
     tableName: "deck_card",
     isSynced: false,

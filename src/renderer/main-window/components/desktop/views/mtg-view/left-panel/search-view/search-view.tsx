@@ -1,12 +1,11 @@
 import { Button, Checkbox } from "@blueprintjs/core";
 import { cloneDeep } from "lodash";
 import * as React from "react";
-import { CatalogTypeDto, ColorDto, MtgCardSetDto } from "../../../../../../../../common/dto";
-import { CardRarity, GameFormat, MTGColor } from "../../../../../../../../common/types";
-import { DisplayValueService, DisplayValueServiceContext, IpcProxyService, IpcProxyServiceContext } from "../../../../../../../shared/context";
+import { CatalogTypeDto, ColorDto, GameFormatDto, MtgCardSetDto } from "../../../../../../../../common/dto";
+import { CardRarity, MtgColor, MtgGameFormat } from "../../../../../../../../common/types";
 import { displayValueRecordToSelectOptions, handleBooleanChange, SelectOption } from "../../../../../../../shared/components";
+import { CardSetContext, DisplayValueService, DisplayValueServiceContext, GameFormatContext, IpcProxyService, IpcProxyServiceContext } from "../../../../../../../shared/context";
 import { CardSearchViewmodel, CardSetViewmodel } from "../../../../../../viewmodels";
-import { CardSetContext } from "../../../../../context";
 import { CardSetSelect } from "./card-set-select";
 import { CatalogSelect } from "./catalog-select.";
 import { ColorSelect } from "./color-select";
@@ -59,6 +58,7 @@ export function SearchView(props: SearchViewProps) {
   const cardSetContext = React.useContext<Array<MtgCardSetDto>>(CardSetContext);
   const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
   const displayValueService = React.useContext<DisplayValueService>(DisplayValueServiceContext);
+  const gameFormatContext = React.useContext<Array<GameFormatDto>>(GameFormatContext);
   //#endregion
 
   //#region memoized item lists ---------------------------------------------------------
@@ -67,9 +67,11 @@ export function SearchView(props: SearchViewProps) {
     []
   );
 
-  const gameFormats: Array<SelectOption<GameFormat>> = React.useMemo(
-    () => displayValueRecordToSelectOptions(displayValueService.gameFormatDisplayValues),
-    []
+  const gameFormats: Array<SelectOption<MtgGameFormat>> = React.useMemo(
+    () => new Array<SelectOption<MtgGameFormat>>(...gameFormatContext.map((g: GameFormatDto) => {
+      return { value: g.id, label: g.display_text };
+    })),
+    [gameFormatContext]
   );
 
   React.useEffect(
@@ -77,7 +79,7 @@ export function SearchView(props: SearchViewProps) {
       void Promise
         .all([
           ipcProxyService.getData<Array<CatalogTypeDto>>("/catalog"),
-          ipcProxyService.getData<Array<ColorDto>>("/colors")
+          ipcProxyService.getData<Array<ColorDto>>("/color")
         ])
         .then(
           (value: [Array<CatalogTypeDto>, Array<ColorDto>]) => {
@@ -128,7 +130,7 @@ export function SearchView(props: SearchViewProps) {
         colors={colors}
         label="Card color"
         onClearOptions={() => onSelectOptionEvent((v: CardSearchViewmodel) => v.clearColorSelection("card"))}
-        onOptionAdded={(color: MTGColor) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addColor("card", color, colors))}
+        onOptionAdded={(color: MtgColor) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addColor("card", color, colors))}
         onOptionRemoved={(color) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeColor("card", color))}
         selectedColors={state.selectedCardColors}
       />
@@ -137,8 +139,8 @@ export function SearchView(props: SearchViewProps) {
         colors={colors}
         label="Produced mana color"
         onClearOptions={() => onSelectOptionEvent((v: CardSearchViewmodel) => v.clearColorSelection("produced_mana"))}
-        onOptionAdded={(color: MTGColor) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addColor("produced_mana", color, colors))}
-        onOptionRemoved={(color: MTGColor) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeColor("produced_mana", color))}
+        onOptionAdded={(color: MtgColor) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addColor("produced_mana", color, colors))}
+        onOptionRemoved={(color: MtgColor) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeColor("produced_mana", color))}
         selectedColors={state.selectedProducedManaColors}
       />
       <ColorSelect
@@ -146,8 +148,8 @@ export function SearchView(props: SearchViewProps) {
         colors={colors}
         label="Identity color"
         onClearOptions={() => onSelectOptionEvent((v: CardSearchViewmodel) => v.clearColorSelection("identity"))}
-        onOptionAdded={(color: MTGColor) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addColor("identity", color, colors))}
-        onOptionRemoved={(color: MTGColor) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeColor("identity", color))}
+        onOptionAdded={(color: MtgColor) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addColor("identity", color, colors))}
+        onOptionRemoved={(color: MtgColor) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeColor("identity", color))}
         selectedColors={state.selectedIdentityColors}
       />
       <SelectSelectOption<CardRarity>
@@ -159,7 +161,7 @@ export function SearchView(props: SearchViewProps) {
         onOptionRemoved={(newOption) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeRarity(newOption))}
         selectedItems={state.selectedRarities}
       />
-      <SelectSelectOption<GameFormat>
+      <SelectSelectOption<MtgGameFormat>
         items={gameFormats}
         key="game-format-select"
         label="Game Format"

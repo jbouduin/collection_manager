@@ -1,9 +1,9 @@
-import { MTGColor, MTGColorType } from "../../../../../../common/types";
+import { MtgColor, MtgColorType } from "../../../../../../common/types";
 
 
 export type CardfaceColorMapAdapterParameter = {
   cardId: string;
   sequence: number;
-  colorType: MTGColorType;
-  colors: Array<MTGColor>;
+  colorType: MtgColorType;
+  colors: Array<MtgColor>;
 };

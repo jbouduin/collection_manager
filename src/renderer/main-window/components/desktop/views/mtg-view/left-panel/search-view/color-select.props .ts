@@ -1,15 +1,15 @@
 import { Props } from "@blueprintjs/core";
 import { ColorDto } from "../../../../../../../../common/dto";
-import { MTGColor, MTGColorType } from "../../../../../../../../common/types";
+import { MtgColor, MtgColorType } from "../../../../../../../../common/types";
 
 
 export interface ColorSelectProps extends Props {
   colors: Array<ColorDto>;
-  colorType: MTGColorType;
+  colorType: MtgColorType;
   label: string;
   selectedColors: Array<string>;
 
-  onOptionAdded: (color: MTGColor) => void;
-  onOptionRemoved: (color: MTGColor) => void;
+  onOptionAdded: (color: MtgColor) => void;
+  onOptionRemoved: (color: MtgColor) => void;
   onClearOptions: () => void;
 }

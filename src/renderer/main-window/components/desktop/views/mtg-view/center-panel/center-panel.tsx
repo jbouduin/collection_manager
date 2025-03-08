@@ -1,9 +1,9 @@
 import * as React from "react";
 import { LanguageDto, MtgCardListDto, MtgCardSetDto } from "../../../../../../../common/dto";
-import { MTGLanguage } from "../../../../../../../common/types";
+import { MtgLanguage } from "../../../../../../../common/types";
 import { BaseCardTableView, BaseLookupResult, CardSetColumn, CardSetLookupResult, CollectiorNumberColumn, ColorIdentityColumn, GenericTextColumn, GenericTextLookupResult, IBaseColumn, ManaCostColumn } from "../../../../../../shared/components";
 import { IpcProxyService, IpcProxyServiceContext } from "../../../../../../shared/context";
-import { CardSetContext, LanguagesContext } from "../../../../../components/context";
+import { CardSetContext, LanguagesContext } from "../../../../../../shared/context";
 import { MtgCardListViewmodel } from "../../../../../viewmodels";
 import { CenterPanelProps } from "./center-panel.props";
 
@@ -151,7 +151,7 @@ export function CenterPanel(props: CenterPanelProps) {
     return {
       defaultSortColumn: card.collectorNumberSortValue,
       textValue: card.languages
-        .map((language: MTGLanguage) => {
+        .map((language: MtgLanguage) => {
           const languageDef = languagesContext.find((lng: LanguageDto) => lng.id == language);
           return languageDef ? languageDef.button_text : language;
         })

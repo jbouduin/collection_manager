@@ -1,5 +1,5 @@
 import { CardQueryDto, CatalogItemDto, ColorDto, QUERY_PARAM_LIST_SEPARATOR, QueryParamToken } from "../../../../common/dto";
-import { CardRarity, CatalogType, GameFormat, MTGColor, MTGColorType } from "../../../../common/types";
+import { CardRarity, CatalogType, MtgGameFormat, MtgColor, MtgColorType } from "../../../../common/types";
 import { BaseViewmodel } from "../../../shared/viewmodels";
 
 
@@ -13,19 +13,19 @@ export class CardSearchViewmodel extends BaseViewmodel<CardQueryDto> {
     this._dto.ownedCards = value;
   }
 
-  public get selectedCardColors(): Array<MTGColor> {
+  public get selectedCardColors(): Array<MtgColor> {
     return this._dto.selectedIdentityColors;
   }
 
-  public get selectedIdentityColors(): Array<MTGColor> {
+  public get selectedIdentityColors(): Array<MtgColor> {
     return this._dto.selectedIdentityColors;
   }
 
-  public get selectedProducedManaColors(): Array<MTGColor> {
+  public get selectedProducedManaColors(): Array<MtgColor> {
     return this._dto.selectedProducedManaColors;
   }
 
-  public get selectedGameFormats(): Array<GameFormat> {
+  public get selectedGameFormats(): Array<MtgGameFormat> {
     return this._dto.selectedGameFormats;
   }
 
@@ -47,11 +47,11 @@ export class CardSearchViewmodel extends BaseViewmodel<CardQueryDto> {
        * - extend with cards I don't own
        */
       ownedCards: false,
-      selectedCardColors: new Array<MTGColor>(),
+      selectedCardColors: new Array<MtgColor>(),
       selectedCatalogItems: new Array<CatalogItemDto>(),
-      selectedGameFormats: new Array<GameFormat>(),
-      selectedIdentityColors: new Array<MTGColor>(),
-      selectedProducedManaColors: new Array<MTGColor>(),
+      selectedGameFormats: new Array<MtgGameFormat>(),
+      selectedIdentityColors: new Array<MtgColor>(),
+      selectedProducedManaColors: new Array<MtgColor>(),
       selectedRarities: ["mythic", "rare", "uncommon", "common"],
       selectedSets: new Array<string>()
     };
@@ -61,7 +61,7 @@ export class CardSearchViewmodel extends BaseViewmodel<CardQueryDto> {
   //#endregion
 
   //#region CardColors --------------------------------------------------------
-  public addColor(type: MTGColorType, color: MTGColor, allColors: Array<ColorDto>): void {
+  public addColor(type: MtgColorType, color: MtgColor, allColors: Array<ColorDto>): void {
     switch (type) {
       case "card":
         this._dto.selectedCardColors.push(color);
@@ -78,7 +78,7 @@ export class CardSearchViewmodel extends BaseViewmodel<CardQueryDto> {
     }
   }
 
-  public removeColor(type: MTGColorType, color: MTGColor): void {
+  public removeColor(type: MtgColorType, color: MtgColor): void {
     switch (type) {
       case "card": {
         const idx = this._dto.selectedCardColors.indexOf(color);
@@ -98,7 +98,7 @@ export class CardSearchViewmodel extends BaseViewmodel<CardQueryDto> {
     }
   }
 
-  public clearColorSelection(type: MTGColorType): void {
+  public clearColorSelection(type: MtgColorType): void {
     switch (type) {
       case "card":
         this._dto.selectedCardColors.splice(0);
@@ -114,12 +114,12 @@ export class CardSearchViewmodel extends BaseViewmodel<CardQueryDto> {
   //#endregion
 
   //#region GameFormat --------------------------------------------------------
-  public addGameFormat(gameFormat: GameFormat): void {
+  public addGameFormat(gameFormat: MtgGameFormat): void {
     this._dto.selectedGameFormats.push(gameFormat);
-    this._dto.selectedGameFormats.sort((a: GameFormat, b: GameFormat) => a.localeCompare(b));
+    this._dto.selectedGameFormats.sort((a: MtgGameFormat, b: MtgGameFormat) => a.localeCompare(b));
   }
 
-  public removeGameFormat(gameFormat: GameFormat): void {
+  public removeGameFormat(gameFormat: MtgGameFormat): void {
     const idx = this._dto.selectedGameFormats.indexOf(gameFormat);
     this._dto.selectedGameFormats.splice(idx, 1);
   }
@@ -239,8 +239,8 @@ export class CardSearchViewmodel extends BaseViewmodel<CardQueryDto> {
     return queryParts;
   }
 
-  private sortColors(selectedColors: Array<MTGColor>, allColors: Array<ColorDto>): void {
-    selectedColors.sort((a: MTGColor, b: MTGColor) => allColors.find((f: ColorDto) => f.id == a).sequence - allColors.find((f: ColorDto) => f.id == b).sequence);
+  private sortColors(selectedColors: Array<MtgColor>, allColors: Array<ColorDto>): void {
+    selectedColors.sort((a: MtgColor, b: MtgColor) => allColors.find((f: ColorDto) => f.id == a).sequence - allColors.find((f: ColorDto) => f.id == b).sequence);
   }
   //#endregion
 }

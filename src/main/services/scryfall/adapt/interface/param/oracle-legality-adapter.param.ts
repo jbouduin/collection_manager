@@ -1,8 +1,8 @@
-import { CardLegality, GameFormat } from "../../../../../../common/types";
+import { CardLegality, MtgGameFormat } from "../../../../../../common/types";
 
 
 export type OracleLegalityAdapterParameter = {
   oracle_id: string;
-  gameFormat: GameFormat;
+  gameFormat: MtgGameFormat;
   legality: CardLegality;
 };

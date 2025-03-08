@@ -1,4 +1,4 @@
-import { CardBorderColor, CardFinish, CardFrame, CardFrameEffect, CardLayout, CardPromoType, CardRarity, CardSecurityStamp, CardSetType, Game, ImageStatus, MTGColor, MTGLanguage } from "../../../../../common/types";
+import { CardBorderColor, CardFinish, CardFrame, CardFrameEffect, CardLayout, CardPromoType, CardRarity, CardSecurityStamp, CardSetType, Game, ImageStatus, MtgColor, MtgLanguage } from "../../../../../common/types";
 import { ScryfallCardface } from "./scryfall-card-face";
 import { ScryfallLegalities } from "./scryfall-legalities";
 import { ScryfallPreviewInfo } from "./scryfall-preview-info";
@@ -26,7 +26,7 @@ export interface ScryfallCard {
   /**
    * A language code for this printing.
    */
-  lang: MTGLanguage;
+  lang: MtgLanguage;
   /**
    * A code for this card’s layout.
    *
@@ -151,7 +151,7 @@ export interface ScryfallCard {
   /**
    * The colors in this card’s color indicator, if any. A null value for this field indicates the card does not have one.
    */
-  color_indicator?: Array<MTGColor>;
+  color_indicator?: Array<MtgColor>;
   /**
    * Nullable 	The mana cost for this card. This value will be any empty string "" if the cost is absent. Remember that per the game rules, a missing mana cost and a mana cost of {0} are different  Multi-faced cards will report this value in card faces.
    */
@@ -169,11 +169,11 @@ export interface ScryfallCard {
   /**
    * This card’s colors, if the overall card has colors defined by the rules. Otherwise the colors will be on the card_faces objects.
    */
-  colors: Array<MTGColor>;
+  colors: Array<MtgColor>;
   /**
    * This card’s color identity.
    */
-  color_identity: Array<MTGColor>;
+  color_identity: Array<MtgColor>;
   /**
    * This card’s overall rank/popularity on EDHREC. Not all cards are ranked.
    *
@@ -197,7 +197,7 @@ export interface ScryfallCard {
   /**
    * Colors of mana that this card could produce.
    */
-  produced_mana?: Array<MTGColor>;
+  produced_mana?: Array<MtgColor>;
   /**
    * True if this card is on the Reserved List.
    */

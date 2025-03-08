@@ -1,6 +1,6 @@
 import { InsertExpression } from "kysely/dist/cjs/parser/insert-values-parser";
 import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser";
-import { MTGColor } from "../../../../../common/types";
+import { MtgColor } from "../../../../../common/types";
 import { DatabaseSchema } from "../../../../database/schema";
 import { ICardfaceColorMapAdapter } from "../interface";
 import { CardfaceColorMapAdapterParameter } from "../interface/param";
@@ -8,7 +8,7 @@ import { CardfaceColorMapAdapterParameter } from "../interface/param";
 
 export class CardfaceColorMapAdapter implements ICardfaceColorMapAdapter {
   public toInsert(scryfall: CardfaceColorMapAdapterParameter): InsertExpression<DatabaseSchema, "cardface_color_map"> {
-    return scryfall.colors.map((color: MTGColor) => {
+    return scryfall.colors.map((color: MtgColor) => {
       return {
         card_id: scryfall.cardId,
         sequence: scryfall.sequence,

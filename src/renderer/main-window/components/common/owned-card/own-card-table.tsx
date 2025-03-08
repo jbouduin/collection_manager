@@ -3,7 +3,7 @@ import * as React from "react";
 import { CardConditionDto } from "../../../../../common/dto";
 import { CardCondition } from "../../../../../common/types";
 import { OwnedCardQuantityViewmodel } from "../../../viewmodels";
-import { CardConditionContext } from "../../context";
+import { CardConditionContext } from "../../../../shared/context";
 import { OwnedCardTableProps } from "./own-card-table.props";
 
 export function OwnedCardTable(props: OwnedCardTableProps) {

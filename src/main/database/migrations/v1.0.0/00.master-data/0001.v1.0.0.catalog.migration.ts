@@ -1,17 +1,17 @@
-/* eslint-disable  @typescript-eslint/no-explicit-any */
 import { ColumnDefinitionBuilder, Insertable, InsertResult, Kysely } from "kysely";
-import { createTable, CreateTableOptions, IBaseMigration } from "../base-migration";
-import { CatalogTypeTable } from "../../schema";
-import { sqliteUTCTimeStamp } from "../../../../common/util";
+import { createTable, CreateTableOptions, IBaseMigration } from "../../base-migration";
+import { CatalogTypeTable } from "../../../schema";
+import { sqliteUTCTimeStamp } from "../../../../../common/util";
 
-export class V0_0_1_Catalog_Migration implements IBaseMigration {
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+export class V1_0_0_Catalog_Migration implements IBaseMigration {
   public get keyName(): string {
-    return "0001: v.0.0.1.Catalog";
+    return "0001: v.1.0.0.Catalog";
   }
 
   public async up(db: Kysely<any>): Promise<void> {
-    return createV0_0_1_CatalogType(db)
-      .then(async () => await populateV0_0_1_CatalogType(db))
+    return createV1_0_0_CatalogType(db)
+      .then(async () => await populateV1_0_0_CatalogType(db))
       .then(async () => await createV0_0_1_CatalogItem(db));
   }
 
@@ -21,7 +21,7 @@ export class V0_0_1_Catalog_Migration implements IBaseMigration {
   }
 }
 
-async function createV0_0_1_CatalogType(db: Kysely<any>): Promise<void> {
+async function createV1_0_0_CatalogType(db: Kysely<any>): Promise<void> {
   const options: CreateTableOptions = {
     isSynced: true,
     tableName: "catalog_type",
@@ -34,7 +34,7 @@ async function createV0_0_1_CatalogType(db: Kysely<any>): Promise<void> {
     .execute();
 }
 
-async function populateV0_0_1_CatalogType(db: Kysely<any>): Promise<Array<InsertResult>> {
+async function populateV1_0_0_CatalogType(db: Kysely<any>): Promise<Array<InsertResult>> {
   const values = new Array<Insertable<CatalogTypeTable>>();
   const now = sqliteUTCTimeStamp();
   values.push({ created_at: now, catalog_name: "card-names", display_label: "Non-token English card names", is_used: 1 });

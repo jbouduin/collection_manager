@@ -1,4 +1,4 @@
-import { MTGColor } from "../../../../../common/types";
+import { MtgColor } from "../../../../../common/types";
 
 export interface ScryfallCardSymbol {
   /**
@@ -44,7 +44,7 @@ export interface ScryfallCardSymbol {
   /**
    * An array of colors that this symbol represents.
    */
-  colors: Array<MTGColor>;
+  colors: Array<MtgColor>;
   /**
    * True if the symbol is a hybrid mana symbol. Note that monocolor Phyrexian symbols aren’t considered hybrid.
    */

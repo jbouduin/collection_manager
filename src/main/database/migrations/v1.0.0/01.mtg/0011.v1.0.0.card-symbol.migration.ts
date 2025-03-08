@@ -1,17 +1,16 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @stylistic/newline-per-chained-call */
 import { ColumnDefinitionBuilder, Kysely } from "kysely";
+import { IBaseMigration, CreateTableOptions, createTable } from "../../base-migration";
 
-import { IBaseMigration, CreateTableOptions, createTable } from "../base-migration";
-
-export class V0_0_1_CardSymbol_Migration implements IBaseMigration {
+/* eslint-disable @typescript-eslint/no-explicit-any, @stylistic/newline-per-chained-call */
+export class V1_0_0_CardSymbol_Migration implements IBaseMigration {
   public get keyName(): string {
-    return "0005: v.0.0.1.CardSymbol";
+    return "0011: v.1.0.0.CardSymbol";
   }
 
   public async up(db: Kysely<any>): Promise<void> {
-    return createV0_0_1_CardSymbol(db)
-      .then(() => createV0_0_1_CardSymbolColorMap(db))
-      .then(() => createV0_0_1_CardSymbolAlternative(db));
+    return createV1_0_0_CardSymbol(db)
+      .then(() => createV1_0_0_CardSymbolColorMap(db))
+      .then(() => createV1_0_0_CardSymbolAlternative(db));
   }
 
   public async down(db: Kysely<any>): Promise<void> {
@@ -21,7 +20,7 @@ export class V0_0_1_CardSymbol_Migration implements IBaseMigration {
   }
 }
 
-async function createV0_0_1_CardSymbol(db: Kysely<any>): Promise<void> {
+async function createV1_0_0_CardSymbol(db: Kysely<any>): Promise<void> {
   const options: CreateTableOptions = {
     isSynced: true,
     tableName: "card_symbol",
@@ -42,7 +41,7 @@ async function createV0_0_1_CardSymbol(db: Kysely<any>): Promise<void> {
     .execute();
 }
 
-async function createV0_0_1_CardSymbolColorMap(db: Kysely<any>): Promise<void> {
+async function createV1_0_0_CardSymbolColorMap(db: Kysely<any>): Promise<void> {
   return db.schema.createTable("card_symbol_color_map")
     .addColumn("card_symbol_id", "text", (col: ColumnDefinitionBuilder) => col.references("card_symbol.id").onDelete("cascade").notNull())
     .addColumn("color_id", "text", (col: ColumnDefinitionBuilder) => col.references("color.id").onDelete("cascade").notNull())
@@ -50,7 +49,7 @@ async function createV0_0_1_CardSymbolColorMap(db: Kysely<any>): Promise<void> {
     .execute();
 }
 
-async function createV0_0_1_CardSymbolAlternative(db: Kysely<any>): Promise<void> {
+async function createV1_0_0_CardSymbolAlternative(db: Kysely<any>): Promise<void> {
   return db.schema.createTable("card_symbol_alternative")
     .addColumn("card_symbol_id", "text", (col: ColumnDefinitionBuilder) => col.references("card_symbol.id").onDelete("cascade").notNull())
     .addColumn("alternative", "text", (col: ColumnDefinitionBuilder) => col.notNull())

@@ -1,5 +1,5 @@
 import { OwnedCardListDto, MtgCardColorDto, MtgCardDetailDto, MtgCardLanguageDto, MtgCardListDto, MtgCardfaceDto, OracleDto, OwnedCardDto } from "../../../../common/dto";
-import { CardLayout, CardRarity, MTGLanguage } from "../../../../common/types";
+import { CardLayout, CardRarity, MtgLanguage } from "../../../../common/types";
 import { OracleViewmodel } from "../oracle/oracle.viewmodel";
 import { CardfaceViewmodel } from "./cardface.viewmodel";
 
@@ -155,7 +155,7 @@ export class MtgCardListViewmodel extends MtgCardViewmodel<MtgCardListDto> {
     return this._coloridentitySortValue;
   }
 
-  public get languages(): Array<MTGLanguage> {
+  public get languages(): Array<MtgLanguage> {
     return this._dtoCard.languages.map((language: MtgCardLanguageDto) => language.lang);
   }
   //#endregion
@@ -184,7 +184,7 @@ export class MtgCardDetailViewmodel extends MtgCardViewmodel<MtgCardDetailDto> {
   private readonly oracles: Map<number, OracleViewmodel>;
 
   //#region Detail specific getters -------------------------------------------
-  public get cardLanguage(): MTGLanguage {
+  public get cardLanguage(): MtgLanguage {
     return this._dtoCard.lang;
   }
 
@@ -250,7 +250,7 @@ export class CollectionCardListViewmodel extends BaseCardViewmodel<OwnedCardList
       .map((cardColor: MtgCardColorDto) => cardColor.mana_symbol);
   }
 
-  public get language(): MTGLanguage {
+  public get language(): MtgLanguage {
     return this._dtoCard.lang;
   }
 

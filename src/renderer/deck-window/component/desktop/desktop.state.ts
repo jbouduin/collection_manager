@@ -1,4 +1,4 @@
-import { CardConditionDto, DeckDetailsDto, LanguageDto, MtgCardSetDto, RendererConfigurationDto } from "../../../../common/dto";
+import { CardConditionDto, DeckDetailsDto, GameFormatDto, LanguageDto, MtgCardSetDto, RendererConfigurationDto } from "../../../../common/dto";
 
 
 export interface DesktopState {
@@ -6,6 +6,7 @@ export interface DesktopState {
   cardSets: Array<MtgCardSetDto>;
   deck: DeckDetailsDto;
   initialized: boolean;
+  gameFormats: Array<GameFormatDto>;
   languages: Array<LanguageDto>;
   rendererConfiguration: RendererConfigurationDto;
   splashScreenOpen: boolean;

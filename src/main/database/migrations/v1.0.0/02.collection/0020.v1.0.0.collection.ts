@@ -1,16 +1,17 @@
 import { ColumnDefinitionBuilder, InsertResult, Kysely } from "kysely";
-import { CreateTableOptions, IBaseMigration, createTable } from "../base-migration";
-import { sqliteUTCTimeStamp } from "../../../../common/util";
+import { CreateTableOptions, IBaseMigration, createTable } from "../../base-migration";
+import { sqliteUTCTimeStamp } from "../../../../../common/util";
+
 
 /* eslint-disable  @typescript-eslint/no-explicit-any */
-export class V0_1_0_Collection implements IBaseMigration {
+export class V1_0_0_Collection_Migration implements IBaseMigration {
   get keyName(): string {
-    return "0008: v.0.1.0.Collection";
+    return "0020: v.1.0.0.Collection";
   }
 
   public up(db: Kysely<any>): Promise<void> {
-    return createV0_1_0_Collection(db)
-      .then(() => populateV0_1_0_Collection(db))
+    return createV1_0_0_Collection(db)
+      .then(() => populateV1_0_0_Collection(db))
       .then(() => Promise.resolve());
   }
   down(db: Kysely<any>): Promise<void> {
@@ -18,7 +19,7 @@ export class V0_1_0_Collection implements IBaseMigration {
   }
 }
 
-function createV0_1_0_Collection(db: Kysely<any>) {
+function createV1_0_0_Collection(db: Kysely<any>) {
   const options: CreateTableOptions = {
     tableName: "collection",
     isSynced: false,
@@ -34,7 +35,7 @@ function createV0_1_0_Collection(db: Kysely<any>) {
     .execute();
 }
 
-function populateV0_1_0_Collection(db: Kysely<any>): Promise<InsertResult> {
+function populateV1_0_0_Collection(db: Kysely<any>): Promise<InsertResult> {
   /*
    * add one single system value, which will be the parent for all folders and collections created in the root.
    * This value will not be retrieved

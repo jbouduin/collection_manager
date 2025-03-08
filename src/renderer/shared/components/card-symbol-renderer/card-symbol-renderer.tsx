@@ -1,8 +1,8 @@
 import { isEmpty, xor } from "lodash";
 import * as React from "react";
-import { compareClassNameProp } from "../utils";
-import { CardSymbolContext } from "../../../main-window/components/context";
+import { CardSymbolContext } from "../../context";
 import { SvgProvider } from "../svg-provider/svg-provider";
+import { compareClassNameProp } from "../utils";
 import { CardSymbolRendererProps } from "./card-symbol-renderer.props";
 
 

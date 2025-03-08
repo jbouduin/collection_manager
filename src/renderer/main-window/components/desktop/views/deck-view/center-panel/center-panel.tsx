@@ -1,14 +1,20 @@
 import { MenuContext, Region, SelectionModes, Table2, Utils } from "@blueprintjs/table";
 import * as React from "react";
-import { BaseLookupResult, GenericTextColumn, IBaseColumn, onDataSelected, selectedRegionTransformToRowSelection } from "../../../../../../shared/components";
+import { BaseLookupResult, ColorIdentityColumn, GenericTextColumn, IBaseColumn, onDataSelected, selectedRegionTransformToRowSelection } from "../../../../../../shared/components";
 import { DeckListViewmodel } from "../../../../../viewmodels";
 import { CenterPanelProps } from "./center-panel.props";
 import { Menu, MenuItem } from "@blueprintjs/core";
+import { GameFormatDto } from "../../../../../../../common/dto";
+import { GameFormatContext } from "../../../../../../shared/context";
 
 
 export function CenterPanel(props: CenterPanelProps) {
   //#region State --------------------------------------------------------------
   const [state, setState] = React.useState<Array<number>>(new Array<number>());
+  //#endregion
+
+  //#region Context -----------------------------------------------------------
+  const gameFormatContext = React.useContext<Array<GameFormatDto>>(GameFormatContext);
   //#endregion
 
   //#region Memo --------------------------------------------------------------
@@ -28,13 +34,24 @@ export function CenterPanel(props: CenterPanelProps) {
         (deck: DeckListViewmodel) => {
           return {
             defaultSortColumn: deck.name,
-            textValue: props.displayServiceValueService.gameFormatDisplayValues[deck.targetFormat] ?? deck.targetFormat
+            textValue: gameFormatContext.find((g: GameFormatDto) => g.id == deck.targetFormat)?.display_text || deck.targetFormat
+          };
+        }
+      ));
+      result.push(new ColorIdentityColumn<DeckListViewmodel>(
+        3,
+        "CI",
+        (deck: DeckListViewmodel) => {
+          return {
+            defaultSortColumn: DeckListViewmodel.name,
+            colorIdentitySortValue: deck.coloridentitySortValue,
+            symbols: deck.colorIdentity
           };
         }
       ));
       return result;
     },
-    [props.displayServiceValueService]
+    [gameFormatContext]
   );
   //#endregion
 

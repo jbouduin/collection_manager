@@ -1,6 +1,5 @@
 /*
- * TODO eventually move types that have to be sortable and could extend over time to the database
- * - Gameformat: can easily extend over time
+ * TODO eventually move types that have to be sortable and could extend over time to the database *
  * - Legality: should be sortable
  *
  */
@@ -123,7 +122,7 @@ export type CardSetType =
   "token" |
   "memorabilia" |
   "minigame";
-export type GameFormat =
+export type MtgGameFormat =
   "alchemy" |
   "brawl" |
   "commander" |
@@ -147,19 +146,19 @@ export type GameFormat =
   "timeless" |
   "vintage";
 export type Game = "paper" | "arena" | "mtgo";
-export type MTGColorType =
+export type MtgColorType =
   "card" |
   "identity" |
   "indicator" |
   "produced_mana";
-export type MTGColor =
+export type MtgColor =
   "W" |
   "U" |
   "R" |
   "B" |
   "G" |
   "C"; // Colorless
-export type MTGLanguage =
+export type MtgLanguage =
   "en" |
   "es" |
   "fr" |

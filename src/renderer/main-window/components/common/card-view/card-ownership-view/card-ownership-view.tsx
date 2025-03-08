@@ -3,9 +3,8 @@ import { cloneDeep, noop } from "lodash";
 import * as React from "react";
 import { CardConditionDto, OwnedCardQuantityDto } from "../../../../../../common/dto";
 import { CardCondition } from "../../../../../../common/types";
-import { IpcProxyService, IpcProxyServiceContext } from "../../../../../shared/context";
+import { CardConditionContext, IpcProxyService, IpcProxyServiceContext } from "../../../../../shared/context";
 import { OwnedCardQuantityViewmodel } from "../../../../viewmodels";
-import { CardConditionContext } from "../../../context";
 import { buildEditableState, OwnedCardDialog, OwnedCardTable } from "../../owned-card";
 import { CardOwnerShipViewProps } from "./card-ownership-view.props";
 

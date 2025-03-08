@@ -2,7 +2,7 @@ import { DeleteResult, InsertResult, Transaction, UpdateResult, sql } from "kyse
 import { inject, injectable } from "tsyringe";
 import { CardSyncParam, MtgCardImageDataDto, IdSelectResult } from "../../../../../common/dto";
 import { ProgressCallback } from "../../../../../common/ipc";
-import { ChangedImageStatusAction, GameFormat, ImageStatus, MTGColor, MTGColorType, TimespanUnit } from "../../../../../common/types";
+import { ChangedImageStatusAction, MtgGameFormat, ImageStatus, MtgColor, MtgColorType, TimespanUnit } from "../../../../../common/types";
 import { isSingleCardFaceLayout, sqliteUTCTimeStamp } from "../../../../../common/util";
 import { DatabaseSchema } from "../../../../../main/database/schema";
 import { IConfigurationService, IDatabaseService, IImageCacheService, ILogService } from "../../../../../main/services/infra/interfaces";
@@ -286,11 +286,11 @@ export class CardSyncService extends BaseSyncService<CardSyncParam> implements I
           taskParameters.push({
             trx: trx,
             tableName: "oracle_legality",
-            filter: (eb) => eb("oracle_legality.oracle_id", "=", scryfallCard.oracle_id).and("oracle_legality.format", "=", key as GameFormat),
+            filter: (eb) => eb("oracle_legality.oracle_id", "=", scryfallCard.oracle_id).and("oracle_legality.format", "=", key as MtgGameFormat),
             adapter: this.oracleLegalityAdapter,
             scryfall: {
               oracle_id: scryfallCard.oracle_id,
-              gameFormat: key as GameFormat,
+              gameFormat: key as MtgGameFormat,
               legality: scryfallCard.legalities[key as keyof ScryfallLegalities]
             }
           });
@@ -301,11 +301,11 @@ export class CardSyncService extends BaseSyncService<CardSyncParam> implements I
           uniqueOracleIds.forEach((cardface: ScryfallCardface) => taskParameters.push({
             trx: trx,
             tableName: "oracle_legality",
-            filter: (eb) => eb("oracle_legality.oracle_id", "=", cardface.oracle_id).and("oracle_legality.format", "=", key as GameFormat),
+            filter: (eb) => eb("oracle_legality.oracle_id", "=", cardface.oracle_id).and("oracle_legality.format", "=", key as MtgGameFormat),
             adapter: this.oracleLegalityAdapter,
             scryfall: {
               oracle_id: cardface.oracle_id,
-              gameFormat: key as GameFormat,
+              gameFormat: key as MtgGameFormat,
               legality: scryfallCard.legalities[key as keyof ScryfallLegalities]
             }
           }));
@@ -411,8 +411,8 @@ export class CardSyncService extends BaseSyncService<CardSyncParam> implements I
     trx: Transaction<DatabaseSchema>,
     cardId: string,
     sequence: number,
-    colorType: MTGColorType,
-    colors: Array<MTGColor>
+    colorType: MtgColorType,
+    colors: Array<MtgColor>
   ): GenericSyncTaskParameter<"cardface_color_map", CardfaceColorMapAdapterParameter> {
     return {
       trx: trx,
@@ -428,8 +428,8 @@ export class CardSyncService extends BaseSyncService<CardSyncParam> implements I
   private createCardColorMapTaskParameter(
     trx: Transaction<DatabaseSchema>,
     cardId: string,
-    colorType: MTGColorType,
-    colors: Array<MTGColor>
+    colorType: MtgColorType,
+    colors: Array<MtgColor>
   ): GenericSyncTaskParameter<"card_color_map", CardColorMapAdapterParameter> {
     return {
       trx: trx,

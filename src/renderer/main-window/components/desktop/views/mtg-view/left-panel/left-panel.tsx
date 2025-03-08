@@ -1,11 +1,11 @@
 import { Tab, Tabs } from "@blueprintjs/core";
 import * as React from "react";
+import { MtgCardSetDto } from "../../../../../../../common/dto";
+import { CardSetContext } from "../../../../../../shared/context";
+import { CardSetTreeViewmodel } from "../../../../../viewmodels/card-set";
 import { LeftPanelProps } from "./left-panel.props";
 import { SearchView } from "./search-view/search-view";
 import { SetTreeView } from "./set-tree-view/set-tree-view";
-import { CardSetContext } from "../../../../context";
-import { MtgCardSetDto } from "../../../../../../../common/dto";
-import { CardSetTreeViewmodel } from "../../../../../viewmodels/card-set/card-set-tree.viewmodel";
 
 
 export function LeftPanel(props: LeftPanelProps) {

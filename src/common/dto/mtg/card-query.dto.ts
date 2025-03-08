@@ -1,4 +1,4 @@
-import { CardRarity, CatalogType, GameFormat, MTGColor } from "../../types";
+import { CardRarity, CatalogType, MtgGameFormat, MtgColor } from "../../types";
 import { CatalogItemDto } from "../master-data";
 
 export type QueryParamToken =
@@ -17,11 +17,11 @@ export const QUERY_PARAM_LIST_SEPARATOR = "¶";
  */
 export interface CardQueryDto {
   ownedCards: boolean;
-  selectedCardColors: Array<MTGColor>;
+  selectedCardColors: Array<MtgColor>;
   selectedCatalogItems: Array<CatalogItemDto>;
-  selectedIdentityColors: Array<MTGColor>;
-  selectedGameFormats: Array<GameFormat>;
-  selectedProducedManaColors: Array<MTGColor>;
+  selectedIdentityColors: Array<MtgColor>;
+  selectedGameFormats: Array<MtgGameFormat>;
+  selectedProducedManaColors: Array<MtgColor>;
   selectedRarities: Array<CardRarity>;
   selectedSets: Array<string>;
 }

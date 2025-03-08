@@ -1,3 +1,3 @@
-import { CardLegality, GameFormat } from "../../../../../common/types";
+import { CardLegality, MtgGameFormat } from "../../../../../common/types";
 
-export type ScryfallLegalities = Record<GameFormat, CardLegality>;
+export type ScryfallLegalities = Record<MtgGameFormat, CardLegality>;

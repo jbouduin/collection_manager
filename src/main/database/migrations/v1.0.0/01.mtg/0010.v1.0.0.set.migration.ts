@@ -1,15 +1,15 @@
-/* eslint-disable  @typescript-eslint/no-explicit-any */
 import { ColumnDefinitionBuilder, Kysely } from "kysely";
+import { IBaseMigration, CreateTableOptions, createTable } from "../../base-migration";
 
-import { IBaseMigration, CreateTableOptions, createTable } from "../base-migration";
 
-export class V0_0_1_Set_Migration implements IBaseMigration {
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+export class V1_0_0_Set_Migration implements IBaseMigration {
   public get keyName(): string {
-    return "0002: v.0.0.1.Set";
+    return "0010: v.1.0.0.Set";
   }
 
   public async up(db: Kysely<any>): Promise<void> {
-    return createV0_0_1_Set(db);
+    return createV1_0_0_Set(db);
   }
 
   public async down(db: Kysely<any>): Promise<void> {
@@ -17,7 +17,7 @@ export class V0_0_1_Set_Migration implements IBaseMigration {
   }
 }
 
-async function createV0_0_1_Set(db: Kysely<any>): Promise<void> {
+async function createV1_0_0_Set(db: Kysely<any>): Promise<void> {
   const options: CreateTableOptions = {
     isSynced: true,
     tableName: "card_set",

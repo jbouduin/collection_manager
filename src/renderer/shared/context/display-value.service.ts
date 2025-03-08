@@ -1,4 +1,4 @@
-import { CardLegality, CardRarity, CardSetGroupBy, CardSetSort, CardSetType, CardSyncType, GameFormat, ImageStatus, RulingSyncType, TimespanUnit } from "../../../common/types";
+import { CardLegality, CardRarity, CardSetGroupBy, CardSetSort, CardSetType, CardSyncType, ImageStatus, RulingSyncType, TimespanUnit } from "../../../common/types";
 
 /**
  * The display service is using maps to make sure we add new display values if new key's are added
@@ -12,7 +12,6 @@ export class DisplayValueService {
   private readonly _cardSetTypeDisplayValues: Record<CardSetType, string>;
   private readonly _cardSyncTypeDisplayValues: Record<CardSyncType, string>;
   private readonly _imageStatusDisplayValues: Record<ImageStatus, string>;
-  private readonly _gameFormatDisplayValues: Record<GameFormat, string>;
   private readonly _rulingSyncTypeDisplayValues: Record<RulingSyncType, string>;
   private readonly _timespanUnitDisplayValues: Record<TimespanUnit, string>;
   //#endregion
@@ -44,10 +43,6 @@ export class DisplayValueService {
 
   public get imageStatusDisplayValues(): Record<ImageStatus, string> {
     return this._imageStatusDisplayValues;
-  }
-
-  public get gameFormatDisplayValues(): Record<GameFormat, string> {
-    return this._gameFormatDisplayValues;
   }
 
   public get rulingSyncTypeDisplayValues(): Record<RulingSyncType, string> {
@@ -146,31 +141,6 @@ export class DisplayValueService {
       week: "Week(s)",
       month: "Month(s)",
       year: "Year(s)"
-    };
-
-    this._gameFormatDisplayValues = {
-      alchemy: "Alchemy",
-      brawl: "Brawl",
-      commander: "Commander",
-      duel: "Duel",
-      explorer: "Explorer",
-      future: "Future",
-      gladiator: "Gladiator",
-      historic: "Historic",
-      legacy: "Legacy",
-      modern: "Modern",
-      oathbreaker: "Oathbreaker",
-      oldschool: "Oldschool",
-      pauper: "Pauper",
-      paupercommander: "Pauper Commander",
-      penny: "Penny",
-      pioneer: "Pioneer",
-      predh: "Predh ???",
-      premodern: "Pre-modern",
-      standard: "Standard",
-      standardbrawl: "Standard Brawl",
-      timeless: "Timeless",
-      vintage: "Vintage"
     };
   }
   //#endregion

@@ -3,16 +3,14 @@ import classNames from "classnames";
 import { cloneDeep, noop } from "lodash";
 import * as React from "react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
-import { CardConditionDto, ConfigurationDto, DeckDetailsDto, LanguageDto, MtgCardSetDto } from "../../../../common/dto";
-import { CardConditionContext, CardSetContext, CardSymbolContext, ConfigurationContext, LanguagesContext } from "../../../main-window/components/context";
+import { CardConditionDto, ConfigurationDto, DeckDetailsDto, GameFormatDto, LanguageDto, MtgCardSetDto } from "../../../../common/dto";
 import { SplashScreen } from "../../../main-window/components/desktop/splash-screen/splash-screen";
 import { AfterSplashScreenClose } from "../../../shared/collection-manager.props";
-import { DisplayValueService, DisplayValueServiceContext, IpcProxyService, IpcProxyServiceContext } from "../../../shared/context";
+import * as Context from "../../../shared/context";
 import { DesktopProps } from "./desktop.props";
 import { DesktopState } from "./desktop.state";
 import { LeftPanel } from "./left-panel/left-panel";
 import { RightPanel } from "./right-panel/right-panel";
-
 
 export function Desktop(props: DesktopProps) {
   //#region State -------------------------------------------------------------
@@ -21,6 +19,7 @@ export function Desktop(props: DesktopProps) {
     cardConditions: new Array<CardConditionDto>(),
     cardSets: new Array<MtgCardSetDto>(),
     deck: null,
+    gameFormats: new Array<GameFormatDto>(),
     languages: new Array<LanguageDto>(),
     rendererConfiguration: null,
     splashScreenOpen: false,
@@ -31,7 +30,7 @@ export function Desktop(props: DesktopProps) {
   //#endregion
 
   //#region Context ---------------------------------------------------------------------
-  const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
+  const ipcProxyService = React.useContext<Context.IpcProxyService>(Context.IpcProxyServiceContext);
   //#endregion
 
   //#region Effects -----------------------------------------------------------
@@ -51,11 +50,13 @@ export function Desktop(props: DesktopProps) {
             ipcProxyService.getData<Array<MtgCardSetDto>>("/card-set"),
             ipcProxyService.getData<Array<LanguageDto>>("/language"),
             ipcProxyService.getData<Array<CardConditionDto>>("/card-condition"),
+            ipcProxyService.getData<Array<GameFormatDto>>("/game-format/"),
             ipcProxyService.getData<DeckDetailsDto>(`/deck/${props.deckId}`)
           ]).then(
-            ([cardSymbols, cardSets, languages, cardConditions, deck]) => {
+            ([cardSymbols, cardSets, languages, cardConditions, gameFormats, deck]) => {
               newState.symbolSvgs = cardSymbols;
               newState.cardSets = cardSets.sort((a: MtgCardSetDto, b: MtgCardSetDto) => a.name.localeCompare(b.name));
+              newState.gameFormats = gameFormats;
               newState.languages = languages;
               newState.cardConditions = cardConditions;
               newState.deck = deck;
@@ -108,12 +109,12 @@ export function Desktop(props: DesktopProps) {
     <>
       {
         desktopState.initialized &&
-        <ConfigurationContext.Provider value={desktopState.rendererConfiguration} >
-          <DisplayValueServiceContext.Provider value={new DisplayValueService()}>
-            <LanguagesContext.Provider value={desktopState.languages}>
-              <CardSymbolContext.Provider value={desktopState.symbolSvgs}>
-                <CardSetContext.Provider value={desktopState.cardSets}>
-                  <CardConditionContext.Provider value={desktopState.cardConditions}>
+        <Context.ConfigurationContext.Provider value={desktopState.rendererConfiguration} >
+          <Context.DisplayValueServiceContext.Provider value={new Context.DisplayValueService()}>
+            <Context.LanguagesContext.Provider value={desktopState.languages}>
+              <Context.CardSymbolContext.Provider value={desktopState.symbolSvgs}>
+                <Context.CardSetContext.Provider value={desktopState.cardSets}>
+                  <Context.CardConditionContext.Provider value={desktopState.cardConditions}>
                     <Card className={classNames(desktopState.themeClassName, "desktop-wrapper")}>
                       <PanelGroup direction="horizontal">
                         <Panel defaultSize={80}>
@@ -138,12 +139,12 @@ export function Desktop(props: DesktopProps) {
                         onDialogClose={noop}
                       />
                     }
-                  </CardConditionContext.Provider>
-                </CardSetContext.Provider>
-              </CardSymbolContext.Provider>
-            </LanguagesContext.Provider>
-          </DisplayValueServiceContext.Provider>
-        </ConfigurationContext.Provider >
+                  </Context.CardConditionContext.Provider>
+                </Context.CardSetContext.Provider>
+              </Context.CardSymbolContext.Provider>
+            </Context.LanguagesContext.Provider>
+          </Context.DisplayValueServiceContext.Provider>
+        </Context.ConfigurationContext.Provider >
       }
     </>
   );

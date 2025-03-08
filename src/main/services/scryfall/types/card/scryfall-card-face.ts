@@ -1,10 +1,10 @@
-import { CardLayout, MTGColor } from "../../../../../common/types";
+import { CardLayout, MtgColor } from "../../../../../common/types";
 
 export interface ScryfallCardface {
   /**
    * The colors in this card’s color indicator, if any. A null value for this field indicates the card does not have one.
    */
-  color_indicator?: Array<MTGColor>;
+  color_indicator?: Array<MtgColor>;
   /**
    * Nullable 	The mana cost for this card. This value will be any empty string "" if the cost is absent. Remember that per the game rules, a missing mana cost and a mana cost of {0} are different  Multi-faced cards will report this value in card faces.
    */
@@ -88,7 +88,7 @@ export interface ScryfallCardface {
   /**
    * This card’s colors, if the overall card has colors defined by the rules. Otherwise the colors will be on the card_faces objects.
    */
-  colors: Array<MTGColor>;
+  colors: Array<MtgColor>;
   /**
    * The card’s mana value. Note that some funny cards have fractional mana costs.
    *

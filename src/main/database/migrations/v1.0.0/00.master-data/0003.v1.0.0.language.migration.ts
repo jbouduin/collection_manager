@@ -1,18 +1,18 @@
-/* eslint-disable  @typescript-eslint/no-explicit-any */
 import { ColumnDefinitionBuilder, InsertResult, Insertable, Kysely } from "kysely";
+import { sqliteUTCTimeStamp } from "../../../../../common/util";
+import { LanguageTable } from "../../../schema";
+import { CreateTableOptions, IBaseMigration, createTable } from "../../base-migration";
 
-import { sqliteUTCTimeStamp } from "../../../../common/util";
-import { LanguageTable } from "../../schema";
-import { CreateTableOptions, IBaseMigration, createTable } from "../base-migration";
 
-export class V0_0_1_Language_Migration implements IBaseMigration {
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+export class V1_0_0_Language_Migration implements IBaseMigration {
   public get keyName(): string {
-    return "0003: v.0.0.1.Language";
+    return "0003: v.1.0.0.Language";
   }
 
   public async up(db: Kysely<any>): Promise<void> {
-    return createV0_0_1_Language(db)
-      .then(() => populateV0_0_1_Language(db))
+    return createV1_0_0_Language(db)
+      .then(() => populateV1_0_0_Language(db))
       .then(() => Promise.resolve());
   }
 
@@ -21,7 +21,7 @@ export class V0_0_1_Language_Migration implements IBaseMigration {
   }
 }
 
-async function createV0_0_1_Language(db: Kysely<any>): Promise<void> {
+async function createV1_0_0_Language(db: Kysely<any>): Promise<void> {
   const options: CreateTableOptions = {
     isSynced: false,
     tableName: "language",
@@ -36,7 +36,7 @@ async function createV0_0_1_Language(db: Kysely<any>): Promise<void> {
     .execute();
 }
 
-async function populateV0_0_1_Language(db: Kysely<any>): Promise<Array<InsertResult>> {
+async function populateV1_0_0_Language(db: Kysely<any>): Promise<Array<InsertResult>> {
   const values = new Array<Insertable<LanguageTable>>();
   const now = sqliteUTCTimeStamp();
   values.push({ created_at: now, id: "en", sequence: 0, printed_code: "EN", display_text: "English", button_text: "EN" });

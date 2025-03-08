@@ -3,7 +3,7 @@ import { CardCardMapTable, CardColorMapTable, CardFaceColorMapTable, CardfaceTab
 import { CardSymbolAlternativeTable, CardSymbolColorMapTable, CardSymbolTable } from "./card-symbol";
 import { CardConditionTable, CollectionTable, OwnedCardCollectionMapTable, OwnedCardTable } from "./collection";
 import { DeckCardTable, DeckTable } from "./deck";
-import { CardSetTable, CatalogItemTable, CatalogTypeTable, ColorTable, LanguageTable } from "./master-data";
+import { CardSetTable, CatalogItemTable, CatalogTypeTable, ColorTable, GameFormatTable, LanguageTable } from "./master-data";
 import { OracleKeywordTable, OracleLegalityTable, OracleRulingLineTable, OracleRulingTable, OracleTable } from "./oracle";
 
 
@@ -31,6 +31,7 @@ export interface DatabaseSchema {
   catalog_item: CatalogItemTable;
   catalog_type: CatalogTypeTable;
   color: ColorTable;
+  game_format: GameFormatTable;
   language: LanguageTable;
   //#endregion
 

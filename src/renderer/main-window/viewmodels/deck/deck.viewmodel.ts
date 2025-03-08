@@ -1,5 +1,5 @@
 import { DeckDto } from "../../../../common/dto";
-import { GameFormat } from "../../../../common/types";
+import { MtgGameFormat } from "../../../../common/types";
 import { BaseViewmodel } from "../../../shared/viewmodels";
 
 export class DeckViewmodel extends BaseViewmodel<DeckDto> {
@@ -28,11 +28,11 @@ export class DeckViewmodel extends BaseViewmodel<DeckDto> {
     this._dto.name = value;
   }
 
-  public get targetFormat(): GameFormat {
+  public get targetFormat(): MtgGameFormat {
     return this._dto.target_format;
   }
 
-  public set targetFormat(value: GameFormat) {
+  public set targetFormat(value: MtgGameFormat) {
     this._dto.target_format = value;
   }
   //#endregion

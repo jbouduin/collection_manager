@@ -1,8 +1,7 @@
 import * as React from "react";
-import { CardSymbolContext } from "../../../context";
-import { SvgProvider } from "../../../../../shared/components/svg-provider/svg-provider";
+import { compareClassNameProp, SvgProvider } from "../../../../../shared/components";
+import { CardSymbolContext } from "../../../../../shared/context";
 import { CardTextViewProps } from "./card-text-view.props";
-import { compareClassNameProp } from "../../../../../shared/components";
 
 
 export const CardTextView = React.memo(

@@ -2,8 +2,8 @@ import { H3, H5 } from "@blueprintjs/core";
 import * as React from "react";
 import { MtgCardSetDto } from "../../../../../../common/dto";
 import { compareClassNameProp, getRarityColorClassname } from "../../../../../shared/components";
-import { CardSetContext } from "../../../context";
 import { SvgProvider } from "../../../../../shared/components/svg-provider/svg-provider";
+import { CardSetContext } from "../../../../../shared/context";
 import { CardHeaderViewProps } from "./card-header-view.props";
 
 export const CardHeaderView = React.memo(

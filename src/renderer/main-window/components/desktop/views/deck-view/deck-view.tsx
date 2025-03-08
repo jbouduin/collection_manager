@@ -2,12 +2,13 @@ import { cloneDeep, noop } from "lodash";
 import * as React from "react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { DeckDto, DeckListDto } from "../../../../../../common/dto";
-import { DisplayValueService, DisplayValueServiceContext, IpcProxyService, IpcProxyServiceContext } from "../../../../../shared/context";
+import { IpcProxyService, IpcProxyServiceContext } from "../../../../../shared/context";
 import { DeckFolderTreeViewmodel, DeckListViewmodel } from "../../../../viewmodels";
 import { CenterPanel } from "./center-panel/center-panel";
 import { DeckViewProps } from "./deck-view.props";
 import { LeftPanel } from "./left-panel/left-panel";
 import { RightPanel } from "./right-panel/right.panel";
+
 
 // TODO memoize child components
 export function DeckView(props: DeckViewProps) {
@@ -27,7 +28,7 @@ export function DeckView(props: DeckViewProps) {
         void ipcProxyService
           .getData<Array<DeckListDto>>(`/deck/folder/${selectedFolder}/deck`)
           .then(
-            (r: Array<DeckListDto>) => setDecksInFolder(r.map((deck: DeckListDto) => new DeckListViewmodel(deck))),
+            (r: Array<DeckListDto>) => setDecksInFolder(r.map((deck: DeckListDto) => DeckListViewmodel.deckListViewmodel(deck))),
             noop
           );
       } else {
@@ -41,13 +42,7 @@ export function DeckView(props: DeckViewProps) {
   const onDeckAdded = React.useCallback(
     (deck: DeckDto) => setDecksInFolder((oldDecksInFolder: Array<DeckListViewmodel>) => {
       const newDeckList = cloneDeep(oldDecksInFolder);
-      const newListDto: DeckListDto = {
-        ...deck,
-        calculatedFormats: [],
-        deckSize: 0,
-        sideBoardSize: 0
-      };
-      newDeckList.push(new DeckListViewmodel(newListDto));
+      newDeckList.push(DeckListViewmodel.newDeckListViewmodel(deck));
       return newDeckList;
     }),
     [decksInFolder]
@@ -87,36 +82,30 @@ export function DeckView(props: DeckViewProps) {
 
   //#region Rendering ---------------------------------------------------------
   return (
-    <DisplayValueServiceContext.Consumer>
-      {
-        (displayServiceValueService: DisplayValueService) => (
-          <PanelGroup direction="horizontal">
-            <Panel defaultSize={20}>
-              <LeftPanel
-                {...props}
-                onDeckAdded={(deck: DeckDto) => onDeckAdded(deck)}
-                onFolderSelected={(folder: DeckFolderTreeViewmodel) => setSelectedFolder(folder.id)}
-              />
-            </Panel>
-            <PanelResizeHandle />
-            <Panel>
-              <CenterPanel
-                {...props}
-                decks={decksInFolder}
-                displayServiceValueService={displayServiceValueService}
-                onDecksSelected={(decks: Array<DeckListViewmodel>) => setSelectedDecks(decks)}
-                onDeleteDeck={(deck: DeckListViewmodel) => onDeleteDeck(deck)}
-                onEditDeck={(deck: DeckListViewmodel) => onEditDeck(deck)}
-              />
-            </Panel>
-            <PanelResizeHandle />
-            <Panel defaultSize={20}>
-              <RightPanel selectedDeckId={selectedDecks.length > 0 ? selectedDecks[0].id : undefined} />
-            </Panel>
-          </PanelGroup>
-        )
-      }
-    </DisplayValueServiceContext.Consumer>
+    <PanelGroup direction="horizontal">
+      <Panel defaultSize={20}>
+        <LeftPanel
+          {...props}
+          onDeckAdded={(deck: DeckDto) => onDeckAdded(deck)}
+          onFolderSelected={(folder: DeckFolderTreeViewmodel) => setSelectedFolder(folder.id)}
+        />
+      </Panel>
+      <PanelResizeHandle />
+      <Panel>
+        <CenterPanel
+          {...props}
+          decks={decksInFolder}
+          // displayServiceValueService={displayServiceValueService}
+          onDecksSelected={(decks: Array<DeckListViewmodel>) => setSelectedDecks(decks)}
+          onDeleteDeck={(deck: DeckListViewmodel) => onDeleteDeck(deck)}
+          onEditDeck={(deck: DeckListViewmodel) => onEditDeck(deck)}
+        />
+      </Panel>
+      <PanelResizeHandle />
+      <Panel defaultSize={20}>
+        <RightPanel selectedDeckId={selectedDecks.length > 0 ? selectedDecks[0].id : undefined} />
+      </Panel>
+    </PanelGroup>
   );
   //#endregion
 }

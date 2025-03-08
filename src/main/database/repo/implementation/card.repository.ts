@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as helpers from "kysely/helpers/sqlite";
 import { inject, injectable } from "tsyringe";
 import { CardfaceColorDto, CardQueryDto, CatalogItemDto, MtgCardColorDto, MtgCardDetailDto, MtgCardfaceDto, MtgCardImageDataDto, MtgCardListDto, OracleDto } from "../../../../common/dto";
-import { CatalogType, MTGColor } from "../../../../common/types";
+import { CatalogType, MtgColor } from "../../../../common/types";
 import { IResult } from "../../../services/base";
 import { IDatabaseService, ILogService, IResultFactory } from "../../../services/infra/interfaces";
 import { INFRASTRUCTURE } from "../../../services/service.tokens";
@@ -264,7 +264,7 @@ export class CardRepository extends BaseRepository implements ICardRepository {
                 .select("ccm.color_id")
                 .whereRef("ccm.card_id", "=", "card.id")
                 .where("ccm.color_type", "=", "identity")
-                .where("ccm.color_id", "in", params.selectedCardColors.filter((c: MTGColor) => c != "C"))),
+                .where("ccm.color_id", "in", params.selectedCardColors.filter((c: MtgColor) => c != "C"))),
               eb.not(eb.exists(eb
                 .selectFrom("card_color_map as ccm")
                 .select("ccm.color_id")
@@ -309,7 +309,7 @@ export class CardRepository extends BaseRepository implements ICardRepository {
                 .select("ccm.color_id")
                 .whereRef("ccm.card_id", "=", "card.id")
                 .where("ccm.color_type", "=", "identity")
-                .where("ccm.color_id", "in", params.selectedIdentityColors.filter((c: MTGColor) => c != "C"))),
+                .where("ccm.color_id", "in", params.selectedIdentityColors.filter((c: MtgColor) => c != "C"))),
               eb.not(eb.exists(eb
                 .selectFrom("card_color_map as ccm")
                 .select("ccm.color_id")
@@ -354,7 +354,7 @@ export class CardRepository extends BaseRepository implements ICardRepository {
                 .select("ccm.color_id")
                 .whereRef("ccm.card_id", "=", "card.id")
                 .where("ccm.color_type", "=", "produced_mana")
-                .where("ccm.color_id", "in", params.selectedProducedManaColors.filter((c: MTGColor) => c != "C"))),
+                .where("ccm.color_id", "in", params.selectedProducedManaColors.filter((c: MtgColor) => c != "C"))),
               eb.not(eb.exists(eb
                 .selectFrom("card_color_map as ccm")
                 .select("ccm.color_id")

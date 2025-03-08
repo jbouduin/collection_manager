@@ -1,5 +1,5 @@
 import { ColumnType } from "kysely";
-import { MTGColor } from "../../../../common/types";
+import { MtgColor } from "../../../../common/types";
 
 
 export interface CardSymbolColorMapTable {
@@ -14,5 +14,5 @@ export interface CardSymbolColorMapTable {
    * The single character color Id
    * @example "W"
    */
-  color_id: ColumnType<MTGColor, string, never>;
+  color_id: ColumnType<MtgColor, string, never>;
 }

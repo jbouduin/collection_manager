@@ -1,20 +1,20 @@
 
 import { ColumnDefinitionBuilder, Kysely } from "kysely";
 
-import { IBaseMigration, CreateTableOptions, createTable } from "../base-migration";
+import { IBaseMigration, CreateTableOptions, createTable } from "../../base-migration";
 
 /* eslint-disable  @typescript-eslint/no-explicit-any, @stylistic/newline-per-chained-call */
-export class V0_0_1_Ruling_Migration implements IBaseMigration {
+export class V1_0_0_Oracle_Migration implements IBaseMigration {
   public get keyName(): string {
-    return "0007: v.0.0.1.Oracle";
+    return "0013: v.1.0.0.Oracle";
   }
 
   public async up(db: Kysely<any>): Promise<void> {
-    return createV0_0_1_Ruling(db)
-      .then(async () => await createV0_0_1_RulingLine(db))
-      .then(async () => await createV0_0_1_Oracle(db))
-      .then(async () => await createV0_0_1_OracleLegality(db))
-      .then(async () => await createV0_0_1_OracleKeyword(db));
+    return createV1_0_0_Ruling(db)
+      .then(async () => await createV1_0_0_RulingLine(db))
+      .then(async () => await createV1_0_0_Oracle(db))
+      .then(async () => await createV1_0_0_OracleLegality(db))
+      .then(async () => await createV1_0_0_OracleKeyword(db));
   }
 
   public async down(db: Kysely<any>): Promise<void> {
@@ -23,7 +23,7 @@ export class V0_0_1_Ruling_Migration implements IBaseMigration {
   }
 }
 
-async function createV0_0_1_Ruling(db: Kysely<any>): Promise<void> {
+async function createV1_0_0_Ruling(db: Kysely<any>): Promise<void> {
   const options: CreateTableOptions = {
     isSynced: true,
     tableName: "oracle_ruling",
@@ -33,7 +33,7 @@ async function createV0_0_1_Ruling(db: Kysely<any>): Promise<void> {
   return createTable(db, options).execute();
 }
 
-async function createV0_0_1_RulingLine(db: Kysely<any>): Promise<void> {
+async function createV1_0_0_RulingLine(db: Kysely<any>): Promise<void> {
   return db.schema.createTable("oracle_ruling_line")
     .addColumn(
       "oracle_id",
@@ -51,7 +51,7 @@ async function createV0_0_1_RulingLine(db: Kysely<any>): Promise<void> {
       .execute());
 }
 
-async function createV0_0_1_Oracle(db: Kysely<any>): Promise<void> {
+async function createV1_0_0_Oracle(db: Kysely<any>): Promise<void> {
   const options: CreateTableOptions = {
     isSynced: true,
     tableName: "oracle",
@@ -68,14 +68,14 @@ async function createV0_0_1_Oracle(db: Kysely<any>): Promise<void> {
     .execute();
 }
 
-async function createV0_0_1_OracleLegality(db: Kysely<any>): Promise<void> {
+async function createV1_0_0_OracleLegality(db: Kysely<any>): Promise<void> {
   const options: CreateTableOptions = {
     isSynced: true,
     tableName: "oracle_legality",
     primaryKeyType: "custom",
     primaryKey: [
       { columnName: "oracle_id", dataType: "text", callback: (col: ColumnDefinitionBuilder) => col.notNull() },
-      { columnName: "format", dataType: "text", callback: (col: ColumnDefinitionBuilder) => col.notNull() }
+      { columnName: "format", dataType: "text", callback: (col: ColumnDefinitionBuilder) => col.notNull().references("game_format.id") }
     ]
   };
 
@@ -84,7 +84,7 @@ async function createV0_0_1_OracleLegality(db: Kysely<any>): Promise<void> {
     .execute();
 }
 
-async function createV0_0_1_OracleKeyword(db: Kysely<any>): Promise<void> {
+async function createV1_0_0_OracleKeyword(db: Kysely<any>): Promise<void> {
   return db.schema.createTable("oracle_keyword")
     .addColumn("oracle_id", "text", (col: ColumnDefinitionBuilder) => col.notNull())
     .addColumn("keyword", "text", (col: ColumnDefinitionBuilder) => col.notNull())

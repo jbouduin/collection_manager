@@ -1,10 +1,10 @@
 import { ColumnType } from "kysely";
 
-import { CardBorderColor, CardFrame, CardLayout, CardRarity, CardSecurityStamp, ImageStatus, MTGLanguage } from "../../../../common/types";
+import { CardBorderColor, CardFrame, CardLayout, CardRarity, CardSecurityStamp, ImageStatus, MtgLanguage } from "../../../../common/types";
 import { SynchronizedWithStringId } from "../base.types";
 
 export interface CardTable extends SynchronizedWithStringId {
-  lang: ColumnType<MTGLanguage, MTGLanguage | undefined, never>;
+  lang: ColumnType<MtgLanguage, MtgLanguage | undefined, never>;
   name: ColumnType<string, string | undefined>;
   oracle_id?: ColumnType<string, string | undefined>;
   set_id: ColumnType<string>;

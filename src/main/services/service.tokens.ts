@@ -28,6 +28,7 @@ export const REPOSITORIES = Object.freeze({
   CollectionRepository: "CollectionRepository",
   ColorRepository: "ColorRepository",
   DeckRepository: "DeckRepository",
+  GameFormatRepository: "GameFormatRepository",
   LanguageRepository: "LanguageRepository",
   OracleRepository: "OracleRepository"
 });

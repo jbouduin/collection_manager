@@ -1,8 +1,7 @@
 import * as React from "react";
 import { CardConditionDto, LanguageDto, MtgCardSetDto, OwnedCardDto, OwnedCardListDto } from "../../../../../../../common/dto";
 import { BaseCardTableView, BaseLookupResult, CardSetColumn, CardSetLookupResult, GenericTextColumn, GenericTextLookupResult, IBaseColumn } from "../../../../../../shared/components";
-import { IpcProxyService, IpcProxyServiceContext } from "../../../../../../shared/context";
-import { CardConditionContext, CardSetContext, LanguagesContext } from "../../../../../components/context";
+import * as Context from "../../../../../../shared/context";
 import { CollectionCardListViewmodel } from "../../../../../viewmodels";
 import { CenterPanelProps } from "./center-panel.props";
 
@@ -13,10 +12,10 @@ export function CenterPanel(props: CenterPanelProps) {
   //#endregion
 
   //#region Context ---------------------------------------------------------------------
-  const cardConditionContext = React.useContext<Array<CardConditionDto>>(CardConditionContext);
-  const cardSetContext = React.useContext<Array<MtgCardSetDto>>(CardSetContext);
-  const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
-  const languagesContext = React.useContext<Array<LanguageDto>>(LanguagesContext);
+  const cardConditionContext = React.useContext<Array<CardConditionDto>>(Context.CardConditionContext);
+  const cardSetContext = React.useContext<Array<MtgCardSetDto>>(Context.CardSetContext);
+  const ipcProxyService = React.useContext<Context.IpcProxyService>(Context.IpcProxyServiceContext);
+  const languagesContext = React.useContext<Array<LanguageDto>>(Context.LanguagesContext);
   //#endregion
 
   //#region Effects -----------------------------------------------------------

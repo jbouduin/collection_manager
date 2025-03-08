@@ -34,3 +34,13 @@ export const CATALOG_TYPE_TABLE_FIELDS: Array<AnyColumnWithTable<DatabaseSchema,
   "catalog_type.last_synced_at",
   "catalog_type.is_used"
 ];
+
+export const COLOR_FIELDS: Array<AnyColumnWithTable<DatabaseSchema, "color">> = [
+  "color.created_at",
+  "color.display_text",
+  "color.id",
+  "color.land_type",
+  "color.mana_symbol",
+  "color.modified_at",
+  "color.sequence"
+];

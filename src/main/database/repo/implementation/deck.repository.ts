@@ -2,7 +2,7 @@ import * as fs from "fs";
 import { DeleteResult, InsertResult, sql, Transaction, Updateable } from "kysely";
 import * as helpers from "kysely/helpers/sqlite";
 import { inject, injectable } from "tsyringe";
-import { DeckDetailsDto, DeckDto, DeckFolderDto, DeckListDto } from "../../../../common/dto";
+import { ColorDto, DeckDetailsDto, DeckDto, DeckFolderDto, DeckListDto } from "../../../../common/dto";
 import { DeckLegalityDto } from "../../../../common/dto/deck/deck-legalitydto.";
 import { sqliteUTCTimeStamp } from "../../../../common/util";
 import { IResult } from "../../../services/base";
@@ -127,7 +127,10 @@ export class DeckRepository extends BaseRepository implements IDeckRepository {
             .as("sideBoardSize"),
           /*
            * NOW this logic is not correct - in order to solve it we should be able to sort legality (store in the db ?) and game format
-           * moreover we should check that restricted cards only are once in the deck
+           * moreover we should check:
+           * - that restricted cards only are once in the deck
+           * - the number of cards is legal
+           * - all cards in a commander deck should have one shared color identity
            */
           helpers.jsonArrayFrom(
             eb.selectFrom("deck_card")
@@ -138,7 +141,19 @@ export class DeckRepository extends BaseRepository implements IDeckRepository {
               .$castTo<DeckLegalityDto>()
               .whereRef("deck_card.deck_id", "=", "deck.id")
               .where("oracle_legality.legality", "in", ["legal", "restricted"])
-          ).as("calculatedFormats")
+          ).as("calculatedFormats"),
+          helpers.jsonArrayFrom(
+            eb.selectFrom("deck_card")
+              .innerJoin("card", "card.id", "deck_card.card_id")
+              .leftJoin("card_color_map", "card_color_map.card_id", "deck_card.card_id")
+              .innerJoin("color", "color.id", "card_color_map.color_id")
+              .select(["color.mana_symbol", "color.sequence"])
+              .distinct()
+              // NOW check to do similar in card repository
+              .$castTo<Pick<ColorDto, "sequence" | "mana_symbol">>()
+              .whereRef("deck_card.deck_id", "=", "deck.id")
+              .where("card_color_map.color_type", "=", "identity")
+          ).as("accumulatedColorIdentity")
         ])
         .where("deck.parent_id", "=", folderId)
         // NOW create a helper for this

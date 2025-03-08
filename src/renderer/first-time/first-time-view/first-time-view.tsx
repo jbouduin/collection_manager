@@ -3,7 +3,7 @@ import classNames from "classnames";
 import { noop } from "lodash";
 import * as React from "react";
 import { ConfigurationDto } from "../../../common/dto";
-import { ConfigurationWrapper } from "../../shared/components";
+import { ConfigurationWrapper } from "../../shared/components/configuration";
 import { DisplayValueService, DisplayValueServiceContext, IpcProxyService, IpcProxyServiceContext } from "../../shared/context";
 import { FirstTimeViewProps } from "./first-time-view.props";
 

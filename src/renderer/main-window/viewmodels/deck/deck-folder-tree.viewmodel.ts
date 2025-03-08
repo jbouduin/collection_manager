@@ -1,5 +1,5 @@
 import { DeckFolderDto } from "../../../../common/dto";
-import { BaseTreeNodeViewmodel } from "../../../shared/components";
+import { BaseTreeNodeViewmodel } from "../../../shared/components/base";
 
 export class DeckFolderTreeViewmodel implements BaseTreeNodeViewmodel {
   //#region private fields ----------------------------------------------------

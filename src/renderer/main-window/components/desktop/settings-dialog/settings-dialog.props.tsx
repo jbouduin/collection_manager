@@ -1,5 +1,5 @@
 import { ConfigurationDto } from "../../../../../common/dto";
-import { BaseDialogProps } from "../../../../shared/components";
+import { BaseDialogProps } from "../../../../shared/components/base";
 
 
 export interface SettingsDialogProps extends BaseDialogProps {

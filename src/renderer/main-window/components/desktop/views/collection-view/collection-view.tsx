@@ -2,7 +2,7 @@ import { isEqual } from "lodash";
 import * as React from "react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { RendererConfigurationDto } from "../../../../../../common/dto";
-import { compareClassNameProp } from "../../../../../shared/components";
+import { compareClassNameProp } from "../../../../../shared/components/utils";
 import { ConfigurationContext } from "../../../../../shared/context";
 import { CollectionCardListViewmodel, CollectionTreeViewmodel } from "../../../../viewmodels";
 import { CardView } from "../../../common/card-view/card-view";

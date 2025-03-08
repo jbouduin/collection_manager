@@ -1,6 +1,6 @@
 import { Props } from "@blueprintjs/core";
+import { DialogAction } from "../../../../../../../shared/components/base";
 import { CollectionTreeViewmodel } from "../../../../../../viewmodels";
-import { DialogAction } from "../../../../../../../shared/components";
 
 
 export interface CollectionDialogProps extends Props {

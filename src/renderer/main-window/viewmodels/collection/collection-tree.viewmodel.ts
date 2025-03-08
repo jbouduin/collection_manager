@@ -1,5 +1,5 @@
 import { CollectionDto } from "../../../../common/dto";
-import { BaseTreeNodeViewmodel } from "../../../shared/components/base-tree-view";
+import { BaseTreeNodeViewmodel } from "../../../shared/components/base";
 import { CollectionViewmodel } from "./collection.viewmodel";
 
 export class CollectionTreeViewmodel extends CollectionViewmodel implements BaseTreeNodeViewmodel {

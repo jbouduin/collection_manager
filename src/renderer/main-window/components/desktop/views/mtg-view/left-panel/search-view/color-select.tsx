@@ -3,7 +3,8 @@ import { ItemRendererProps, MultiSelect } from "@blueprintjs/select";
 import { cloneDeep } from "lodash";
 import * as React from "react";
 import { ColorDto } from "../../../../../../../../common/dto";
-import { CardSymbolRenderer, highlightText } from "../../../../../../../shared/components";
+import { CardSymbolRenderer } from "../../../../../../../shared/components/card-symbol-renderer";
+import { highlightText } from "../../../../../../../shared/components/utils";
 import { ColorSelectProps } from "./color-select.props ";
 
 
@@ -84,7 +85,7 @@ export function ColorSelect(props: ColorSelectProps) {
         selected={state.includes(item)}
         shouldDismissPopover={false}
         text={(
-          <div style={{ display: "flex"}}>
+          <div style={{ display: "flex" }}>
             <CardSymbolRenderer cardSymbols={[item.mana_symbol]} className="mana-cost-image-in-text" />
             {highlightText(item.display_text, itemProps.query)}
           </div>

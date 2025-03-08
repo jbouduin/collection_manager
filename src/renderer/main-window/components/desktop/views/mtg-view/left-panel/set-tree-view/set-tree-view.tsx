@@ -6,7 +6,7 @@ import { CardSetGroupBy, CardSetSort, CardSetType } from "../../../../../../../.
 import { IpcProxyService, IpcProxyServiceContext } from "../../../../../../../shared/context";
 import { TreeConfigurationViewmodel } from "../../../../../../viewmodels";
 import { CardSetTreeViewmodel } from "../../../../../../viewmodels/card-set/card-set-tree.viewmodel";
-import { BaseTreeView, BaseTreeViewProps } from "../../../../../../../shared/components/base-tree-view";
+import { BaseTreeView, BaseTreeViewProps } from "../../../../../../../shared/components/base/base-tree-view";
 import { SvgProvider } from "../../../../../../../shared/components/svg-provider/svg-provider";
 import { CardSetDialog } from "../../../../card-set-dialog/card-set-dialog";
 import { HeaderView } from "../header-view/header-view";

@@ -1,7 +1,7 @@
 import { H5, Section, SectionCard, Tab, Tabs } from "@blueprintjs/core";
 import classNames from "classnames";
 import * as React from "react";
-import { CardSymbolRenderer } from "../../../../../shared/components";
+import { CardSymbolRenderer } from "../../../../../shared/components/card-symbol-renderer";
 import { CardfaceViewProps } from "./card-face-view.props";
 import { CardTextView } from "../card-text-view";
 

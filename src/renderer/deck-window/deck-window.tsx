@@ -1,9 +1,9 @@
-import * as React from "react";
 import { FocusStyleManager, OverlaysProvider, OverlayToaster, PortalProvider, Position, ToastProps } from "@blueprintjs/core";
+import * as React from "react";
 import { createRoot } from "react-dom/client";
-import { IpcProxyService, IpcProxyServiceContext } from "../shared/context";
-import { Desktop } from "./component/desktop/desktop";
 import * as url from "url";
+import { IpcProxyService, IpcProxyServiceContext } from "../shared/context";
+import { DeckWindowDesktop } from "./components/desktop/deck-window-desktop";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
@@ -33,7 +33,7 @@ void (async () => {
     <OverlaysProvider>
       <PortalProvider>
         <IpcProxyServiceContext.Provider value={ipcProxyService}>
-          <Desktop deckId={deckId} />
+          <DeckWindowDesktop deckId={deckId} />
         </IpcProxyServiceContext.Provider>
       </PortalProvider>
     </OverlaysProvider>

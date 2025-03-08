@@ -1,7 +1,7 @@
 import { ButtonGroup, Menu, MenuItem } from "@blueprintjs/core";
 import * as React from "react";
 import { ConfigurationDto, SyncParamDto } from "../../../../../common/dto";
-import { AfterSplashScreenClose } from "../../../../shared/collection-manager.props";
+import { AfterSplashScreenClose } from "../../../../shared/components/base/collection-manager.props";
 import { IpcProxyService, IpcProxyServiceContext } from "../../../../shared/context";
 import { EDesktopView } from "../desktop-view.enum";
 import { SettingsDialog } from "../settings-dialog/settings-dialog";

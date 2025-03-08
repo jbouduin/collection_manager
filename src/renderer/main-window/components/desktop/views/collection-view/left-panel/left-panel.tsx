@@ -4,7 +4,7 @@ import * as React from "react";
 import { CollectionDto } from "../../../../../../../common/dto";
 import { IpcProxyService, IpcProxyServiceContext } from "../../../../../../shared/context";
 import { CollectionTreeViewmodel, TreeConfigurationViewmodel } from "../../../../../viewmodels";
-import { BaseTreeView, BaseTreeViewProps } from "../../../../../../shared/components/base-tree-view";
+import { BaseTreeView, BaseTreeViewProps } from "../../../../../../shared/components/base/base-tree-view";
 import { CollectionDialog } from "./collection-dialog/collection-dialog";
 import { DialogData } from "./dialog-data";
 import { LeftPanelProps } from "./left-panel.props";

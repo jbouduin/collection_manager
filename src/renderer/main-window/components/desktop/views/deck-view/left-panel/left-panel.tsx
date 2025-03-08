@@ -2,7 +2,7 @@ import { ContextMenu, Icon, Menu, MenuDivider, MenuItem, TreeNodeInfo } from "@b
 import { cloneDeep, noop } from "lodash";
 import * as React from "react";
 import { DeckDto, DeckFolderDto } from "../../../../../../../common/dto";
-import { BaseTreeView } from "../../../../../../shared/components/base-tree-view";
+import { BaseTreeView } from "../../../../../../shared/components/base/base-tree-view";
 import { IpcProxyService, IpcProxyServiceContext } from "../../../../../../shared/context";
 import { DeckFolderTreeViewmodel, DeckViewmodel, TreeConfigurationViewmodel } from "../../../../../viewmodels";
 import { DeckDialog } from "./deck-dialog/deck-dialog";

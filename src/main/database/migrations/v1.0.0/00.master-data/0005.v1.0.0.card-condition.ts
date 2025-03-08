@@ -19,7 +19,6 @@ export class V1_0_0_CardCondition_Migration implements IBaseMigration {
   }
 }
 
-// NOW move to master data
 function createV1_0_0_CardCondition(db: Kysely<any>): Promise<void> {
   const options: CreateTableOptions = {
     isSynced: false,

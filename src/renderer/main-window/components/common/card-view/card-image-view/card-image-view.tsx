@@ -1,7 +1,7 @@
 import { Button, SectionCard } from "@blueprintjs/core";
 import classNames from "classnames";
 import * as React from "react";
-import { compareClassNameProp } from "../../../../../shared/components";
+import { compareClassNameProp } from "../../../../../shared/components/utils";
 import { CardImageViewProps } from "./card-image-view.props";
 import { CardImageViewState } from "./card-image-view.state";
 

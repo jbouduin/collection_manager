@@ -1,7 +1,8 @@
 import { Button, Dialog, DialogBody, DialogFooter, FormGroup, Icon, InputGroup, SectionCard, TextArea } from "@blueprintjs/core";
 import { cloneDeep } from "lodash";
 import * as React from "react";
-import { handleStringChange, SvgProvider } from "../../../../../../../shared/components";
+import { SvgProvider } from "../../../../../../../shared/components/svg-provider";
+import { handleStringChange } from "../../../../../../../shared/components/utils";
 import { CollectionTreeViewmodel } from "../../../../../../viewmodels";
 import { CollectionDialogProps } from "./collection-dialog.props";
 

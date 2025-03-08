@@ -1,9 +1,9 @@
 import * as React from "react";
 import { LanguageDto, MtgCardListDto, MtgCardSetDto } from "../../../../../../../common/dto";
 import { MtgLanguage } from "../../../../../../../common/types";
-import { BaseCardTableView, BaseLookupResult, CardSetColumn, CardSetLookupResult, CollectiorNumberColumn, ColorIdentityColumn, GenericTextColumn, GenericTextLookupResult, IBaseColumn, ManaCostColumn } from "../../../../../../shared/components";
-import { IpcProxyService, IpcProxyServiceContext } from "../../../../../../shared/context";
-import { CardSetContext, LanguagesContext } from "../../../../../../shared/context";
+import { CardSetColumn, CardSetLookupResult, CardTableView, CollectiorNumberColumn, ColorIdentityColumn, ManaCostColumn } from "../../../../../../shared/components/card-table-view";
+import { BaseLookupResult, GenericTextColumn, GenericTextLookupResult, IBaseColumn } from "../../../../../../shared/components/base";
+import { CardSetContext, IpcProxyService, IpcProxyServiceContext, LanguagesContext } from "../../../../../../shared/context";
 import { MtgCardListViewmodel } from "../../../../../viewmodels";
 import { CenterPanelProps } from "./center-panel.props";
 
@@ -127,7 +127,7 @@ export function CenterPanel(props: CenterPanelProps) {
 
   //#region Rendering ---------------------------------------------------------
   return (
-    <BaseCardTableView<MtgCardListViewmodel>
+    <CardTableView<MtgCardListViewmodel>
       data={cards}
       hideSplashScreen={undefined}
       onDataSelected={(cards?: Array<MtgCardListViewmodel>) => props.onCardsSelected(cards)}

@@ -1,5 +1,6 @@
 import * as React from "react";
-import { compareClassNameProp, SvgProvider } from "../../../../../shared/components";
+import { SvgProvider } from "../../../../../shared/components/svg-provider";
+import { compareClassNameProp } from "../../../../../shared/components/utils";
 import { CardSymbolContext } from "../../../../../shared/context";
 import { CardTextViewProps } from "./card-text-view.props";
 

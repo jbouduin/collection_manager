@@ -1,4 +1,4 @@
-import { DialogAction } from "../../../../../../shared/components";
+import { DialogAction } from "../../../../../../shared/components/base";
 import { DeckViewmodel } from "../../../../../viewmodels";
 
 

@@ -1,5 +1,5 @@
 import { MtgCardSetDto } from "../../../../common/dto";
-import { BaseTreeNodeViewmodel } from "../../../shared/components/base-tree-view";
+import { BaseTreeNodeViewmodel } from "../../../shared/components/base/base-tree-view";
 import { CardSetViewmodel } from "./card-set.viewmodel";
 
 

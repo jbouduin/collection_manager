@@ -3,7 +3,7 @@ import { cloneDeep } from "lodash";
 import * as React from "react";
 import { CatalogTypeDto, ColorDto, GameFormatDto, MtgCardSetDto } from "../../../../../../../../common/dto";
 import { CardRarity, MtgColor, MtgGameFormat } from "../../../../../../../../common/types";
-import { displayValueRecordToSelectOptions, handleBooleanChange, SelectOption } from "../../../../../../../shared/components";
+import { displayValueRecordToSelectOptions, handleBooleanChange, SelectOption } from "../../../../../../../shared/components/utils";
 import { CardSetContext, DisplayValueService, DisplayValueServiceContext, GameFormatContext, IpcProxyService, IpcProxyServiceContext } from "../../../../../../../shared/context";
 import { CardSearchViewmodel, CardSetViewmodel } from "../../../../../../viewmodels";
 import { CardSetSelect } from "./card-set-select";

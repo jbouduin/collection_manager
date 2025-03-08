@@ -3,7 +3,7 @@ import { isEmpty, xor } from "lodash";
 import * as React from "react";
 import { CardSetType } from "../../../../../../../../common/types";
 import { DisplayValueService, DisplayValueServiceContext } from "../../../../../../../shared/context";
-import { compareClassNameProp } from "../../../../../../../shared/components";
+import { compareClassNameProp } from "../../../../../../../shared/components/utils";
 import { HeaderViewProps } from "./header-view-props";
 
 type PopoverKey = "card-set-group-by-menu" | "card-set-sort-menu" | "card-set-type-filter-menu";

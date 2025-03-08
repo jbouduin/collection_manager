@@ -1,7 +1,7 @@
 import { AnchorButton, Button, Dialog, DialogBody, DialogFooter, HTMLTable, Icon, Tab, Tabs } from "@blueprintjs/core";
 import * as React from "react";
 import { LanguageDto, MtgCardSetDetailsDto, MtgCardSetLanguageDto } from "../../../../../common/dto";
-import { SvgProvider } from "../../../../shared/components";
+import { SvgProvider } from "../../../../shared/components/svg-provider";
 import { DisplayValueService, DisplayValueServiceContext, IpcProxyService, IpcProxyServiceContext, LanguagesContext } from "../../../../shared/context";
 import { CardSetDetailsViewmodel } from "../../../viewmodels";
 import { CardSetDialogProps } from "./card-set-dialog.props";

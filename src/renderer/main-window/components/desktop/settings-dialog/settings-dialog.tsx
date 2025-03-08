@@ -2,7 +2,7 @@ import { Dialog } from "@blueprintjs/core";
 import { noop } from "lodash";
 import * as React from "react";
 import { ConfigurationDto } from "../../../../../common/dto/";
-import { ConfigurationWrapper } from "../../../../shared/components";
+import { ConfigurationWrapper } from "../../../../shared/components/configuration";
 import { IpcProxyService, IpcProxyServiceContext } from "../../../../shared/context";
 import { ConfigurationViewModel } from "../../../../shared/viewmodels";
 import { SettingsDialogProps } from "./settings-dialog.props";

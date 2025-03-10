@@ -55,7 +55,6 @@ export class CardSetRepository extends BaseRepository implements ICardSetReposit
           helpers.jsonArrayFrom<MtgCardSetLanguageDto>(
             eb.selectFrom("card")
               .select((eb) => ["card.lang", eb.fn.count("card.id").as("number_of_cards")])
-              // .distinctOn("card.lang")
               .groupBy("card.lang")
               .whereRef("card.set_id", "=", "card_set.id")
               .innerJoin("language", "language.id", "card.lang")

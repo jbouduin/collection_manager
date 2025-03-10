@@ -311,7 +311,7 @@ export class DeckCardListViewmodel extends AListViewmodel<DeckCardListDto> {
   }
 
   public get sideboardQuantity(): number {
-    return this._dtoCard.side_board_quantity;
+    return this._dtoCard.sideboard_quantity;
   }
   //#endregion
 

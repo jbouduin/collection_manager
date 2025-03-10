@@ -20,5 +20,5 @@ export const DECK_CARD_TABLE_FIELDS: Array<AnyColumnWithTable<DatabaseSchema, "d
   "deck_card.deck_id",
   "deck_card.deck_quantity",
   "deck_card.modified_at",
-  "deck_card.side_board_quantity"
+  "deck_card.sideboard_quantity"
 ];

@@ -67,6 +67,6 @@ function createV1_0_0_DeckCard(db: Kysely<any>) {
   };
   return createTable(db, options)
     .addColumn("deck_quantity", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
-    .addColumn("side_board_quantity", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
+    .addColumn("sideboard_quantity", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
     .execute();
 }

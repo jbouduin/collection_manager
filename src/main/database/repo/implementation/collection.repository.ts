@@ -2,17 +2,17 @@ import { writeFileSync } from "fs";
 import { DeleteResult, InsertResult, Transaction, UpdateResult } from "kysely";
 import * as helpers from "kysely/helpers/sqlite";
 import { inject, injectable } from "tsyringe";
-import { CardfaceColorDto, CollectionDto, IdSelectResult, MtgCardColorDto, MtgCardfaceDto, OracleDto, OwnedCardCollectionMapDto, OwnedCardDto, OwnedCardListDto, OwnedCardQuantityDto } from "../../../../common/dto";
+import { CollectionDto, IdSelectResult, OwnedCardCollectionMapDto, OwnedCardDto, OwnedCardListDto, OwnedCardQuantityDto } from "../../../../common/dto";
 import { sqliteUTCTimeStamp } from "../../../../common/util";
 import { IResult } from "../../../services/base";
 import { IDatabaseService, ILogService, IResultFactory } from "../../../services/infra/interfaces";
 import { INFRASTRUCTURE } from "../../../services/service.tokens";
 import { logCompilable } from "../../log-compilable";
-import { CARD_COLOR_MAP_TABLE_FIELDS, CARD_TABLE_FIELDS, CARDFACE_COLOR_MAP_TABLE_FIELDS, CARDFACE_TABLE_FIELDS, DatabaseSchema } from "../../schema";
+import { CARD_TABLE_FIELDS, DatabaseSchema } from "../../schema";
 import { OWNED_CARD_COLLECTION_MAP_TABLE_FIELDS, OWNED_CARD_TABLE_FIELDS } from "../../schema/collection/table-field.constants";
-import { ORACLE_TABLE_FIELDS } from "../../schema/oracle/table-field.constants";
 import { ICollectionRepository } from "../interfaces/collection.repository";
 import { BaseRepository } from "./base.repository";
+import { $cardColors, $cardFaces, $oracle } from "./helpers";
 
 @injectable()
 export class CollectionRepository extends BaseRepository implements ICollectionRepository {
@@ -102,33 +102,8 @@ export class CollectionRepository extends BaseRepository implements ICollectionR
       return this.database.selectFrom("card")
         .select((eb) => [
           ...CARD_TABLE_FIELDS,
-          helpers.jsonArrayFrom<MtgCardfaceDto>(
-            eb.selectFrom("cardface")
-              .select((eb) => [
-                ...CARDFACE_TABLE_FIELDS,
-                helpers.jsonArrayFrom<CardfaceColorDto>(
-                  eb.selectFrom("cardface_color_map")
-                    .select(CARDFACE_COLOR_MAP_TABLE_FIELDS)
-                    .whereRef("cardface_color_map.card_id", "=", "cardface.card_id")
-                    .whereRef("cardface_color_map.sequence", "=", "cardface.sequence")
-                    .$castTo<CardfaceColorDto>()
-                ).as("cardfaceColors"),
-                helpers.jsonObjectFrom<OracleDto>(
-                  eb.selectFrom("oracle")
-                    .select(ORACLE_TABLE_FIELDS)
-                    .whereRef("oracle.oracle_id", "=", "cardface.oracle_id")
-                    .$castTo<OracleDto>()
-                ).as("oracle")
-              ])
-              .whereRef("cardface.card_id", "=", "card.id")
-              .$castTo<MtgCardfaceDto>()
-          ).as("cardfaces"),
-          helpers.jsonArrayFrom<OracleDto>(
-            eb.selectFrom("oracle")
-              .select(ORACLE_TABLE_FIELDS)
-              .whereRef("oracle.oracle_id", "=", "card.oracle_id")
-              .$castTo<OracleDto>()
-          ).as("oracle"),
+          $cardFaces(eb.ref("card.id")).as("cardfaces"),
+          $oracle(eb.ref("card.oracle_id")).as("oracle"),
           helpers.jsonArrayFrom<OwnedCardDto>(
             eb.selectFrom("owned_card")
               .select((eb) => [
@@ -143,13 +118,7 @@ export class CollectionRepository extends BaseRepository implements ICollectionR
               .whereRef("owned_card.card_id", "=", "card.id")
               .$castTo<OwnedCardDto>()
           ).as("ownedCards"),
-          helpers.jsonArrayFrom<MtgCardColorDto>(
-            eb.selectFrom("card_color_map")
-              .innerJoin("color", "color.id", "card_color_map.color_id")
-              .select([...CARD_COLOR_MAP_TABLE_FIELDS, "color.mana_symbol"])
-              .whereRef("card_color_map.card_id", "=", "card.id")
-              .$castTo<MtgCardColorDto>()
-          ).as("cardColors")
+          $cardColors(eb.ref("card.id")).as("cardColors")
         ])
         .innerJoin("owned_card", "owned_card.card_id", "card.id")
         .innerJoin("owned_card_collection_map", "owned_card_collection_map.owned_card_id", "owned_card.id")

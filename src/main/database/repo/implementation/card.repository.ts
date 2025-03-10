@@ -1,16 +1,15 @@
 import * as fs from "fs";
-import * as helpers from "kysely/helpers/sqlite";
 import { inject, injectable } from "tsyringe";
-import { CardfaceColorDto, CardQueryDto, CatalogItemDto, MtgCardColorDto, MtgCardDetailDto, MtgCardfaceDto, MtgCardImageDataDto, MtgCardListDto, OracleDto } from "../../../../common/dto";
+import { CardQueryDto, CatalogItemDto, MtgCardDetailDto, MtgCardImageDataDto, MtgCardListDto } from "../../../../common/dto";
 import { CatalogType, MtgColor } from "../../../../common/types";
 import { IResult } from "../../../services/base";
 import { IDatabaseService, ILogService, IResultFactory } from "../../../services/infra/interfaces";
 import { INFRASTRUCTURE } from "../../../services/service.tokens";
 import { logCompilable } from "../../log-compilable";
-import { CARD_COLOR_MAP_TABLE_FIELDS, CARD_TABLE_FIELDS, CARDFACE_COLOR_MAP_TABLE_FIELDS, CARDFACE_TABLE_FIELDS } from "../../schema";
-import { ORACLE_TABLE_FIELDS } from "../../schema/oracle/table-field.constants";
+import { CARD_TABLE_FIELDS } from "../../schema";
 import { ICardRepository } from "../interfaces";
 import { BaseRepository } from "./base.repository";
+import { $cardColors, $cardFaces, $cardLanguages, $oracle } from "./helpers";
 
 
 @injectable()
@@ -33,48 +32,10 @@ export class CardRepository extends BaseRepository implements ICardRepository {
         .selectFrom("card")
         .select((eb) => [
           ...CARD_TABLE_FIELDS,
-          helpers.jsonArrayFrom<MtgCardfaceDto>(
-            eb.selectFrom("cardface")
-              .select((eb) => [
-                ...CARDFACE_TABLE_FIELDS,
-                helpers.jsonArrayFrom<CardfaceColorDto>(
-                  eb.selectFrom("cardface_color_map")
-                    .select(CARDFACE_COLOR_MAP_TABLE_FIELDS)
-                    .whereRef("cardface_color_map.card_id", "=", "cardface.card_id")
-                    .whereRef("cardface_color_map.sequence", "=", "cardface.sequence")
-                    .$castTo<CardfaceColorDto>()
-                ).as("cardfaceColors"),
-                helpers.jsonObjectFrom<OracleDto>(
-                  eb.selectFrom("oracle")
-                    .select(ORACLE_TABLE_FIELDS)
-                    .whereRef("oracle.oracle_id", "=", "cardface.oracle_id")
-                    .$castTo<OracleDto>()
-                ).as("oracle")
-              ])
-              .whereRef("cardface.card_id", "=", "card.id")
-              .$castTo<MtgCardfaceDto>()
-          ).as("cardfaces"),
-          helpers.jsonArrayFrom<OracleDto>(
-            eb.selectFrom("oracle")
-              .select(ORACLE_TABLE_FIELDS)
-              .whereRef("oracle.oracle_id", "=", "card.oracle_id")
-              .$castTo<OracleDto>()
-          ).as("oracle"),
-          helpers.jsonArrayFrom(
-            eb.selectFrom("card as c2")
-              .select(["c2.lang", "c2.id"])
-              .whereRef("c2.set_id", "=", "card.set_id")
-              .whereRef("c2.collector_number", "=", "card.collector_number")
-              .innerJoin("language", "language.id", "c2.lang")
-              .orderBy("language.sequence")
-          ).as("languages"),
-          helpers.jsonArrayFrom<MtgCardColorDto>(
-            eb.selectFrom("card_color_map")
-              .innerJoin("color", "color.id", "card_color_map.color_id")
-              .select([...CARD_COLOR_MAP_TABLE_FIELDS, "color.sequence", "color.mana_symbol"])
-              .whereRef("card_color_map.card_id", "=", "card.id")
-              .$castTo<MtgCardColorDto>()
-          ).as("cardColors")
+          $cardFaces(eb.ref("card.id")).as("cardfaces"),
+          $oracle(eb.ref("card.oracle_id")).as("oracle"),
+          $cardLanguages(eb.ref("card.set_id"), eb.ref("card.collector_number")).as("languages"),
+          $cardColors(eb.ref("card.id")).as("cardColors")
         ])
         .where("card.id", "=", cardId)
         // .$call(this.logCompilable)
@@ -120,48 +81,10 @@ export class CardRepository extends BaseRepository implements ICardRepository {
         .selectFrom("card")
         .select((eb) => [
           ...CARD_TABLE_FIELDS,
-          helpers.jsonArrayFrom<MtgCardfaceDto>(
-            eb.selectFrom("cardface")
-              .select((eb) => [
-                ...CARDFACE_TABLE_FIELDS,
-                helpers.jsonArrayFrom<CardfaceColorDto>(
-                  eb.selectFrom("cardface_color_map")
-                    .select(CARDFACE_COLOR_MAP_TABLE_FIELDS)
-                    .whereRef("cardface_color_map.card_id", "=", "cardface.card_id")
-                    .whereRef("cardface_color_map.sequence", "=", "cardface.sequence")
-                    .$castTo<CardfaceColorDto>()
-                ).as("cardfaceColors"),
-                helpers.jsonObjectFrom<OracleDto>(
-                  eb.selectFrom("oracle")
-                    .select(ORACLE_TABLE_FIELDS)
-                    .whereRef("oracle.oracle_id", "=", "cardface.oracle_id")
-                    .$castTo<OracleDto>()
-                ).as("oracle")
-              ])
-              .whereRef("cardface.card_id", "=", "card.id")
-              .$castTo<MtgCardfaceDto>()
-          ).as("cardfaces"),
-          helpers.jsonArrayFrom<OracleDto>(
-            eb.selectFrom("oracle")
-              .select(ORACLE_TABLE_FIELDS)
-              .whereRef("oracle.oracle_id", "=", "card.oracle_id")
-              .$castTo<OracleDto>()
-          ).as("oracle"),
-          helpers.jsonArrayFrom(
-            eb.selectFrom("card as c2")
-              .select(["c2.lang", "c2.id"])
-              .whereRef("c2.set_id", "=", "card.set_id")
-              .whereRef("c2.collector_number", "=", "card.collector_number")
-              .innerJoin("language", "language.id", "c2.lang")
-              .orderBy("language.sequence")
-          ).as("languages"),
-          helpers.jsonArrayFrom<MtgCardColorDto>(
-            eb.selectFrom("card_color_map")
-              .innerJoin("color", "color.id", "card_color_map.color_id")
-              .select([...CARD_COLOR_MAP_TABLE_FIELDS, "color.sequence", "color.mana_symbol"])
-              .whereRef("card_color_map.card_id", "=", "card.id")
-              .$castTo<MtgCardColorDto>()
-          ).as("cardColors")
+          $cardFaces(eb.ref("card.id")).as("cardfaces"),
+          $oracle(eb.ref("card.oracle_id")).as("oracle"),
+          $cardLanguages(eb.ref("card.set_id"), eb.ref("card.collector_number")).as("languages"),
+          $cardColors(eb.ref("card.id")).as("cardColors")
         ])
         .$if(params.selectedSets?.length > 0, (sqb) => sqb.where("card.set_id", "in", params.selectedSets))
         .$if(params.selectedRarities?.length > 0, (sqb) => sqb.where("card.rarity", "in", params.selectedRarities))

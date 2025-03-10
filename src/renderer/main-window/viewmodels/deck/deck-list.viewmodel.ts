@@ -38,9 +38,8 @@ export class DeckListViewmodel {
   public static newDeckListViewmodel(deck: DeckDto): DeckListViewmodel {
     const newListDto: DeckListDto = {
       ...deck,
-      calculatedFormats: [],
       deckSize: 0,
-      sideBoardSize: 0,
+      sideboardSize: 0,
       accumulatedColorIdentity: new Array<Pick<ColorDto, "sequence" | "mana_symbol">>()
     };
     return new DeckListViewmodel(newListDto);

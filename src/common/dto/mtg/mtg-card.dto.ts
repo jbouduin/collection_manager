@@ -12,6 +12,17 @@ export interface CardDto extends Selectable<CardTable> {
   languages: Array<MtgCardLanguageDto>;
   oracle: Array<OracleDto>;
 }
-export type MtgCardDto = Selectable<CardTable>;
-export type MtgCardListDto = CardDto;
-export type MtgCardDetailDto = CardDto;
+
+export interface MtgCardListDto extends Selectable<CardTable> {
+  cardColors: Array<MtgCardColorDto>;
+  cardfaces: Array<MtgCardfaceDto>;
+  languages: Array<MtgCardLanguageDto>;
+  oracle: Array<OracleDto>;
+}
+
+export interface MtgCardDetailDto extends Selectable<CardTable> {
+  cardColors: Array<MtgCardColorDto>;
+  cardfaces: Array<MtgCardfaceDto>;
+  languages: Array<MtgCardLanguageDto>;
+  oracle: Array<OracleDto>;
+}

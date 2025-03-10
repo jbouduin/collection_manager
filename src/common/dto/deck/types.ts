@@ -1,6 +1,11 @@
-import { CardDto } from "../mtg";
+import { Selectable } from "kysely";
+import { CardTable } from "../../../main/database/schema";
+import { MtgCardColorDto, MtgCardfaceDto, OracleDto } from "../mtg";
 
-export type DeckCardListDto = CardDto & {
+export interface DeckCardListDto extends Selectable<CardTable> {
+  cardColors: Array<MtgCardColorDto>;
+  cardfaces: Array<MtgCardfaceDto>;
+  oracle: Array<OracleDto>;
   deck_quantity: number;
-  side_board_quantity: number;
-};
+  sideboard_quantity: number;
+}

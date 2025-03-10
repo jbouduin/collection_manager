@@ -1,18 +1,22 @@
 import * as fs from "fs";
-import { DeleteResult, InsertResult, sql, Transaction, Updateable } from "kysely";
+import { DeleteResult, InsertResult, Transaction, Updateable } from "kysely";
 import * as helpers from "kysely/helpers/sqlite";
 import { inject, injectable } from "tsyringe";
-import { CardfaceColorDto, ColorDto, DeckCardListDto, DeckDetailsDto, DeckDto, DeckFolderDto, DeckLegalityDto, DeckListDto, MtgCardColorDto, MtgCardfaceDto, OracleDto } from "../../../../common/dto";
+import { ColorDto, DeckCardListDto, DeckDetailsDto, DeckDto, DeckFolderDto, DeckListDto } from "../../../../common/dto";
 import { sqliteUTCTimeStamp } from "../../../../common/util";
 import { IResult } from "../../../services/base";
 import { IDatabaseService, ILogService, IResultFactory } from "../../../services/infra/interfaces";
 import { INFRASTRUCTURE } from "../../../services/service.tokens";
 import { logCompilable } from "../../log-compilable";
-import { CARD_COLOR_MAP_TABLE_FIELDS, CARD_TABLE_FIELDS, CARDFACE_COLOR_MAP_TABLE_FIELDS, CARDFACE_TABLE_FIELDS, DatabaseSchema, ORACLE_TABLE_FIELDS } from "../../schema";
+import { CARD_TABLE_FIELDS, DatabaseSchema } from "../../schema";
 import { DeckTable } from "../../schema/deck/deck.table";
 import { DECK_TABLE_FIELDS } from "../../schema/deck/table-field.constants";
 import { IDeckRepository } from "../interfaces";
 import { BaseRepository } from "./base.repository";
+import { $deckSize, $sideboardSize } from "./helpers";
+import { $whereBoolean } from "./helpers/boolean-helpers";
+import { $cardColors, $cardFaces, $oracle } from "./helpers";
+
 
 @injectable()
 export class DeckRepository extends BaseRepository implements IDeckRepository {
@@ -55,8 +59,7 @@ export class DeckRepository extends BaseRepository implements IDeckRepository {
               .executeTakeFirstOrThrow())
             .then((r: DeckListDto) => {
               r.deckSize = 0;
-              r.sideBoardSize = 0;
-              r.calculatedFormats = new Array<DeckLegalityDto>();
+              r.sideboardSize = 0;
               return this.resultFactory.createSuccessResult<DeckDto>(r);
             });
         });
@@ -94,34 +97,10 @@ export class DeckRepository extends BaseRepository implements IDeckRepository {
         .select((eb) => [
           ...CARD_TABLE_FIELDS,
           "deck_card.deck_quantity",
-          "deck_card.side_board_quantity",
-          helpers.jsonArrayFrom<MtgCardfaceDto>(
-            eb.selectFrom("cardface")
-              .select((eb) => [
-                ...CARDFACE_TABLE_FIELDS,
-                helpers.jsonArrayFrom<CardfaceColorDto>(
-                  eb.selectFrom("cardface_color_map")
-                    .select(CARDFACE_COLOR_MAP_TABLE_FIELDS)
-                    .whereRef("cardface_color_map.card_id", "=", "cardface.card_id")
-                    .whereRef("cardface_color_map.sequence", "=", "cardface.sequence")
-                    .$castTo<CardfaceColorDto>()
-                ).as("cardfaceColors"),
-                helpers.jsonObjectFrom<OracleDto>(
-                  eb.selectFrom("oracle")
-                    .select(ORACLE_TABLE_FIELDS)
-                    .whereRef("oracle.oracle_id", "=", "cardface.oracle_id")
-                    .$castTo<OracleDto>()
-                ).as("oracle")
-              ])
-              .whereRef("cardface.card_id", "=", "card.id")
-              .$castTo<MtgCardfaceDto>()
-          ).as("cardfaces"),
-          helpers.jsonArrayFrom<OracleDto>(
-            eb.selectFrom("oracle")
-              .select(ORACLE_TABLE_FIELDS)
-              .whereRef("oracle.oracle_id", "=", "card.oracle_id")
-              .$castTo<OracleDto>()
-          ).as("oracle"),
+          "deck_card.sideboard_quantity",
+          $cardFaces(eb.ref("card.id")).as("cardfaces"),
+          $oracle(eb.ref("card.oracle_id")).as("oracle"),
+          // NOW languages are not needed here
           helpers.jsonArrayFrom(
             eb.selectFrom("card as c2")
               .select(["c2.lang", "c2.id"])
@@ -130,13 +109,7 @@ export class DeckRepository extends BaseRepository implements IDeckRepository {
               .innerJoin("language", "language.id", "c2.lang")
               .orderBy("language.sequence")
           ).as("languages"),
-          helpers.jsonArrayFrom<MtgCardColorDto>(
-            eb.selectFrom("card_color_map")
-              .innerJoin("color", "color.id", "card_color_map.color_id")
-              .select([...CARD_COLOR_MAP_TABLE_FIELDS, "color.sequence", "color.mana_symbol"])
-              .whereRef("card_color_map.card_id", "=", "card.id")
-              .$castTo<MtgCardColorDto>()
-          ).as("cardColors")
+          $cardColors(eb.ref("card.id")).as("cardColors")
         ])
         .where("deck_card.deck_id", "=", deckId)
         .$castTo<DeckCardListDto>()
@@ -154,42 +127,10 @@ export class DeckRepository extends BaseRepository implements IDeckRepository {
     try {
       return this.database
         .selectFrom("deck")
-        // NOW check if we can create helper functions for this
         .select((eb) => [
           ...DECK_TABLE_FIELDS,
-          eb.fn
-            .coalesce(
-              eb.selectFrom("deck_card as dcd")
-                .select((eb) => [eb.fn.sum<number>("dcd.deck_quantity").as("deckSize")])
-                .whereRef("dcd.deck_id", "=", "deck.id")
-                .$castTo<number>(),
-              sql<number>`0`)
-            .as("deckSize"),
-          eb.fn
-            .coalesce(
-              eb.selectFrom("deck_card as dcd")
-                .select((eb) => [eb.fn.sum<number>("dcd.side_board_quantity").as("sideBoardSize")])
-                .whereRef("dcd.deck_id", "=", "deck.id")
-                .$castTo<number>(),
-              sql<number>`0`)
-            .as("sideBoardSize"),
-          /*
-           * NOW this logic is not correct - in order to solve it we should be able to sort legality (store in the db ?) and game format
-           * moreover we should check:
-           * - that restricted cards only are once in the deck
-           * - the number of cards is legal
-           * - all cards in a commander deck should have one shared color identity
-           */
-          helpers.jsonArrayFrom(
-            eb.selectFrom("deck_card")
-              .innerJoin("card", "card.id", "deck_card.card_id")
-              .innerJoin("oracle_legality", "oracle_legality.oracle_id", "card.oracle_id")
-              .select(["oracle_legality.format", "oracle_legality.legality"])
-              .distinct()
-              .$castTo<DeckLegalityDto>()
-              .whereRef("deck_card.deck_id", "=", "deck.id")
-              .where("oracle_legality.legality", "in", ["legal", "restricted"])
-          ).as("calculatedFormats"),
+          $deckSize(eb.ref("deck.id")).as("deckSize"),
+          $sideboardSize(eb.ref("deck.id")).as("sideboardSize"),
           helpers.jsonArrayFrom(
             eb.selectFrom("deck_card")
               .innerJoin("card", "card.id", "deck_card.card_id")
@@ -197,15 +138,13 @@ export class DeckRepository extends BaseRepository implements IDeckRepository {
               .innerJoin("color", "color.id", "card_color_map.color_id")
               .select(["color.mana_symbol", "color.sequence"])
               .distinct()
-              // NOW check to do similar in card repository
               .$castTo<Pick<ColorDto, "sequence" | "mana_symbol">>()
               .whereRef("deck_card.deck_id", "=", "deck.id")
               .where("card_color_map.color_type", "=", "identity")
           ).as("accumulatedColorIdentity")
         ])
         .where("deck.parent_id", "=", folderId)
-        // NOW create a helper for this
-        .where(sql`deck.is_folder`, "=", sql`0`)
+        .where((eb) => $whereBoolean(eb.ref("deck.is_folder"), false))
         .$call((sqb) => logCompilable(this.logService, sqb))
         .$castTo<DeckListDto>()
         .execute()
@@ -223,8 +162,7 @@ export class DeckRepository extends BaseRepository implements IDeckRepository {
       return this.database
         .selectFrom("deck")
         .selectAll()
-        // NOW create a helper for this
-        .where(sql`deck.is_folder`, "=", sql`1`)
+        .where((eb) => $whereBoolean(eb.ref("deck.is_folder"), true))
         .$castTo<DeckFolderDto>()
         .execute()
         .then((qryResult: Array<DeckFolderDto>) => this.resultFactory.createSuccessResult(qryResult));

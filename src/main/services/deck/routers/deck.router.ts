@@ -1,5 +1,5 @@
 import { container, inject, singleton } from "tsyringe";
-import { DeckDetailsDto, DeckDto, DeckFolderDto, DeckListDto } from "../../../../common/dto";
+import { DeckCardListDto, DeckDetailsDto, DeckDto, DeckFolderDto, DeckListDto } from "../../../../common/dto";
 import { BaseRouter, DeleteRouteCallback, IResult, IRouter, RouteCallback, RoutedRequest } from "../../base";
 import { ILogService, IResultFactory, IRouterService } from "../../infra/interfaces";
 import { INFRASTRUCTURE, REPOSITORIES } from "../../service.tokens";
@@ -22,6 +22,7 @@ export class DeckRouter extends BaseRouter implements IRouter {
     router.registerDeleteRoute("/deck/:id", this.deleteDeck.bind(this) as DeleteRouteCallback);
     router.registerGetRoute("/deck/folder", this.getAllFolders.bind(this) as RouteCallback);
     router.registerGetRoute("/deck/folder/:id/deck", this.getAllDecksInFolder.bind(this) as RouteCallback);
+    router.registerGetRoute("/deck/:id/card", this.getAllCardsOfDeck.bind(this) as RouteCallback);
     router.registerGetRoute("/deck/:id", this.getDeckDetails.bind(this) as RouteCallback);
     router.registerPatchRoute("/deck/:id", this.patchDeck.bind(this) as RouteCallback);
     router.registerPostRoute("/deck", this.createDeck.bind(this) as RouteCallback);
@@ -50,6 +51,14 @@ export class DeckRouter extends BaseRouter implements IRouter {
       .continueAsync<Array<DeckListDto>>(
         (r: IResult<number>) => container.resolve<IDeckRepository>(REPOSITORIES.DeckRepository).getAllDecksInFolder(r.data),
         (r: IResult<number>) => r.castAsync<Array<DeckListDto>>(undefined)
+      );
+  }
+
+  private getAllCardsOfDeck(request: RoutedRequest<void>): Promise<IResult<Array<DeckCardListDto>>> {
+    return this.parseIntegerUrlParameter(request.params["id"], "Deck ID")
+      .continueAsync<Array<DeckCardListDto>>(
+        (r: IResult<number>) => container.resolve<IDeckRepository>(REPOSITORIES.DeckRepository).getAllCardsOfDeck(r.data),
+        (r: IResult<number>) => r.castAsync<Array<DeckCardListDto>>(undefined)
       );
   }
 

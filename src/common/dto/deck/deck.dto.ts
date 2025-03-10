@@ -1,7 +1,7 @@
 import { Selectable } from "kysely";
 import { DeckTable } from "../../../main/database/schema/deck/deck.table";
 import { ColorDto } from "../master-data";
-import { DeckLegalityDto } from "./deck-legalitydto.";
+import { DeckLegalityDto } from "./deck-legality.dto";
 
 export type DeckDto = Selectable<DeckTable>;
 export type DeckFolderDto = DeckDto;

@@ -1,10 +1,16 @@
-import { OwnedCardListDto, MtgCardColorDto, MtgCardDetailDto, MtgCardLanguageDto, MtgCardListDto, MtgCardfaceDto, OracleDto, OwnedCardDto } from "../../../../common/dto";
+import { OwnedCardListDto, MtgCardColorDto, MtgCardDetailDto, MtgCardLanguageDto, MtgCardListDto, MtgCardfaceDto, OracleDto, OwnedCardDto, DeckCardListDto } from "../../../../common/dto";
 import { CardLayout, CardRarity, MtgLanguage } from "../../../../common/types";
 import { OracleViewmodel } from "../oracle/oracle.viewmodel";
 import { CardfaceViewmodel } from "./cardface.viewmodel";
 
+/*
+ * NOW cleanup:
+ * - move base classes to shared
+ * - and try to avoid duplicate code
+ */
+
 /* eslint-disable  @typescript-eslint/no-duplicate-type-constituents */
-abstract class BaseCardViewmodel<T extends MtgCardListDto | MtgCardDetailDto | OwnedCardListDto> {
+abstract class BaseCardViewmodel<T extends MtgCardListDto | MtgCardDetailDto | OwnedCardListDto | DeckCardListDto> {
   //#region private readonly fields -------------------------------------------
   private readonly _cardManaCost: Array<string>;
   //#endregion
@@ -224,8 +230,10 @@ export class MtgCardDetailViewmodel extends MtgCardViewmodel<MtgCardDetailDto> {
   //#endregion
 }
 
-export class CollectionCardListViewmodel extends BaseCardViewmodel<OwnedCardListDto> {
+abstract class AListViewmodel<T extends OwnedCardListDto | DeckCardListDto> extends BaseCardViewmodel<T> {
   private readonly _collectorNumberSortValue: string;
+  private readonly _colorIdentity: Array<string>;
+  private readonly _coloridentitySortValue: string;
 
   //#region Getters -----------------------------------------------------------
   public get cardPower(): string {
@@ -245,11 +253,12 @@ export class CollectionCardListViewmodel extends BaseCardViewmodel<OwnedCardList
   }
 
   public get colorIdentity(): Array<string> {
-    return this._dtoCard.cardColors
-      .filter((cardColor: MtgCardColorDto) => cardColor.color_type == "identity")
-      .map((cardColor: MtgCardColorDto) => cardColor.mana_symbol);
+    return this._colorIdentity;
   }
 
+  public get colorIdentitySortValue(): string {
+    return this._coloridentitySortValue;
+  }
   public get language(): MtgLanguage {
     return this._dtoCard.lang;
   }
@@ -260,7 +269,29 @@ export class CollectionCardListViewmodel extends BaseCardViewmodel<OwnedCardList
   public get setId(): string {
     return this._dtoCard.set_id;
   }
+  //#endregion
 
+  //#region Constructor & C° --------------------------------------------------
+  public constructor(dtoCard: T) {
+    super(dtoCard);
+    this._collectorNumberSortValue = isNaN(Number(dtoCard.collector_number)) ? dtoCard.collector_number : dtoCard.collector_number.padStart(4, "0");
+    this._colorIdentity = dtoCard.cardColors
+      .filter((cardColor: MtgCardColorDto) => cardColor.color_type == "identity")
+      .sort((a: MtgCardColorDto, b: MtgCardColorDto) => a.sequence - b.sequence)
+      .map((cardColor: MtgCardColorDto) => cardColor.mana_symbol);
+    this._coloridentitySortValue = "";
+    const cardColors = this._dtoCard.cardColors
+      .filter((cardColor: MtgCardColorDto) => cardColor.color_type == "identity")
+      .sort((a: MtgCardColorDto, b: MtgCardColorDto) => a.sequence - b.sequence);
+    for (const item of cardColors) {
+      this._coloridentitySortValue = this._coloridentitySortValue + item.sequence.toString().padStart(2, "0");
+    }
+  }
+  //#endregion
+}
+
+export class CollectionCardListViewmodel extends AListViewmodel<OwnedCardListDto> {
+  //#region Getters -----------------------------------------------------------
   public get ownedCards(): Array<OwnedCardDto> {
     return this._dtoCard.ownedCards;
   }
@@ -269,7 +300,24 @@ export class CollectionCardListViewmodel extends BaseCardViewmodel<OwnedCardList
   //#region Constructor & C° --------------------------------------------------
   public constructor(dtoCard: OwnedCardListDto) {
     super(dtoCard);
-    this._collectorNumberSortValue = isNaN(Number(dtoCard.collector_number)) ? dtoCard.collector_number : dtoCard.collector_number.padStart(4, "0");
+  }
+  //#endregion
+}
+
+export class DeckCardListViewmodel extends AListViewmodel<DeckCardListDto> {
+  //#region Getters -----------------------------------------------------------
+  public get deckQuantity(): number {
+    return this._dtoCard.deck_quantity;
+  }
+
+  public get sideboardQuantity(): number {
+    return this._dtoCard.side_board_quantity;
+  }
+  //#endregion
+
+  //#region Constructor & C° --------------------------------------------------
+  public constructor(dtoCard: DeckCardListDto) {
+    super(dtoCard);
   }
   //#endregion
 }

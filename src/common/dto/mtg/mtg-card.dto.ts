@@ -6,7 +6,7 @@ import { MtgCardLanguageDto } from "./mtg-card-language.dto";
 import { OracleDto } from "./types";
 
 
-interface CardDto extends Selectable<CardTable> {
+export interface CardDto extends Selectable<CardTable> {
   cardColors: Array<MtgCardColorDto>;
   cardfaces: Array<MtgCardfaceDto>;
   languages: Array<MtgCardLanguageDto>;

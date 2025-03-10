@@ -138,8 +138,6 @@ export function CenterPanel(props: CenterPanelProps) {
   //#endregion
 
   //#region Auxiliary methods -------------------------------------------------
-
-
   function cardSetCallback(card: MtgCardListViewmodel): CardSetLookupResult {
     const cardSet = cardSetContext.find((set: MtgCardSetDto) => set.id == card.setId);
     return cardSet

@@ -6,7 +6,8 @@ import { IpcProxyService, IpcProxyServiceContext } from "../../../../shared/cont
 import { DeckCardListDto } from "../../../../../common/dto";
 import { noop } from "lodash";
 import { LeftPanelTop } from "./left-panel-top/left-panel-top";
-import { DeckCardListViewmodel } from "../../../../main-window/viewmodels";
+import { DeckCardListViewmodel } from "../../../viewmodels";
+
 
 export function LeftPanel(props: LeftPanelProps) {
   const [cards, setCards] = React.useState<Array<DeckCardListViewmodel>>(new Array<DeckCardListViewmodel>());

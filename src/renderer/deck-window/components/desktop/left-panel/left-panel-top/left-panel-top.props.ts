@@ -1,5 +1,6 @@
 import { Props } from "@blueprintjs/core";
-import { DeckCardListViewmodel } from "../../../../../main-window/viewmodels";
+import { DeckCardListViewmodel } from "../../../../viewmodels";
+
 
 export interface LeftPanelTopProps extends Props {
   cards: Array<DeckCardListViewmodel>;

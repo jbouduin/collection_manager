@@ -1,10 +1,10 @@
 import * as React from "react";
 import { MtgCardSetDto } from "../../../../../../common/dto";
-import { DeckCardListViewmodel } from "../../../../../main-window/viewmodels";
 import { BaseLookupResult, GenericTextColumn, GenericTextLookupResult, IBaseColumn } from "../../../../../shared/components/base";
 import { CardSetColumn, CardSetLookupResult, CardTableView, CollectiorNumberColumn, ColorIdentityColumn, ManaCostColumn } from "../../../../../shared/components/card-table-view";
 import { CardSetContext } from "../../../../../shared/context";
 import { LeftPanelTopProps } from "./left-panel-top.props";
+import { DeckCardListViewmodel } from "../../../../viewmodels";
 
 export function LeftPanelTop(props: LeftPanelTopProps) {
   //#region Context -----------------------------------------------------------

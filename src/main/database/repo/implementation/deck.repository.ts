@@ -100,15 +100,6 @@ export class DeckRepository extends BaseRepository implements IDeckRepository {
           "deck_card.sideboard_quantity",
           $cardFaces(eb.ref("card.id")).as("cardfaces"),
           $oracle(eb.ref("card.oracle_id")).as("oracle"),
-          // NOW languages are not needed here
-          helpers.jsonArrayFrom(
-            eb.selectFrom("card as c2")
-              .select(["c2.lang", "c2.id"])
-              .whereRef("c2.set_id", "=", "card.set_id")
-              .whereRef("c2.collector_number", "=", "card.collector_number")
-              .innerJoin("language", "language.id", "c2.lang")
-              .orderBy("language.sequence")
-          ).as("languages"),
           $cardColors(eb.ref("card.id")).as("cardColors")
         ])
         .where("deck_card.deck_id", "=", deckId)

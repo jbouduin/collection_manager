@@ -1,8 +1,7 @@
 import * as React from "react";
-import { LanguageDto, MtgCardListDto, MtgCardSetDto } from "../../../../../../../common/dto";
-import { MtgLanguage } from "../../../../../../../common/types";
-import { CardSetColumn, CardSetLookupResult, CardTableView, CollectiorNumberColumn, ColorIdentityColumn, ManaCostColumn } from "../../../../../../shared/components/card-table-view";
+import { LanguageDto, MtgCardLanguageDto, MtgCardListDto, MtgCardSetDto } from "../../../../../../../common/dto";
 import { BaseLookupResult, GenericTextColumn, GenericTextLookupResult, IBaseColumn } from "../../../../../../shared/components/base";
+import { CardSetColumn, CardSetLookupResult, CardTableView, CollectiorNumberColumn, ColorIdentityColumn, ManaCostColumn } from "../../../../../../shared/components/card-table-view";
 import { CardSetContext, IpcProxyService, IpcProxyServiceContext, LanguagesContext } from "../../../../../../shared/context";
 import { MtgCardListViewmodel } from "../../../../../viewmodels";
 import { CenterPanelProps } from "./center-panel.props";
@@ -109,7 +108,7 @@ export function CenterPanel(props: CenterPanelProps) {
         (card: MtgCardListViewmodel) => {
           return {
             defaultSortColumn: card.collectorNumberSortValue,
-            colorIdentitySortValue: card.coloridentitySortValue,
+            colorIdentitySortValue: card.colorIdentitySortValue,
             symbols: card.colorIdentity
           };
         }
@@ -149,9 +148,9 @@ export function CenterPanel(props: CenterPanelProps) {
     return {
       defaultSortColumn: card.collectorNumberSortValue,
       textValue: card.languages
-        .map((language: MtgLanguage) => {
-          const languageDef = languagesContext.find((lng: LanguageDto) => lng.id == language);
-          return languageDef ? languageDef.button_text : language;
+        .map((language: MtgCardLanguageDto) => {
+          const languageDef = languagesContext.find((lng: LanguageDto) => lng.id == language.lang);
+          return languageDef ? languageDef.button_text : language.lang;
         })
         .join(", ")
     };

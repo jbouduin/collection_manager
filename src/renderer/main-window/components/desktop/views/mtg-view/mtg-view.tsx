@@ -71,7 +71,7 @@ export function MtgView(props: MtgViewProps) {
 
   //#region Auxiliary methods -------------------------------------------------
   function calculateCardToDisplay(): string {
-    return state.selectedCards[0].otherCardLanguages.at(0).id;
+    return state.selectedCards[0].languages.at(0).id;
   }
   //#endregion
 }

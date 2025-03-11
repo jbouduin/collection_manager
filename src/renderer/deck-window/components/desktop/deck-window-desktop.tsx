@@ -4,7 +4,8 @@ import { BaseDesktop, DesktopContentProps } from "../../../shared/components/bas
 import { DeckWindowDesktopProps } from "./deck-window-desktop.props";
 import { LeftPanel } from "./left-panel/left-panel";
 import { RightPanel } from "./right-panel/right-panel";
-import { DeckCardListViewmodel } from "../../../main-window/viewmodels";
+import { DeckCardListViewmodel } from "../../viewmodels";
+
 
 export function DeckWindowDesktop(props: DeckWindowDesktopProps) {
   //#region State -------------------------------------------------------------

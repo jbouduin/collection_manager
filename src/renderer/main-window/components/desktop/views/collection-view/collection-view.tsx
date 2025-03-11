@@ -2,10 +2,10 @@ import { isEqual } from "lodash";
 import * as React from "react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { RendererConfigurationDto } from "../../../../../../common/dto";
+import { CardDetail } from "../../../../../shared/components/card-details";
 import { compareClassNameProp } from "../../../../../shared/components/utils";
 import { ConfigurationContext } from "../../../../../shared/context";
 import { CollectionCardListViewmodel, CollectionTreeViewmodel } from "../../../../viewmodels";
-import { CardView } from "../../../common/card-view/card-view";
 import { CenterPanel, CenterPanelProps } from "./center-panel";
 import { CollectionViewState } from "./collection-view-state";
 import { CollectionViewProps } from "./collection-view.props";
@@ -57,7 +57,7 @@ export function CollectionView(props: CollectionViewProps) {
               </Panel>
               <PanelResizeHandle />
               <Panel defaultSize={20}>
-                <CardView
+                <CardDetail
                   {...props}
                   cardId={state.selectedCards?.length > 0 ? state.selectedCards[0].cardId : null}
                   collectionId={state.selectedCollection?.id}

@@ -3,8 +3,8 @@ import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { BaseDesktop, DesktopContentProps } from "../../../shared/components/base";
 import { DeckWindowDesktopProps } from "./deck-window-desktop.props";
 import { LeftPanel } from "./left-panel/left-panel";
-import { RightPanel } from "./right-panel/right-panel";
 import { DeckCardListViewmodel } from "../../viewmodels";
+import { CardDetail } from "../../../shared/components/card-details";
 
 
 export function DeckWindowDesktop(props: DeckWindowDesktopProps) {
@@ -31,7 +31,11 @@ export function DeckWindowDesktop(props: DeckWindowDesktopProps) {
         </Panel>
         <PanelResizeHandle />
         <Panel>
-          <RightPanel cardId={selectedCards?.length > 0 ? selectedCards[0].cardId : null} />
+          <CardDetail
+            cardId={selectedCards?.length > 0 ? selectedCards[0].cardId : null}
+            collectionId={null}
+            showOtherLanguages={false}
+          />
         </Panel>
       </PanelGroup>
     );

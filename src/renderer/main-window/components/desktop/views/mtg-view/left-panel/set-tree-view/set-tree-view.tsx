@@ -255,7 +255,7 @@ export function SetTreeView(props: LeftPanelProps) {
       id: cardSet.id,
       label: (
         <ContextMenu
-          className="set-tree-item"
+          className="tree-view-item"
           content={
             <Menu>
               <MenuItem

@@ -1,10 +1,10 @@
 import * as React from "react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { RendererConfigurationDto } from "../../../../../../common/dto";
+import { CardDetail } from "../../../../../shared/components/card-details";
 import { compareClassNameProp } from "../../../../../shared/components/utils";
 import { ConfigurationContext } from "../../../../../shared/context";
 import { CardSetViewmodel, MtgCardListViewmodel } from "../../../../viewmodels";
-import { CardView } from "../../../common/card-view/card-view";
 import { CenterPanel, CenterPanelProps } from "./center-panel";
 import { LeftPanel } from "./left-panel/left-panel";
 import { MtgViewProps } from "./mtg-view.props";
@@ -54,7 +54,7 @@ export function MtgView(props: MtgViewProps) {
               </Panel>
               <PanelResizeHandle />
               <Panel defaultSize={20}>
-                <CardView
+                <CardDetail
                   cardId={state.selectedCards?.length > 0 ? calculateCardToDisplay() : null}
                   className={props.className}
                   collectionId={null}

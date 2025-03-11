@@ -2,19 +2,7 @@
 @import "@blueprintjs/core/lib/css/blueprint.css";
 @import "@blueprintjs/table/lib/css/table.css";
 @import "@blueprintjs/select/lib/css/blueprint-select.css";
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
-    Arial, sans-serif;
-  margin: auto;
-  font-size: small;
-}
-
-#root {
-  max-height: 100vh;
-  overflow: hidden;
-}
-
+@import "../shared/shared.css";
 
 .desktop-wrapper {
   padding: 0px;
@@ -43,7 +31,7 @@ body {
   height: 100vh;
 }
 
-.set-tree-item {
+.tree-view-item {
   display: flex;
   flex-direction: row;
 }
@@ -52,106 +40,11 @@ body {
   padding-right: 5px;
 }
 
-.image-wrapper {
+/* .image-wrapper {
   padding: 5%;
   margin: auto;
-}
+} */
 
-.mana-cost-image-in-table {
-  margin-right: 3px;
-  margin-bottom: -2px
-}
-
-.mana-cost-image-in-title {
-  margin-right: 3px;
-  margin-bottom: -3px
-}
-
-.mana-cost-image-in-text {
-  margin-right: 3px;
-  margin-bottom: -3px
-}
-
-.mana-cost-image-in-text:first-child {
-  margin-left: 3px
-}
-
-.ruling-line-paragraph {
-  border-bottom-width: thin;
-  border-bottom-style: solid;
-  padding-bottom: 10px;
-}
-
-.card-view-wrapper {
-  height: 100vh;
-  overflow: auto;
-}
-
-.card-image {
-  display: block;
-  margin: auto;
-  max-height: 400px;
-}
-
-.card-header-line-1 {
-  display: flex;
-  flex-direction: row;
-}
-
-img.rotate-90 {
-  transform: rotate(90deg);
-}
-
-img.rotate-180 {
-  transform: rotate(180deg);
-}
-
-.ruling-divider {
-  margin-left: 0px;
-  margin-right: 0px;
-}
-
-.rarity-rare {
-  color: gold;
-}
-
-.rarity-uncommon {
-  color: silver
-}
-
-.rarity-mythic {
-  color: darkorange;
-}
-
-.card-view-section-card {
-  padding-top: 10px;
-  padding-left: 15px;
-  padding-right: 15px;
-  display: flex;
-  flex-direction: column;
-}
-
-.language-button-bar {
-  padding-left: 10px;
-  padding-right: 10px;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-}
-
-.language-button-bar-button {
-  padding: 5px;
-}
-
-.left-panel-button-group {
-  flex: 0 1 auto;
-}
-
-.left-panel-tabs {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
 
 .bp5-tab-panel.left-panel-tab-panel {
   display: flex;
@@ -178,26 +71,10 @@ img.rotate-180 {
 }
 
 .base-tree {
-  /* height: 100vh; */
-  /* max-width: fit-content; */
   overflow-x: auto;
   overflow-y: auto;
   flex: 1 1 auto;
   height: 100%;
-}
-
-.splash-window {
-  width: 900px;
-}
-
-.splash-wrapper {
-  background-image: url("/assets/img/Splash.webp");
-  background-size: cover;
-  max-height: 506px;
-  max-width: 900px;
-  padding: 20px;
-  padding-top: 375px;
-  color: white;
 }
 
 .bp5-tree-root:last-child {

@@ -233,7 +233,7 @@ export function LeftPanel(props: LeftPanelProps) {
       id: deck.id,
       label: (
         <ContextMenu
-          className="set-tree-item"
+          className="tree-view-item"
           content={
             <Menu key={deck.id}>
               <MenuItem

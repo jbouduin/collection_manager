@@ -1,9 +1,9 @@
 import { Tree, TreeNodeInfo } from "@blueprintjs/core";
 import { NodePath, BaseTreeViewAction } from "./types";
 import { cloneDeep } from "lodash";
-import { BaseTreeNodeViewmodel } from "./base-tree-node.viewmodel";
+import { IBaseTreeNodeViewmodel } from "./base-tree-node.viewmodel";
 
-export function BaseTreeViewReducer<TData extends BaseTreeNodeViewmodel>(state: Array<TreeNodeInfo<TData>>, action: BaseTreeViewAction) {
+export function BaseTreeViewReducer<TData extends IBaseTreeNodeViewmodel>(state: Array<TreeNodeInfo<TData>>, action: BaseTreeViewAction) {
   const newState = cloneDeep(state);
   switch (action.type) {
     case "DESELECT_ALL": {
@@ -45,7 +45,7 @@ export function BaseTreeViewReducer<TData extends BaseTreeNodeViewmodel>(state: 
   }
 }
 
-function forEachNode<TData extends BaseTreeNodeViewmodel>(
+function forEachNode<TData extends IBaseTreeNodeViewmodel>(
   nodes: Array<TreeNodeInfo<TData>> | undefined,
   callback: (node: TreeNodeInfo<TData>) => void
 ) {
@@ -58,7 +58,7 @@ function forEachNode<TData extends BaseTreeNodeViewmodel>(
   }
 }
 
-function forNodeAtPath<TData extends BaseTreeNodeViewmodel>(
+function forNodeAtPath<TData extends IBaseTreeNodeViewmodel>(
   nodes: Array<TreeNodeInfo<TData>>,
   path: NodePath,
   callback: (node: TreeNodeInfo<TData>) => void
@@ -66,7 +66,7 @@ function forNodeAtPath<TData extends BaseTreeNodeViewmodel>(
   callback(Tree.nodeFromPath(path, nodes));
 }
 
-export function getTreeNodeItemsRecursive<TData extends BaseTreeNodeViewmodel>(
+export function getTreeNodeItemsRecursive<TData extends IBaseTreeNodeViewmodel>(
   node: TreeNodeInfo<TData>,
   items?: Array<TData>
 ): Array<TData> {

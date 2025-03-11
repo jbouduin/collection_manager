@@ -1,9 +1,9 @@
 import { TreeNodeInfo } from "@blueprintjs/core";
 import { BaseTreeViewFilterProps } from "./base-tree-view-filter.props";
-import { BaseTreeNodeViewmodel } from "./base-tree-node.viewmodel";
+import { IBaseTreeNodeViewmodel } from "./base-tree-node.viewmodel";
 
 
-export interface BaseTreeViewProps<TData extends BaseTreeNodeViewmodel, TFilter> {
+export interface BaseTreeViewProps<TData extends IBaseTreeNodeViewmodel, TFilter> {
   data: Array<TData>;
   filterProps: BaseTreeViewFilterProps<TData, TFilter>;
 

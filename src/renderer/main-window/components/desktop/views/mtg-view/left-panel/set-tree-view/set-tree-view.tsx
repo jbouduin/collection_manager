@@ -1,7 +1,7 @@
 import { ContextMenu, Menu, MenuItem, TreeNodeInfo } from "@blueprintjs/core";
 import { cloneDeep, isEqual, upperFirst } from "lodash";
 import * as React from "react";
-import { SyncParamDto } from "../../../../../../../../common/dto";
+import { MtgCardSetDto, SyncParamDto } from "../../../../../../../../common/dto";
 import { CardSetGroupBy, CardSetSort, CardSetType } from "../../../../../../../../common/types";
 import { IpcProxyService, IpcProxyServiceContext } from "../../../../../../../shared/context";
 import { TreeConfigurationViewmodel } from "../../../../../../viewmodels";
@@ -106,8 +106,8 @@ export function SetTreeView(props: LeftPanelProps) {
     }
   }
 
-  function buildTree(data: Array<CardSetTreeViewmodel>, props: TreeConfigurationViewmodel): Array<TreeNodeInfo<string | CardSetTreeViewmodel>> {
-    let result: Array<TreeNodeInfo<string | CardSetTreeViewmodel>>;
+  function buildTree(data: Array<CardSetTreeViewmodel>, props: TreeConfigurationViewmodel): Array<TreeNodeInfo<CardSetTreeViewmodel>> {
+    let result: Array<TreeNodeInfo<CardSetTreeViewmodel>>;
     switch (props.cardSetGroupBy) {
       case "parent":
         result = buildTreeByParent(data);
@@ -179,23 +179,52 @@ export function SetTreeView(props: LeftPanelProps) {
       });
   }
 
-  function buildTreeByBlockOrType(cardSets: Array<CardSetTreeViewmodel>, groupFieldFunction: (cardSet: CardSetTreeViewmodel) => string): Array<TreeNodeInfo<CardSetTreeViewmodel | string>> {
+  function buildTreeByBlockOrType(cardSets: Array<CardSetTreeViewmodel>, groupFieldFunction: (cardSet: CardSetTreeViewmodel) => string): Array<TreeNodeInfo<CardSetTreeViewmodel>> {
     const groups = [...new Set(cardSets.map((cardSet: CardSetTreeViewmodel) => groupFieldFunction(cardSet)))];
     groups.sort((a: string, b: string) => (a ?? "zzz").toUpperCase().localeCompare((b ?? "zzz").toUpperCase()));
+
     return groups.map((group: string) => {
-      const groupNode: TreeNodeInfo<CardSetTreeViewmodel | string> = {
+      const childNodes = cardSets.filter((cardSet: CardSetTreeViewmodel) => groupFieldFunction(cardSet) == group);
+      const groupNode: TreeNodeInfo<CardSetTreeViewmodel> = {
         id: group ?? "none",
         label: group ? upperFirst(group).replace("_", " ") : "None",
         isExpanded: false,
         isSelected: false,
-        nodeData: group ?? "none",
-        childNodes: cardSets
-          .filter((cardSet: CardSetTreeViewmodel) => groupFieldFunction(cardSet) == group)
-          .sort(sortViewmodelfunction)
-          .map(mapViewModelToTreeItem)
+        nodeData: new CardSetTreeViewmodel(createDtoForBlockOrType(group ?? "None"), false, false),
+        childNodes: childNodes.sort(sortViewmodelfunction).map(mapViewModelToTreeItem)
       };
       return groupNode;
     });
+  }
+
+  function createDtoForBlockOrType(group: string): MtgCardSetDto {
+    const groupNodeDto: MtgCardSetDto = {
+      svg: null,
+      block: null,
+      code: null,
+      mtgo_code: null,
+      arena_code: null,
+      tcgplayer_id: null,
+      name: group,
+      set_type: "core",
+      released_at: undefined,
+      block_code: "",
+      parent_set_code: "",
+      card_count: 0,
+      printed_size: 0,
+      is_digital: false,
+      is_foil_only: false,
+      is_nonfoil_only: false,
+      scryfall_uri: "",
+      uri: "",
+      icon_svg_uri: "",
+      search_uri: "",
+      last_full_synchronization_at: undefined,
+      created_at: undefined,
+      last_synced_at: undefined,
+      id: ""
+    };
+    return groupNodeDto;
   }
 
   function buildTreeByNone(cardSets: Array<CardSetTreeViewmodel>): Array<TreeNodeInfo<CardSetTreeViewmodel>> {

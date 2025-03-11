@@ -1,8 +1,8 @@
 import { CollectionDto } from "../../../../common/dto";
-import { BaseTreeNodeViewmodel } from "../../../shared/components/base";
+import { IBaseTreeNodeViewmodel } from "../../../shared/components/base";
 import { CollectionViewmodel } from "./collection.viewmodel";
 
-export class CollectionTreeViewmodel extends CollectionViewmodel implements BaseTreeNodeViewmodel {
+export class CollectionTreeViewmodel extends CollectionViewmodel implements IBaseTreeNodeViewmodel {
   //#region Pbulic fields -----------------------------------------------------
   public isSelected: boolean;
   public isExpanded: boolean;

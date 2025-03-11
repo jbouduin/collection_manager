@@ -1,9 +1,9 @@
 import { MtgCardSetDto } from "../../../../common/dto";
-import { BaseTreeNodeViewmodel } from "../../../shared/components/base/base-tree-view";
+import { IBaseTreeNodeViewmodel } from "../../../shared/components/base/base-tree-view";
 import { CardSetViewmodel } from "./card-set.viewmodel";
 
 
-export class CardSetTreeViewmodel extends CardSetViewmodel implements BaseTreeNodeViewmodel {
+export class CardSetTreeViewmodel extends CardSetViewmodel implements IBaseTreeNodeViewmodel {
   //#region Pbulic fields -----------------------------------------------------
   public isSelected: boolean;
   public isExpanded: boolean;

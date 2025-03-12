@@ -1,8 +1,8 @@
-import { CollectionDto } from "../../../../common/dto";
+import { ICollectionDto } from "../../../../common/dto";
 import { BaseViewmodel } from "../../../shared/viewmodels";
 
 
-export class CollectionViewmodel extends BaseViewmodel<CollectionDto> {
+export class CollectionViewmodel extends BaseViewmodel<ICollectionDto> {
   public get id(): number {
     return this._dto.id;
   }
@@ -43,7 +43,7 @@ export class CollectionViewmodel extends BaseViewmodel<CollectionDto> {
     return this._dto.modified_at ? this._dto.modified_at.toLocaleDateString() : undefined;
   }
 
-  public constructor(dto: CollectionDto) {
+  public constructor(dto: ICollectionDto) {
     super(dto);
   }
 }

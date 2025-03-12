@@ -2,6 +2,6 @@ import { Selectable } from "kysely";
 import { CardConditionTable, CollectionTable, OwnedCardCollectionMapTable } from "../../../main/database/schema";
 
 
-export type CardConditionDto = Selectable<CardConditionTable>;
-export type CollectionDto = Selectable<CollectionTable>;
-export type OwnedCardCollectionMapDto = Selectable<OwnedCardCollectionMapTable>;
+export type ICardConditionDto = Selectable<CardConditionTable>;
+export type ICollectionDto = Selectable<CollectionTable>;
+export type IOwnedCardCollectionMapDto = Selectable<OwnedCardCollectionMapTable>;

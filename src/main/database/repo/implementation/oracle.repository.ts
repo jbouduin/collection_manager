@@ -1,5 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import { LegalityDto, RulingLineDto } from "../../../../common/dto";
+import { ILegalityDto, IOracleRulingLineDto } from "../../../../common/dto";
 import { IResult } from "../../../services/base";
 import { IDatabaseService, ILogService, IResultFactory } from "../../../services/infra/interfaces";
 import { logCompilable } from "../../log-compilable";
@@ -17,7 +17,7 @@ export class OracleRepository extends BaseRepository implements IOracleRepositor
     super(databaseService, logService, resultFactory);
   }
 
-  public async getByOracleId(oracleId: string): Promise<IResult<Array<RulingLineDto>>> {
+  public async getByOracleId(oracleId: string): Promise<IResult<Array<IOracleRulingLineDto>>> {
     try {
       return this.database
         .selectFrom("oracle_ruling")
@@ -25,25 +25,25 @@ export class OracleRepository extends BaseRepository implements IOracleRepositor
         .where("oracle_ruling.oracle_id", "=", oracleId)
         .selectAll("oracle_ruling_line")
         .$call((q) => logCompilable(this.logService, q))
-        .$castTo<RulingLineDto>()
+        .$castTo<IOracleRulingLineDto>()
         .execute()
-        .then((r: Array<RulingLineDto>) => this.resultFactory.createSuccessResult<Array<RulingLineDto>>(r));
+        .then((r: Array<IOracleRulingLineDto>) => this.resultFactory.createSuccessResult<Array<IOracleRulingLineDto>>(r));
     } catch (err) {
-      return this.resultFactory.createExceptionResultPromise<Array<RulingLineDto>>(err);
+      return this.resultFactory.createExceptionResultPromise<Array<IOracleRulingLineDto>>(err);
     }
   }
 
-  public getLegalities(oracleId: string): Promise<IResult<Array<LegalityDto>>> {
+  public getLegalities(oracleId: string): Promise<IResult<Array<ILegalityDto>>> {
     try {
       return this.database
         .selectFrom("oracle_legality")
         .selectAll()
         .where("oracle_legality.oracle_id", "=", oracleId)
-        .$castTo<LegalityDto>()
+        .$castTo<ILegalityDto>()
         .execute()
-        .then((r: Array<LegalityDto>) => this.resultFactory.createSuccessResult(r));
+        .then((r: Array<ILegalityDto>) => this.resultFactory.createSuccessResult(r));
     } catch (err) {
-      return this.resultFactory.createExceptionResultPromise<Array<LegalityDto>>(err);
+      return this.resultFactory.createExceptionResultPromise<Array<ILegalityDto>>(err);
     }
   }
 }

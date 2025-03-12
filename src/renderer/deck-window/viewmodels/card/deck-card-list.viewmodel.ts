@@ -1,8 +1,8 @@
-import { DeckCardListDto } from "../../../../common/dto";
+import { IDeckCardListDto } from "../../../../common/dto";
 import { BaseMtgCardListViewmodel } from "../../../shared/viewmodels";
 
 
-export class DeckCardListViewmodel extends BaseMtgCardListViewmodel<DeckCardListDto> {
+export class DeckCardListViewmodel extends BaseMtgCardListViewmodel<IDeckCardListDto> {
   //#region Getters -----------------------------------------------------------
   public get deckCardId(): number {
     return this._dtoCard.deck_card_id;
@@ -17,7 +17,7 @@ export class DeckCardListViewmodel extends BaseMtgCardListViewmodel<DeckCardList
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
-  public constructor(dtoCard: DeckCardListDto) {
+  public constructor(dtoCard: IDeckCardListDto) {
     super(dtoCard);
   }
   //#endregion

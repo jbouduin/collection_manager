@@ -1,9 +1,9 @@
-import { ColorDto, DeckDto, DeckListDto } from "../../../../common/dto";
+import { IColorDto, IDeckDto, IDeckListDto } from "../../../../common/dto";
 import { MtgGameFormat } from "../../../../common/types";
 
 export class DeckListViewmodel {
   //#region private fields ----------------------------------------------------
-  private readonly _deck: DeckListDto;
+  private readonly _deck: IDeckListDto;
   private readonly _colorIdentity: Array<string>;
   private readonly _coloridentitySortValue: string;
   //#endregion
@@ -31,26 +31,26 @@ export class DeckListViewmodel {
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
-  public static deckListViewmodel(deck: DeckListDto): DeckListViewmodel {
+  public static deckListViewmodel(deck: IDeckListDto): DeckListViewmodel {
     return new DeckListViewmodel(deck);
   }
 
-  public static newDeckListViewmodel(deck: DeckDto): DeckListViewmodel {
-    const newListDto: DeckListDto = {
+  public static newDeckListViewmodel(deck: IDeckDto): DeckListViewmodel {
+    const newListDto: IDeckListDto = {
       ...deck,
       deckSize: 0,
       sideboardSize: 0,
-      accumulatedColorIdentity: new Array<Pick<ColorDto, "sequence" | "mana_symbol">>()
+      accumulatedColorIdentity: new Array<Pick<IColorDto, "sequence" | "mana_symbol">>()
     };
     return new DeckListViewmodel(newListDto);
   }
 
-  private constructor(deck: DeckListDto) {
+  private constructor(deck: IDeckListDto) {
     this._deck = deck;
     const deckColors = this._deck.accumulatedColorIdentity
-      .sort((a: Pick<ColorDto, "sequence" | "mana_symbol">, b: Pick<ColorDto, "sequence" | "mana_symbol">) => a.sequence - b.sequence);
+      .sort((a: Pick<IColorDto, "sequence" | "mana_symbol">, b: Pick<IColorDto, "sequence" | "mana_symbol">) => a.sequence - b.sequence);
     this._colorIdentity = deckColors
-      .map((cardColor: Pick<ColorDto, "sequence" | "mana_symbol">) => cardColor.mana_symbol);
+      .map((cardColor: Pick<IColorDto, "sequence" | "mana_symbol">) => cardColor.mana_symbol);
     this._coloridentitySortValue = "";
     for (const item of deckColors) {
       this._coloridentitySortValue = this._coloridentitySortValue + item.sequence.toString().padStart(2, "0");

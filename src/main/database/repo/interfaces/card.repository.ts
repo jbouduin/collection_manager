@@ -1,9 +1,9 @@
-import { MtgCardListDto, MtgCardImageDataDto, MtgCardDetailDto, CardQueryDto } from "../../../../common/dto";
+import { IMtgCardListDto, IMtgCardImageDataDto, IMtgCardDetailDto, ICardQueryDto } from "../../../../common/dto";
 import { IResult } from "../../../services/base";
 
 
 export interface ICardRepository {
-  getCardDetails(cardId: string): Promise<IResult<MtgCardDetailDto>>;
-  getCardImageData(cardId: string): Promise<IResult<MtgCardImageDataDto>>;
-  queryCards(params: CardQueryDto): Promise<IResult<Array<MtgCardListDto>>>;
+  getCardDetails(cardId: string): Promise<IResult<IMtgCardDetailDto>>;
+  getCardImageData(cardId: string): Promise<IResult<IMtgCardImageDataDto>>;
+  queryCards(params: ICardQueryDto): Promise<IResult<Array<IMtgCardListDto>>>;
 }

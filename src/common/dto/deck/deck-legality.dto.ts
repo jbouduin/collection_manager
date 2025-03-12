@@ -1,6 +1,6 @@
 import { CardLegality, MtgGameFormat } from "../../types";
 
-export interface DeckLegalityDto {
+export interface IDeckLegalityDto {
   format: MtgGameFormat;
   legality: CardLegality;
 }

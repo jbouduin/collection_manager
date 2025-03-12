@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogBody, DialogFooter, Section } from "@blueprintjs/core";
 import { cloneDeep, noop } from "lodash";
 import * as React from "react";
-import { CardConditionDto, CollectionDto, OwnedCardCollectionMapDto, OwnedCardQuantityDto } from "../../../../common/dto";
+import { ICardConditionDto, ICollectionDto, IOwnedCardCollectionMapDto, IOwnedCardQuantityDto } from "../../../../common/dto";
 import { CardCondition } from "../../../../common/types";
 import { CardConditionContext, IpcProxyService, IpcProxyServiceContext } from "../../context";
 import { OwnedCardQuantityViewmodel } from "../../viewmodels";
@@ -13,11 +13,11 @@ import { OwnedCardDialogProps } from "./owned-card-dialog.props";
 export function OwnedCardDialog(props: OwnedCardDialogProps) {
   //#region State -------------------------------------------------------------
   const [viewmodels, setViewmodels] = React.useState<Map<number, Array<OwnedCardQuantityViewmodel>>>(null);
-  const [collections, setCollections] = React.useState<Array<CollectionDto>>(null);
+  const [collections, setCollections] = React.useState<Array<ICollectionDto>>(null);
   //#endregion
 
   //#region Context -----------------------------------------------------------
-  const cardConditionContext = React.useContext<Array<CardConditionDto>>(CardConditionContext);
+  const cardConditionContext = React.useContext<Array<ICardConditionDto>>(CardConditionContext);
   const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
   //#endregion
 
@@ -25,11 +25,11 @@ export function OwnedCardDialog(props: OwnedCardDialogProps) {
   React.useEffect(
     () => {
       void Promise.all([
-        ipcProxyService.getData<Array<CollectionDto>>("/collection"),
-        ipcProxyService.getData<Array<OwnedCardQuantityDto>>(`/card/${props.cardId}/collection`)
+        ipcProxyService.getData<Array<ICollectionDto>>("/collection"),
+        ipcProxyService.getData<Array<IOwnedCardQuantityDto>>(`/card/${props.cardId}/collection`)
       ])
         .then(
-          (result: [Array<CollectionDto>, Array<OwnedCardQuantityDto>]) => {
+          (result: [Array<ICollectionDto>, Array<IOwnedCardQuantityDto>]) => {
             setCollections(result[0]);
             setViewmodels(buildViemmodels(result[1], result[0]));
           },
@@ -46,9 +46,9 @@ export function OwnedCardDialog(props: OwnedCardDialogProps) {
   //#region Event handling ----------------------------------------------------
   function onSave(): void {
     void ipcProxyService
-      .postData<Array<OwnedCardQuantityDto>, Array<OwnedCardQuantityDto>>(`/card/${props.cardId}/collection`, buildRequestBody())
+      .postData<Array<IOwnedCardQuantityDto>, Array<IOwnedCardQuantityDto>>(`/card/${props.cardId}/collection`, buildRequestBody())
       .then(
-        (result: Array<OwnedCardQuantityDto>) => {
+        (result: Array<IOwnedCardQuantityDto>) => {
           if (result) {
             setViewmodels(buildViemmodels(result, collections));
             props.onClose(result);
@@ -112,7 +112,7 @@ export function OwnedCardDialog(props: OwnedCardDialogProps) {
       <>
         {
           Array.from(viewmodels).map((value, idx) => {
-            const collection = collections.find((c: CollectionDto) => c.id == value[0]);
+            const collection = collections.find((c: ICollectionDto) => c.id == value[0]);
             const foils = value[1]
               .filter((qty: OwnedCardQuantityViewmodel) => qty.isFoil == true)
               .reduce((previousValue: number, currentValue: OwnedCardQuantityViewmodel) => previousValue + currentValue.quantity, 0);
@@ -152,25 +152,25 @@ export function OwnedCardDialog(props: OwnedCardDialogProps) {
   //#endregion
 
   //#region Auxiliary methods -------------------------------------------------
-  function buildViemmodels(existing: Array<OwnedCardQuantityDto>, collections: Array<CollectionDto>): Map<number, Array<OwnedCardQuantityViewmodel>> {
+  function buildViemmodels(existing: Array<IOwnedCardQuantityDto>, collections: Array<ICollectionDto>): Map<number, Array<OwnedCardQuantityViewmodel>> {
     const dtoMapByCollection = existing
-      .map((dto: OwnedCardQuantityDto) => dto.collectionMaps)
+      .map((dto: IOwnedCardQuantityDto) => dto.collectionMaps)
       .flat(1)
-      .reduce<Map<number, Array<OwnedCardQuantityDto>>>(
+      .reduce<Map<number, Array<IOwnedCardQuantityDto>>>(
         (prev, current) => {
           if (!prev.has(current.collection_id)) {
-            prev.set(current.collection_id, new Array<OwnedCardQuantityDto>());
+            prev.set(current.collection_id, new Array<IOwnedCardQuantityDto>());
           }
           return prev;
         },
-        new Map<number, Array<OwnedCardQuantityDto>>()
+        new Map<number, Array<IOwnedCardQuantityDto>>()
       );
 
-    dtoMapByCollection.forEach((resultDtoArray: Array<OwnedCardQuantityDto>, collectionId: number) => {
-      existing.forEach((dto: OwnedCardQuantityDto) => {
-        const collectionDto = dto.collectionMaps.find((cm: OwnedCardCollectionMapDto) => cm.collection_id == collectionId);
+    dtoMapByCollection.forEach((resultDtoArray: Array<IOwnedCardQuantityDto>, collectionId: number) => {
+      existing.forEach((dto: IOwnedCardQuantityDto) => {
+        const collectionDto = dto.collectionMaps.find((cm: IOwnedCardCollectionMapDto) => cm.collection_id == collectionId);
         if (collectionDto) {
-          const ownedCardQuantityDto: OwnedCardQuantityDto = {
+          const ownedCardQuantityDto: IOwnedCardQuantityDto = {
             id: dto.id,
             card_id: dto.card_id,
             condition_id: dto.condition_id,
@@ -186,28 +186,28 @@ export function OwnedCardDialog(props: OwnedCardDialogProps) {
     });
 
     collections
-      .filter((c: CollectionDto) => !c.is_folder && !dtoMapByCollection.has(c.id))
-      .forEach((c: CollectionDto) => dtoMapByCollection.set(c.id, new Array<OwnedCardQuantityDto>()));
+      .filter((c: ICollectionDto) => !c.is_folder && !dtoMapByCollection.has(c.id))
+      .forEach((c: ICollectionDto) => dtoMapByCollection.set(c.id, new Array<IOwnedCardQuantityDto>()));
     const result = new Map<number, Array<OwnedCardQuantityViewmodel>>();
     dtoMapByCollection
-      .forEach((resultDtoArray: Array<OwnedCardQuantityDto>, collectionId: number) => result.set(
+      .forEach((resultDtoArray: Array<IOwnedCardQuantityDto>, collectionId: number) => result.set(
         collectionId,
         buildEditableState(cardConditionContext, props.cardId, collectionId, resultDtoArray)
       ));
     return result;
   }
 
-  function buildRequestBody(): Array<OwnedCardQuantityDto> {
-    const result = new Array<OwnedCardQuantityDto>();
+  function buildRequestBody(): Array<IOwnedCardQuantityDto> {
+    const result = new Array<IOwnedCardQuantityDto>();
     Array.from(viewmodels)
       .map((mapEntry: [number, Array<OwnedCardQuantityViewmodel>]) => mapEntry[1])
       .flat(1)
       .filter((vm: OwnedCardQuantityViewmodel) => vm.hasChanges)
       .forEach((vm: OwnedCardQuantityViewmodel) => {
-        let inResult: OwnedCardQuantityDto = result.find((r: OwnedCardQuantityDto) => r.condition_id == vm.conditionId && r.is_foil == vm.isFoil);
+        let inResult: IOwnedCardQuantityDto = result.find((r: IOwnedCardQuantityDto) => r.condition_id == vm.conditionId && r.is_foil == vm.isFoil);
         if (!inResult) {
           inResult = {
-            collectionMaps: new Array<OwnedCardCollectionMapDto>(),
+            collectionMaps: new Array<IOwnedCardCollectionMapDto>(),
             id: vm.dto.id,
             created_at: vm.dto.created_at,
             modified_at: vm.dto.modified_at,

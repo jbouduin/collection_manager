@@ -1,10 +1,10 @@
-import { MtgCardSetDetailsDto, MtgCardSetLanguageDto, LanguageDto } from "../../../../common/dto";
+import { IMtgCardSetDetailsDto, IMtgCardSetLanguageDto, ILanguageDto } from "../../../../common/dto";
 import { CardSetType } from "../../../../common/types";
 
 
 export class CardSetDetailsViewmodel {
   //#region Private fields ----------------------------------------------------
-  private _dtoCardSet: MtgCardSetDetailsDto;
+  private _dtoCardSet: IMtgCardSetDetailsDto;
   //#endregion
 
   //#region Public getters ----------------------------------------------------
@@ -51,7 +51,7 @@ export class CardSetDetailsViewmodel {
     return this._dtoCardSet.last_full_synchronization_at ? true : false;
   }
 
-  public get languagesWithNumberOfCards(): Array<MtgCardSetLanguageDto> {
+  public get languagesWithNumberOfCards(): Array<IMtgCardSetLanguageDto> {
     return this._dtoCardSet.languages;
   }
 
@@ -81,15 +81,15 @@ export class CardSetDetailsViewmodel {
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
-  public constructor(dtoCardSetDetails: MtgCardSetDetailsDto) {
+  public constructor(dtoCardSetDetails: IMtgCardSetDetailsDto) {
     this._dtoCardSet = dtoCardSetDetails;
   }
   //#endregion
 
   //#region Public methods ----------------------------------------------------
-  public getLanguagesOfSet(languages: Array<LanguageDto>): string {
+  public getLanguagesOfSet(languages: Array<ILanguageDto>): string {
     return this._dtoCardSet.languages
-      .map((language: MtgCardSetLanguageDto) => languages.find((dtoLanguage: LanguageDto) => dtoLanguage.id == language.lang).button_text)
+      .map((language: IMtgCardSetLanguageDto) => languages.find((dtoLanguage: ILanguageDto) => dtoLanguage.id == language.lang).button_text)
       .join(", ");
   }
   //#endregion

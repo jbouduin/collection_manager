@@ -1,11 +1,11 @@
 
 import { Selectable } from "kysely";
-import { MtgCardSymbolDto } from "../../../../common/dto";
+import { IMtgCardSymbolDto } from "../../../../common/dto";
 import { IResult } from "../../../services/base";
 import { CardSymbolTable } from "../../schema";
 
 
 export interface ICardSymbolRepository {
-  getAll(): Promise<IResult<Array<MtgCardSymbolDto>>>;
+  getAll(): Promise<IResult<Array<IMtgCardSymbolDto>>>;
   getCardSymbols(): Promise<IResult<Array<Selectable<CardSymbolTable>>>>;
 }

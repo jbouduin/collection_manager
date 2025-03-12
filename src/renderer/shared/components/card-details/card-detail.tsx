@@ -1,6 +1,6 @@
 import { H5, Section, SectionCard, Tab, Tabs } from "@blueprintjs/core";
 import * as React from "react";
-import { MtgCardDetailDto, MtgCardLanguageDto } from "../../../../common/dto";
+import { IMtgCardDetailDto, IMtgCardLanguageDto } from "../../../../common/dto";
 import { IpcProxyService, IpcProxyServiceContext } from "../../context";
 import { MtgCardDetailViewmodel } from "../../viewmodels";
 import { CardSymbolRenderer } from "../card-symbol-renderer";
@@ -66,7 +66,7 @@ export function CardDetail(props: CardDetailProps) {
             <LanguageButtonBar
               cardLanguages={cardViewState.card.otherCardLanguages}
               currentLanguage={cardViewState.card.cardLanguage}
-              onButtonClick={(language: MtgCardLanguageDto) => void loadCard(language.id)}
+              onButtonClick={(language: IMtgCardLanguageDto) => void loadCard(language.id)}
             />
           </SectionCard>
         }
@@ -142,9 +142,9 @@ export function CardDetail(props: CardDetailProps) {
   //#region Other Auxiliary methods -------------------------------------------
   async function loadCard(cardId: string): Promise<void> {
     if (cardId) {
-      await ipcProxyService.getData<MtgCardDetailDto>(`/card/${cardId}`)
+      await ipcProxyService.getData<IMtgCardDetailDto>(`/card/${cardId}`)
         .then(
-          (cardResult: MtgCardDetailDto) => setCardViewState({ card: new MtgCardDetailViewmodel(cardResult), cardfaceSequence: 0 }),
+          (cardResult: IMtgCardDetailDto) => setCardViewState({ card: new MtgCardDetailViewmodel(cardResult), cardfaceSequence: 0 }),
           (_r: Error) => setCardViewState(null)
         );
     } else {

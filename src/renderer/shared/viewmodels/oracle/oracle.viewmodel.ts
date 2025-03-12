@@ -1,8 +1,8 @@
-import { OracleDto } from "../../../../common/dto";
+import { IOracleDto } from "../../../../common/dto";
 
 export class OracleViewmodel {
   //#region private readonly fields -------------------------------------------
-  private readonly _dtoOracle: OracleDto;
+  private readonly _dtoOracle: IOracleDto;
   //#endregion
 
   //#region Public getters ----------------------------------------------------
@@ -16,7 +16,7 @@ export class OracleViewmodel {
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
-  public constructor(dtoOracle: OracleDto) {
+  public constructor(dtoOracle: IOracleDto) {
     this._dtoOracle = dtoOracle;
   }
   //#endregion

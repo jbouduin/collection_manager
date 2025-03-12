@@ -1,5 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import { ColorDto } from "../../../../common/dto";
+import { IColorDto } from "../../../../common/dto";
 import { IResult } from "../../../services/base";
 import { IDatabaseService, ILogService, IResultFactory } from "../../../services/infra/interfaces";
 import { INFRASTRUCTURE } from "../../../services/service.tokens";
@@ -19,16 +19,16 @@ export class ColorRepository extends BaseRepository implements IColorRepository 
   //#region
 
   //#region IColorRepository methods ------------------------------------------
-  public getAll(): Promise<IResult<Array<ColorDto>>> {
+  public getAll(): Promise<IResult<Array<IColorDto>>> {
     try {
       return this.database
         .selectFrom("color")
         .selectAll()
-        .$castTo<ColorDto>()
+        .$castTo<IColorDto>()
         .execute()
-        .then((r: Array<ColorDto>) => this.resultFactory.createSuccessResult<Array<ColorDto>>(r));
+        .then((r: Array<IColorDto>) => this.resultFactory.createSuccessResult<Array<IColorDto>>(r));
     } catch (err) {
-      return this.resultFactory.createExceptionResultPromise<Array<ColorDto>>(err);
+      return this.resultFactory.createExceptionResultPromise<Array<IColorDto>>(err);
     }
   }
   //#endregion

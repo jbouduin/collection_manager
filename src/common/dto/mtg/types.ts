@@ -2,9 +2,9 @@ import { Selectable } from "kysely";
 import { CardFaceColorMapTable, LanguageTable, OracleLegalityTable, OracleRulingLineTable, OracleTable } from "../../../main/database/schema";
 
 
-export type CardfaceColorDto = Selectable<CardFaceColorMapTable>;
-export type LanguageDto = Selectable<LanguageTable>;
-export type LegalityDto = Selectable<OracleLegalityTable>;
-export type OracleDto = Selectable<OracleTable>;
-export type OracleLegalityDto = Selectable<OracleLegalityTable>;
-export type RulingLineDto = Selectable<OracleRulingLineTable>;
+export type ICardfaceColorDto = Selectable<CardFaceColorMapTable>;
+export type ILanguageDto = Selectable<LanguageTable>;
+export type ILegalityDto = Selectable<OracleLegalityTable>;
+export type IOracleDto = Selectable<OracleTable>;
+export type IOracleLegalityDto = Selectable<OracleLegalityTable>;
+export type IOracleRulingLineDto = Selectable<OracleRulingLineTable>;

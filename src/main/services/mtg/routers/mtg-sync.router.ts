@@ -1,5 +1,5 @@
 import { inject, singleton } from "tsyringe";
-import { SyncParamDto } from "../../../../common/dto";
+import { ISyncParamDto } from "../../../../common/dto";
 import { BaseRouter, IResult, IRouter, RouteCallback, RoutedRequest } from "../../base";
 import { ILogService, IResultFactory, IRouterService } from "../../infra/interfaces";
 import { INFRASTRUCTURE, MTG } from "../../service.tokens";
@@ -30,7 +30,7 @@ export class MtgSyncRouter extends BaseRouter implements IRouter {
   //#endregion
 
   //#region Route callbacks ---------------------------------------------------
-  private sync(request: RoutedRequest<SyncParamDto>): Promise<IResult<void>> {
+  private sync(request: RoutedRequest<ISyncParamDto>): Promise<IResult<void>> {
     try {
       return this.mtgSyncService
         .synchronize(request.data, request.sender)

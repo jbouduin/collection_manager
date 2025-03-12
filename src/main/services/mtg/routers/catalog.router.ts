@@ -1,5 +1,5 @@
 import { container, inject, singleton } from "tsyringe";
-import { CatalogItemDto, CatalogTypeDto } from "../../../../common/dto";
+import { ICatalogItemDto, ICatalogTypeDto } from "../../../../common/dto";
 import { CatalogType } from "../../../../common/types";
 import { ICatalogRepository } from "../../../database/repo/interfaces";
 import { BaseRouter, IResult, IRouter, RouteCallback, RoutedRequest } from "../../base";
@@ -26,13 +26,13 @@ export class CatalogRouter extends BaseRouter implements IRouter {
   //#endregion
 
   //#region Route callbacks ---------------------------------------------------
-  private getCatalogItems(request: RoutedRequest<void>): Promise<IResult<Array<CatalogItemDto>>> {
+  private getCatalogItems(request: RoutedRequest<void>): Promise<IResult<Array<ICatalogItemDto>>> {
     return container
       .resolve<ICatalogRepository>(REPOSITORIES.CatalogRepository)
       .getCatalogItems(request.params["id"] as CatalogType, request.queryParams["item"]);
   }
 
-  private getCatalogs(_request: RoutedRequest<void>): Promise<IResult<Array<CatalogTypeDto>>> {
+  private getCatalogs(_request: RoutedRequest<void>): Promise<IResult<Array<ICatalogTypeDto>>> {
     return container
       .resolve<ICatalogRepository>(REPOSITORIES.CatalogRepository)
       .getCatalogs();

@@ -1,9 +1,9 @@
-import { SyncParamDto } from "../../../../common/dto";
+import { ISyncParamDto } from "../../../../common/dto";
 import { CardSyncType, CatalogType, ImageStatus, RulingSyncType, TimespanUnit } from "../../../../common/types";
 import { BaseViewmodel } from "../base.viewmodel";
 
 
-export class SyncParamViewmodel extends BaseViewmodel<SyncParamDto> {
+export class SyncParamViewmodel extends BaseViewmodel<ISyncParamDto> {
   //#region Getters/Setters ---------------------------------------------------
   public get cardSyncType(): CardSyncType {
     return this._dto.cardSyncType;
@@ -55,7 +55,7 @@ export class SyncParamViewmodel extends BaseViewmodel<SyncParamDto> {
   //#endregion
 
   //#region Constructor -------------------------------------------------------
-  public constructor(dtoSyncParam: SyncParamDto) {
+  public constructor(dtoSyncParam: ISyncParamDto) {
     super(dtoSyncParam);
   }
   //#endregion

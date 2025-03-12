@@ -1,6 +1,6 @@
 import { MtgLanguage } from "../../types";
 
-export interface MtgCardLanguageDto {
+export interface IMtgCardLanguageDto {
   id: string;
   lang: MtgLanguage;
 }

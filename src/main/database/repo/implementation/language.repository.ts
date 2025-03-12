@@ -1,5 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import { LanguageDto } from "../../../../common/dto";
+import { ILanguageDto } from "../../../../common/dto";
 import { IResult } from "../../../services/base";
 import { IDatabaseService, ILogService, IResultFactory } from "../../../services/infra/interfaces";
 import { INFRASTRUCTURE } from "../../../services/service.tokens";
@@ -20,16 +20,16 @@ export class LanguageRepository extends BaseRepository implements ILanguageRepos
   //#endregion
 
   //#region ILanguageRepository methods ---------------------------------------
-  public getAll(): Promise<IResult<Array<LanguageDto>>> {
+  public getAll(): Promise<IResult<Array<ILanguageDto>>> {
     try {
       return this.database
         .selectFrom("language")
         .selectAll()
-        .$castTo<LanguageDto>()
+        .$castTo<ILanguageDto>()
         .execute()
-        .then((r: Array<LanguageDto>) => this.resultFactory.createSuccessResult<Array<LanguageDto>>(r));
+        .then((r: Array<ILanguageDto>) => this.resultFactory.createSuccessResult<Array<ILanguageDto>>(r));
     } catch (err) {
-      return this.resultFactory.createExceptionResultPromise<Array<LanguageDto>>(err);
+      return this.resultFactory.createExceptionResultPromise<Array<ILanguageDto>>(err);
     }
   }
   //#endregion

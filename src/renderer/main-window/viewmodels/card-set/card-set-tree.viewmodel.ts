@@ -1,4 +1,4 @@
-import { MtgCardSetDto } from "../../../../common/dto";
+import { IMtgCardSetDto } from "../../../../common/dto";
 import { IBaseTreeNodeViewmodel } from "../../../shared/components/base/base-tree-view";
 import { CardSetViewmodel } from "./card-set.viewmodel";
 
@@ -10,7 +10,7 @@ export class CardSetTreeViewmodel extends CardSetViewmodel implements IBaseTreeN
   //#endregion
 
   //#region Constructor -------------------------------------------------------
-  public constructor(dto: MtgCardSetDto, isSelected: boolean, isExpanded: boolean) {
+  public constructor(dto: IMtgCardSetDto, isSelected: boolean, isExpanded: boolean) {
     super(dto);
     this.isSelected = isSelected;
     this.isExpanded = isExpanded;

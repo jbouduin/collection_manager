@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogBody, DialogFooter } from "@blueprintjs/core";
 import { cloneDeep } from "lodash";
 import * as React from "react";
-import { CatalogTypeDto } from "../../../../../common/dto";
+import { ICatalogTypeDto } from "../../../../../common/dto";
 import { SyncParameterView } from "../../../../shared/components/sync-parameter-view";
 import { IpcProxyService, IpcProxyServiceContext } from "../../../../shared/context";
 import { SyncParamViewmodel } from "../../../../shared/viewmodels";
@@ -25,7 +25,7 @@ export function SyncDialog(props: SyncDialogProps) {
     oracleId: undefined
   });
   const [syncParam, setSyncParam] = React.useState<SyncParamViewmodel>(initialState);
-  const [catalogs, setCatalogs] = React.useState<Array<CatalogTypeDto>>(new Array<CatalogTypeDto>());
+  const [catalogs, setCatalogs] = React.useState<Array<ICatalogTypeDto>>(new Array<ICatalogTypeDto>());
   //#endregion
 
   //#region Context -----------------------------------------------------------
@@ -35,9 +35,9 @@ export function SyncDialog(props: SyncDialogProps) {
   //#region Effects -----------------------------------------------------------
   React.useEffect(
     () => {
-      void ipcProxyService.getData<Array<CatalogTypeDto>>("/catalog").then(
-        (r: Array<CatalogTypeDto>) => setCatalogs(r),
-        (_r: Error) => setCatalogs(new Array<CatalogTypeDto>())
+      void ipcProxyService.getData<Array<ICatalogTypeDto>>("/catalog").then(
+        (r: Array<ICatalogTypeDto>) => setCatalogs(r),
+        (_r: Error) => setCatalogs(new Array<ICatalogTypeDto>())
       );
     },
     []

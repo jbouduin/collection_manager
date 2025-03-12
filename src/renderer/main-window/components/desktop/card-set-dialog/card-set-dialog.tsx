@@ -1,6 +1,6 @@
 import { AnchorButton, Button, Dialog, DialogBody, DialogFooter, HTMLTable, Icon, Tab, Tabs } from "@blueprintjs/core";
 import * as React from "react";
-import { LanguageDto, MtgCardSetDetailsDto, MtgCardSetLanguageDto } from "../../../../../common/dto";
+import { ILanguageDto, IMtgCardSetDetailsDto, IMtgCardSetLanguageDto } from "../../../../../common/dto";
 import { SvgProvider } from "../../../../shared/components/svg-provider";
 import { DisplayValueService, DisplayValueServiceContext, IpcProxyService, IpcProxyServiceContext, LanguagesContext } from "../../../../shared/context";
 import { CardSetDetailsViewmodel } from "../../../viewmodels";
@@ -23,7 +23,7 @@ export function CardSetDialog(props: CardSetDialogProps) {
       if (props.cardSetId) {
         void ipcProxyService.getData(`/card-set/${props.cardSetId}`)
           .then(
-            (cardSetDetails: MtgCardSetDetailsDto) => setCardSetDetails(new CardSetDetailsViewmodel(cardSetDetails)),
+            (cardSetDetails: IMtgCardSetDetailsDto) => setCardSetDetails(new CardSetDetailsViewmodel(cardSetDetails)),
             (_r: Error) => setCardSetDetails(null)
           );
       }
@@ -88,7 +88,7 @@ export function CardSetDialog(props: CardSetDialogProps) {
     return (
       <LanguagesContext.Consumer>
         {
-          (languages: Array<LanguageDto>) => (
+          (languages: Array<ILanguageDto>) => (
             <Tabs
               animate={true}
               defaultSelectedTabId="core-details"
@@ -108,7 +108,7 @@ export function CardSetDialog(props: CardSetDialogProps) {
     );
   }
 
-  function renderMainPropertiesTable(languages: Array<LanguageDto>): React.JSX.Element {
+  function renderMainPropertiesTable(languages: Array<ILanguageDto>): React.JSX.Element {
     return (
       <HTMLTable
         border={0}
@@ -125,7 +125,7 @@ export function CardSetDialog(props: CardSetDialogProps) {
     );
   }
 
-  function renderMainPropertiesTableLines(languages: Array<LanguageDto>): Array<React.JSX.Element> {
+  function renderMainPropertiesTableLines(languages: Array<ILanguageDto>): Array<React.JSX.Element> {
     const table = new Array<React.JSX.Element>();
     table.push((
       <tr>
@@ -248,7 +248,7 @@ export function CardSetDialog(props: CardSetDialogProps) {
     return table;
   }
 
-  function renderLanguagePropertiesTable(languages: Array<LanguageDto>): React.JSX.Element {
+  function renderLanguagePropertiesTable(languages: Array<ILanguageDto>): React.JSX.Element {
     return (
       <HTMLTable bordered={false} compact={true} width="100%">
         <tbody>
@@ -260,11 +260,11 @@ export function CardSetDialog(props: CardSetDialogProps) {
     );
   }
 
-  function renderLanguagePropertiesTableLines(languages: Array<LanguageDto>): Array<React.JSX.Element> {
-    return cardSetDetails.languagesWithNumberOfCards.map((cardSetDetailsLanguage: MtgCardSetLanguageDto) => {
+  function renderLanguagePropertiesTableLines(languages: Array<ILanguageDto>): Array<React.JSX.Element> {
+    return cardSetDetails.languagesWithNumberOfCards.map((cardSetDetailsLanguage: IMtgCardSetLanguageDto) => {
       return (
         <tr>
-          <td style={{ paddingLeft: "0px" }}>{languages.find((language: LanguageDto) => language.id == cardSetDetailsLanguage.lang).display_text}:</td>
+          <td style={{ paddingLeft: "0px" }}>{languages.find((language: ILanguageDto) => language.id == cardSetDetailsLanguage.lang).display_text}:</td>
           <td style={{ paddingLeft: "0px" }}>{`${cardSetDetailsLanguage.number_of_cards} cards`}</td>
         </tr>
       );

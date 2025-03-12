@@ -1,10 +1,10 @@
-import { MtgSetTreeViewConfigurationDto } from "../../../../common/dto";
+import { IMtgSetTreeViewConfigurationDto } from "../../../../common/dto";
 import { MtgViewTreeConfigurationViewmodel } from "../../../shared/viewmodels";
 
 
 export class TreeConfigurationViewmodel extends MtgViewTreeConfigurationViewmodel {
   //#region Constructor -------------------------------------------------------
-  public constructor(dto: MtgSetTreeViewConfigurationDto) {
+  public constructor(dto: IMtgSetTreeViewConfigurationDto) {
     super(dto);
   }
   //#endregion

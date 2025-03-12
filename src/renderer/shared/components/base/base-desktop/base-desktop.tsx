@@ -2,7 +2,7 @@ import { Card, Classes } from "@blueprintjs/core";
 import classNames from "classnames";
 import { cloneDeep, noop } from "lodash";
 import * as React from "react";
-import { CardConditionDto, ConfigurationDto, GameFormatDto, LanguageDto, MtgCardSetDto } from "../../../../../common/dto";
+import { ICardConditionDto, IConfigurationDto, IGameFormatDto, ILanguageDto, IMtgCardSetDto } from "../../../../../common/dto";
 import * as Context from "../../../../shared/context";
 import { AfterSplashScreenClose } from "../collection-manager.props";
 import { BaseDesktopProps } from "./base-desktop.props";
@@ -14,10 +14,10 @@ export function BaseDesktop(props: BaseDesktopProps) {
   //#region State -------------------------------------------------------------
   const initialState: BaseDesktopState = {
     initialized: false,
-    cardConditions: new Array<CardConditionDto>(),
-    cardSets: new Array<MtgCardSetDto>(),
-    gameFormats: new Array<GameFormatDto>(),
-    languages: new Array<LanguageDto>(),
+    cardConditions: new Array<ICardConditionDto>(),
+    cardSets: new Array<IMtgCardSetDto>(),
+    gameFormats: new Array<IGameFormatDto>(),
+    languages: new Array<ILanguageDto>(),
     rendererConfiguration: null,
     splashScreenOpen: false,
     symbolSvgs: new Map<string, string>(),
@@ -33,8 +33,8 @@ export function BaseDesktop(props: BaseDesktopProps) {
   //#region Effects -----------------------------------------------------------
   React.useEffect(
     () => {
-      void ipcProxyService.getData<ConfigurationDto>("/configuration")
-        .then((configuration: ConfigurationDto) => {
+      void ipcProxyService.getData<IConfigurationDto>("/configuration")
+        .then((configuration: IConfigurationDto) => {
           const newState = cloneDeep(initialState);
           newState.rendererConfiguration = configuration.rendererConfiguration;
           ipcProxyService.logServerResponses = configuration.rendererConfiguration.logServerResponses;
@@ -44,14 +44,14 @@ export function BaseDesktop(props: BaseDesktopProps) {
         .then((newState: BaseDesktopState) => {
           void Promise.all([
             ipcProxyService.getData<Map<string, string>>("/card-symbol/svg"),
-            ipcProxyService.getData<Array<MtgCardSetDto>>("/card-set"),
-            ipcProxyService.getData<Array<LanguageDto>>("/language"),
-            ipcProxyService.getData<Array<CardConditionDto>>("/card-condition"),
-            ipcProxyService.getData<Array<GameFormatDto>>("/game-format/")
+            ipcProxyService.getData<Array<IMtgCardSetDto>>("/card-set"),
+            ipcProxyService.getData<Array<ILanguageDto>>("/language"),
+            ipcProxyService.getData<Array<ICardConditionDto>>("/card-condition"),
+            ipcProxyService.getData<Array<IGameFormatDto>>("/game-format/")
           ]).then(
             ([cardSymbols, cardSets, languages, cardConditions, gameFormats]) => {
               newState.symbolSvgs = cardSymbols;
-              newState.cardSets = cardSets.sort((a: MtgCardSetDto, b: MtgCardSetDto) => a.name.localeCompare(b.name));
+              newState.cardSets = cardSets.sort((a: IMtgCardSetDto, b: IMtgCardSetDto) => a.name.localeCompare(b.name));
               newState.gameFormats = gameFormats;
               newState.languages = languages;
               newState.cardConditions = cardConditions;
@@ -79,8 +79,8 @@ export function BaseDesktop(props: BaseDesktopProps) {
       }
       if (afterSplashScreenClose.includes("CardSets")) {
         promises.push(ipcProxyService
-          .getData<Array<MtgCardSetDto>>("/card-set")
-          .then((r: Array<MtgCardSetDto>) => newState.cardSets = r.sort((a: MtgCardSetDto, b: MtgCardSetDto) => a.name.localeCompare(b.name))));
+          .getData<Array<IMtgCardSetDto>>("/card-set")
+          .then((r: Array<IMtgCardSetDto>) => newState.cardSets = r.sort((a: IMtgCardSetDto, b: IMtgCardSetDto) => a.name.localeCompare(b.name))));
       }
       Promise.all(promises).then(
         () => setDesktopState(newState),
@@ -100,7 +100,7 @@ export function BaseDesktop(props: BaseDesktopProps) {
   }
   //#endregion
 
-  function onConfigurationChanged(saved: ConfigurationDto): void {
+  function onConfigurationChanged(saved: IConfigurationDto): void {
     const newState = cloneDeep(desktopState);
     newState.rendererConfiguration = saved.rendererConfiguration;
     newState.themeClassName = saved.rendererConfiguration.useDarkTheme ? Classes.DARK : "";
@@ -123,7 +123,7 @@ export function BaseDesktop(props: BaseDesktopProps) {
                         {props.desktopContent({
                           className: desktopState.themeClassName,
                           hideSplashScreen: (afterClose: Array<AfterSplashScreenClose>) => hideSplashScreen(afterClose),
-                          onConfigurationChanged: (newConfiguration: ConfigurationDto) => onConfigurationChanged(newConfiguration),
+                          onConfigurationChanged: (newConfiguration: IConfigurationDto) => onConfigurationChanged(newConfiguration),
                           showSplashScreen: () => openSplashScreen()
                         })}
                       </Card>

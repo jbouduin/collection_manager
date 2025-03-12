@@ -1,5 +1,5 @@
 import React from "react";
-import { ConfigurationDto } from "../../../../common/dto";
+import { IConfigurationDto } from "../../../../common/dto";
 import { BaseDesktop, DesktopContentProps } from "../../../shared/components/base";
 import { ButtonBar } from "./button-bar/button-bar";
 import { EDesktopView } from "./desktop-view.enum";
@@ -25,7 +25,7 @@ export function MainWindowDesktop() {
       <>
         <ButtonBar
           {...contentProps}
-          afterSaveSettings={(saved: ConfigurationDto) => contentProps.onConfigurationChanged(saved)}
+          afterSaveSettings={(saved: IConfigurationDto) => contentProps.onConfigurationChanged(saved)}
           currentView={desktopView}
           onDesktopViewSelectionClick={(view: EDesktopView) => setDesktopView(view)}
         />

@@ -1,5 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import { GameFormatDto } from "../../../../common/dto";
+import { IGameFormatDto } from "../../../../common/dto";
 import { IResult } from "../../../services/base";
 import { IDatabaseService, ILogService, IResultFactory } from "../../../services/infra/interfaces";
 import { INFRASTRUCTURE } from "../../../services/service.tokens";
@@ -19,16 +19,16 @@ export class GameFormatRepository extends BaseRepository implements IGameFormatR
   //#region
 
   //#region IColorRepository methods ------------------------------------------
-  public getAll(): Promise<IResult<Array<GameFormatDto>>> {
+  public getAll(): Promise<IResult<Array<IGameFormatDto>>> {
     try {
       return this.database
         .selectFrom("game_format")
         .selectAll()
-        .$castTo<GameFormatDto>()
+        .$castTo<IGameFormatDto>()
         .execute()
-        .then((r: Array<GameFormatDto>) => this.resultFactory.createSuccessResult<Array<GameFormatDto>>(r));
+        .then((r: Array<IGameFormatDto>) => this.resultFactory.createSuccessResult<Array<IGameFormatDto>>(r));
     } catch (err) {
-      return this.resultFactory.createExceptionResultPromise<Array<GameFormatDto>>(err);
+      return this.resultFactory.createExceptionResultPromise<Array<IGameFormatDto>>(err);
     }
   }
   //#endregion

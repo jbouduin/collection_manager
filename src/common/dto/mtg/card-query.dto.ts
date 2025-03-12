@@ -1,7 +1,7 @@
 import { CardRarity, CatalogType, MtgGameFormat, MtgColor } from "../../types";
-import { CatalogItemDto } from "../master-data";
+import { ICatalogItemDto } from "../master-data";
 
-export type QueryParamToken =
+export type CardQueryParamToken =
   "set" |
   "format" |
   "rarity" |
@@ -15,10 +15,10 @@ export const QUERY_PARAM_LIST_SEPARATOR = "¶";
 /**
  * Feature: saved searches
  */
-export interface CardQueryDto {
+export interface ICardQueryDto {
   ownedCards: boolean;
   selectedCardColors: Array<MtgColor>;
-  selectedCatalogItems: Array<CatalogItemDto>;
+  selectedCatalogItems: Array<ICatalogItemDto>;
   selectedIdentityColors: Array<MtgColor>;
   selectedGameFormats: Array<MtgGameFormat>;
   selectedProducedManaColors: Array<MtgColor>;

@@ -1,10 +1,10 @@
 import { Props } from "@blueprintjs/core";
-import { CatalogTypeDto } from "../../../../common/dto";
+import { ICatalogTypeDto } from "../../../../common/dto";
 import { SyncParamViewmodel } from "../../viewmodels";
 
 
 export interface SyncParameterViewProps extends Props {
-  catalogs: Array<CatalogTypeDto>;
+  catalogs: Array<ICatalogTypeDto>;
   onSyncParamChanged: (syncParam: SyncParamViewmodel) => void;
   syncParam: SyncParamViewmodel;
 }

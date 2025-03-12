@@ -1,7 +1,7 @@
 import { ContextMenu, Icon, Menu, MenuDivider, MenuItem, TreeNodeInfo } from "@blueprintjs/core";
 import { cloneDeep, noop } from "lodash";
 import * as React from "react";
-import { DeckDto, DeckFolderDto } from "../../../../../../../common/dto";
+import { IDeckDto, IDeckFolderDto } from "../../../../../../../common/dto";
 import { BaseTreeView } from "../../../../../../shared/components/base/base-tree-view";
 import { IpcProxyService, IpcProxyServiceContext } from "../../../../../../shared/context";
 import { DeckFolderTreeViewmodel, DeckViewmodel, TreeConfigurationViewmodel } from "../../../../../viewmodels";
@@ -26,9 +26,9 @@ export function LeftPanel(props: LeftPanelProps) {
   React.useEffect(
     () => {
       void ipcProxyService
-        .getData<Array<DeckFolderDto>>("/deck/folder")
+        .getData<Array<IDeckFolderDto>>("/deck/folder")
         .then(
-          (result: Array<DeckFolderDto>) => setFolderDecks(result.map((collection: DeckFolderDto) => new DeckFolderTreeViewmodel(collection, false, false))),
+          (result: Array<IDeckFolderDto>) => setFolderDecks(result.map((collection: IDeckFolderDto) => new DeckFolderTreeViewmodel(collection, false, false))),
           (_r: Error) => setFolderDecks(initialCollectionState)
         );
     },
@@ -58,11 +58,11 @@ export function LeftPanel(props: LeftPanelProps) {
 
   //#region Event handling ----------------------------------------------------
   function onSave(deck: DeckViewmodel): void {
-    const savedDtoPromise: Promise<DeckDto> = dialogData.dialogAction == "edit"
-      ? ipcProxyService.patchData<DeckDto, DeckDto>(`/deck/${deck.id}`, deck.dto)
-      : ipcProxyService.postData<DeckDto, DeckDto>("/deck", deck.dto);
+    const savedDtoPromise: Promise<IDeckDto> = dialogData.dialogAction == "edit"
+      ? ipcProxyService.patchData<IDeckDto, IDeckDto>(`/deck/${deck.id}`, deck.dto)
+      : ipcProxyService.postData<IDeckDto, IDeckDto>("/deck", deck.dto);
     void savedDtoPromise.then(
-      (savedDto: DeckDto) => {
+      (savedDto: IDeckDto) => {
         if (savedDto.is_folder) {
           folderDecks.forEach((c: DeckFolderTreeViewmodel) => c.isSelected = false);
           const newFolderList = cloneDeep(folderDecks);
@@ -105,7 +105,7 @@ export function LeftPanel(props: LeftPanelProps) {
     if (parentId == null) {
       parentId = folderDecks.find((c: DeckFolderTreeViewmodel) => c.parentId == null).id;
     }
-    const newDto: DeckDto = {
+    const newDto: IDeckDto = {
       id: 0,
       parent_id: parentId,
       name: "",
@@ -124,7 +124,7 @@ export function LeftPanel(props: LeftPanelProps) {
   }
 
   function onAddDeck(parentId: number): void {
-    const newDto: DeckDto = {
+    const newDto: IDeckDto = {
       id: 0,
       parent_id: parentId,
       name: "",

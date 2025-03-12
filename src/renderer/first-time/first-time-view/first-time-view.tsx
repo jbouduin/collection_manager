@@ -2,7 +2,7 @@ import { Card, Section } from "@blueprintjs/core";
 import classNames from "classnames";
 import { noop } from "lodash";
 import * as React from "react";
-import { ConfigurationDto } from "../../../common/dto";
+import { IConfigurationDto } from "../../../common/dto";
 import { ConfigurationWrapper } from "../../shared/components/configuration";
 import { DisplayValueService, DisplayValueServiceContext, IpcProxyService, IpcProxyServiceContext } from "../../shared/context";
 import { FirstTimeViewProps } from "./first-time-view.props";
@@ -19,11 +19,11 @@ export function FirstTimeView(props: FirstTimeViewProps) {
                 <ConfigurationWrapper
                   configuration={props.configuration}
                   onCancel={() => window.close()}
-                  onSave={(toSave: ConfigurationDto) => {
+                  onSave={(toSave: IConfigurationDto) => {
                     void ipcProxyService
-                      .postData<ConfigurationDto, ConfigurationDto>("/configuration", toSave)
+                      .postData<IConfigurationDto, IConfigurationDto>("/configuration", toSave)
                       .then(
-                        (_saved: ConfigurationDto) => window.close(),
+                        (_saved: IConfigurationDto) => window.close(),
                         noop
                       );
                   }}

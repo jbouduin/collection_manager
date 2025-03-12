@@ -1,6 +1,6 @@
 import { Checkbox, Divider, FormGroup, H4, HTMLSelect, HTMLTable, NumericInput, SectionCard } from "@blueprintjs/core";
 import * as React from "react";
-import { CatalogTypeDto } from "../../../../common/dto";
+import { ICatalogTypeDto } from "../../../../common/dto";
 import { CardSyncType, ImageStatus, RulingSyncType, TimespanUnit } from "../../../../common/types";
 import { DisplayValueService, DisplayValueServiceContext } from "../../context";
 import { displayValueRecordToSelectOptions, handleBooleanChange, handleValueChange } from "../utils";
@@ -137,7 +137,7 @@ export function SyncParameterView(props: SyncParameterViewProps) {
     const table = new Array<React.JSX.Element>();
     let currentRow: Array<React.JSX.Element>;
     let idx = 0;
-    props.catalogs.forEach((catalog: CatalogTypeDto) => {
+    props.catalogs.forEach((catalog: ICatalogTypeDto) => {
       if (idx % 2 == 0) {
         currentRow = new Array<React.JSX.Element>();
       }

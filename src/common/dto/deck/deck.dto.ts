@@ -1,18 +1,18 @@
 import { Selectable } from "kysely";
 import { DeckTable } from "../../../main/database/schema/deck/deck.table";
-import { ColorDto } from "../master-data";
+import { IColorDto } from "../master-data";
 
 
-export type DeckDto = Selectable<DeckTable>;
-export type DeckFolderDto = DeckDto;
+export type IDeckDto = Selectable<DeckTable>;
+export type IDeckFolderDto = IDeckDto;
 
-export interface DeckListDto extends DeckDto {
+export interface IDeckListDto extends IDeckDto {
   deckSize: number;
   sideboardSize: number;
-  accumulatedColorIdentity: Array<Pick<ColorDto, "sequence" | "mana_symbol">>;
+  accumulatedColorIdentity: Array<Pick<IColorDto, "sequence" | "mana_symbol">>;
 }
 
-export type DeckDetailsDto = DeckListDto;
+export type IDeckDetailsDto = IDeckListDto;
 // export interface DeckDetailsDto extends DeckListDto {
 
 // }

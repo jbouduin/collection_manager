@@ -4,7 +4,7 @@ import { createWriteStream, existsSync, mkdirSync, readFileSync, unlinkSync, wri
 import { Selectable } from "kysely";
 import * as path from "path";
 import { inject, injectable } from "tsyringe";
-import { MtgCardImageDataDto } from "../../../../common/dto";
+import { IMtgCardImageDataDto } from "../../../../common/dto";
 import { ProgressCallback } from "../../../../common/ipc";
 import { CardSetTable, CardSymbolTable } from "../../../../main/database/schema";
 import { IResult } from "../../base";
@@ -57,7 +57,7 @@ export class ImageCacheService implements IImageCacheService {
       .catch((reason) => this.logService.error("Main", `failed ${cardSet.name}`, reason));
   }
 
-  public deleteCachedCardImage(card: MtgCardImageDataDto): void {
+  public deleteCachedCardImage(card: IMtgCardImageDataDto): void {
     const cachePath = this.pathToCachedCardImage(card);
     if (existsSync(cachePath)) {
       unlinkSync(cachePath);
@@ -76,7 +76,7 @@ export class ImageCacheService implements IImageCacheService {
     }
   }
 
-  public async getCardImage(card: MtgCardImageDataDto): Promise<Response> {
+  public async getCardImage(card: IMtgCardImageDataDto): Promise<Response> {
     const cachePath = this.pathToCachedCardImage(card);
     if (existsSync(cachePath)) {
       return net.fetch(cachePath);
@@ -86,7 +86,7 @@ export class ImageCacheService implements IImageCacheService {
     }
   }
 
-  public cacheCardImage(card: MtgCardImageDataDto, onlyIfExists: boolean): Promise<void> {
+  public cacheCardImage(card: IMtgCardImageDataDto, onlyIfExists: boolean): Promise<void> {
     const cachePath = this.pathToCachedCardImage(card);
     if (!onlyIfExists) {
       return this.fetchAndCacheCardImage(cachePath, card);
@@ -105,7 +105,7 @@ export class ImageCacheService implements IImageCacheService {
   //#endregion
 
   //#region Private methods ---------------------------------------------------
-  private async fetchAndCacheCardImage(cachePath: string, card: MtgCardImageDataDto): Promise<void> {
+  private async fetchAndCacheCardImage(cachePath: string, card: IMtgCardImageDataDto): Promise<void> {
     return this.apiClient.getCardImage(card)
       .then((arrayBuffer: ArrayBuffer) => {
         const buffer = Buffer.from(arrayBuffer);
@@ -122,7 +122,7 @@ export class ImageCacheService implements IImageCacheService {
     return path.join(dirName, fileName);
   }
 
-  private pathToCachedCardImage(card: MtgCardImageDataDto): string {
+  private pathToCachedCardImage(card: IMtgCardImageDataDto): string {
     let fileName: string;
     let dirName: string;
 

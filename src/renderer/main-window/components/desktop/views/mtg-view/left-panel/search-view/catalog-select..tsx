@@ -2,7 +2,7 @@ import { FormGroup, MenuItem } from "@blueprintjs/core";
 import { ItemRendererProps, MultiSelect } from "@blueprintjs/select";
 import { cloneDeep } from "lodash";
 import * as React from "react";
-import { CatalogItemDto } from "../../../../../../../../common/dto";
+import { ICatalogItemDto } from "../../../../../../../../common/dto";
 import { highlightText } from "../../../../../../../shared/components/utils";
 import { IpcProxyService, IpcProxyServiceContext } from "../../../../../../../shared/context";
 import { CatalogSelectProps } from "./catalog-select.props";
@@ -10,7 +10,7 @@ import { CatalogSelectProps } from "./catalog-select.props";
 export function CatalogSelect(props: CatalogSelectProps) {
   //#region State -------------------------------------------------------------
   const [state, setState] = React.useState(props.selectedItems);
-  const [items, setItems] = React.useState(new Array<CatalogItemDto>());
+  const [items, setItems] = React.useState(new Array<ICatalogItemDto>());
   //#endregion
 
   //#region Context -----------------------------------------------------------
@@ -20,20 +20,20 @@ export function CatalogSelect(props: CatalogSelectProps) {
   //#region Event handling ----------------------------------------------------
   function onClear(): void {
     props.onClearOptions();
-    setState(new Array<CatalogItemDto>());
+    setState(new Array<ICatalogItemDto>());
   }
 
-  function onRemove(item: CatalogItemDto): void {
+  function onRemove(item: ICatalogItemDto): void {
     const newState = cloneDeep(state);
-    const indexOfSelected = newState.findIndex((f: CatalogItemDto) => f.item == item.item);
+    const indexOfSelected = newState.findIndex((f: ICatalogItemDto) => f.item == item.item);
     newState.splice(indexOfSelected, 1);
     props.onOptionRemoved(item);
     setState(newState);
   }
 
-  function onSelect(item: CatalogItemDto): void {
+  function onSelect(item: ICatalogItemDto): void {
     const newState = cloneDeep(state);
-    const indexOfSelected = newState.findIndex((f: CatalogItemDto) => f.item == item.item);
+    const indexOfSelected = newState.findIndex((f: ICatalogItemDto) => f.item == item.item);
     if (indexOfSelected >= 0) {
       newState.splice(indexOfSelected, 1);
       props.onOptionRemoved(item);
@@ -51,27 +51,27 @@ export function CatalogSelect(props: CatalogSelectProps) {
       key={props.catalog.catalog_name}
       label={props.catalog.display_label}
     >
-      <MultiSelect<CatalogItemDto>
+      <MultiSelect<ICatalogItemDto>
         initialContent={null}
         // itemListPredicate={itemListPredicate}
         itemPredicate={filterOption}
-        itemRenderer={(item: CatalogItemDto, itemProps: ItemRendererProps) => itemRenderer(item, itemProps)}
+        itemRenderer={(item: ICatalogItemDto, itemProps: ItemRendererProps) => itemRenderer(item, itemProps)}
         items={items}
         key={props.catalog.catalog_name}
         noResults={<MenuItem disabled={true} roleStructure="listoption" text="No results." />}
         onClear={() => onClear()}
-        onItemSelect={(item: CatalogItemDto) => onSelect(item)}
+        onItemSelect={(item: ICatalogItemDto) => onSelect(item)}
         onQueryChange={onQueryChange}
-        onRemove={(item: CatalogItemDto) => onRemove(item)}
+        onRemove={(item: ICatalogItemDto) => onRemove(item)}
         popoverProps={{ matchTargetWidth: true, minimal: true }}
         resetOnSelect={true}
         selectedItems={state}
-        tagRenderer={(item: CatalogItemDto) => tagRenderer(item)}
+        tagRenderer={(item: ICatalogItemDto) => tagRenderer(item)}
       />
     </FormGroup>
   );
 
-  function itemRenderer(item: CatalogItemDto, itemProps: ItemRendererProps): React.JSX.Element | null {
+  function itemRenderer(item: ICatalogItemDto, itemProps: ItemRendererProps): React.JSX.Element | null {
     if (!itemProps.modifiers.matchesPredicate) {
       return null;
     }
@@ -95,7 +95,7 @@ export function CatalogSelect(props: CatalogSelectProps) {
     );
   }
 
-  function tagRenderer(item: CatalogItemDto): React.ReactNode {
+  function tagRenderer(item: ICatalogItemDto): React.ReactNode {
     return (
       <div key={item.item}>
         {item.item}
@@ -105,7 +105,7 @@ export function CatalogSelect(props: CatalogSelectProps) {
   //#endregion
 
   //#region Auxiliary methods -------------------------------------------------
-  function filterOption(query: string, item: CatalogItemDto, _index?: number, exactMatch?: boolean): boolean {
+  function filterOption(query: string, item: ICatalogItemDto, _index?: number, exactMatch?: boolean): boolean {
     const normalizedTitle = item.item.toLowerCase();
     const normalizedQuery = query.toLowerCase();
 
@@ -118,10 +118,10 @@ export function CatalogSelect(props: CatalogSelectProps) {
 
   function onQueryChange(query: string, _event?: React.ChangeEvent<HTMLInputElement>): void {
     void ipcProxyService
-      .getData<Array<CatalogItemDto>>(`/catalog/${props.catalog.catalog_name}?item=${query}`)
+      .getData<Array<ICatalogItemDto>>(`/catalog/${props.catalog.catalog_name}?item=${query}`)
       .then(
-        (r: Array<CatalogItemDto>) => setItems(r),
-        (_r: Error) => setItems(new Array<CatalogItemDto>())
+        (r: Array<ICatalogItemDto>) => setItems(r),
+        (_r: Error) => setItems(new Array<ICatalogItemDto>())
       );
   }
   //#endregion

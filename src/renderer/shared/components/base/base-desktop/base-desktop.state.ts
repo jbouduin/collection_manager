@@ -1,13 +1,13 @@
-import { CardConditionDto, GameFormatDto, LanguageDto, MtgCardSetDto, RendererConfigurationDto } from "../../../../../common/dto";
+import { ICardConditionDto, IGameFormatDto, ILanguageDto, IMtgCardSetDto, IRendererConfigurationDto } from "../../../../../common/dto";
 
 
 export interface BaseDesktopState {
-  cardConditions: Array<CardConditionDto>;
-  cardSets: Array<MtgCardSetDto>;
-  gameFormats: Array<GameFormatDto>;
+  cardConditions: Array<ICardConditionDto>;
+  cardSets: Array<IMtgCardSetDto>;
+  gameFormats: Array<IGameFormatDto>;
   initialized: boolean;
-  languages: Array<LanguageDto>;
-  rendererConfiguration: RendererConfigurationDto;
+  languages: Array<ILanguageDto>;
+  rendererConfiguration: IRendererConfigurationDto;
   splashScreenOpen: boolean;
   symbolSvgs: Map<string, string>;
   themeClassName: string;

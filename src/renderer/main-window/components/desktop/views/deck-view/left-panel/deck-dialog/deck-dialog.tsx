@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogBody, DialogFooter, FormGroup, HTMLSelect, Icon, InputGroup, SectionCard, TextArea } from "@blueprintjs/core";
 import { cloneDeep } from "lodash";
 import * as React from "react";
-import { GameFormatDto } from "../../../../../../../../common/dto";
+import { IGameFormatDto } from "../../../../../../../../common/dto";
 import { MtgGameFormat } from "../../../../../../../../common/types";
 import { SvgProvider } from "../../../../../../../shared/components/svg-provider";
 import { handleStringChange, handleValueChange, SelectOption } from "../../../../../../../shared/components/utils";
@@ -16,7 +16,7 @@ export function DeckDialog(props: DeckDialogProps) {
   //#endregion
 
   //#region Context -----------------------------------------------------------
-  const gameFormatContext = React.useContext<Array<GameFormatDto>>(GameFormatContext);
+  const gameFormatContext = React.useContext<Array<IGameFormatDto>>(GameFormatContext);
   //#endregion
 
   //#region Effect ------------------------------------------------------------
@@ -34,7 +34,7 @@ export function DeckDialog(props: DeckDialogProps) {
   const gameFormats: Array<SelectOption<MtgGameFormat>> = React.useMemo(
     () => new Array<SelectOption<MtgGameFormat>>(
       { value: null, label: "" },
-      ...gameFormatContext.map((g: GameFormatDto) => {
+      ...gameFormatContext.map((g: IGameFormatDto) => {
         return { value: g.id, label: g.display_text };
       })
     ),

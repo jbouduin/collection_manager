@@ -1,5 +1,5 @@
 import { container, inject, singleton } from "tsyringe";
-import { CollectionDto, OwnedCardListDto, OwnedCardQuantityDto } from "../../../../common/dto";
+import { ICollectionDto, IOwnedCardListDto, IOwnedCardQuantityDto } from "../../../../common/dto";
 import { ICollectionRepository } from "../../../database/repo/interfaces/collection.repository";
 import { BaseRouter, DeleteRouteCallback, IResult, IRouter, RouteCallback, RoutedRequest } from "../../base";
 import { ILogService, IResultFactory, IRouterService } from "../../infra/interfaces";
@@ -31,7 +31,7 @@ export class CollectionRouter extends BaseRouter implements IRouter {
   //#endregion
 
   //#region Route callbacks ---------------------------------------------------
-  private createCollection(request: RoutedRequest<CollectionDto>): Promise<IResult<CollectionDto>> {
+  private createCollection(request: RoutedRequest<ICollectionDto>): Promise<IResult<ICollectionDto>> {
     return container.resolve<ICollectionRepository>(REPOSITORIES.CollectionRepository).createCollection(request.data);
   }
 
@@ -43,47 +43,47 @@ export class CollectionRouter extends BaseRouter implements IRouter {
       );
   }
 
-  private getAll(_request: RoutedRequest<void>): Promise<IResult<Array<CollectionDto>>> {
+  private getAll(_request: RoutedRequest<void>): Promise<IResult<Array<ICollectionDto>>> {
     return container.resolve<ICollectionRepository>(REPOSITORIES.CollectionRepository).getAllCollections();
   }
 
-  private getCardsOfCollection(request: RoutedRequest<void>): Promise<IResult<Array<OwnedCardListDto>>> {
+  private getCardsOfCollection(request: RoutedRequest<void>): Promise<IResult<Array<IOwnedCardListDto>>> {
     return this.parseIntegerUrlParameter(request.params["id"], "Collection ID")
-      .continueAsync<Array<OwnedCardListDto>>(
+      .continueAsync<Array<IOwnedCardListDto>>(
         (r: IResult<number>) => container.resolve<ICollectionRepository>(REPOSITORIES.CollectionRepository).getCollectionCardList(r.data),
-        (r: IResult<number>) => r.castAsync<Array<OwnedCardListDto>>(new Array<OwnedCardListDto>())
+        (r: IResult<number>) => r.castAsync<Array<IOwnedCardListDto>>(new Array<IOwnedCardListDto>())
       );
   }
 
-  private getOwnershipOfCardInCollection(request: RoutedRequest<void>): Promise<IResult<Array<OwnedCardQuantityDto>>> {
+  private getOwnershipOfCardInCollection(request: RoutedRequest<void>): Promise<IResult<Array<IOwnedCardQuantityDto>>> {
     return this.parseIntegerUrlParameter(request.params["collectionid"], "Collection ID")
-      .continueAsync<Array<OwnedCardQuantityDto>>(
+      .continueAsync<Array<IOwnedCardQuantityDto>>(
         (r: IResult<number>) => container.resolve<ICollectionRepository>(REPOSITORIES.CollectionRepository).getCardQuantitiesForCardInCollection(request.params["cardid"], r.data),
-        (r: IResult<number>) => r.castAsync<Array<OwnedCardQuantityDto>>(null)
+        (r: IResult<number>) => r.castAsync<Array<IOwnedCardQuantityDto>>(null)
       );
   }
 
-  private updateCollection(request: RoutedRequest<CollectionDto>): Promise<IResult<CollectionDto>> {
+  private updateCollection(request: RoutedRequest<ICollectionDto>): Promise<IResult<ICollectionDto>> {
     return this.parseIntegerUrlParameter(request.params["id"], "Collection ID")
-      .continueAsync<CollectionDto>(
+      .continueAsync<ICollectionDto>(
         (r: IResult<number>) => {
           if (r.data != request.data.id) {
-            return this.resultFactory.createBadRequestResultPromise<CollectionDto>();
+            return this.resultFactory.createBadRequestResultPromise<ICollectionDto>();
           } else {
             return container.resolve<ICollectionRepository>(REPOSITORIES.CollectionRepository).updateCollection(request.data);
           }
         },
-        (r: IResult<number>) => r.castAsync<CollectionDto>(null)
+        (r: IResult<number>) => r.castAsync<ICollectionDto>(null)
       );
   }
 
-  private updateQuantities(request: RoutedRequest<Array<OwnedCardQuantityDto>>): Promise<IResult<Array<OwnedCardQuantityDto>>> {
+  private updateQuantities(request: RoutedRequest<Array<IOwnedCardQuantityDto>>): Promise<IResult<Array<IOwnedCardQuantityDto>>> {
     return this.parseIntegerUrlParameter(request.params["collectionid"], "Collection ID")
-      .continueAsync<Array<OwnedCardQuantityDto>>(
+      .continueAsync<Array<IOwnedCardQuantityDto>>(
         (r: IResult<number>) => container
           .resolve<ICollectionRepository>(REPOSITORIES.CollectionRepository)
           .saveQuantitiesForCardInCollection(request.params["cardid"], r.data, request.data),
-        (r: IResult<number>) => r.castAsync<Array<OwnedCardQuantityDto>>(request.data)
+        (r: IResult<number>) => r.castAsync<Array<IOwnedCardQuantityDto>>(request.data)
       );
   }
   //#endregion

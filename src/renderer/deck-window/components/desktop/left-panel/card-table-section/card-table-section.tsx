@@ -1,7 +1,7 @@
 import { Menu, MenuItem, Section } from "@blueprintjs/core";
 import { MenuContext } from "@blueprintjs/table";
 import * as React from "react";
-import { MtgCardSetDto } from "../../../../../../common/dto";
+import { IMtgCardSetDto } from "../../../../../../common/dto";
 import { BaseLookupResult, GenericTextColumn, GenericTextLookupResult, IBaseColumn } from "../../../../../shared/components/base";
 import { GenericNumericColumn } from "../../../../../shared/components/base/base-table/generic-numeric-column";
 import { CardSetColumn, CardSetLookupResult, CardTableView, CollectiorNumberColumn, ColorIdentityColumn, ManaCostColumn } from "../../../../../shared/components/card-table-view";
@@ -11,7 +11,7 @@ import { CardTableSectionProps } from "./card-table-section.props";
 
 export function CardTableSection(props: CardTableSectionProps) {
   //#region Context -----------------------------------------------------------
-  const cardSetContext = React.useContext<Array<MtgCardSetDto>>(CardSetContext);
+  const cardSetContext = React.useContext<Array<IMtgCardSetDto>>(CardSetContext);
   //#endregion
 
   //#region Sortable columns --------------------------------------------------
@@ -102,7 +102,7 @@ export function CardTableSection(props: CardTableSectionProps) {
   );
 
   function cardSetCallback(card: DeckCardListViewmodel): CardSetLookupResult {
-    const cardSet = cardSetContext.find((set: MtgCardSetDto) => set.id == card.setId);
+    const cardSet = cardSetContext.find((set: IMtgCardSetDto) => set.id == card.setId);
     return cardSet
       ? { defaultSortColumn: card.collectorNumberSortValue, cardSetName: cardSet.name, svg: undefined, rarity: card.rarity }
       : { defaultSortColumn: card.collectorNumberSortValue, cardSetName: card.setId, svg: undefined, rarity: card.rarity };

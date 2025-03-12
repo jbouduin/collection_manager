@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { dirname, join } from "path";
 import { inject, singleton } from "tsyringe";
-import { ConfigurationDto, DtoScryfallConfiguration, RendererConfigurationDto, SyncParamDto } from "../../../../common/dto";
+import { IConfigurationDto, IScryfallConfigurationDto, IRendererConfigurationDto, ISyncParamDto } from "../../../../common/dto";
 import { ScryfallEndpoint } from "../../../../common/types";
 import { BaseService, IResult } from "../../base";
 import { INFRASTRUCTURE } from "../../service.tokens";
@@ -15,12 +15,12 @@ export class ConfigurationService extends BaseService implements IConfigurationS
   private appDirectory: string;
   private homeDirectory: string;
   private useDarkTheme: boolean;
-  private _configuration: ConfigurationDto;
+  private _configuration: IConfigurationDto;
   private _isFirstUsage: boolean;
   //#endregion
 
   //#region IConfigurationService properties ----------------------------------
-  public get configuration(): ConfigurationDto {
+  public get configuration(): IConfigurationDto {
     return this._configuration;
   }
 
@@ -52,7 +52,7 @@ export class ConfigurationService extends BaseService implements IConfigurationS
     this.useDarkTheme = useDarkTheme;
     this.configFilePath = join(appDirectory, "collection-manager.config.json");
     if (existsSync(this.configFilePath)) {
-      this._configuration = JSON.parse(readFileSync(this.configFilePath, "utf-8")) as ConfigurationDto;
+      this._configuration = JSON.parse(readFileSync(this.configFilePath, "utf-8")) as IConfigurationDto;
       this._isFirstUsage = false;
     } else {
       this._configuration = this.createFactoryDefault();
@@ -62,34 +62,34 @@ export class ConfigurationService extends BaseService implements IConfigurationS
   //#endregion
 
   //#region Route callbacks ---------------------------------------------------
-  public getSettings(): Promise<IResult<ConfigurationDto>> {
+  public getSettings(): Promise<IResult<IConfigurationDto>> {
     return this.resultFactory.createSuccessResultPromise(this._configuration);
   }
 
-  public getFactoryDefault(): Promise<IResult<ConfigurationDto>> {
+  public getFactoryDefault(): Promise<IResult<IConfigurationDto>> {
     return this.resultFactory.createSuccessResultPromise(this.createFactoryDefault());
   }
 
-  public putSettings(configuration: ConfigurationDto): Promise<IResult<ConfigurationDto>> {
+  public putSettings(configuration: IConfigurationDto): Promise<IResult<IConfigurationDto>> {
     // LATER Validation
     this.createDirectoryIfNotExists(dirname(this.configFilePath));
     writeFileSync(this.configFilePath, JSON.stringify(configuration, null, 2));
     this._configuration = configuration;
     this._isFirstUsage = false;
-    return this.resultFactory.createSuccessResultPromise<ConfigurationDto>(configuration);
+    return this.resultFactory.createSuccessResultPromise<IConfigurationDto>(configuration);
   }
 
-  public setSettings(configuration: ConfigurationDto): Promise<IResult<ConfigurationDto>> {
+  public setSettings(configuration: IConfigurationDto): Promise<IResult<IConfigurationDto>> {
     writeFileSync(this.configFilePath, JSON.stringify(configuration, null, 2));
     this._configuration = configuration;
     this._isFirstUsage = false;
-    return this.resultFactory.createSuccessResultPromise<ConfigurationDto>(configuration);
+    return this.resultFactory.createSuccessResultPromise<IConfigurationDto>(configuration);
   }
   //#endregion
 
   //#region Auxiliary factory default methods ---------------------------------
-  private createFactoryDefault(): ConfigurationDto {
-    const result: ConfigurationDto = {
+  private createFactoryDefault(): IConfigurationDto {
+    const result: IConfigurationDto = {
       dataConfiguration: {
         rootDataDirectory: join(this.homeDirectory, "collection-manager"),
         cacheDirectory: join(this.appDirectory, ".cache"),
@@ -102,7 +102,7 @@ export class ConfigurationService extends BaseService implements IConfigurationS
     return result;
   }
 
-  private createScryFallFactoryDefault(): DtoScryfallConfiguration {
+  private createScryFallFactoryDefault(): IScryfallConfigurationDto {
     const endpoints: Record<ScryfallEndpoint, string> = {
       cards: "card/:id",
       cardSet: "sets",
@@ -113,7 +113,7 @@ export class ConfigurationService extends BaseService implements IConfigurationS
       search: "cards/search"
     };
 
-    const result: DtoScryfallConfiguration = {
+    const result: IScryfallConfigurationDto = {
       cardBackRoot: "https://backs.scryfall.io",
       scryfallApiRoot: "https://api.scryfall.com",
       scryfallEndpoints: endpoints,
@@ -127,8 +127,8 @@ export class ConfigurationService extends BaseService implements IConfigurationS
     return result;
   }
 
-  private createSyncAtStartupFactoryDefault(): SyncParamDto {
-    const result: SyncParamDto = {
+  private createSyncAtStartupFactoryDefault(): ISyncParamDto {
+    const result: ISyncParamDto = {
       catalogTypesToSync: [],
       syncCardSymbols: false,
       syncCardSets: false,
@@ -145,8 +145,8 @@ export class ConfigurationService extends BaseService implements IConfigurationS
     return result;
   }
 
-  private createRendererConfigurationFactoryDefault(useDarkTheme: boolean): RendererConfigurationDto {
-    const result: RendererConfigurationDto = {
+  private createRendererConfigurationFactoryDefault(useDarkTheme: boolean): IRendererConfigurationDto {
+    const result: IRendererConfigurationDto = {
       useDarkTheme: useDarkTheme,
       logServerResponses: false,
       mtgSetTreeViewConfiguration: {

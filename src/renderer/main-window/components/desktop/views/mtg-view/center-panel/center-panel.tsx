@@ -1,5 +1,5 @@
 import * as React from "react";
-import { LanguageDto, MtgCardLanguageDto, MtgCardListDto, MtgCardSetDto } from "../../../../../../../common/dto";
+import { ILanguageDto, IMtgCardLanguageDto, IMtgCardListDto, IMtgCardSetDto } from "../../../../../../../common/dto";
 import { BaseLookupResult, GenericTextColumn, GenericTextLookupResult, IBaseColumn } from "../../../../../../shared/components/base";
 import { CardSetColumn, CardSetLookupResult, CardTableView, CollectiorNumberColumn, ColorIdentityColumn, ManaCostColumn } from "../../../../../../shared/components/card-table-view";
 import { CardSetContext, IpcProxyService, IpcProxyServiceContext, LanguagesContext } from "../../../../../../shared/context";
@@ -14,9 +14,9 @@ export function CenterPanel(props: CenterPanelProps) {
   //#endregion
 
   //#region Context -----------------------------------------------------------
-  const cardSetContext = React.useContext<Array<MtgCardSetDto>>(CardSetContext);
+  const cardSetContext = React.useContext<Array<IMtgCardSetDto>>(CardSetContext);
   const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
-  const languagesContext = React.useContext<Array<LanguageDto>>(LanguagesContext);
+  const languagesContext = React.useContext<Array<ILanguageDto>>(LanguagesContext);
   //#endregion
 
   //#region Effects -----------------------------------------------------------
@@ -26,8 +26,8 @@ export function CenterPanel(props: CenterPanelProps) {
         void ipcProxyService
           .getData(`/card/query?set=${props.selectedSet.id}`)
           .then(
-            (cardResult: Array<MtgCardListDto>) => setCards(cardResult
-              .map((card: MtgCardListDto) => new MtgCardListViewmodel(card))
+            (cardResult: Array<IMtgCardListDto>) => setCards(cardResult
+              .map((card: IMtgCardListDto) => new MtgCardListViewmodel(card))
               .sort((a: MtgCardListViewmodel, b: MtgCardListViewmodel) => a.collectorNumberSortValue.localeCompare(b.collectorNumberSortValue))),
             (_r: Error) => setCards(initialState)
           );
@@ -35,8 +35,8 @@ export function CenterPanel(props: CenterPanelProps) {
         void ipcProxyService
           .getData(`/card/query?${props.queryString}`)
           .then(
-            (cardResult: Array<MtgCardListDto>) => setCards(cardResult
-              .map((card: MtgCardListDto) => new MtgCardListViewmodel(card))
+            (cardResult: Array<IMtgCardListDto>) => setCards(cardResult
+              .map((card: IMtgCardListDto) => new MtgCardListViewmodel(card))
               .sort((a: MtgCardListViewmodel, b: MtgCardListViewmodel) => a.collectorNumberSortValue.localeCompare(b.collectorNumberSortValue))),
             (_r: Error) => setCards(initialState)
           );
@@ -138,7 +138,7 @@ export function CenterPanel(props: CenterPanelProps) {
 
   //#region Auxiliary methods -------------------------------------------------
   function cardSetCallback(card: MtgCardListViewmodel): CardSetLookupResult {
-    const cardSet = cardSetContext.find((set: MtgCardSetDto) => set.id == card.setId);
+    const cardSet = cardSetContext.find((set: IMtgCardSetDto) => set.id == card.setId);
     return cardSet
       ? { defaultSortColumn: card.collectorNumberSortValue, cardSetName: cardSet.name, svg: undefined, rarity: card.rarity }
       : { defaultSortColumn: card.collectorNumberSortValue, cardSetName: card.setId, svg: undefined, rarity: card.rarity };
@@ -148,8 +148,8 @@ export function CenterPanel(props: CenterPanelProps) {
     return {
       defaultSortColumn: card.collectorNumberSortValue,
       textValue: card.languages
-        .map((language: MtgCardLanguageDto) => {
-          const languageDef = languagesContext.find((lng: LanguageDto) => lng.id == language.lang);
+        .map((language: IMtgCardLanguageDto) => {
+          const languageDef = languagesContext.find((lng: ILanguageDto) => lng.id == language.lang);
           return languageDef ? languageDef.button_text : language.lang;
         })
         .join(", ")

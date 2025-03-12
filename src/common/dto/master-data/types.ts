@@ -2,8 +2,8 @@ import { Selectable } from "kysely";
 import { CatalogItemTable, ColorTable, GameFormatTable } from "../../../main/database/schema";
 
 
-export type CatalogItemDto = Selectable<CatalogItemTable>;
-export type ColorDto = Selectable<ColorTable>;
-export type GameFormatDto = Selectable<GameFormatTable>;
-export type DeckSizeQuantityOperator = "<=" | ">=" | "==";
-export type NumberOfCardsQuantityOperator = "<=" | "==";
+export type ICatalogItemDto = Selectable<CatalogItemTable>;
+export type IColorDto = Selectable<ColorTable>;
+export type IGameFormatDto = Selectable<GameFormatTable>;
+export type IDeckSizeQuantityOperator = "<=" | ">=" | "==";
+export type INumberOfCardsQuantityOperator = "<=" | "==";

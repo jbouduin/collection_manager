@@ -1,9 +1,9 @@
-import { DeckFolderDto } from "../../../../common/dto";
+import { IDeckFolderDto } from "../../../../common/dto";
 import { IBaseTreeNodeViewmodel } from "../../../shared/components/base";
 
 export class DeckFolderTreeViewmodel implements IBaseTreeNodeViewmodel {
   //#region private fields ----------------------------------------------------
-  private readonly _deck: DeckFolderDto;
+  private readonly _deck: IDeckFolderDto;
   //#endregion
 
   //#region public fields -----------------------------------------------------
@@ -32,13 +32,13 @@ export class DeckFolderTreeViewmodel implements IBaseTreeNodeViewmodel {
     return this._deck.parent_id;
   }
 
-  public get dto(): DeckFolderDto {
+  public get dto(): IDeckFolderDto {
     return this._deck;
   }
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
-  public constructor(deck: DeckFolderDto, isSelected: boolean, isExpanded: boolean) {
+  public constructor(deck: IDeckFolderDto, isSelected: boolean, isExpanded: boolean) {
     this._deck = deck;
     this.isSelected = isSelected;
     this.isExpanded = isExpanded;

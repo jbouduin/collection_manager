@@ -1,5 +1,5 @@
 import { container, inject, singleton } from "tsyringe";
-import { LanguageDto } from "../../../../common/dto";
+import { ILanguageDto } from "../../../../common/dto";
 import { ILanguageRepository } from "../../../database/repo/interfaces";
 import { BaseRouter, IResult, IRouter, RouteCallback, RoutedRequest } from "../../base";
 import { ILogService, IResultFactory, IRouterService } from "../../infra/interfaces";
@@ -24,7 +24,7 @@ export class LanguageRouter extends BaseRouter implements IRouter {
   //#endregion
 
   //#region Route callbacks ---------------------------------------------------
-  private getAll(_request: RoutedRequest<void>): Promise<IResult<Array<LanguageDto>>> {
+  private getAll(_request: RoutedRequest<void>): Promise<IResult<Array<ILanguageDto>>> {
     return container.resolve<ILanguageRepository>(REPOSITORIES.LanguageRepository).getAll();
   }
   //#endregion

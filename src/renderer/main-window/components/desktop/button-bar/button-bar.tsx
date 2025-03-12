@@ -1,6 +1,6 @@
 import { ButtonGroup, Menu, MenuItem } from "@blueprintjs/core";
 import * as React from "react";
-import { ConfigurationDto, SyncParamDto } from "../../../../../common/dto";
+import { IConfigurationDto, ISyncParamDto } from "../../../../../common/dto";
 import { AfterSplashScreenClose } from "../../../../shared/components/base/collection-manager.props";
 import { IpcProxyService, IpcProxyServiceContext } from "../../../../shared/context";
 import { EDesktopView } from "../desktop-view.enum";
@@ -27,11 +27,11 @@ export function ButtonBar(props: ButtonBarProps) {
   //#endregion
 
   //#region Event handling --------------------------------------------------------------
-  function startSync(syncParam: SyncParamDto): void {
+  function startSync(syncParam: ISyncParamDto): void {
     props.showSplashScreen();
     setState(initialState);
     void ipcProxyService
-      .postData<SyncParamDto, never>("/mtg-sync", syncParam)
+      .postData<ISyncParamDto, never>("/mtg-sync", syncParam)
       .then(
         () => {
           if (syncParam.syncCardSets || syncParam.syncCardSymbols) {
@@ -90,7 +90,7 @@ export function ButtonBar(props: ButtonBarProps) {
       {
         state.settingsDialogOpen &&
         <SettingsDialog
-          afterSave={(saved: ConfigurationDto) => {
+          afterSave={(saved: IConfigurationDto) => {
             props.afterSaveSettings(saved);
             setState(initialState);
           }}

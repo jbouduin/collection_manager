@@ -1,5 +1,5 @@
 import { container, inject, singleton } from "tsyringe";
-import { DeckCardListDto, UpdateDeckCardQuantityDto } from "../../../../common/dto";
+import { IDeckCardListDto, IUpdateDeckCardQuantityDto } from "../../../../common/dto";
 import { IDeckRepository } from "../../../database/repo/interfaces";
 import { BaseRouter, DeleteRouteCallback, IResult, IRouter, RouteCallback, RoutedRequest } from "../../base";
 import { ILogService, IResultFactory, IRouterService } from "../../infra/interfaces";
@@ -33,21 +33,21 @@ export class DeckCardRouter extends BaseRouter implements IRouter {
       );
   }
 
-  private updateDeckCardQuantity(request: RoutedRequest<UpdateDeckCardQuantityDto>): Promise<IResult<DeckCardListDto>> {
+  private updateDeckCardQuantity(request: RoutedRequest<IUpdateDeckCardQuantityDto>): Promise<IResult<IDeckCardListDto>> {
     return this.parseIntegerUrlParameter(request.params["id"], "Deck ID")
-      .continueAsync<DeckCardListDto>(
+      .continueAsync<IDeckCardListDto>(
         (r: IResult<number>) => {
           if (r.data != request.data.deck_card_id) {
-            return this.resultFactory.createBadRequestResultPromise<DeckCardListDto>("Datafield ID in the body does not correspond to the URL.");
+            return this.resultFactory.createBadRequestResultPromise<IDeckCardListDto>("Datafield ID in the body does not correspond to the URL.");
           } else {
             if (request.data.deck_quantity + request.data.sideboard_quantity > 0) {
               return container.resolve<IDeckRepository>(REPOSITORIES.DeckRepository).updateDeckCardQuantity(request.data);
             } else {
-              return this.resultFactory.createBadRequestResultPromise<DeckCardListDto>("Quantity for card in deck and sideboard is 0.");
+              return this.resultFactory.createBadRequestResultPromise<IDeckCardListDto>("Quantity for card in deck and sideboard is 0.");
             }
           }
         },
-        (r: IResult<number>) => r.castAsync<DeckCardListDto>(undefined)
+        (r: IResult<number>) => r.castAsync<IDeckCardListDto>(undefined)
       );
   }
   //#endregion

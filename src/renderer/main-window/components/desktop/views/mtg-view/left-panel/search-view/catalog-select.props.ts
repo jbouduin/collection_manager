@@ -1,12 +1,12 @@
 import { Props } from "@blueprintjs/core";
-import { CatalogItemDto, CatalogTypeDto } from "../../../../../../../../common/dto";
+import { ICatalogItemDto, ICatalogTypeDto } from "../../../../../../../../common/dto";
 
 
 export interface CatalogSelectProps extends Props {
-  catalog: CatalogTypeDto;
-  selectedItems: Array<CatalogItemDto>;
+  catalog: ICatalogTypeDto;
+  selectedItems: Array<ICatalogItemDto>;
 
-  onOptionAdded: (item: CatalogItemDto) => void;
-  onOptionRemoved: (item: CatalogItemDto) => void;
+  onOptionAdded: (item: ICatalogItemDto) => void;
+  onOptionRemoved: (item: ICatalogItemDto) => void;
   onClearOptions: () => void;
 }

@@ -1,9 +1,9 @@
 
-import { MtgCardSetDto, MtgCardSetDetailsDto } from "../../../../common/dto";
+import { IMtgCardSetDto, IMtgCardSetDetailsDto } from "../../../../common/dto";
 import { IResult } from "../../../services/base";
 
 
 export interface ICardSetRepository {
-  getAll(): Promise<IResult<Array<MtgCardSetDto>>>;
-  getDetails(cardSetId: string): Promise<IResult<MtgCardSetDetailsDto>>;
+  getAll(): Promise<IResult<Array<IMtgCardSetDto>>>;
+  getDetails(cardSetId: string): Promise<IResult<IMtgCardSetDetailsDto>>;
 }

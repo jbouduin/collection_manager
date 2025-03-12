@@ -1,5 +1,5 @@
 import { container, inject, singleton } from "tsyringe";
-import { CardQueryDto, CatalogItemDto, MtgCardDetailDto, MtgCardListDto, OwnedCardQuantityDto, QUERY_PARAM_LIST_SEPARATOR, QueryParamToken } from "../../../../common/dto";
+import { ICardQueryDto, ICatalogItemDto, IMtgCardDetailDto, IMtgCardListDto, IOwnedCardQuantityDto, QUERY_PARAM_LIST_SEPARATOR, CardQueryParamToken } from "../../../../common/dto";
 import { ICardRepository } from "../../../database/repo/interfaces";
 import { ICollectionRepository } from "../../../database/repo/interfaces/collection.repository";
 import { BaseRouter, IResult, IRouter, RouteCallback, RoutedRequest } from "../../base";
@@ -30,21 +30,21 @@ export class CardRouter extends BaseRouter implements IRouter {
   //#endregion
 
   //#region Route callbacks ---------------------------------------------------
-  private getCard(request: RoutedRequest<void>): Promise<IResult<MtgCardDetailDto>> {
+  private getCard(request: RoutedRequest<void>): Promise<IResult<IMtgCardDetailDto>> {
     return container.resolve<ICardRepository>(REPOSITORIES.CardRepository).getCardDetails(request.params["id"])
-      .then((r: IResult<MtgCardDetailDto>) => {
+      .then((r: IResult<IMtgCardDetailDto>) => {
         return r.data != undefined
-          ? this.resultFactory.createSuccessResult<MtgCardDetailDto>(r.data)
-          : this.resultFactory.createNotFoundResult<MtgCardDetailDto>(request.params["id"]);
+          ? this.resultFactory.createSuccessResult<IMtgCardDetailDto>(r.data)
+          : this.resultFactory.createNotFoundResult<IMtgCardDetailDto>(request.params["id"]);
       });
   }
 
-  private getCardOwnerShip(request: RoutedRequest<void>): Promise<IResult<Array<OwnedCardQuantityDto>>> {
+  private getCardOwnerShip(request: RoutedRequest<void>): Promise<IResult<Array<IOwnedCardQuantityDto>>> {
     return container.resolve<ICollectionRepository>(REPOSITORIES.CollectionRepository).getCardQuantitiesForCard(request.params["id"]);
   }
 
-  private queryCards(request: RoutedRequest<void>): Promise<IResult<Array<MtgCardListDto>>> {
-    const queryParams: CardQueryDto = {
+  private queryCards(request: RoutedRequest<void>): Promise<IResult<Array<IMtgCardListDto>>> {
+    const queryParams: ICardQueryDto = {
       ownedCards: this.extractQueryParam(request.queryParams, "own") ? true : false,
       selectedCardColors: this.extractQueryParam(request.queryParams, "cc")?.split(QUERY_PARAM_LIST_SEPARATOR) as Array<MtgColor>,
       selectedCatalogItems: this.extractCatalogQueryParams(request.queryParams),
@@ -58,18 +58,18 @@ export class CardRouter extends BaseRouter implements IRouter {
     return container.resolve<ICardRepository>(REPOSITORIES.CardRepository).queryCards(queryParams);
   }
 
-  private updateQuantities(request: RoutedRequest<Array<OwnedCardQuantityDto>>): Promise<IResult<Array<OwnedCardQuantityDto>>> {
+  private updateQuantities(request: RoutedRequest<Array<IOwnedCardQuantityDto>>): Promise<IResult<Array<IOwnedCardQuantityDto>>> {
     return container.resolve<ICollectionRepository>(REPOSITORIES.CollectionRepository)
       .saveQuantitiesForCard(request.params["id"], request.data);
   }
   //#endregion
 
-  private extractQueryParam(queryParams: Record<string, string>, token: QueryParamToken): string | null {
+  private extractQueryParam(queryParams: Record<string, string>, token: CardQueryParamToken): string | null {
     return queryParams[token];
   }
 
-  private extractCatalogQueryParams(queryParams: Record<string, string>): Array<CatalogItemDto> {
-    const result = new Array<CatalogItemDto>();
+  private extractCatalogQueryParams(queryParams: Record<string, string>): Array<ICatalogItemDto> {
+    const result = new Array<ICatalogItemDto>();
     Object.keys(ECatalogType).forEach((catalog: CatalogType) => {
       this.extractQueryParam(queryParams, catalog)?.split(QUERY_PARAM_LIST_SEPARATOR)
         .forEach((item: string) => result.push({ catalog_name: catalog, item: item }));

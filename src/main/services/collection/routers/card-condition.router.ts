@@ -1,5 +1,5 @@
 import { container, inject, singleton } from "tsyringe";
-import { CardConditionDto } from "../../../../common/dto";
+import { ICardConditionDto } from "../../../../common/dto";
 import { ICardConditionRepository } from "../../../database/repo/interfaces";
 import { BaseRouter, IResult, IRouter, RouteCallback, RoutedRequest } from "../../base";
 import { ILogService, IResultFactory, IRouterService } from "../../infra/interfaces";
@@ -24,7 +24,7 @@ export class CardConditionRouter extends BaseRouter implements IRouter {
   //#endregion
 
   //#region Route callbacks ---------------------------------------------------
-  private getAll(_request: RoutedRequest<void>): Promise<IResult<Array<CardConditionDto>>> {
+  private getAll(_request: RoutedRequest<void>): Promise<IResult<Array<ICardConditionDto>>> {
     return container.resolve<ICardConditionRepository>(REPOSITORIES.CardConditionRepository).getAll();
   }
   //#endregion

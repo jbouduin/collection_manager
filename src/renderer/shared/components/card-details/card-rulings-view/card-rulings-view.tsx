@@ -1,7 +1,7 @@
 import { Classes, SectionCard } from "@blueprintjs/core";
 import classNames from "classnames";
 import * as React from "react";
-import { RulingLineDto } from "../../../../../common/dto";
+import { IOracleRulingLineDto } from "../../../../../common/dto";
 import { IpcProxyService, IpcProxyServiceContext } from "../../../context";
 import { compareClassNameProp } from "../../utils";
 import { CardRulingsViewProps } from "./card-rulings-view.props";
@@ -9,7 +9,7 @@ import { CardRulingsViewProps } from "./card-rulings-view.props";
 export const CardRulingsView = React.memo(
   (props: CardRulingsViewProps) => {
     //#region State -------------------------------------------------------------
-    const [rulings, setRulings] = React.useState<Array<RulingLineDto>>(null);
+    const [rulings, setRulings] = React.useState<Array<IOracleRulingLineDto>>(null);
     //#endregion
 
     //#region Context ---------------------------------------------------------------------
@@ -22,7 +22,7 @@ export const CardRulingsView = React.memo(
         if (props.oracleId) {
           void ipcProxyService.getData(`/oracle/${props.oracleId}/ruling`)
             .then(
-              (queryResult: Array<RulingLineDto>) => setRulings(queryResult),
+              (queryResult: Array<IOracleRulingLineDto>) => setRulings(queryResult),
               (_r: Error) => setRulings(null)
             );
         } else {
@@ -38,17 +38,17 @@ export const CardRulingsView = React.memo(
       ? renderSectionCard(rulings)
       : undefined;
 
-    function renderSectionCard(rulings: Array<RulingLineDto>): React.JSX.Element {
+    function renderSectionCard(rulings: Array<IOracleRulingLineDto>): React.JSX.Element {
       return (
         <SectionCard padded={false}>
           {
-            rulings.map((ruling: RulingLineDto, idx: number) => renderSingleRulingLine(idx, ruling, idx == rulings.length - 1))
+            rulings.map((ruling: IOracleRulingLineDto, idx: number) => renderSingleRulingLine(idx, ruling, idx == rulings.length - 1))
           }
         </SectionCard>
       );
     }
 
-    function renderSingleRulingLine(idx: number, ruling: RulingLineDto, isLast: boolean): React.JSX.Element {
+    function renderSingleRulingLine(idx: number, ruling: IOracleRulingLineDto, isLast: boolean): React.JSX.Element {
       return (
         <div key={`r-${idx}`}>
           <p>{ruling.published_at.toLocaleDateString(navigator.language, { day: "2-digit", month: "2-digit", year: "numeric" })} - {ruling.source}</p>

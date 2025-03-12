@@ -1,6 +1,6 @@
 import { CardSetGroupBy, CardSetSort, CardSetType } from "../../types";
 
-export interface MtgSetTreeViewConfigurationDto {
+export interface IMtgSetTreeViewConfigurationDto {
   cardSetSort: CardSetSort;
   cardSetGroupBy: CardSetGroupBy;
   cardSetTypeFilter: Array<CardSetType>;

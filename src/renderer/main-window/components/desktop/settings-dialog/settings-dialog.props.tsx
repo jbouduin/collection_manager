@@ -1,7 +1,7 @@
-import { ConfigurationDto } from "../../../../../common/dto";
+import { IConfigurationDto } from "../../../../../common/dto";
 import { BaseDialogProps } from "../../../../shared/components/base";
 
 
 export interface SettingsDialogProps extends BaseDialogProps {
-  afterSave: (saved: ConfigurationDto) => void;
+  afterSave: (saved: IConfigurationDto) => void;
 }

@@ -1,5 +1,5 @@
 import { container, inject, singleton } from "tsyringe";
-import { GameFormatDto } from "../../../../common/dto";
+import { IGameFormatDto } from "../../../../common/dto";
 import { IGameFormatRepository } from "../../../database/repo/interfaces";
 import { BaseRouter, IResult, IRouter, RouteCallback, RoutedRequest } from "../../base";
 import { ILogService, IResultFactory, IRouterService } from "../../infra/interfaces";
@@ -24,7 +24,7 @@ export class GameFormatRouter extends BaseRouter implements IRouter {
   //#endregion
 
   //#region Route callbacks ---------------------------------------------------
-  private getAll(_request: RoutedRequest<void>): Promise<IResult<Array<GameFormatDto>>> {
+  private getAll(_request: RoutedRequest<void>): Promise<IResult<Array<IGameFormatDto>>> {
     return container.resolve<IGameFormatRepository>(REPOSITORIES.GameFormatRepository).getAll();
   }
   //#endregion

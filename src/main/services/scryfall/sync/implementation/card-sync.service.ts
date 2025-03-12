@@ -1,6 +1,6 @@
 import { DeleteResult, InsertResult, Transaction, UpdateResult, sql } from "kysely";
 import { inject, injectable } from "tsyringe";
-import { CardSyncParam, MtgCardImageDataDto, IdSelectResult } from "../../../../../common/dto";
+import { ICardSyncParam, IMtgCardImageDataDto, IdSelectResult } from "../../../../../common/dto";
 import { ProgressCallback } from "../../../../../common/ipc";
 import { ChangedImageStatusAction, MtgGameFormat, ImageStatus, MtgColor, MtgColorType, TimespanUnit } from "../../../../../common/types";
 import { isSingleCardFaceLayout, sqliteUTCTimeStamp } from "../../../../../common/util";
@@ -30,7 +30,7 @@ type PreSyncSelectResult = {
 };
 
 @injectable()
-export class CardSyncService extends BaseSyncService<CardSyncParam> implements ICardSyncService {
+export class CardSyncService extends BaseSyncService<ICardSyncParam> implements ICardSyncService {
   //#region Private readonly fields -------------------------------------------
   private readonly imageCacheService: IImageCacheService;
   private readonly cardAdapter: ICardAdapter;
@@ -79,7 +79,7 @@ export class CardSyncService extends BaseSyncService<CardSyncParam> implements I
   //#endregion
 
   //#region ICardSyncService methods ------------------------------------------
-  public override async sync(syncParam: CardSyncParam, progressCallback: ProgressCallback): Promise<void> {
+  public override async sync(syncParam: ICardSyncParam, progressCallback: ProgressCallback): Promise<void> {
     return this.GetSyncData(syncParam, progressCallback)
       .then(async (presync: PreSyncSelectResult) => {
         this.dumpScryFallData("cards.json", presync.scryfallCards);
@@ -99,7 +99,7 @@ export class CardSyncService extends BaseSyncService<CardSyncParam> implements I
   //#endregion
 
   //#region Presync auxiliary methods -----------------------------------------
-  private async GetSyncData(syncParam: CardSyncParam, progressCallback: ProgressCallback): Promise<PreSyncSelectResult> {
+  private async GetSyncData(syncParam: ICardSyncParam, progressCallback: ProgressCallback): Promise<PreSyncSelectResult> {
     let presyncResult: Promise<PreSyncSelectResult>;
     if (syncParam.cardSyncType == "byCardSet") {
       presyncResult = this.database.selectFrom("card")
@@ -479,13 +479,13 @@ export class CardSyncService extends BaseSyncService<CardSyncParam> implements I
           .where("card.id", "=", prev.id)
           .where("card.image_status", "!=", prev.image_status)
           // .$call(this.logCompilable)
-          .$castTo<MtgCardImageDataDto>()
+          .$castTo<IMtgCardImageDataDto>()
           .execute()
-          .then((current: Array<MtgCardImageDataDto>) => {
+          .then((current: Array<IMtgCardImageDataDto>) => {
             progressCallback(`Processing image (${index}/${total})`);
             return runSerial(
               current,
-              (cardImageDto: MtgCardImageDataDto) => {
+              (cardImageDto: IMtgCardImageDataDto) => {
                 if (action == "delete") {
                   return Promise.resolve(this.imageCacheService.deleteCachedCardImage(cardImageDto));
                 } else {

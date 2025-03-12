@@ -1,7 +1,7 @@
 import { Menu, MenuItem } from "@blueprintjs/core";
 import { MenuContext, Region, SelectionModes, Table2, Utils } from "@blueprintjs/table";
 import * as React from "react";
-import { GameFormatDto } from "../../../../../../../common/dto";
+import { IGameFormatDto } from "../../../../../../../common/dto";
 import { ColorIdentityColumn } from "../../../../../../shared/components/card-table-view";
 import { BaseLookupResult, GenericTextColumn, IBaseColumn, onDataSelected, selectedRegionTransformToRowSelection } from "../../../../../../shared/components/base";
 import { GameFormatContext } from "../../../../../../shared/context";
@@ -15,7 +15,7 @@ export function CenterPanel(props: CenterPanelProps) {
   //#endregion
 
   //#region Context -----------------------------------------------------------
-  const gameFormatContext = React.useContext<Array<GameFormatDto>>(GameFormatContext);
+  const gameFormatContext = React.useContext<Array<IGameFormatDto>>(GameFormatContext);
   //#endregion
 
   //#region Memo --------------------------------------------------------------
@@ -35,7 +35,7 @@ export function CenterPanel(props: CenterPanelProps) {
         (deck: DeckListViewmodel) => {
           return {
             defaultSortColumn: deck.name,
-            textValue: gameFormatContext.find((g: GameFormatDto) => g.id == deck.targetFormat)?.display_text || deck.targetFormat
+            textValue: gameFormatContext.find((g: IGameFormatDto) => g.id == deck.targetFormat)?.display_text || deck.targetFormat
           };
         }
       ));

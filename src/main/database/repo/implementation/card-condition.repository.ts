@@ -1,5 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import { CardConditionDto } from "../../../../common/dto";
+import { ICardConditionDto } from "../../../../common/dto";
 import { IResult } from "../../../services/base";
 import { IDatabaseService, ILogService, IResultFactory } from "../../../services/infra/interfaces";
 import { INFRASTRUCTURE } from "../../../services/service.tokens";
@@ -19,16 +19,16 @@ export class CardConditionRepository extends BaseRepository implements ICardCond
   //#region
 
   //#region IColorRepository methods ------------------------------------------
-  public getAll(): Promise<IResult<Array<CardConditionDto>>> {
+  public getAll(): Promise<IResult<Array<ICardConditionDto>>> {
     try {
       return this.database
         .selectFrom("card_condition")
         .selectAll()
-        .$castTo<CardConditionDto>()
+        .$castTo<ICardConditionDto>()
         .execute()
-        .then((r: Array<CardConditionDto>) => this.resultFactory.createSuccessResult<Array<CardConditionDto>>(r));
+        .then((r: Array<ICardConditionDto>) => this.resultFactory.createSuccessResult<Array<ICardConditionDto>>(r));
     } catch (err) {
-      return this.resultFactory.createExceptionResultPromise<Array<CardConditionDto>>(err);
+      return this.resultFactory.createExceptionResultPromise<Array<ICardConditionDto>>(err);
     }
   }
   //#endregion

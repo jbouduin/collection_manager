@@ -1,7 +1,7 @@
 import { sql } from "kysely";
 import * as helpers from "kysely/helpers/sqlite";
 import { inject, injectable } from "tsyringe";
-import { MtgCardSetDetailsDto, MtgCardSetDto, MtgCardSetLanguageDto } from "../../../../common/dto";
+import { IMtgCardSetDetailsDto, IMtgCardSetDto, IMtgCardSetLanguageDto } from "../../../../common/dto";
 import { IResult } from "../../../services/base";
 import { IDatabaseService, IImageCacheService, ILogService, IResultFactory } from "../../../services/infra/interfaces";
 import { INFRASTRUCTURE } from "../../../services/service.tokens";
@@ -30,36 +30,36 @@ export class CardSetRepository extends BaseRepository implements ICardSetReposit
 
   //#region ICardSetRepository methods ----------------------------------------
   /* eslint-disable @stylistic/function-paren-newline */
-  public getAll(): Promise<IResult<Array<MtgCardSetDto>>> {
+  public getAll(): Promise<IResult<Array<IMtgCardSetDto>>> {
     try {
       return this.database
         .selectFrom("card_set")
         .selectAll()
-        .$castTo<MtgCardSetDto>()
+        .$castTo<IMtgCardSetDto>()
         .execute()
-        .then((qryResult: Array<MtgCardSetDto>) => {
-          qryResult.forEach((cardSet: MtgCardSetDto) => cardSet.svg = this.imageCacheService.getCardSetSvg(cardSet));
+        .then((qryResult: Array<IMtgCardSetDto>) => {
+          qryResult.forEach((cardSet: IMtgCardSetDto) => cardSet.svg = this.imageCacheService.getCardSetSvg(cardSet));
           return this.resultFactory.createSuccessResult(qryResult);
         });
     } catch (err) {
-      return this.resultFactory.createExceptionResultPromise<Array<MtgCardSetDto>>(err);
+      return this.resultFactory.createExceptionResultPromise<Array<IMtgCardSetDto>>(err);
     }
   }
 
-  public getDetails(cardSetId: string): Promise<IResult<MtgCardSetDetailsDto>> {
+  public getDetails(cardSetId: string): Promise<IResult<IMtgCardSetDetailsDto>> {
     try {
       return this.database
         .selectFrom("card_set")
         .select((eb) => [
           ...CARD_SET_TABLE_FIELDS,
-          helpers.jsonArrayFrom<MtgCardSetLanguageDto>(
+          helpers.jsonArrayFrom<IMtgCardSetLanguageDto>(
             eb.selectFrom("card")
               .select((eb) => ["card.lang", eb.fn.count("card.id").as("number_of_cards")])
               .groupBy("card.lang")
               .whereRef("card.set_id", "=", "card_set.id")
               .innerJoin("language", "language.id", "card.lang")
               .orderBy("language.sequence")
-              .$castTo<MtgCardSetLanguageDto>()
+              .$castTo<IMtgCardSetLanguageDto>()
           ).as("languages"),
           eb.selectFrom("card as c2")
             .select((eb) => eb.fn.count(sql`DISTINCT c2.oracle_id`).as("unique_cards"))
@@ -68,12 +68,12 @@ export class CardSetRepository extends BaseRepository implements ICardSetReposit
         ])
         .where("card_set.id", "=", cardSetId)
         // .$call(this.logCompilable)
-        .$castTo<MtgCardSetDetailsDto>()
+        .$castTo<IMtgCardSetDetailsDto>()
         .executeTakeFirst()
-        .then((r) => this.resultFactory.createSuccessResult<MtgCardSetDetailsDto>(r)
+        .then((r) => this.resultFactory.createSuccessResult<IMtgCardSetDetailsDto>(r)
         );
     } catch (err) {
-      return this.resultFactory.createExceptionResultPromise<MtgCardSetDetailsDto>(err);
+      return this.resultFactory.createExceptionResultPromise<IMtgCardSetDetailsDto>(err);
     }
   }
   //#endregion

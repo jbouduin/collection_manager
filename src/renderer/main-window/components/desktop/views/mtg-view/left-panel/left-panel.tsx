@@ -1,6 +1,6 @@
 import { Tab, Tabs } from "@blueprintjs/core";
 import * as React from "react";
-import { MtgCardSetDto } from "../../../../../../../common/dto";
+import { IMtgCardSetDto } from "../../../../../../../common/dto";
 import { CardSetContext } from "../../../../../../shared/context";
 import { CardSetTreeViewmodel } from "../../../../../viewmodels/card-set";
 import { LeftPanelProps } from "./left-panel.props";
@@ -14,7 +14,7 @@ export function LeftPanel(props: LeftPanelProps) {
     <>
       <CardSetContext.Consumer>
         {
-          (cardSets: Array<MtgCardSetDto>) => (
+          (cardSets: Array<IMtgCardSetDto>) => (
             <Tabs
               animate={true}
               className="left-panel-tabs"

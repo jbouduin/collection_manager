@@ -1,5 +1,5 @@
 import { container, inject, singleton } from "tsyringe";
-import { ColorDto } from "../../../../common/dto";
+import { IColorDto } from "../../../../common/dto";
 import { IColorRepository } from "../../../database/repo/interfaces";
 import { BaseRouter, IResult, IRouter, RouteCallback, RoutedRequest } from "../../base";
 import { ILogService, IResultFactory, IRouterService } from "../../infra/interfaces";
@@ -24,7 +24,7 @@ export class ColorRouter extends BaseRouter implements IRouter {
   //#endregion
 
   //#region Route callbacks ---------------------------------------------------
-  private getAll(_request: RoutedRequest<void>): Promise<IResult<Array<ColorDto>>> {
+  private getAll(_request: RoutedRequest<void>): Promise<IResult<Array<IColorDto>>> {
     return container.resolve<IColorRepository>(REPOSITORIES.ColorRepository).getAll();
   }
   //#endregion

@@ -1,9 +1,9 @@
 import { Selectable } from "kysely";
 import { CardfaceTable } from "../../../main/database/schema";
-import { CardfaceColorDto, OracleDto } from "./types";
+import { ICardfaceColorDto, IOracleDto } from "./types";
 
 
-export interface MtgCardfaceDto extends Selectable<CardfaceTable> {
-  cardfaceColors: Array<CardfaceColorDto>;
-  oracle: OracleDto;
+export interface IMtgCardfaceDto extends Selectable<CardfaceTable> {
+  cardfaceColors: Array<ICardfaceColorDto>;
+  oracle: IOracleDto;
 }

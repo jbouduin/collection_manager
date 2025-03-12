@@ -1,7 +1,7 @@
 import { cloneDeep, noop } from "lodash";
 import * as React from "react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
-import { DeckDto, DeckListDto } from "../../../../../../common/dto";
+import { IDeckDto, IDeckListDto } from "../../../../../../common/dto";
 import { IpcProxyService, IpcProxyServiceContext } from "../../../../../shared/context";
 import { DeckFolderTreeViewmodel, DeckListViewmodel } from "../../../../viewmodels";
 import { CenterPanel } from "./center-panel/center-panel";
@@ -26,9 +26,9 @@ export function DeckView(props: DeckViewProps) {
     () => {
       if (selectedFolder != null) {
         void ipcProxyService
-          .getData<Array<DeckListDto>>(`/deck/folder/${selectedFolder}/deck`)
+          .getData<Array<IDeckListDto>>(`/deck/folder/${selectedFolder}/deck`)
           .then(
-            (r: Array<DeckListDto>) => setDecksInFolder(r.map((deck: DeckListDto) => DeckListViewmodel.deckListViewmodel(deck))),
+            (r: Array<IDeckListDto>) => setDecksInFolder(r.map((deck: IDeckListDto) => DeckListViewmodel.deckListViewmodel(deck))),
             noop
           );
       } else {
@@ -40,7 +40,7 @@ export function DeckView(props: DeckViewProps) {
 
   //#region Event handling --------------------------------------------------------------
   const onDeckAdded = React.useCallback(
-    (deck: DeckDto) => setDecksInFolder((oldDecksInFolder: Array<DeckListViewmodel>) => {
+    (deck: IDeckDto) => setDecksInFolder((oldDecksInFolder: Array<DeckListViewmodel>) => {
       const newDeckList = cloneDeep(oldDecksInFolder);
       newDeckList.push(DeckListViewmodel.newDeckListViewmodel(deck));
       return newDeckList;
@@ -86,7 +86,7 @@ export function DeckView(props: DeckViewProps) {
       <Panel defaultSize={20}>
         <LeftPanel
           {...props}
-          onDeckAdded={(deck: DeckDto) => onDeckAdded(deck)}
+          onDeckAdded={(deck: IDeckDto) => onDeckAdded(deck)}
           onFolderSelected={(folder: DeckFolderTreeViewmodel) => setSelectedFolder(folder.id)}
         />
       </Panel>

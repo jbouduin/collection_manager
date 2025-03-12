@@ -1,9 +1,9 @@
-import { MtgSetTreeViewConfigurationDto } from "../mtg/mtg-set-tree-configuration.dto";
+import { IMtgSetTreeViewConfigurationDto } from "../mtg/mtg-set-tree-configuration.dto";
 
-export interface RendererConfigurationDto {
+export interface IRendererConfigurationDto {
   useDarkTheme: boolean;
   logServerResponses: boolean;
-  mtgSetTreeViewConfiguration: MtgSetTreeViewConfigurationDto;
+  mtgSetTreeViewConfiguration: IMtgSetTreeViewConfigurationDto;
   /*
    * FEATURE settings for all center panels
    * for all views ->

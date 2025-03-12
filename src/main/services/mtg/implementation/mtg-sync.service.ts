@@ -1,6 +1,6 @@
 import { WebContents } from "electron";
 import { container, inject, singleton } from "tsyringe";
-import { CardSyncParam, RulingSyncParam, SyncParamDto } from "../../../../common/dto";
+import { ICardSyncParam, IRulingSyncParam, ISyncParamDto } from "../../../../common/dto";
 import { CatalogType } from "../../../../common/types";
 import { runSerial } from "../../infra/util";
 import { ICardSetSyncService, ICardSymbolSyncService, ICardSyncService, ICatalogSyncService, IRulingSyncService } from "../../scryfall";
@@ -30,22 +30,22 @@ export class MtgSyncService implements IMtgSyncService {
   //#endregion
 
   //#region IMtgSyncService methods -------------------------------------------
-  public async synchronize(syncParam: SyncParamDto, webContents: WebContents): Promise<void> {
+  public async synchronize(syncParam: ISyncParamDto, webContents: WebContents): Promise<void> {
     const taskParams = new Array<SyncTaskParam<unknown>>();
     if (syncParam.cardSyncType != "none") {
       taskParams.push({
         displayName: "Cards",
-        syncParam: syncParam as CardSyncParam,
+        syncParam: syncParam as ICardSyncParam,
         webContents: webContents,
-        handler: container.resolve<ICardSyncService>(SCRYFALL.CardSyncService) as BaseSyncService<CardSyncParam>
+        handler: container.resolve<ICardSyncService>(SCRYFALL.CardSyncService) as BaseSyncService<ICardSyncParam>
       });
     }
     if (syncParam.rulingSyncType != "none") {
       taskParams.push({
         displayName: "Rulings",
-        syncParam: syncParam as RulingSyncParam,
+        syncParam: syncParam as IRulingSyncParam,
         webContents: webContents,
-        handler: container.resolve<IRulingSyncService>(SCRYFALL.RulingSyncService) as BaseSyncService<RulingSyncParam>
+        handler: container.resolve<IRulingSyncService>(SCRYFALL.RulingSyncService) as BaseSyncService<IRulingSyncParam>
       });
     }
     if (syncParam.syncCardSymbols) {

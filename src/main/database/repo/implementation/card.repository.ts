@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import { inject, injectable } from "tsyringe";
-import { CardQueryDto, CatalogItemDto, MtgCardDetailDto, MtgCardImageDataDto, MtgCardListDto } from "../../../../common/dto";
+import { ICardQueryDto, ICatalogItemDto, IMtgCardDetailDto, IMtgCardImageDataDto, IMtgCardListDto } from "../../../../common/dto";
 import { CatalogType, MtgColor } from "../../../../common/types";
 import { IResult } from "../../../services/base";
 import { IDatabaseService, ILogService, IResultFactory } from "../../../services/infra/interfaces";
@@ -26,7 +26,7 @@ export class CardRepository extends BaseRepository implements ICardRepository {
 
   //#region ICardRepository methods -------------------------------------------
   /* eslint-disable @stylistic/function-paren-newline */
-  public async getCardDetails(cardId: string): Promise<IResult<MtgCardDetailDto>> {
+  public async getCardDetails(cardId: string): Promise<IResult<IMtgCardDetailDto>> {
     try {
       return await this.database
         .selectFrom("card")
@@ -39,18 +39,18 @@ export class CardRepository extends BaseRepository implements ICardRepository {
         ])
         .where("card.id", "=", cardId)
         // .$call(this.logCompilable)
-        .$castTo<MtgCardDetailDto>()
+        .$castTo<IMtgCardDetailDto>()
         .executeTakeFirst()
-        .then((qryResult: MtgCardDetailDto) => {
+        .then((qryResult: IMtgCardDetailDto) => {
           fs.writeFileSync("c:/data/new-assistant/json/getCardDetails.json", JSON.stringify(qryResult, null, 2));
-          return this.resultFactory.createSuccessResult<MtgCardDetailDto>(qryResult);
+          return this.resultFactory.createSuccessResult<IMtgCardDetailDto>(qryResult);
         });
     } catch (err) {
-      return this.resultFactory.createExceptionResultPromise<MtgCardDetailDto>(err);
+      return this.resultFactory.createExceptionResultPromise<IMtgCardDetailDto>(err);
     }
   }
 
-  public async getCardImageData(cardId: string): Promise<IResult<MtgCardImageDataDto>> {
+  public async getCardImageData(cardId: string): Promise<IResult<IMtgCardImageDataDto>> {
     try {
       return this.database.selectFrom("card")
         .innerJoin("card_set", "card_set.id", "card.set_id")
@@ -62,20 +62,20 @@ export class CardRepository extends BaseRepository implements ICardRepository {
           "card.lang as language"
         ])
         .where("card.id", "=", cardId)
-        .$castTo<MtgCardImageDataDto>()
+        .$castTo<IMtgCardImageDataDto>()
         // .$call(this.logCompilable)
         .executeTakeFirst()
-        .then((r: MtgCardImageDataDto) => {
+        .then((r: IMtgCardImageDataDto) => {
           return r != undefined
-            ? this.resultFactory.createSuccessResult<MtgCardImageDataDto>(r)
-            : this.resultFactory.createNotFoundResult<MtgCardImageDataDto>("card(s)");
+            ? this.resultFactory.createSuccessResult<IMtgCardImageDataDto>(r)
+            : this.resultFactory.createNotFoundResult<IMtgCardImageDataDto>("card(s)");
         });
     } catch (err) {
-      return this.resultFactory.createExceptionResultPromise<MtgCardImageDataDto>(err);
+      return this.resultFactory.createExceptionResultPromise<IMtgCardImageDataDto>(err);
     }
   }
 
-  public async queryCards(params: CardQueryDto): Promise<IResult<Array<MtgCardListDto>>> {
+  public async queryCards(params: ICardQueryDto): Promise<IResult<Array<IMtgCardListDto>>> {
     try {
       return await this.database
         .selectFrom("card")
@@ -298,27 +298,27 @@ export class CardRepository extends BaseRepository implements ICardRepository {
           )
         )
         .$call((sqb) => logCompilable(this.logService, sqb))
-        .$castTo<MtgCardListDto>()
+        .$castTo<IMtgCardListDto>()
         .groupBy(["card.set_id", "card.collector_number"])
         .orderBy(["card.set_id", "card.collector_number"])
         .execute()
-        .then((qryResult: Array<MtgCardListDto>) => {
+        .then((qryResult: Array<IMtgCardListDto>) => {
           fs.writeFileSync("c:/data/new-assistant/json/queryCards.json", JSON.stringify(qryResult, null, 2));
-          return this.resultFactory.createSuccessResult<Array<MtgCardListDto>>(qryResult);
+          return this.resultFactory.createSuccessResult<Array<IMtgCardListDto>>(qryResult);
         });
     } catch (err) {
-      return this.resultFactory.createExceptionResultPromise<Array<MtgCardListDto>>(err);
+      return this.resultFactory.createExceptionResultPromise<Array<IMtgCardListDto>>(err);
     }
   }
   //#endregion
 
   //#region Auxiliary methods -------------------------------------------------
-  private hasAnyCatalogItem(allSelected: Array<CatalogItemDto>, catalog: CatalogType): boolean {
-    return allSelected.findIndex((f: CatalogItemDto) => f.catalog_name == catalog) >= 0;
+  private hasAnyCatalogItem(allSelected: Array<ICatalogItemDto>, catalog: CatalogType): boolean {
+    return allSelected.findIndex((f: ICatalogItemDto) => f.catalog_name == catalog) >= 0;
   }
 
-  private extractCatalogItems(allSelected: Array<CatalogItemDto>, catalog: CatalogType): Array<string> {
-    return allSelected.filter((f: CatalogItemDto) => f.catalog_name == catalog).map((f: CatalogItemDto) => f.item);
+  private extractCatalogItems(allSelected: Array<ICatalogItemDto>, catalog: CatalogType): Array<string> {
+    return allSelected.filter((f: ICatalogItemDto) => f.catalog_name == catalog).map((f: ICatalogItemDto) => f.item);
   }
   //#endregion
 }

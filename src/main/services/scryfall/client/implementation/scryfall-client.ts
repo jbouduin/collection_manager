@@ -1,6 +1,6 @@
 import { inject, injectable } from "tsyringe";
-import { MtgCardImageDataDto } from "../../../../../common/dto";
-import { DtoScryfallConfiguration } from "../../../../../common/dto/infra/scryfall-configuration.dto";
+import { IMtgCardImageDataDto } from "../../../../../common/dto";
+import { IScryfallConfigurationDto } from "../../../../../common/dto/infra/scryfall-configuration.dto";
 import { ProgressCallback } from "../../../../../common/ipc";
 import { CatalogType } from "../../../../../common/types";
 import { IConfigurationService, ILogService } from "../../../../../main/services/infra/interfaces";
@@ -15,7 +15,7 @@ import { IScryfallClient, ScryfallSearchOptions } from "../interfaces";
 @injectable()
 export class ScryfallClient implements IScryfallClient {
   //#region private readonly fields -------------------------------------------
-  private readonly scryfallConfiguration: DtoScryfallConfiguration;
+  private readonly scryfallConfiguration: IScryfallConfigurationDto;
   private readonly logService: ILogService;
   //#endregion
 
@@ -40,7 +40,7 @@ export class ScryfallClient implements IScryfallClient {
       .then((response: Response) => response.arrayBuffer());
   }
 
-  public getCardImage(card: MtgCardImageDataDto): Promise<ArrayBuffer> {
+  public getCardImage(card: IMtgCardImageDataDto): Promise<ArrayBuffer> {
     let url: URL;
     if (card.side == "back" && card.cardBackId) {
       url = new URL(`${this.scryfallConfiguration.cardBackRoot}/${card.imageType}/${card.cardBackId.substring(0, 1)}/${card.cardBackId.substring(1, 2)}/${card.cardBackId}.jpg`);

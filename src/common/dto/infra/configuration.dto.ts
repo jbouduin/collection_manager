@@ -1,15 +1,15 @@
-import { SyncParamDto as SyncParamDto } from "../sync/sync-param.dto";
-import { DtoDataConfiguration as DataConfigurationDto } from "./data-configuration.dto";
-import { RendererConfigurationDto } from "./renderer-configuration.dto";
-import { DtoScryfallConfiguration as ScryfallConfigurationDto } from "./scryfall-configuration.dto";
+import { ISyncParamDto } from "../sync/sync-param.dto";
+import { IDataConfigurationDto } from "./data-configuration.dto";
+import { IRendererConfigurationDto } from "./renderer-configuration.dto";
+import { IScryfallConfigurationDto } from "./scryfall-configuration.dto";
 
 
-export interface ConfigurationDto {
-  dataConfiguration: DataConfigurationDto;
-  rendererConfiguration: RendererConfigurationDto;
+export interface IConfigurationDto {
+  dataConfiguration: IDataConfigurationDto;
+  rendererConfiguration: IRendererConfigurationDto;
   // to be moved to the database
-  scryfallConfiguration: ScryfallConfigurationDto;
-  syncAtStartupConfiguration: SyncParamDto;
+  scryfallConfiguration: IScryfallConfigurationDto;
+  syncAtStartupConfiguration: ISyncParamDto;
   /*
    * TODO deck-picking configuration
    * - condition order

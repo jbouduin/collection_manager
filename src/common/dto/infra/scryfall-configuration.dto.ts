@@ -1,7 +1,7 @@
 import { ScryfallEndpoint } from "../../types";
 
 // TODO move this to the databasse
-export interface DtoScryfallConfiguration {
+export interface IScryfallConfigurationDto {
   readonly scryfallApiRoot: string;
   readonly cardBackRoot: string;
   readonly scryfallEndpoints: Record<ScryfallEndpoint, string>;

@@ -2,7 +2,7 @@ import * as fs from "fs";
 import { DeleteResult, InsertResult, Transaction, Updateable } from "kysely";
 import * as helpers from "kysely/helpers/sqlite";
 import { inject, injectable } from "tsyringe";
-import { ColorDto, DeckCardListDto, DeckDetailsDto, DeckDto, DeckFolderDto, DeckListDto, UpdateDeckCardQuantityDto } from "../../../../common/dto";
+import { IColorDto, IDeckCardListDto, IDeckDetailsDto, IDeckDto, IDeckFolderDto, IDeckListDto, IUpdateDeckCardQuantityDto } from "../../../../common/dto";
 import { sqliteUTCTimeStamp } from "../../../../common/util";
 import { IResult } from "../../../services/base";
 import { IDatabaseService, ILogService, IResultFactory } from "../../../services/infra/interfaces";
@@ -31,7 +31,7 @@ export class DeckRepository extends BaseRepository implements IDeckRepository {
 
   //#region IDeckRepository methods ------------------------------------------
   /* eslint-disable @stylistic/function-paren-newline */
-  public createDeck(deck: DeckDto): Promise<IResult<DeckDto>> {
+  public createDeck(deck: IDeckDto): Promise<IResult<IDeckDto>> {
     try {
       const now = sqliteUTCTimeStamp();
       return this.database.transaction()
@@ -53,17 +53,17 @@ export class DeckRepository extends BaseRepository implements IDeckRepository {
             .then((r: InsertResult) => trx.selectFrom("deck")
               .selectAll()
               .where("deck.id", "=", Number(r.insertId))
-              .$castTo<DeckListDto>()
+              .$castTo<IDeckListDto>()
               // .$call((q) => logCompilable(this.logService, q))
               .executeTakeFirstOrThrow())
-            .then((r: DeckListDto) => {
+            .then((r: IDeckListDto) => {
               r.deckSize = 0;
               r.sideboardSize = 0;
-              return this.resultFactory.createSuccessResult<DeckDto>(r);
+              return this.resultFactory.createSuccessResult<IDeckDto>(r);
             });
         });
     } catch (err) {
-      return this.resultFactory.createExceptionResultPromise<DeckDto>(err);
+      return this.resultFactory.createExceptionResultPromise<IDeckDto>(err);
     }
   }
 
@@ -109,7 +109,7 @@ export class DeckRepository extends BaseRepository implements IDeckRepository {
     }
   }
 
-  public getAllCardsOfDeck(deckId: number): Promise<IResult<Array<DeckCardListDto>>> {
+  public getAllCardsOfDeck(deckId: number): Promise<IResult<Array<IDeckCardListDto>>> {
     try {
       return this.database
         .selectFrom("deck_card")
@@ -124,18 +124,18 @@ export class DeckRepository extends BaseRepository implements IDeckRepository {
           $cardColors(eb.ref("card.id")).as("cardColors")
         ])
         .where("deck_card.deck_id", "=", deckId)
-        .$castTo<DeckCardListDto>()
+        .$castTo<IDeckCardListDto>()
         .execute()
-        .then((qryResult: Array<DeckCardListDto>) => {
+        .then((qryResult: Array<IDeckCardListDto>) => {
           fs.writeFileSync("c:/data/new-assistant/json/getcardsofdeck.json", JSON.stringify(qryResult, null, 2));
-          return this.resultFactory.createSuccessResult<Array<DeckCardListDto>>(qryResult);
+          return this.resultFactory.createSuccessResult<Array<IDeckCardListDto>>(qryResult);
         });
     } catch (err) {
-      return this.resultFactory.createExceptionResultPromise<Array<DeckCardListDto>>(err);
+      return this.resultFactory.createExceptionResultPromise<Array<IDeckCardListDto>>(err);
     }
   }
 
-  public getAllDecksInFolder(folderId: number): Promise<IResult<Array<DeckListDto>>> {
+  public getAllDecksInFolder(folderId: number): Promise<IResult<Array<IDeckListDto>>> {
     try {
       return this.database
         .selectFrom("deck")
@@ -150,7 +150,7 @@ export class DeckRepository extends BaseRepository implements IDeckRepository {
               .innerJoin("color", "color.id", "card_color_map.color_id")
               .select(["color.mana_symbol", "color.sequence"])
               .distinct()
-              .$castTo<Pick<ColorDto, "sequence" | "mana_symbol">>()
+              .$castTo<Pick<IColorDto, "sequence" | "mana_symbol">>()
               .whereRef("deck_card.deck_id", "=", "deck.id")
               .where("card_color_map.color_type", "=", "identity")
           ).as("accumulatedColorIdentity")
@@ -158,52 +158,52 @@ export class DeckRepository extends BaseRepository implements IDeckRepository {
         .where("deck.parent_id", "=", folderId)
         .where((eb) => $whereBoolean(eb.ref("deck.is_folder"), false))
         .$call((sqb) => logCompilable(this.logService, sqb))
-        .$castTo<DeckListDto>()
+        .$castTo<IDeckListDto>()
         .execute()
-        .then((qryResult: Array<DeckListDto>) => {
+        .then((qryResult: Array<IDeckListDto>) => {
           fs.writeFileSync("c:/data/new-assistant/json/getAllDecks.json", JSON.stringify(qryResult, null, 2));
-          return this.resultFactory.createSuccessResult<Array<DeckListDto>>(qryResult);
+          return this.resultFactory.createSuccessResult<Array<IDeckListDto>>(qryResult);
         });
     } catch (err) {
-      return this.resultFactory.createExceptionResultPromise<Array<DeckListDto>>(err);
+      return this.resultFactory.createExceptionResultPromise<Array<IDeckListDto>>(err);
     }
   }
 
-  public getAllFolders(): Promise<IResult<Array<DeckFolderDto>>> {
+  public getAllFolders(): Promise<IResult<Array<IDeckFolderDto>>> {
     try {
       return this.database
         .selectFrom("deck")
         .selectAll()
         .where((eb) => $whereBoolean(eb.ref("deck.is_folder"), true))
-        .$castTo<DeckFolderDto>()
+        .$castTo<IDeckFolderDto>()
         .execute()
-        .then((qryResult: Array<DeckFolderDto>) => this.resultFactory.createSuccessResult(qryResult));
+        .then((qryResult: Array<IDeckFolderDto>) => this.resultFactory.createSuccessResult(qryResult));
     } catch (err) {
-      return this.resultFactory.createExceptionResultPromise<Array<DeckFolderDto>>(err);
+      return this.resultFactory.createExceptionResultPromise<Array<IDeckFolderDto>>(err);
     }
   }
 
-  public getDeckDetails(id: number): Promise<IResult<DeckDetailsDto>> {
+  public getDeckDetails(id: number): Promise<IResult<IDeckDetailsDto>> {
     try {
       return this.database
         .selectFrom("deck")
         .selectAll()
         .where("deck.id", "=", id)
-        .$castTo<DeckDetailsDto>()
+        .$castTo<IDeckDetailsDto>()
         .executeTakeFirst()
-        .then((dto: DeckDetailsDto) => {
+        .then((dto: IDeckDetailsDto) => {
           if (dto) {
-            return this.resultFactory.createSuccessResult<DeckDetailsDto>(dto);
+            return this.resultFactory.createSuccessResult<IDeckDetailsDto>(dto);
           } else {
-            return this.resultFactory.createNotFoundResult<DeckListDto>(`Deck with ID '${id}'`);
+            return this.resultFactory.createNotFoundResult<IDeckListDto>(`Deck with ID '${id}'`);
           }
         });
     } catch (err) {
-      return this.resultFactory.createExceptionResultPromise<DeckDetailsDto>(err);
+      return this.resultFactory.createExceptionResultPromise<IDeckDetailsDto>(err);
     }
   }
 
-  public patchDeck(deck: Partial<DeckDto>): Promise<IResult<DeckDto>> {
+  public patchDeck(deck: Partial<IDeckDto>): Promise<IResult<IDeckDto>> {
     try {
       const toUpdate: Updateable<DeckTable> = { modified_at: sqliteUTCTimeStamp() };
       if (Object.keys(deck).includes("name")) {
@@ -225,17 +225,17 @@ export class DeckRepository extends BaseRepository implements IDeckRepository {
             .then(() => trx.selectFrom("deck")
               .selectAll()
               .where("deck.id", "=", Number(deck.id))
-              .$castTo<DeckDto>()
+              .$castTo<IDeckDto>()
               // .$call((q) => logCompilable(this.logService, q))
               .executeTakeFirst())
-            .then((r: DeckDto) => this.resultFactory.createSuccessResult<DeckDto>(r));
+            .then((r: IDeckDto) => this.resultFactory.createSuccessResult<IDeckDto>(r));
         });
     } catch (err) {
-      return this.resultFactory.createExceptionResultPromise<DeckDto>(err);
+      return this.resultFactory.createExceptionResultPromise<IDeckDto>(err);
     }
   }
 
-  public updateDeckCardQuantity(deckCard: UpdateDeckCardQuantityDto): Promise<IResult<DeckCardListDto>> {
+  public updateDeckCardQuantity(deckCard: IUpdateDeckCardQuantityDto): Promise<IResult<IDeckCardListDto>> {
     try {
       return this.database.transaction()
         .execute(async (trx: Transaction<DatabaseSchema>) => {
@@ -259,16 +259,16 @@ export class DeckRepository extends BaseRepository implements IDeckRepository {
                 $cardColors(eb.ref("card.id")).as("cardColors")
               ])
               .where("deck_card.id", "=", deckCard.deck_card_id)
-              .$castTo<DeckCardListDto>()
+              .$castTo<IDeckCardListDto>()
               .executeTakeFirst()
-              .then((qryResult: DeckCardListDto) => {
+              .then((qryResult: IDeckCardListDto) => {
                 fs.writeFileSync("c:/data/new-assistant/json/updateDeckCardQuantity.json", JSON.stringify(qryResult, null, 2));
-                return this.resultFactory.createSuccessResult<DeckCardListDto>(qryResult);
+                return this.resultFactory.createSuccessResult<IDeckCardListDto>(qryResult);
               })
             );
         });
     } catch (err) {
-      return this.resultFactory.createExceptionResultPromise<DeckCardListDto>(err);
+      return this.resultFactory.createExceptionResultPromise<IDeckCardListDto>(err);
     }
   }
   //#endregion

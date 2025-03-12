@@ -1,7 +1,7 @@
 import { ContextMenu, Icon, Menu, MenuDivider, MenuItem, TreeNodeInfo } from "@blueprintjs/core";
 import { cloneDeep, isEqual, noop } from "lodash";
 import * as React from "react";
-import { CollectionDto } from "../../../../../../../common/dto";
+import { ICollectionDto } from "../../../../../../../common/dto";
 import { IpcProxyService, IpcProxyServiceContext } from "../../../../../../shared/context";
 import { CollectionTreeViewmodel, TreeConfigurationViewmodel } from "../../../../../viewmodels";
 import { BaseTreeView, BaseTreeViewProps } from "../../../../../../shared/components/base/base-tree-view";
@@ -33,9 +33,9 @@ export function LeftPanel(props: LeftPanelProps) {
   React.useEffect(
     () => {
       void ipcProxyService
-        .getData<Array<CollectionDto>>("/collection")
+        .getData<Array<ICollectionDto>>("/collection")
         .then(
-          (result: Array<CollectionDto>) => setCollections(result.map((collection: CollectionDto) => new CollectionTreeViewmodel(collection, false, false))),
+          (result: Array<ICollectionDto>) => setCollections(result.map((collection: ICollectionDto) => new CollectionTreeViewmodel(collection, false, false))),
           (_r: Error) => setCollections(initialCollectionState)
         );
     },
@@ -65,11 +65,11 @@ export function LeftPanel(props: LeftPanelProps) {
 
   //#region Event handling ----------------------------------------------------
   function onSave(collection: CollectionTreeViewmodel): void {
-    const savedDtoPromise: Promise<CollectionDto> = dialogData.dialogAction == "edit"
-      ? ipcProxyService.putData<CollectionDto, CollectionDto>(`/collection/${collection.id}`, collection.dto)
-      : ipcProxyService.postData<CollectionDto, CollectionDto>("/collection", collection.dto);
+    const savedDtoPromise: Promise<ICollectionDto> = dialogData.dialogAction == "edit"
+      ? ipcProxyService.putData<ICollectionDto, ICollectionDto>(`/collection/${collection.id}`, collection.dto)
+      : ipcProxyService.postData<ICollectionDto, ICollectionDto>("/collection", collection.dto);
     void savedDtoPromise.then(
-      (savedDto: CollectionDto) => {
+      (savedDto: ICollectionDto) => {
         collections.forEach((c: CollectionTreeViewmodel) => c.isSelected = false);
         const newCollectionList = cloneDeep(collections);
         if (dialogData.dialogAction == "edit") {
@@ -112,7 +112,7 @@ export function LeftPanel(props: LeftPanelProps) {
     if (parentId == null) {
       parentId = collections.find((c: CollectionTreeViewmodel) => c.parentId == null).id;
     }
-    const newDto: CollectionDto = {
+    const newDto: ICollectionDto = {
       id: 0,
       parent_id: parentId,
       name: "",
@@ -133,7 +133,7 @@ export function LeftPanel(props: LeftPanelProps) {
     if (parentId == null) {
       parentId = collections.find((c: CollectionTreeViewmodel) => c.parentId == null).id;
     }
-    const newDto: CollectionDto = {
+    const newDto: ICollectionDto = {
       id: 0,
       parent_id: parentId,
       name: "",

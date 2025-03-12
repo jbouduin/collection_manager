@@ -1,7 +1,7 @@
 import { isEqual } from "lodash";
 import * as React from "react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
-import { RendererConfigurationDto } from "../../../../../../common/dto";
+import { IRendererConfigurationDto } from "../../../../../../common/dto";
 import { CardDetail } from "../../../../../shared/components/card-details";
 import { compareClassNameProp } from "../../../../../shared/components/utils";
 import { ConfigurationContext } from "../../../../../shared/context";
@@ -38,7 +38,7 @@ export function CollectionView(props: CollectionViewProps) {
   return (
     <ConfigurationContext.Consumer>
       {
-        (_configuration: RendererConfigurationDto) => (
+        (_configuration: IRendererConfigurationDto) => (
           <>
             <PanelGroup direction="horizontal">
               <Panel defaultSize={20}>

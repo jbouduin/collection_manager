@@ -1,5 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import { CatalogItemDto, CatalogTypeDto } from "../../../../common/dto";
+import { ICatalogItemDto, ICatalogTypeDto } from "../../../../common/dto";
 import { CatalogType } from "../../../../common/types";
 import { IResult } from "../../../services/base";
 import { IDatabaseService, ILogService, IResultFactory } from "../../../services/infra/interfaces";
@@ -20,7 +20,7 @@ export class CatalogRepository extends BaseRepository implements ICatalogReposit
     super(databaseService, logService, resultFactory);
   }
 
-  public async getCatalogItems(name: CatalogType, query: string): Promise<IResult<Array<CatalogItemDto>>> {
+  public async getCatalogItems(name: CatalogType, query: string): Promise<IResult<Array<ICatalogItemDto>>> {
     try {
       return this.database
         .selectFrom("catalog_item")
@@ -31,16 +31,16 @@ export class CatalogRepository extends BaseRepository implements ICatalogReposit
           (eb) => eb.where("catalog_item.item", "like", `%${query}%`)
         )
         .limit(50)
-        .$castTo<CatalogItemDto>()
+        .$castTo<ICatalogItemDto>()
         .$call((q) => logCompilable(this.logService, q))
         .execute()
-        .then((r: Array<CatalogItemDto>) => this.resultFactory.createSuccessResult(r));
+        .then((r: Array<ICatalogItemDto>) => this.resultFactory.createSuccessResult(r));
     } catch (err) {
-      return this.resultFactory.createExceptionResultPromise<Array<CatalogItemDto>>(err);
+      return this.resultFactory.createExceptionResultPromise<Array<ICatalogItemDto>>(err);
     }
   }
 
-  public async getCatalogs(): Promise<IResult<Array<CatalogTypeDto>>> {
+  public async getCatalogs(): Promise<IResult<Array<ICatalogTypeDto>>> {
     try {
       return this.database
         .selectFrom("catalog_type")
@@ -51,12 +51,12 @@ export class CatalogRepository extends BaseRepository implements ICatalogReposit
             .whereRef("catalog_item.catalog_name", "=", "catalog_type.catalog_name")
             .as("count")
         ])
-        .$castTo<CatalogTypeDto>()
+        .$castTo<ICatalogTypeDto>()
         .execute()
         // filter after retrieving -> kysely + sqlite does not allow filtering on booleans
-        .then((r: Array<CatalogTypeDto>) => this.resultFactory.createSuccessResult(r.filter((f: CatalogTypeDto) => f.is_used)));
+        .then((r: Array<ICatalogTypeDto>) => this.resultFactory.createSuccessResult(r.filter((f: ICatalogTypeDto) => f.is_used)));
     } catch (err) {
-      return this.resultFactory.createExceptionResultPromise<Array<CatalogTypeDto>>(err);
+      return this.resultFactory.createExceptionResultPromise<Array<ICatalogTypeDto>>(err);
     }
   }
 }

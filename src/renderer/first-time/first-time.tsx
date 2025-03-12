@@ -1,7 +1,7 @@
 import { BlueprintProvider, FocusStyleManager, OverlayToaster, Position, ToastProps } from "@blueprintjs/core";
 import * as React from "react";
 import { createRoot } from "react-dom/client";
-import { ConfigurationDto } from "../../common/dto";
+import { IConfigurationDto } from "../../common/dto";
 import { IpcProxyService, IpcProxyServiceContext } from "../shared/context";
 import { ConfigurationViewModel } from "../shared/viewmodels";
 import { FirstTimeView } from "./first-time-view/first-time-view";
@@ -24,10 +24,10 @@ void (async () => {
 
   const ipcProxyService = new IpcProxyService((props: ToastProps, key?: string) => appToaster.show(props, key));
 
-  await ipcProxyService.getData<ConfigurationDto>("/configuration")
+  await ipcProxyService.getData<IConfigurationDto>("/configuration")
     .then(
-      (configuration: ConfigurationDto) => new ConfigurationViewModel(configuration, true),
-      (_r: Error) => undefined as ConfigurationDto
+      (configuration: IConfigurationDto) => new ConfigurationViewModel(configuration, true),
+      (_r: Error) => undefined as IConfigurationDto
     )
     .then((configurationViewmodel: ConfigurationViewModel) => {
       const container = document.getElementById("root");

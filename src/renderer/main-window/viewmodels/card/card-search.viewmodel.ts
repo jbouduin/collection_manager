@@ -1,9 +1,9 @@
-import { CardQueryDto, CatalogItemDto, ColorDto, QUERY_PARAM_LIST_SEPARATOR, QueryParamToken } from "../../../../common/dto";
+import { ICardQueryDto, ICatalogItemDto, IColorDto, QUERY_PARAM_LIST_SEPARATOR, CardQueryParamToken } from "../../../../common/dto";
 import { CardRarity, CatalogType, MtgGameFormat, MtgColor, MtgColorType } from "../../../../common/types";
 import { BaseViewmodel } from "../../../shared/viewmodels";
 
 
-export class CardSearchViewmodel extends BaseViewmodel<CardQueryDto> {
+export class CardSearchViewmodel extends BaseViewmodel<ICardQueryDto> {
   //#region Getters - Setters ---------------------------------------------------
   public get ownedCards(): boolean {
     return this._dto.ownedCards;
@@ -40,7 +40,7 @@ export class CardSearchViewmodel extends BaseViewmodel<CardQueryDto> {
 
   //#region Constructor -------------------------------------------------------
   public constructor() {
-    const initial: CardQueryDto = {
+    const initial: ICardQueryDto = {
       /*
        * TODO extend owned cards functionality
        * - currently owned cards is searching by card.id => this excludes reprints from the search
@@ -48,7 +48,7 @@ export class CardSearchViewmodel extends BaseViewmodel<CardQueryDto> {
        */
       ownedCards: false,
       selectedCardColors: new Array<MtgColor>(),
-      selectedCatalogItems: new Array<CatalogItemDto>(),
+      selectedCatalogItems: new Array<ICatalogItemDto>(),
       selectedGameFormats: new Array<MtgGameFormat>(),
       selectedIdentityColors: new Array<MtgColor>(),
       selectedProducedManaColors: new Array<MtgColor>(),
@@ -61,7 +61,7 @@ export class CardSearchViewmodel extends BaseViewmodel<CardQueryDto> {
   //#endregion
 
   //#region CardColors --------------------------------------------------------
-  public addColor(type: MtgColorType, color: MtgColor, allColors: Array<ColorDto>): void {
+  public addColor(type: MtgColorType, color: MtgColor, allColors: Array<IColorDto>): void {
     switch (type) {
       case "card":
         this._dto.selectedCardColors.push(color);
@@ -162,9 +162,9 @@ export class CardSearchViewmodel extends BaseViewmodel<CardQueryDto> {
   //#endregion
 
   //#region Catalogs ----------------------------------------------------------
-  public addCatalogItem(item: CatalogItemDto): void {
+  public addCatalogItem(item: ICatalogItemDto): void {
     this._dto.selectedCatalogItems.push(item);
-    this._dto.selectedCatalogItems.sort((a: CatalogItemDto, b: CatalogItemDto) => {
+    this._dto.selectedCatalogItems.sort((a: ICatalogItemDto, b: ICatalogItemDto) => {
       const compareType = a.catalog_name.localeCompare(b.catalog_name);
       if (compareType == 0) {
         return a.item.localeCompare(b.item);
@@ -174,20 +174,20 @@ export class CardSearchViewmodel extends BaseViewmodel<CardQueryDto> {
     });
   }
 
-  public removeCatalogItem(item: CatalogItemDto): void {
+  public removeCatalogItem(item: ICatalogItemDto): void {
     const idx = this._dto.selectedCatalogItems.indexOf(item);
     this._dto.selectedCatalogItems.splice(idx, 1);
   }
 
-  public getSelectedCatalogItems(catalogType: CatalogType): Array<CatalogItemDto> {
-    return this._dto.selectedCatalogItems.filter((item: CatalogItemDto) => item.catalog_name == catalogType);
+  public getSelectedCatalogItems(catalogType: CatalogType): Array<ICatalogItemDto> {
+    return this._dto.selectedCatalogItems.filter((item: ICatalogItemDto) => item.catalog_name == catalogType);
   }
 
   public clearCatalogSelection(catalogType: CatalogType): void {
-    let idx = this._dto.selectedCatalogItems.findIndex((item: CatalogItemDto) => item.catalog_name == catalogType);
+    let idx = this._dto.selectedCatalogItems.findIndex((item: ICatalogItemDto) => item.catalog_name == catalogType);
     while (idx >= 0) {
       this._dto.selectedCatalogItems.splice(idx, 1);
-      idx = this._dto.selectedCatalogItems.findIndex((item: CatalogItemDto) => item.catalog_name == catalogType);
+      idx = this._dto.selectedCatalogItems.findIndex((item: ICatalogItemDto) => item.catalog_name == catalogType);
     }
   }
   //#endregion
@@ -214,7 +214,7 @@ export class CardSearchViewmodel extends BaseViewmodel<CardQueryDto> {
       this.appendToQueryParam(queryParts, "rarity", this._dto.selectedRarities);
     }
     const catalogItems = this._dto.selectedCatalogItems.reduce(
-      (prev: Map<CatalogType, Array<string>>, current: CatalogItemDto) => {
+      (prev: Map<CatalogType, Array<string>>, current: ICatalogItemDto) => {
         const catalog = prev.get(current.catalog_name);
         if (!catalog) {
           prev.set(current.catalog_name, new Array<string>(current.item));
@@ -234,13 +234,13 @@ export class CardSearchViewmodel extends BaseViewmodel<CardQueryDto> {
   //#endregion
 
   //#region Auxiliary methods -------------------------------------------------
-  private appendToQueryParam(queryParts: Array<string>, token: QueryParamToken, values: Array<string>): Array<string> {
+  private appendToQueryParam(queryParts: Array<string>, token: CardQueryParamToken, values: Array<string>): Array<string> {
     queryParts.push(`${token}=${values.join(QUERY_PARAM_LIST_SEPARATOR)}`);
     return queryParts;
   }
 
-  private sortColors(selectedColors: Array<MtgColor>, allColors: Array<ColorDto>): void {
-    selectedColors.sort((a: MtgColor, b: MtgColor) => allColors.find((f: ColorDto) => f.id == a).sequence - allColors.find((f: ColorDto) => f.id == b).sequence);
+  private sortColors(selectedColors: Array<MtgColor>, allColors: Array<IColorDto>): void {
+    selectedColors.sort((a: MtgColor, b: MtgColor) => allColors.find((f: IColorDto) => f.id == a).sequence - allColors.find((f: IColorDto) => f.id == b).sequence);
   }
   //#endregion
 }

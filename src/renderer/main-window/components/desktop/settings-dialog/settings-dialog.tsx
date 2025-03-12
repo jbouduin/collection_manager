@@ -1,7 +1,7 @@
 import { Dialog } from "@blueprintjs/core";
 import { noop } from "lodash";
 import * as React from "react";
-import { ConfigurationDto } from "../../../../../common/dto/";
+import { IConfigurationDto } from "../../../../../common/dto/";
 import { ConfigurationWrapper } from "../../../../shared/components/configuration";
 import { IpcProxyService, IpcProxyServiceContext } from "../../../../shared/context";
 import { ConfigurationViewModel } from "../../../../shared/viewmodels";
@@ -24,7 +24,7 @@ export function SettingsDialog(props: SettingsDialogProps) {
         void ipcProxyService
           .getData("/configuration")
           .then(
-            (configuration: ConfigurationDto) => setConfiguration(new ConfigurationViewModel(configuration, false)),
+            (configuration: IConfigurationDto) => setConfiguration(new ConfigurationViewModel(configuration, false)),
             (_r: Error) => setConfiguration(null)
           );
       }
@@ -48,11 +48,11 @@ export function SettingsDialog(props: SettingsDialogProps) {
       <ConfigurationWrapper
         configuration={configuration}
         onCancel={() => props.onDialogClose()}
-        onSave={(toSave: ConfigurationDto) => {
+        onSave={(toSave: IConfigurationDto) => {
           void ipcProxyService
-            .putData<ConfigurationDto, ConfigurationDto>("/configuration", toSave)
+            .putData<IConfigurationDto, IConfigurationDto>("/configuration", toSave)
             .then(
-              (saved: ConfigurationDto) => props.afterSave(saved),
+              (saved: IConfigurationDto) => props.afterSave(saved),
               noop
             );
         }}

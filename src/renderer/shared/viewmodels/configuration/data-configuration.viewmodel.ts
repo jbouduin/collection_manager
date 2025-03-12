@@ -1,7 +1,7 @@
-import { DtoDataConfiguration } from "../../../../common/dto";
+import { IDataConfigurationDto } from "../../../../common/dto";
 import { BaseViewmodel } from "../base.viewmodel";
 
-export class DataConfigurationViewmodel extends BaseViewmodel<DtoDataConfiguration> {
+export class DataConfigurationViewmodel extends BaseViewmodel<IDataConfigurationDto> {
   //#region Getters/Setters ---------------------------------------------------
   public get cacheDirectory(): string {
     return this._dto.cacheDirectory;
@@ -29,7 +29,7 @@ export class DataConfigurationViewmodel extends BaseViewmodel<DtoDataConfigurati
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
-  public constructor(dtoDataConfiguration: DtoDataConfiguration) {
+  public constructor(dtoDataConfiguration: IDataConfigurationDto) {
     super(dtoDataConfiguration);
   }
   //#endregion

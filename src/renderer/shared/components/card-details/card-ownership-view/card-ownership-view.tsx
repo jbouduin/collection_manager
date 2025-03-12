@@ -1,7 +1,7 @@
 import { Button, DialogFooter } from "@blueprintjs/core";
 import { cloneDeep, noop } from "lodash";
 import * as React from "react";
-import { CardConditionDto, OwnedCardQuantityDto } from "../../../../../common/dto";
+import { ICardConditionDto, IOwnedCardQuantityDto } from "../../../../../common/dto";
 import { CardCondition } from "../../../../../common/types";
 import { OwnedCardQuantityViewmodel } from "../../../../main-window/viewmodels";
 import { CardConditionContext, IpcProxyService, IpcProxyServiceContext } from "../../../context";
@@ -17,7 +17,7 @@ export function CardOwnerShipView(props: CardOwnerShipViewProps) {
 
   //#region Context -----------------------------------------------------------
   const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
-  const cardConditionContext = React.useContext<Array<CardConditionDto>>(CardConditionContext);
+  const cardConditionContext = React.useContext<Array<ICardConditionDto>>(CardConditionContext);
   //#endregion
 
   //#region Effects -----------------------------------------------------------
@@ -26,16 +26,16 @@ export function CardOwnerShipView(props: CardOwnerShipViewProps) {
       // if there is a collectionId -> the table is editable
       if (props.collectionId) {
         void ipcProxyService
-          .getData<Array<OwnedCardQuantityDto>>(`/collection/${props.collectionId}/card/${props.cardId}`)
+          .getData<Array<IOwnedCardQuantityDto>>(`/collection/${props.collectionId}/card/${props.cardId}`)
           .then(
-            (r: Array<OwnedCardQuantityDto>) => setState(buildEditableState(cardConditionContext, props.cardId, props.collectionId, r)),
+            (r: Array<IOwnedCardQuantityDto>) => setState(buildEditableState(cardConditionContext, props.cardId, props.collectionId, r)),
             (_r: Error) => setState(new Array<OwnedCardQuantityViewmodel>())
           );
       } else {
         void ipcProxyService
-          .getData<Array<OwnedCardQuantityDto>>(`/card/${props.cardId}/collection`)
+          .getData<Array<IOwnedCardQuantityDto>>(`/card/${props.cardId}/collection`)
           .then(
-            (r: Array<OwnedCardQuantityDto>) => setState(r.map((qty: OwnedCardQuantityDto) => new OwnedCardQuantityViewmodel(qty))),
+            (r: Array<IOwnedCardQuantityDto>) => setState(r.map((qty: IOwnedCardQuantityDto) => new OwnedCardQuantityViewmodel(qty))),
             (_r: Error) => setState(new Array<OwnedCardQuantityViewmodel>())
           );
       }
@@ -52,12 +52,12 @@ export function CardOwnerShipView(props: CardOwnerShipViewProps) {
   }
 
   function onSave(): void {
-    ipcProxyService.postData<Array<OwnedCardQuantityDto>, Array<OwnedCardQuantityDto>>(
+    ipcProxyService.postData<Array<IOwnedCardQuantityDto>, Array<IOwnedCardQuantityDto>>(
       `/collection/${props.collectionId}/card/${props.cardId}`,
       state.filter((vm: OwnedCardQuantityViewmodel) => vm.hasChanges).map((vm: OwnedCardQuantityViewmodel) => vm.dto)
     )
       .then(
-        (saved: Array<OwnedCardQuantityDto>) => {
+        (saved: Array<IOwnedCardQuantityDto>) => {
           if (saved) {
             setState(buildEditableState(cardConditionContext, props.cardId, props.collectionId, saved));
           }
@@ -76,9 +76,9 @@ export function CardOwnerShipView(props: CardOwnerShipViewProps) {
     setShowDialog(true);
   }
 
-  function onDialogClose(quantities: Array<OwnedCardQuantityDto>): void {
+  function onDialogClose(quantities: Array<IOwnedCardQuantityDto>): void {
     if (quantities) {
-      setState(quantities.map((qty: OwnedCardQuantityDto) => new OwnedCardQuantityViewmodel(qty)));
+      setState(quantities.map((qty: IOwnedCardQuantityDto) => new OwnedCardQuantityViewmodel(qty)));
     }
     setShowDialog(false);
   }

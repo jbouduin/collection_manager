@@ -1,28 +1,28 @@
 import { Selectable } from "kysely";
 import { CardTable } from "../../../main/database/schema";
-import { MtgCardColorDto } from "./mtg-card-color.dto";
-import { MtgCardfaceDto } from "./mtg-card-face.dto";
-import { MtgCardLanguageDto } from "./mtg-card-language.dto";
-import { OracleDto } from "./types";
+import { IMtgCardColorDto } from "./mtg-card-color.dto";
+import { IMtgCardfaceDto } from "./mtg-card-face.dto";
+import { IMtgCardLanguageDto } from "./mtg-card-language.dto";
+import { IOracleDto } from "./types";
 
 
-export interface CardDto extends Selectable<CardTable> {
-  cardColors: Array<MtgCardColorDto>;
-  cardfaces: Array<MtgCardfaceDto>;
-  languages: Array<MtgCardLanguageDto>;
-  oracle: Array<OracleDto>;
+export interface ICardDto extends Selectable<CardTable> {
+  cardColors: Array<IMtgCardColorDto>;
+  cardfaces: Array<IMtgCardfaceDto>;
+  languages: Array<IMtgCardLanguageDto>;
+  oracle: Array<IOracleDto>;
 }
 
-export interface MtgCardListDto extends Selectable<CardTable> {
-  cardColors: Array<MtgCardColorDto>;
-  cardfaces: Array<MtgCardfaceDto>;
-  languages: Array<MtgCardLanguageDto>;
-  oracle: Array<OracleDto>;
+export interface IMtgCardListDto extends Selectable<CardTable> {
+  cardColors: Array<IMtgCardColorDto>;
+  cardfaces: Array<IMtgCardfaceDto>;
+  languages: Array<IMtgCardLanguageDto>;
+  oracle: Array<IOracleDto>;
 }
 
-export interface MtgCardDetailDto extends Selectable<CardTable> {
-  cardColors: Array<MtgCardColorDto>;
-  cardfaces: Array<MtgCardfaceDto>;
-  languages: Array<MtgCardLanguageDto>;
-  oracle: Array<OracleDto>;
+export interface IMtgCardDetailDto extends Selectable<CardTable> {
+  cardColors: Array<IMtgCardColorDto>;
+  cardfaces: Array<IMtgCardfaceDto>;
+  languages: Array<IMtgCardLanguageDto>;
+  oracle: Array<IOracleDto>;
 }

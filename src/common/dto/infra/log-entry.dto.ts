@@ -1,4 +1,4 @@
-export interface LogEntryDto {
+export interface ILogEntryDto {
   message: string;
   args: Array<unknown>;
 }

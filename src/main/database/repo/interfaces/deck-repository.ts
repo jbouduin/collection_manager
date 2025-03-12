@@ -1,15 +1,15 @@
-import { DeckCardListDto, DeckDetailsDto, DeckDto, DeckFolderDto, DeckListDto, UpdateDeckCardQuantityDto } from "../../../../common/dto";
+import { IDeckCardListDto, IDeckDetailsDto, IDeckDto, IDeckFolderDto, IDeckListDto, IUpdateDeckCardQuantityDto } from "../../../../common/dto";
 import { IResult } from "../../../services/base";
 
 
 export interface IDeckRepository {
-  createDeck(deck: DeckDto): Promise<IResult<DeckDto>>;
+  createDeck(deck: IDeckDto): Promise<IResult<IDeckDto>>;
   deleteDeck(id: number): Promise<IResult<number>>;
   deleteDeckCard(id: number): Promise<IResult<number>>;
-  getAllCardsOfDeck(deckId: number): Promise<IResult<Array<DeckCardListDto>>>;
-  getAllDecksInFolder(folderId: number): Promise<IResult<Array<DeckListDto>>>;
-  getAllFolders(): Promise<IResult<Array<DeckFolderDto>>>;
-  getDeckDetails(id: number): Promise<IResult<DeckDetailsDto>>;
-  patchDeck(deck: Partial<DeckDto>): Promise<IResult<DeckDto>>;
-  updateDeckCardQuantity(deckCard: UpdateDeckCardQuantityDto): Promise<IResult<DeckCardListDto>>;
+  getAllCardsOfDeck(deckId: number): Promise<IResult<Array<IDeckCardListDto>>>;
+  getAllDecksInFolder(folderId: number): Promise<IResult<Array<IDeckListDto>>>;
+  getAllFolders(): Promise<IResult<Array<IDeckFolderDto>>>;
+  getDeckDetails(id: number): Promise<IResult<IDeckDetailsDto>>;
+  patchDeck(deck: Partial<IDeckDto>): Promise<IResult<IDeckDto>>;
+  updateDeckCardQuantity(deckCard: IUpdateDeckCardQuantityDto): Promise<IResult<IDeckCardListDto>>;
 }

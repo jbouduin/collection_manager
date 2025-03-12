@@ -1,7 +1,7 @@
-import { MtgCardListDto, MtgCardDetailDto, OwnedCardListDto, DeckCardListDto, OracleDto, MtgCardfaceDto } from "../../../../common/dto";
+import { IMtgCardListDto, IMtgCardDetailDto, IOwnedCardListDto, IDeckCardListDto, IOracleDto, IMtgCardfaceDto } from "../../../../common/dto";
 import { CardRarity } from "../../../../common/types";
 
-export abstract class BaseMtgCardViewmodel<T extends MtgCardListDto | MtgCardDetailDto | OwnedCardListDto | DeckCardListDto> {
+export abstract class BaseMtgCardViewmodel<T extends IMtgCardListDto | IMtgCardDetailDto | IOwnedCardListDto | IDeckCardListDto> {
   //#region private readonly fields -------------------------------------------
   private readonly _cardManaCost: Array<string>;
   //#endregion
@@ -21,12 +21,12 @@ export abstract class BaseMtgCardViewmodel<T extends MtgCardListDto | MtgCardDet
 
   public get cardName(): string {
     return this._dtoCard.layout != "reversible_card"
-      ? this.joinMultiCardFaceData(this._dtoCard.oracle.map((oracle: OracleDto) => oracle.oracle_name))
-      : this.joinMultiCardFaceData(this._dtoCard.cardfaces.map((cardface: MtgCardfaceDto) => cardface.oracle.oracle_name));
+      ? this.joinMultiCardFaceData(this._dtoCard.oracle.map((oracle: IOracleDto) => oracle.oracle_name))
+      : this.joinMultiCardFaceData(this._dtoCard.cardfaces.map((cardface: IMtgCardfaceDto) => cardface.oracle.oracle_name));
   }
 
   public get cardTypeLine(): string {
-    return this.joinMultiCardFaceData(this._dtoCard.oracle.map((oracle: OracleDto) => oracle.type_line));
+    return this.joinMultiCardFaceData(this._dtoCard.oracle.map((oracle: IOracleDto) => oracle.type_line));
   }
 
   /**
@@ -36,7 +36,7 @@ export abstract class BaseMtgCardViewmodel<T extends MtgCardListDto | MtgCardDet
    */
   public get convertedManaCostSortValue(): number {
     return this._dtoCard.cardfaces
-      .map((cardFace: MtgCardfaceDto) => {
+      .map((cardFace: IMtgCardfaceDto) => {
         return cardFace.cmc ? cardFace.cmc : -1;
       })
       .reduce(
@@ -64,7 +64,7 @@ export abstract class BaseMtgCardViewmodel<T extends MtgCardListDto | MtgCardDet
 
   private calculateCardManaCost(dtoCard: T): Array<string> {
     const result = new Array<string>();
-    dtoCard.cardfaces.forEach((cardface: MtgCardfaceDto, idx: number) => {
+    dtoCard.cardfaces.forEach((cardface: IMtgCardfaceDto, idx: number) => {
       if (idx > 0) {
         result.push("//");
       }

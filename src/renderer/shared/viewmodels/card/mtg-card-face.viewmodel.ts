@@ -1,9 +1,9 @@
-import { MtgCardfaceDto } from "../../../../common/dto";
+import { IMtgCardfaceDto } from "../../../../common/dto";
 import { OracleViewmodel } from "../oracle";
 
 export class MtgCardFaceViewmodel {
   //#region private readonly fields -------------------------------------------
-  private readonly _dtoCardface: MtgCardfaceDto;
+  private readonly _dtoCardface: IMtgCardfaceDto;
   private readonly _manaCost: Array<string>;
   private readonly _oracle: OracleViewmodel;
   //#endregion
@@ -50,7 +50,7 @@ export class MtgCardFaceViewmodel {
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
-  public constructor(dtoCardface: MtgCardfaceDto) {
+  public constructor(dtoCardface: IMtgCardfaceDto) {
     this._dtoCardface = dtoCardface;
     this._manaCost = this.convertManaCost(dtoCardface.mana_cost);
     this._oracle = new OracleViewmodel(dtoCardface.oracle);

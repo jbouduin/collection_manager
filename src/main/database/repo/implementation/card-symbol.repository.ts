@@ -1,7 +1,7 @@
 import { Selectable } from "kysely";
 import * as helpers from "kysely/helpers/sqlite";
 import { inject, injectable } from "tsyringe";
-import { MtgCardSymbolDto, MtgCardSymbolAlternative, MtgCardSymbolColorMapDto } from "../../../../common/dto";
+import { IMtgCardSymbolDto, IMtgCardSymbolAlternative, IMtgCardSymbolColorMapDto } from "../../../../common/dto";
 import { IResult } from "../../../services/base";
 import { IDatabaseService, ILogService, IResultFactory } from "../../../services/infra/interfaces";
 import { INFRASTRUCTURE } from "../../../services/service.tokens";
@@ -25,30 +25,30 @@ export class CardSymbolRepository extends BaseRepository implements ICardSymbolR
 
   //#region ICardSymbolRepository methods -------------------------------------
   /* eslint-disable @stylistic/function-paren-newline */
-  public async getAll(): Promise<IResult<Array<MtgCardSymbolDto>>> {
+  public async getAll(): Promise<IResult<Array<IMtgCardSymbolDto>>> {
     try {
       return await this.database
         .selectFrom("card_symbol")
         .select((eb) => [
           ...CARD_SYMBOL_TABLE_FIELDS,
-          helpers.jsonArrayFrom<MtgCardSymbolColorMapDto>(
+          helpers.jsonArrayFrom<IMtgCardSymbolColorMapDto>(
             eb.selectFrom("card_symbol_color_map")
               .select(CARD_SYMBOL_COLOR_MAP_TABLE_FIELDS)
               .whereRef("card_symbol_color_map.card_symbol_id", "=", "card_symbol.id")
-              .$castTo<MtgCardSymbolColorMapDto>()
+              .$castTo<IMtgCardSymbolColorMapDto>()
           ).as("colors"),
-          helpers.jsonObjectFrom<MtgCardSymbolAlternative>(
+          helpers.jsonObjectFrom<IMtgCardSymbolAlternative>(
             eb.selectFrom("card_symbol_alternative")
               .select(CARD_SYMBOL_ALTERNATIVE_TABLE_FIELDS)
               .whereRef("card_symbol_alternative.card_symbol_id", "=", "card_symbol.id")
-              .$castTo<MtgCardSymbolAlternative>()
+              .$castTo<IMtgCardSymbolAlternative>()
           ).as("alternatives")
         ])
-        .$castTo<MtgCardSymbolDto>()
+        .$castTo<IMtgCardSymbolDto>()
         .execute()
-        .then((r: Array<MtgCardSymbolDto>) => this.resultFactory.createSuccessResult<Array<MtgCardSymbolDto>>(r));
+        .then((r: Array<IMtgCardSymbolDto>) => this.resultFactory.createSuccessResult<Array<IMtgCardSymbolDto>>(r));
     } catch (err) {
-      return this.resultFactory.createExceptionResultPromise<Array<MtgCardSymbolDto>>(err);
+      return this.resultFactory.createExceptionResultPromise<Array<IMtgCardSymbolDto>>(err);
     }
   }
 

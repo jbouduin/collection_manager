@@ -1,7 +1,7 @@
 import { cloneDeep, noop } from "lodash";
 import * as React from "react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
-import { DeckCardListDto, UpdateDeckCardQuantityDto } from "../../../../../common/dto";
+import { IDeckCardListDto, IUpdateDeckCardQuantityDto } from "../../../../../common/dto";
 import { IpcProxyService, IpcProxyServiceContext } from "../../../../shared/context";
 import { DeckContentType } from "../../../types";
 import { DeckCardListViewmodel } from "../../../viewmodels";
@@ -22,9 +22,9 @@ export function LeftPanel(props: LeftPanelProps) {
   //#region Effect ------------------------------------------------------------
   React.useEffect(
     () => void ipcProxyService
-      .getData<Array<DeckCardListDto>>(`/deck/${props.deckId}/card`)
+      .getData<Array<IDeckCardListDto>>(`/deck/${props.deckId}/card`)
       .then(
-        (r: Array<DeckCardListDto>) => setCards(r.map((d: DeckCardListDto) => new DeckCardListViewmodel(d))),
+        (r: Array<IDeckCardListDto>) => setCards(r.map((d: IDeckCardListDto) => new DeckCardListViewmodel(d))),
         noop
       ),
     [props.deckId]
@@ -33,7 +33,7 @@ export function LeftPanel(props: LeftPanelProps) {
 
   //#region Event handling ----------------------------------------------------
   function onCardDecrease(card: DeckCardListViewmodel, content: DeckContentType): void {
-    const dto: UpdateDeckCardQuantityDto = {
+    const dto: IUpdateDeckCardQuantityDto = {
       deck_card_id: card.deckCardId,
       deck_quantity: content == "deck" ? card.deckQuantity - 1 : card.deckQuantity,
       sideboard_quantity: content == "deck" ? card.sideboardQuantity : card.sideboardQuantity - 1
@@ -42,7 +42,7 @@ export function LeftPanel(props: LeftPanelProps) {
   }
 
   function onCardIncrease(card: DeckCardListViewmodel, content: DeckContentType): void {
-    const dto: UpdateDeckCardQuantityDto = {
+    const dto: IUpdateDeckCardQuantityDto = {
       deck_card_id: card.deckCardId,
       deck_quantity: content == "deck" ? card.deckQuantity + 1 : card.deckQuantity,
       sideboard_quantity: content == "deck" ? card.sideboardQuantity : card.sideboardQuantity + 1
@@ -50,11 +50,11 @@ export function LeftPanel(props: LeftPanelProps) {
     updateQuantity(dto);
   }
 
-  function updateQuantity(dto: UpdateDeckCardQuantityDto): void {
+  function updateQuantity(dto: IUpdateDeckCardQuantityDto): void {
     void ipcProxyService
-      .patchData<UpdateDeckCardQuantityDto, DeckCardListDto>(`/deck-card/${dto.deck_card_id}/quantity`, dto)
+      .patchData<IUpdateDeckCardQuantityDto, IDeckCardListDto>(`/deck-card/${dto.deck_card_id}/quantity`, dto)
       .then(
-        (r: DeckCardListDto) => {
+        (r: IDeckCardListDto) => {
           const newCards = cloneDeep(cards);
           const indexOf = newCards.findIndex((c: DeckCardListViewmodel) => c.deckCardId == dto.deck_card_id);
           newCards[indexOf] = new DeckCardListViewmodel(r);
@@ -65,7 +65,7 @@ export function LeftPanel(props: LeftPanelProps) {
   }
 
   function onCardRemove(card: DeckCardListViewmodel, content: DeckContentType): void {
-    const dto: UpdateDeckCardQuantityDto = {
+    const dto: IUpdateDeckCardQuantityDto = {
       deck_card_id: card.deckCardId,
       deck_quantity: content == "deck" ? 0 : card.deckQuantity,
       sideboard_quantity: content == "deck" ? card.sideboardQuantity : 0

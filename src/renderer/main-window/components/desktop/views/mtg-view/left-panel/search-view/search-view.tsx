@@ -1,7 +1,7 @@
 import { Button, Checkbox } from "@blueprintjs/core";
 import { cloneDeep } from "lodash";
 import * as React from "react";
-import { CatalogTypeDto, ColorDto, GameFormatDto, MtgCardSetDto } from "../../../../../../../../common/dto";
+import { ICatalogTypeDto, IColorDto, IGameFormatDto, IMtgCardSetDto } from "../../../../../../../../common/dto";
 import { CardRarity, MtgColor, MtgGameFormat } from "../../../../../../../../common/types";
 import { displayValueRecordToSelectOptions, handleBooleanChange, SelectOption } from "../../../../../../../shared/components/utils";
 import { CardSetContext, DisplayValueService, DisplayValueServiceContext, GameFormatContext, IpcProxyService, IpcProxyServiceContext } from "../../../../../../../shared/context";
@@ -50,15 +50,15 @@ const CatalogMemo = React.memo(
 export function SearchView(props: SearchViewProps) {
   //#region State -----------------------------------------------------------------------
   const [state, setState] = React.useState<CardSearchViewmodel>(new CardSearchViewmodel());
-  const [catalogs, setCatalogs] = React.useState<Array<CatalogTypeDto>>(new Array<CatalogTypeDto>());
-  const [colors, setColors] = React.useState<Array<ColorDto>>(new Array<ColorDto>());
+  const [catalogs, setCatalogs] = React.useState<Array<ICatalogTypeDto>>(new Array<ICatalogTypeDto>());
+  const [colors, setColors] = React.useState<Array<IColorDto>>(new Array<IColorDto>());
   //#endregion
 
   //#region Context ---------------------------------------------------------------------
-  const cardSetContext = React.useContext<Array<MtgCardSetDto>>(CardSetContext);
+  const cardSetContext = React.useContext<Array<IMtgCardSetDto>>(CardSetContext);
   const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
   const displayValueService = React.useContext<DisplayValueService>(DisplayValueServiceContext);
-  const gameFormatContext = React.useContext<Array<GameFormatDto>>(GameFormatContext);
+  const gameFormatContext = React.useContext<Array<IGameFormatDto>>(GameFormatContext);
   //#endregion
 
   //#region memoized item lists ---------------------------------------------------------
@@ -68,7 +68,7 @@ export function SearchView(props: SearchViewProps) {
   );
 
   const gameFormats: Array<SelectOption<MtgGameFormat>> = React.useMemo(
-    () => new Array<SelectOption<MtgGameFormat>>(...gameFormatContext.map((g: GameFormatDto) => {
+    () => new Array<SelectOption<MtgGameFormat>>(...gameFormatContext.map((g: IGameFormatDto) => {
       return { value: g.id, label: g.display_text };
     })),
     [gameFormatContext]
@@ -78,17 +78,17 @@ export function SearchView(props: SearchViewProps) {
     () => {
       void Promise
         .all([
-          ipcProxyService.getData<Array<CatalogTypeDto>>("/catalog"),
-          ipcProxyService.getData<Array<ColorDto>>("/color")
+          ipcProxyService.getData<Array<ICatalogTypeDto>>("/catalog"),
+          ipcProxyService.getData<Array<IColorDto>>("/color")
         ])
         .then(
-          (value: [Array<CatalogTypeDto>, Array<ColorDto>]) => {
+          (value: [Array<ICatalogTypeDto>, Array<IColorDto>]) => {
             setCatalogs(value[0]);
             setColors(value[1]);
           },
           (_r: Error) => {
-            setCatalogs(new Array<CatalogTypeDto>());
-            setColors(new Array<ColorDto>());
+            setCatalogs(new Array<ICatalogTypeDto>());
+            setColors(new Array<IColorDto>());
           }
         );
     },
@@ -118,7 +118,7 @@ export function SearchView(props: SearchViewProps) {
         onChange={handleBooleanChange((value: boolean) => onSelectOptionEvent((v: CardSearchViewmodel) => v.ownedCards = value))}
       />
       <CardSetSelect
-        cardSets={cardSetContext.map((c: MtgCardSetDto) => new CardSetViewmodel(c))}
+        cardSets={cardSetContext.map((c: IMtgCardSetDto) => new CardSetViewmodel(c))}
         key="card-set-select"
         onClearOptions={() => onSelectOptionEvent((v: CardSearchViewmodel) => v.clearCardSetSelection())}
         onOptionAdded={(cardSet: string) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addCardSet(cardSet))}
@@ -171,8 +171,8 @@ export function SearchView(props: SearchViewProps) {
         selectedItems={state.selectedGameFormats}
       />
       {
-        catalogs.filter((c: CatalogTypeDto) => c.count > 0)
-          .map((c: CatalogTypeDto) => {
+        catalogs.filter((c: ICatalogTypeDto) => c.count > 0)
+          .map((c: ICatalogTypeDto) => {
             return (
               <CatalogSelect
                 catalog={c}

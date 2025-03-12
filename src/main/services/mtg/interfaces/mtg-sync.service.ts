@@ -1,6 +1,6 @@
 import { WebContents } from "electron";
-import { SyncParamDto } from "../../../../common/dto";
+import { ISyncParamDto } from "../../../../common/dto";
 
 export interface IMtgSyncService {
-  synchronize(syncParam: SyncParamDto, webContents: WebContents): Promise<void>;
+  synchronize(syncParam: ISyncParamDto, webContents: WebContents): Promise<void>;
 }

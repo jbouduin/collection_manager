@@ -1,5 +1,5 @@
 import { container, inject, singleton } from "tsyringe";
-import { DeckCardListDto, DeckDetailsDto, DeckDto, DeckFolderDto, DeckListDto } from "../../../../common/dto";
+import { IDeckCardListDto, IDeckDetailsDto, IDeckDto, IDeckFolderDto, IDeckListDto } from "../../../../common/dto";
 import { IDeckRepository } from "../../../database/repo/interfaces";
 import { BaseRouter, DeleteRouteCallback, IResult, IRouter, RouteCallback, RoutedRequest } from "../../base";
 import { ILogService, IResultFactory, IRouterService } from "../../infra/interfaces";
@@ -30,7 +30,7 @@ export class DeckRouter extends BaseRouter implements IRouter {
   //#endregion
 
   //#region Route callbacks ---------------------------------------------------
-  private createDeck(request: RoutedRequest<DeckListDto>): Promise<IResult<DeckDto>> {
+  private createDeck(request: RoutedRequest<IDeckListDto>): Promise<IResult<IDeckDto>> {
     return container.resolve<IDeckRepository>(REPOSITORIES.DeckRepository).createDeck(request.data);
   }
 
@@ -42,45 +42,45 @@ export class DeckRouter extends BaseRouter implements IRouter {
       );
   }
 
-  private getAllFolders(_request: RoutedRequest<void>): Promise<IResult<Array<DeckFolderDto>>> {
+  private getAllFolders(_request: RoutedRequest<void>): Promise<IResult<Array<IDeckFolderDto>>> {
     return container.resolve<IDeckRepository>(REPOSITORIES.DeckRepository).getAllFolders();
   }
 
-  private getAllDecksInFolder(request: RoutedRequest<void>): Promise<IResult<Array<DeckListDto>>> {
+  private getAllDecksInFolder(request: RoutedRequest<void>): Promise<IResult<Array<IDeckListDto>>> {
     return this.parseIntegerUrlParameter(request.params["id"], "Folder ID")
-      .continueAsync<Array<DeckListDto>>(
+      .continueAsync<Array<IDeckListDto>>(
         (r: IResult<number>) => container.resolve<IDeckRepository>(REPOSITORIES.DeckRepository).getAllDecksInFolder(r.data),
-        (r: IResult<number>) => r.castAsync<Array<DeckListDto>>(undefined)
+        (r: IResult<number>) => r.castAsync<Array<IDeckListDto>>(undefined)
       );
   }
 
-  private getAllCardsOfDeck(request: RoutedRequest<void>): Promise<IResult<Array<DeckCardListDto>>> {
+  private getAllCardsOfDeck(request: RoutedRequest<void>): Promise<IResult<Array<IDeckCardListDto>>> {
     return this.parseIntegerUrlParameter(request.params["id"], "Deck ID")
-      .continueAsync<Array<DeckCardListDto>>(
+      .continueAsync<Array<IDeckCardListDto>>(
         (r: IResult<number>) => container.resolve<IDeckRepository>(REPOSITORIES.DeckRepository).getAllCardsOfDeck(r.data),
-        (r: IResult<number>) => r.castAsync<Array<DeckCardListDto>>(undefined)
+        (r: IResult<number>) => r.castAsync<Array<IDeckCardListDto>>(undefined)
       );
   }
 
-  private getDeckDetails(request: RoutedRequest<void>): Promise<IResult<DeckDetailsDto>> {
+  private getDeckDetails(request: RoutedRequest<void>): Promise<IResult<IDeckDetailsDto>> {
     return this.parseIntegerUrlParameter(request.params["id"], "Deck ID")
-      .continueAsync<DeckDetailsDto>(
+      .continueAsync<IDeckDetailsDto>(
         (r: IResult<number>) => container.resolve<IDeckRepository>(REPOSITORIES.DeckRepository).getDeckDetails(r.data),
-        (r: IResult<number>) => r.castAsync<DeckListDto>(undefined)
+        (r: IResult<number>) => r.castAsync<IDeckListDto>(undefined)
       );
   }
 
-  private patchDeck(request: RoutedRequest<Partial<DeckListDto>>): Promise<IResult<DeckDto>> {
+  private patchDeck(request: RoutedRequest<Partial<IDeckListDto>>): Promise<IResult<IDeckDto>> {
     return this.parseIntegerUrlParameter(request.params["id"], "Deck ID")
-      .continueAsync<DeckDto>(
+      .continueAsync<IDeckDto>(
         (r: IResult<number>) => {
           if (r.data != request.data.id) {
-            return this.resultFactory.createBadRequestResultPromise<DeckListDto>("Datafield ID in the body does not correspond to the URL.");
+            return this.resultFactory.createBadRequestResultPromise<IDeckListDto>("Datafield ID in the body does not correspond to the URL.");
           } else {
             return container.resolve<IDeckRepository>(REPOSITORIES.DeckRepository).patchDeck(request.data);
           }
         },
-        (r: IResult<number>) => r.castAsync<DeckListDto>(undefined)
+        (r: IResult<number>) => r.castAsync<IDeckListDto>(undefined)
       );
   }
   //#endregion

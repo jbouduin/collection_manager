@@ -4,7 +4,7 @@ import { MigrationProvider } from "kysely";
 import { homedir } from "os";
 import { join } from "path";
 import { container, injectable } from "tsyringe";
-import { MtgCardImageDataDto, SyncParamDto } from "../../../../common/dto";
+import { IMtgCardImageDataDto, ISyncParamDto } from "../../../../common/dto";
 import { IpcChannel, IpcRequest } from "../../../../common/ipc";
 import { MigrationDi } from "../../../database/migrations/migrations.di";
 import { IResult, IRouter } from "../../base";
@@ -79,7 +79,7 @@ export class BootstrapService implements IBootstrapService {
       const requestedUrl = new URL(request.url);
       return container.resolve<ICardRepository>(REPOSITORIES.CardRepository)
         .getCardImageData(requestedUrl.hostname)
-        .then((data: IResult<MtgCardImageDataDto>) => {
+        .then((data: IResult<IMtgCardImageDataDto>) => {
           data.data.imageType = requestedUrl.searchParams.get("size") as ImageSize;
           data.data.side = requestedUrl.searchParams.get("side") as CardSide;
           const cacheService = container.resolve<IImageCacheService>(INFRASTRUCTURE.ImageCacheService);
@@ -119,8 +119,8 @@ export class BootstrapService implements IBootstrapService {
     );
   }
 
-  private firstUseSyncParam(): SyncParamDto {
-    const result: SyncParamDto = {
+  private firstUseSyncParam(): ISyncParamDto {
+    const result: ISyncParamDto = {
       cardImageStatusToSync: [],
       cardSelectionToSync: [],
       cardSetCodeToSyncCardsFor: undefined,

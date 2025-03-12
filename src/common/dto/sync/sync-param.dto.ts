@@ -1,6 +1,6 @@
 import { CatalogType, ImageStatus, ChangedImageStatusAction, CardSyncType, RulingSyncType, TimespanUnit } from "../../types";
 
-export interface SyncParamDto {
+export interface ISyncParamDto {
   /**
    * The catalogs to be synced
    */
@@ -34,5 +34,11 @@ export interface SyncParamDto {
    */
 }
 
-export type CardSyncParam = Omit<SyncParamDto, "catalogTypesToSync" | "syncCardSymbols" | "syncCardSets" | "rulingSyncType" | "oracleId">;
-export type RulingSyncParam = Omit<SyncParamDto, "catalogTypesToSync" | "syncCardSymbols" | "syncCardSets" | "cardSyncType" | "cardImageStatusToSync" | "syncCardsSyncedBeforeNumber" | "syncCardsSyncedBeforeUnit" | "cardSetCodeToSyncCardsFor" | "changedImageStatusAction">;
+export type ICardSyncParam = Omit<
+  ISyncParamDto,
+  "catalogTypesToSync" | "syncCardSymbols" | "syncCardSets" | "rulingSyncType" | "oracleId"
+>;
+export type IRulingSyncParam = Omit<
+  ISyncParamDto,
+  "catalogTypesToSync" | "syncCardSymbols" | "syncCardSets" | "cardSyncType" | "cardImageStatusToSync" | "syncCardsSyncedBeforeNumber" | "syncCardsSyncedBeforeUnit" | "cardSetCodeToSyncCardsFor" | "changedImageStatusAction"
+>;

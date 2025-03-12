@@ -1,4 +1,4 @@
-export interface DtoDataConfiguration {
+export interface IDataConfigurationDto {
   rootDataDirectory: string;
   cacheDirectory: string;
   databaseName: string;

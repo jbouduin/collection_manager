@@ -1,5 +1,5 @@
 import { container, inject, singleton } from "tsyringe";
-import { LegalityDto, RulingLineDto, RulingSyncParam } from "../../../../common/dto";
+import { ILegalityDto, IOracleRulingLineDto, IRulingSyncParam } from "../../../../common/dto";
 import { IOracleRepository } from "../../../database/repo/interfaces";
 import { BaseRouter, IResult, IRouter, RouteCallback, RoutedRequest } from "../../base";
 import { ILogService, IResultFactory, IRouterService } from "../../infra/interfaces";
@@ -26,18 +26,18 @@ export class OracleRouter extends BaseRouter implements IRouter {
   //#endregion
 
   //#region Route callbacks ---------------------------------------------------
-  private getLegalities(request: RoutedRequest<void>): Promise<IResult<Array<LegalityDto>>> {
+  private getLegalities(request: RoutedRequest<void>): Promise<IResult<Array<ILegalityDto>>> {
     return container.resolve<IOracleRepository>(REPOSITORIES.OracleRepository).getLegalities(request.params["id"]);
   }
 
-  private getRulings(request: RoutedRequest<void>): Promise<IResult<Array<RulingLineDto>>> {
+  private getRulings(request: RoutedRequest<void>): Promise<IResult<Array<IOracleRulingLineDto>>> {
     const oracleId = request.params["id"];
     const oracleRepository = container.resolve<IOracleRepository>(REPOSITORIES.OracleRepository);
     return oracleRepository
       .getByOracleId(oracleId)
-      .then((queryResult: IResult<Array<RulingLineDto>>) => {
+      .then((queryResult: IResult<Array<IOracleRulingLineDto>>) => {
         if (queryResult.data.length == 0) {
-          const syncParam: RulingSyncParam = {
+          const syncParam: IRulingSyncParam = {
             rulingSyncType: "oracleId",
             cardSelectionToSync: null,
             oracleId: oracleId
@@ -47,12 +47,12 @@ export class OracleRouter extends BaseRouter implements IRouter {
             .then(() => {
               return oracleRepository
                 .getByOracleId(oracleId)
-                .then((afterSync: IResult<Array<RulingLineDto>>) => {
-                  return afterSync.processResult((r: IResult<Array<RulingLineDto>>) => r.data = r.data.filter((line: RulingLineDto) => line.oracle_id !== null));
+                .then((afterSync: IResult<Array<IOracleRulingLineDto>>) => {
+                  return afterSync.processResult((r: IResult<Array<IOracleRulingLineDto>>) => r.data = r.data.filter((line: IOracleRulingLineDto) => line.oracle_id !== null));
                 });
             });
         } else {
-          return queryResult.processResult((r: IResult<Array<RulingLineDto>>) => r.data = r.data.filter((line: RulingLineDto) => line.oracle_id !== null));
+          return queryResult.processResult((r: IResult<Array<IOracleRulingLineDto>>) => r.data = r.data.filter((line: IOracleRulingLineDto) => line.oracle_id !== null));
         }
       });
   }

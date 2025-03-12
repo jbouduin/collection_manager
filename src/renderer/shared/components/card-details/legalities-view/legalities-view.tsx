@@ -1,6 +1,6 @@
 import { HTMLTable, Intent, Tag } from "@blueprintjs/core";
 import * as React from "react";
-import { GameFormatDto, LegalityDto } from "../../../../../common/dto";
+import { IGameFormatDto, ILegalityDto } from "../../../../../common/dto";
 import { DisplayValueService, DisplayValueServiceContext, GameFormatContext, IpcProxyService, IpcProxyServiceContext } from "../../../context";
 import { compareClassNameProp } from "../../utils";
 import { LegalitiesViewProps } from "./legalities-view.props";
@@ -8,7 +8,7 @@ import { LegalitiesViewProps } from "./legalities-view.props";
 export const LegalitiesView = React.memo(
   (props: LegalitiesViewProps) => {
     //#region State -------------------------------------------------------------
-    const [legalities, setLegalities] = React.useState(new Array<LegalityDto>());
+    const [legalities, setLegalities] = React.useState(new Array<ILegalityDto>());
     //#endregion
 
     //#region Context ---------------------------------------------------------------------
@@ -22,11 +22,11 @@ export const LegalitiesView = React.memo(
         if (props.oracleId) {
           void ipcProxyService.getData(`/oracle/${props.oracleId}/legality`)
             .then(
-              (queryResult: Array<LegalityDto>) => setLegalities(queryResult),
-              (_r: Error) => setLegalities(new Array<LegalityDto>())
+              (queryResult: Array<ILegalityDto>) => setLegalities(queryResult),
+              (_r: Error) => setLegalities(new Array<ILegalityDto>())
             );
         } else {
-          setLegalities(new Array<LegalityDto>());
+          setLegalities(new Array<ILegalityDto>());
         }
       },
       [props.oracleId]
@@ -37,7 +37,7 @@ export const LegalitiesView = React.memo(
     return (
       <GameFormatContext.Consumer>
         {
-          (gameFormats: Array<GameFormatDto>) => (
+          (gameFormats: Array<IGameFormatDto>) => (
             <HTMLTable
               bordered={false}
               compact={true}
@@ -56,15 +56,15 @@ export const LegalitiesView = React.memo(
     //#endregion
 
     //#region Auxiliary functions -----------------------------------------------
-    function getTable(gameFormats: Array<GameFormatDto>): Array<React.JSX.Element> {
+    function getTable(gameFormats: Array<IGameFormatDto>): Array<React.JSX.Element> {
       const table = new Array<React.JSX.Element>();
       let currentRow: Array<React.JSX.Element>;
-      legalities.forEach((legality: LegalityDto, idx: number) => {
+      legalities.forEach((legality: ILegalityDto, idx: number) => {
         if (idx % 2 == 0) {
           currentRow = new Array<React.JSX.Element>();
-          currentRow.push(<td style={{ paddingLeft: "0px" }}>{gameFormats.find((g: GameFormatDto) => g.id == legality.format)?.display_text || legality.format}</td>);
+          currentRow.push(<td style={{ paddingLeft: "0px" }}>{gameFormats.find((g: IGameFormatDto) => g.id == legality.format)?.display_text || legality.format}</td>);
         } else {
-          currentRow.push(<td>{gameFormats.find((g: GameFormatDto) => g.id == legality.format)?.display_text || legality.format}</td>);
+          currentRow.push(<td>{gameFormats.find((g: IGameFormatDto) => g.id == legality.format)?.display_text || legality.format}</td>);
         }
         let intent: Intent;
         let label: string = displayValueService.cardLegalityDisplayValues[legality.legality];

@@ -1,5 +1,5 @@
 import { inject, singleton } from "tsyringe";
-import { LogEntryDto } from "../../../../common/dto/infra/log-entry.dto";
+import { ILogEntryDto } from "../../../../common/dto/infra/log-entry.dto";
 import { EIpcStatus, IpcRequest } from "../../../../common/ipc";
 import { BaseRouter, IResult, IRouter, Result, RouteCallback } from "../../base";
 import { INFRASTRUCTURE } from "../../service.tokens";
@@ -28,22 +28,22 @@ export class LogRouter extends BaseRouter implements IRouter {
   //#endregion
 
   //#region private methods ---------------------------------------------------
-  public info(logEntry: IpcRequest<LogEntryDto>): Promise<IResult<void>> {
+  public info(logEntry: IpcRequest<ILogEntryDto>): Promise<IResult<void>> {
     this.logService.info("Renderer", logEntry.data.message, logEntry.data.args);
     return Promise.resolve(new Result<void>(EIpcStatus.NoContent));
   }
 
-  public error(logEntry: IpcRequest<LogEntryDto>): Promise<IResult<void>> {
+  public error(logEntry: IpcRequest<ILogEntryDto>): Promise<IResult<void>> {
     this.logService.error("Renderer", logEntry.data.message, logEntry.data.args);
     return Promise.resolve(new Result<void>(EIpcStatus.NoContent));
   }
 
-  public warning(logEntry: IpcRequest<LogEntryDto>): Promise<IResult<void>> {
+  public warning(logEntry: IpcRequest<ILogEntryDto>): Promise<IResult<void>> {
     this.logService.warning("Renderer", logEntry.data.message, logEntry.data.args);
     return Promise.resolve(new Result<void>(EIpcStatus.NoContent));
   }
 
-  public debug(logEntry: IpcRequest<LogEntryDto>): Promise<IResult<void>> {
+  public debug(logEntry: IpcRequest<ILogEntryDto>): Promise<IResult<void>> {
     this.logService.debug("Renderer", logEntry.data.message, logEntry.data.args);
     return Promise.resolve(new Result<void>(EIpcStatus.NoContent));
   }

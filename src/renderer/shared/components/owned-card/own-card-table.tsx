@@ -1,6 +1,6 @@
 import { HTMLTable, NumericInput } from "@blueprintjs/core";
 import * as React from "react";
-import { CardConditionDto } from "../../../../common/dto";
+import { ICardConditionDto } from "../../../../common/dto";
 import { CardCondition } from "../../../../common/types";
 import { CardConditionContext } from "../../context";
 import { OwnedCardQuantityViewmodel } from "../../viewmodels";
@@ -8,7 +8,7 @@ import { OwnedCardTableProps } from "./own-card-table.props";
 
 export function OwnedCardTable(props: OwnedCardTableProps) {
   //#region Context -----------------------------------------------------------
-  const cardConditionContext = React.useContext<Array<CardConditionDto>>(CardConditionContext);
+  const cardConditionContext = React.useContext<Array<ICardConditionDto>>(CardConditionContext);
   //#endregion
 
   //#region Rendering ---------------------------------------------------------
@@ -36,10 +36,10 @@ export function OwnedCardTable(props: OwnedCardTableProps) {
     </>
   );
 
-  function getTable(conditions: Array<CardConditionDto>): Array<React.JSX.Element> {
+  function getTable(conditions: Array<ICardConditionDto>): Array<React.JSX.Element> {
     const table: Array<React.JSX.Element> = conditions
-      .sort((a: CardConditionDto, b: CardConditionDto) => a.sequence - b.sequence)
-      .map((condition: CardConditionDto) => {
+      .sort((a: ICardConditionDto, b: ICardConditionDto) => a.sequence - b.sequence)
+      .map((condition: ICardConditionDto) => {
         return (
           <tr key={condition.id}>
             <td key="col1" style={{ paddingLeft: "0px" }}>{condition.expression}</td>

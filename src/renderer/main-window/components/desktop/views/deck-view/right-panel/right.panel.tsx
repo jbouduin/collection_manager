@@ -1,11 +1,11 @@
 import * as React from "react";
 import { RightPanelProps } from "./right-panel.props";
 import { H2, H3 } from "@blueprintjs/core";
-import { DeckDetailsDto } from "../../../../../../../common/dto";
+import { IDeckDetailsDto } from "../../../../../../../common/dto";
 import { IpcProxyService, IpcProxyServiceContext } from "../../../../../../shared/context";
 
 export function RightPanel(props: RightPanelProps) {
-  const [deck, setDeck] = React.useState<DeckDetailsDto>(undefined);
+  const [deck, setDeck] = React.useState<IDeckDetailsDto>(undefined);
 
   //#region Context -----------------------------------------------------------
   const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
@@ -15,9 +15,9 @@ export function RightPanel(props: RightPanelProps) {
   React.useEffect(
     () => {
       if (props.selectedDeckId != null) {
-        void ipcProxyService.getData<DeckDetailsDto>(`/deck/${props.selectedDeckId}`)
+        void ipcProxyService.getData<IDeckDetailsDto>(`/deck/${props.selectedDeckId}`)
           .then(
-            (dto: DeckDetailsDto) => setDeck(dto),
+            (dto: IDeckDetailsDto) => setDeck(dto),
             (_r: Error) => setDeck(null)
           );
       } else {

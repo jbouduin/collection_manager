@@ -1,6 +1,6 @@
 import { DeleteResult, ExpressionOrFactory, InsertResult, Selectable, SqlBool, Transaction, UpdateResult } from "kysely";
 import { inject, injectable } from "tsyringe";
-import { RulingSyncParam } from "../../../../../common/dto";
+import { IRulingSyncParam } from "../../../../../common/dto";
 import { ProgressCallback } from "../../../../../common/ipc";
 import { runSerial } from "../../../../../main/services/infra/util";
 import { CardTable, DatabaseSchema } from "../../../../database/schema";
@@ -15,7 +15,7 @@ import { logCompilable } from "../../../../database/log-compilable";
 
 
 @injectable()
-export class RulingSyncService extends BaseSyncService<RulingSyncParam> implements IRulingSyncService {
+export class RulingSyncService extends BaseSyncService<IRulingSyncParam> implements IRulingSyncService {
   //#region private readonly fields -------------------------------------------
   private readonly rulingLineAdapter: IOracleRulingLineAdapter;
   private readonly rulingAdapter: IOracleRulingAdapter;
@@ -36,7 +36,7 @@ export class RulingSyncService extends BaseSyncService<RulingSyncParam> implemen
   }
 
   //#region IRulingSyncService methods ----------------------------------------
-  public override async sync(syncParam: RulingSyncParam, progressCallback: ProgressCallback): Promise<void> {
+  public override async sync(syncParam: IRulingSyncParam, progressCallback: ProgressCallback): Promise<void> {
     // this will not return reversible_card of type land, as they do not have an oracle id
     progressCallback("Synchronizing rulings");
     const cards = await this.database.selectFrom("card")

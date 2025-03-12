@@ -1,8 +1,8 @@
-import { DeckDto } from "../../../../common/dto";
+import { IDeckDto } from "../../../../common/dto";
 import { MtgGameFormat } from "../../../../common/types";
 import { BaseViewmodel } from "../../../shared/viewmodels";
 
-export class DeckViewmodel extends BaseViewmodel<DeckDto> {
+export class DeckViewmodel extends BaseViewmodel<IDeckDto> {
   //#region Getters/Setters -----------------------------------------------
   public get description(): string {
     return this._dto.description;

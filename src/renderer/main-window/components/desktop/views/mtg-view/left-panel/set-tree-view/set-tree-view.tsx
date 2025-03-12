@@ -1,7 +1,7 @@
 import { ContextMenu, Menu, MenuItem, TreeNodeInfo } from "@blueprintjs/core";
 import { cloneDeep, isEqual, upperFirst } from "lodash";
 import * as React from "react";
-import { MtgCardSetDto, SyncParamDto } from "../../../../../../../../common/dto";
+import { IMtgCardSetDto, ISyncParamDto } from "../../../../../../../../common/dto";
 import { CardSetGroupBy, CardSetSort, CardSetType } from "../../../../../../../../common/types";
 import { IpcProxyService, IpcProxyServiceContext } from "../../../../../../../shared/context";
 import { TreeConfigurationViewmodel } from "../../../../../../viewmodels";
@@ -59,7 +59,7 @@ export function SetTreeView(props: LeftPanelProps) {
 
   function synchronizeSet(code: string): void {
     props.showSplashScreen();
-    const params: SyncParamDto = {
+    const params: ISyncParamDto = {
       catalogTypesToSync: [],
       syncCardSymbols: false,
       syncCardSets: false,
@@ -73,7 +73,7 @@ export function SetTreeView(props: LeftPanelProps) {
       changedImageStatusAction: "delete",
       oracleId: undefined
     };
-    void ipcProxyService.postData<SyncParamDto, never>("/mtg-sync", params)
+    void ipcProxyService.postData<ISyncParamDto, never>("/mtg-sync", params)
       .then(
         () => props.hideSplashScreen(null),
         () => props.hideSplashScreen(null)
@@ -197,8 +197,8 @@ export function SetTreeView(props: LeftPanelProps) {
     });
   }
 
-  function createDtoForBlockOrType(group: string): MtgCardSetDto {
-    const groupNodeDto: MtgCardSetDto = {
+  function createDtoForBlockOrType(group: string): IMtgCardSetDto {
+    const groupNodeDto: IMtgCardSetDto = {
       svg: null,
       block: null,
       code: null,

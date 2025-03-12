@@ -1,9 +1,9 @@
-import { OwnedCardCollectionMapDto, OwnedCardQuantityDto } from "../../../../common/dto";
+import { IOwnedCardCollectionMapDto, IOwnedCardQuantityDto } from "../../../../common/dto";
 import { CardCondition } from "../../../../common/types";
 import { BaseViewmodel } from "../base.viewmodel";
 
 
-export class OwnedCardQuantityViewmodel extends BaseViewmodel<OwnedCardQuantityDto> {
+export class OwnedCardQuantityViewmodel extends BaseViewmodel<IOwnedCardQuantityDto> {
   //#region Getters -----------------------------------------------------------
   public get conditionId(): CardCondition {
     return this._dto.condition_id;
@@ -16,16 +16,16 @@ export class OwnedCardQuantityViewmodel extends BaseViewmodel<OwnedCardQuantityD
 
   //#region Get/Set -----------------------------------------------------------
   public get quantity(): number {
-    return this._dto.collectionMaps.reduce((prev: number, cur: OwnedCardCollectionMapDto) => prev + cur.quantity, 0);
+    return this._dto.collectionMaps.reduce((prev: number, cur: IOwnedCardCollectionMapDto) => prev + cur.quantity, 0);
   }
 
   public set quantity(value: number) {
-    this._dto.collectionMaps.forEach((m: OwnedCardCollectionMapDto) => m.quantity = value);
+    this._dto.collectionMaps.forEach((m: IOwnedCardCollectionMapDto) => m.quantity = value);
   }
   //#endregion
 
   //#region Constructor -------------------------------------------------------
-  public constructor(dto: OwnedCardQuantityDto) {
+  public constructor(dto: IOwnedCardQuantityDto) {
     super(dto);
   }
   //#endregion

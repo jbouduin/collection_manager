@@ -1,4 +1,4 @@
-import { CollectionDto } from "../../../../common/dto";
+import { ICollectionDto } from "../../../../common/dto";
 import { IBaseTreeNodeViewmodel } from "../../../shared/components/base";
 import { CollectionViewmodel } from "./collection.viewmodel";
 
@@ -9,7 +9,7 @@ export class CollectionTreeViewmodel extends CollectionViewmodel implements IBas
   //#endregion
 
   //#region Constructor -------------------------------------------------------
-  public constructor(dto: CollectionDto, isSelected: boolean, isExpanded: boolean) {
+  public constructor(dto: ICollectionDto, isSelected: boolean, isExpanded: boolean) {
     super(dto);
     this.isSelected = isSelected;
     this.isExpanded = isExpanded;

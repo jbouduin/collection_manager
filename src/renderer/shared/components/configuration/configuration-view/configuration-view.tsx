@@ -5,12 +5,12 @@ import { DataConfigurationView } from "../data-configuration-view/data-configura
 import { DatabaseViewConfigurationView } from "../database-view-configuration-view/database-view-configuration-view";
 import { ConfigurationViewProps } from "./configuration-view.props";
 import { IpcProxyService, IpcProxyServiceContext } from "../../../context";
-import { CatalogTypeDto } from "../../../../../common/dto";
+import { ICatalogTypeDto } from "../../../../../common/dto";
 
 // LATER add logServerResponses and debuglevel (consider adding a different part in configurationdto for system settings)
 export function ConfigurationView(props: ConfigurationViewProps) {
   //#region State -----------------------------------------------------------------------
-  const [state, setState] = React.useState<Array<CatalogTypeDto>>(new Array<CatalogTypeDto>());
+  const [state, setState] = React.useState<Array<ICatalogTypeDto>>(new Array<ICatalogTypeDto>());
   //#endregion
 
   //#region Context -----------------------------------------------------------
@@ -20,10 +20,10 @@ export function ConfigurationView(props: ConfigurationViewProps) {
   //#region Effects -----------------------------------------------------------
   React.useEffect(
     () => {
-      void ipcProxyService.getData<Array<CatalogTypeDto>>("/catalog")
+      void ipcProxyService.getData<Array<ICatalogTypeDto>>("/catalog")
         .then(
-          (r: Array<CatalogTypeDto>) => setState(r),
-          (_r: Error) => setState(new Array<CatalogTypeDto>())
+          (r: Array<ICatalogTypeDto>) => setState(r),
+          (_r: Error) => setState(new Array<ICatalogTypeDto>())
         );
     },
     []

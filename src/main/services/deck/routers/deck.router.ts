@@ -1,9 +1,9 @@
 import { container, inject, singleton } from "tsyringe";
 import { DeckCardListDto, DeckDetailsDto, DeckDto, DeckFolderDto, DeckListDto } from "../../../../common/dto";
+import { IDeckRepository } from "../../../database/repo/interfaces";
 import { BaseRouter, DeleteRouteCallback, IResult, IRouter, RouteCallback, RoutedRequest } from "../../base";
 import { ILogService, IResultFactory, IRouterService } from "../../infra/interfaces";
 import { INFRASTRUCTURE, REPOSITORIES } from "../../service.tokens";
-import { IDeckRepository } from "../../../database/repo/interfaces";
 
 
 @singleton()
@@ -75,7 +75,7 @@ export class DeckRouter extends BaseRouter implements IRouter {
       .continueAsync<DeckDto>(
         (r: IResult<number>) => {
           if (r.data != request.data.id) {
-            return this.resultFactory.createBadRequestResultPromise<DeckListDto>("Datafield ID in the body does not correspond to the URL");
+            return this.resultFactory.createBadRequestResultPromise<DeckListDto>("Datafield ID in the body does not correspond to the URL.");
           } else {
             return container.resolve<IDeckRepository>(REPOSITORIES.DeckRepository).patchDeck(request.data);
           }

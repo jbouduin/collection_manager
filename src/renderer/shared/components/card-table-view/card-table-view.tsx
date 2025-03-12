@@ -3,9 +3,11 @@ import * as React from "react";
 import { BaseTableViewProps, onDataSelected, selectedRegionTransformToRowSelection } from "../base";
 import { CardTableViewState } from "./card-table-view.state";
 
+// TODO if props.data changes clear the selected region -> be carefull: that makes the selected region stuff controlled
 export function CardTableView<T>(props: BaseTableViewProps<T>) {
   //#region State -------------------------------------------------------------
   const initialState = {
+    // TODO should this be state ? As long as we do not allow re-ordering columns by user probably not
     sortableColumnDefintions: props.sortableColumnDefintions,
     sortedIndexMap: new Array<number>()
   };
@@ -16,6 +18,7 @@ export function CardTableView<T>(props: BaseTableViewProps<T>) {
   return (
     <div className="cards-table-wrapper">
       <Table2
+        bodyContextMenuRenderer={props.bodyContextMenuRenderer}
         cellRendererDependencies={[props.data, state.sortedIndexMap]}
         children={state.sortableColumnDefintions.map((c) => c.getColumn(getCellData, sortColumn))}
         numRows={props.data?.length ?? 0}

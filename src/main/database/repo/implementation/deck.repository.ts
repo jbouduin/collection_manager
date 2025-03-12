@@ -2,7 +2,7 @@ import * as fs from "fs";
 import { DeleteResult, InsertResult, Transaction, Updateable } from "kysely";
 import * as helpers from "kysely/helpers/sqlite";
 import { inject, injectable } from "tsyringe";
-import { ColorDto, DeckCardListDto, DeckDetailsDto, DeckDto, DeckFolderDto, DeckListDto } from "../../../../common/dto";
+import { ColorDto, DeckCardListDto, DeckDetailsDto, DeckDto, DeckFolderDto, DeckListDto, UpdateDeckCardQuantityDto } from "../../../../common/dto";
 import { sqliteUTCTimeStamp } from "../../../../common/util";
 import { IResult } from "../../../services/base";
 import { IDatabaseService, ILogService, IResultFactory } from "../../../services/infra/interfaces";
@@ -13,9 +13,8 @@ import { DeckTable } from "../../schema/deck/deck.table";
 import { DECK_TABLE_FIELDS } from "../../schema/deck/table-field.constants";
 import { IDeckRepository } from "../interfaces";
 import { BaseRepository } from "./base.repository";
-import { $deckSize, $sideboardSize } from "./helpers";
+import { $cardColors, $cardFaces, $deckSize, $oracle, $sideboardSize } from "./helpers";
 import { $whereBoolean } from "./helpers/boolean-helpers";
-import { $cardColors, $cardFaces, $oracle } from "./helpers";
 
 
 @injectable()
@@ -89,6 +88,27 @@ export class DeckRepository extends BaseRepository implements IDeckRepository {
     }
   }
 
+  public deleteDeckCard(id: number): Promise<IResult<number>> {
+    try {
+      return this.database.transaction()
+        .execute(async (trx: Transaction<DatabaseSchema>) => {
+          return trx
+            .deleteFrom("deck_card")
+            .where("deck_card.id", "=", id)
+            .executeTakeFirstOrThrow()
+            .then((r: DeleteResult) => {
+              if (r.numDeletedRows > 0) {
+                return this.resultFactory.createSuccessResult<number>(Number(r.numDeletedRows));
+              } else {
+                return this.resultFactory.createNotFoundResult(`Deckcard with id '${id}'`);
+              }
+            });
+        });
+    } catch (err) {
+      return this.resultFactory.createExceptionResultPromise<number>(err);
+    }
+  }
+
   public getAllCardsOfDeck(deckId: number): Promise<IResult<Array<DeckCardListDto>>> {
     try {
       return this.database
@@ -98,6 +118,7 @@ export class DeckRepository extends BaseRepository implements IDeckRepository {
           ...CARD_TABLE_FIELDS,
           "deck_card.deck_quantity",
           "deck_card.sideboard_quantity",
+          "deck_card.id as deck_card_id",
           $cardFaces(eb.ref("card.id")).as("cardfaces"),
           $oracle(eb.ref("card.oracle_id")).as("oracle"),
           $cardColors(eb.ref("card.id")).as("cardColors")
@@ -211,6 +232,43 @@ export class DeckRepository extends BaseRepository implements IDeckRepository {
         });
     } catch (err) {
       return this.resultFactory.createExceptionResultPromise<DeckDto>(err);
+    }
+  }
+
+  public updateDeckCardQuantity(deckCard: UpdateDeckCardQuantityDto): Promise<IResult<DeckCardListDto>> {
+    try {
+      return this.database.transaction()
+        .execute(async (trx: Transaction<DatabaseSchema>) => {
+          return trx.updateTable("deck_card")
+            .set({
+              deck_quantity: deckCard.deck_quantity,
+              sideboard_quantity: deckCard.sideboard_quantity,
+              modified_at: sqliteUTCTimeStamp()
+            })
+            .where("deck_card.id", "=", deckCard.deck_card_id)
+            .executeTakeFirstOrThrow()
+            .then(() => trx.selectFrom("deck_card")
+              .innerJoin("card", "card.id", "deck_card.card_id")
+              .select((eb) => [
+                ...CARD_TABLE_FIELDS,
+                "deck_card.deck_quantity",
+                "deck_card.sideboard_quantity",
+                "deck_card.id as deck_card_id",
+                $cardFaces(eb.ref("card.id")).as("cardfaces"),
+                $oracle(eb.ref("card.oracle_id")).as("oracle"),
+                $cardColors(eb.ref("card.id")).as("cardColors")
+              ])
+              .where("deck_card.id", "=", deckCard.deck_card_id)
+              .$castTo<DeckCardListDto>()
+              .executeTakeFirst()
+              .then((qryResult: DeckCardListDto) => {
+                fs.writeFileSync("c:/data/new-assistant/json/updateDeckCardQuantity.json", JSON.stringify(qryResult, null, 2));
+                return this.resultFactory.createSuccessResult<DeckCardListDto>(qryResult);
+              })
+            );
+        });
+    } catch (err) {
+      return this.resultFactory.createExceptionResultPromise<DeckCardListDto>(err);
     }
   }
   //#endregion

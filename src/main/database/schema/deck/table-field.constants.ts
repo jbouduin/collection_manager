@@ -15,6 +15,7 @@ export const DECK_TABLE_FIELDS: Array<AnyColumnWithTable<DatabaseSchema, "deck">
 ];
 
 export const DECK_CARD_TABLE_FIELDS: Array<AnyColumnWithTable<DatabaseSchema, "deck_card">> = [
+  "deck_card.id",
   "deck_card.card_id",
   "deck_card.created_at",
   "deck_card.deck_id",

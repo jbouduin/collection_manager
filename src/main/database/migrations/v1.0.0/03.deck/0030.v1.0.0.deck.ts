@@ -59,14 +59,13 @@ function createV1_0_0_DeckCard(db: Kysely<any>) {
   const options: CreateTableOptions = {
     tableName: "deck_card",
     isSynced: false,
-    primaryKeyType: "custom",
-    primaryKey: [
-      { columnName: "deck_id", dataType: "integer", callback: (col: ColumnDefinitionBuilder) => col.notNull().references("deck.id").onDelete("cascade") },
-      { columnName: "card_id", dataType: "integer", callback: (col: ColumnDefinitionBuilder) => col.notNull().references("card.id").onDelete("cascade") }
-    ]
+    primaryKeyType: "integer"
   };
   return createTable(db, options)
+    .addColumn("deck_id", "integer", (col: ColumnDefinitionBuilder) => col.notNull().references("deck.id").onDelete("cascade"))
+    .addColumn("card_id", "integer", (col: ColumnDefinitionBuilder) => col.notNull().references("card.id").onDelete("cascade"))
     .addColumn("deck_quantity", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
     .addColumn("sideboard_quantity", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
+    .addUniqueConstraint("UC_DECK_ID_CARD_ID", ["deck_id", "card_id"])
     .execute();
 }

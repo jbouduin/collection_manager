@@ -1,6 +1,6 @@
 import { AnchorButton, Button, Dialog, DialogBody, DialogFooter, HTMLTable, Icon, Tab, Tabs } from "@blueprintjs/core";
 import * as React from "react";
-import { ILanguageDto, IMtgCardSetDetailsDto, IMtgCardSetLanguageDto } from "../../../../../common/dto";
+import { ILanguageDto, IMtgCardSetDetailDto, IMtgCardSetLanguageDto } from "../../../../../common/dto";
 import { SvgProvider } from "../../../../shared/components/svg-provider";
 import { DisplayValueService, DisplayValueServiceContext, IpcProxyService, IpcProxyServiceContext, LanguagesContext } from "../../../../shared/context";
 import { CardSetDetailsViewmodel } from "../../../viewmodels";
@@ -23,7 +23,7 @@ export function CardSetDialog(props: CardSetDialogProps) {
       if (props.cardSetId) {
         void ipcProxyService.getData(`/card-set/${props.cardSetId}`)
           .then(
-            (cardSetDetails: IMtgCardSetDetailsDto) => setCardSetDetails(new CardSetDetailsViewmodel(cardSetDetails)),
+            (cardSetDetails: IMtgCardSetDetailDto) => setCardSetDetails(new CardSetDetailsViewmodel(cardSetDetails)),
             (_r: Error) => setCardSetDetails(null)
           );
       }

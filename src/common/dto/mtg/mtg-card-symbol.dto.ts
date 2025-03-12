@@ -1,8 +1,6 @@
 import { Selectable } from "kysely";
-import { CardSymbolAlternativeTable, CardSymbolColorMapTable, CardSymbolTable } from "../../../main/database/schema";
-
-export type IMtgCardSymbolColorMapDto = Selectable<CardSymbolColorMapTable>;
-export type IMtgCardSymbolAlternative = Selectable<CardSymbolAlternativeTable>;
+import { CardSymbolTable } from "../../../main/database/schema";
+import { IMtgCardSymbolAlternative, IMtgCardSymbolColorMapDto } from "./types";
 
 export interface IMtgCardSymbolDto extends Selectable<CardSymbolTable> {
   colors: Array<IMtgCardSymbolColorMapDto>;

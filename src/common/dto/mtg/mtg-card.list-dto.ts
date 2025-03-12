@@ -5,8 +5,7 @@ import { IMtgCardfaceDto } from "./mtg-card-face.dto";
 import { IMtgCardLanguageDto } from "./mtg-card-language.dto";
 import { IOracleDto } from "./types";
 
-
-export interface ICardDto extends Selectable<CardTable> {
+export interface IMtgCardListDto extends Selectable<CardTable> {
   cardColors: Array<IMtgCardColorDto>;
   cardfaces: Array<IMtgCardfaceDto>;
   languages: Array<IMtgCardLanguageDto>;

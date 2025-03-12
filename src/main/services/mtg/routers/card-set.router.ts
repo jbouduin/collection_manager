@@ -1,5 +1,5 @@
 import { inject, singleton } from "tsyringe";
-import { IMtgCardSetDetailsDto, IMtgCardSetDto, IMtgCardDetailDto } from "../../../../common/dto";
+import { IMtgCardSetDetailDto, IMtgCardSetDto, IMtgCardDetailDto } from "../../../../common/dto";
 import { ICardRepository, ICardSetRepository } from "../../../database/repo/interfaces";
 import { BaseRouter, IResult, IRouter, RouteCallback, RoutedRequest } from "../../base";
 import { ILogService, IResultFactory, IRouterService } from "../../infra/interfaces";
@@ -43,7 +43,7 @@ export class CardSetRouter extends BaseRouter implements IRouter {
     return this.cardRepository.getCardDetails(request.params["id"]);
   }
 
-  private getDetails(request: RoutedRequest<void>): Promise<IResult<IMtgCardSetDetailsDto>> {
+  private getDetails(request: RoutedRequest<void>): Promise<IResult<IMtgCardSetDetailDto>> {
     return this.cardSetRepository.getDetails(request.params["id"]);
   }
   //#endregion

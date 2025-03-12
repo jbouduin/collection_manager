@@ -2,7 +2,7 @@ import * as fs from "fs";
 import { DeleteResult, InsertResult, Transaction, Updateable } from "kysely";
 import * as helpers from "kysely/helpers/sqlite";
 import { inject, injectable } from "tsyringe";
-import { IColorDto, IDeckCardListDto, IDeckDetailsDto, IDeckDto, IDeckFolderDto, IDeckListDto, IUpdateDeckCardQuantityDto } from "../../../../common/dto";
+import { IColorDto, IDeckCardListDto, IDeckDetailDto, IDeckDto, IDeckFolderDto, IDeckListDto, IUpdateDeckCardQuantityDto } from "../../../../common/dto";
 import { sqliteUTCTimeStamp } from "../../../../common/util";
 import { IResult } from "../../../services/base";
 import { IDatabaseService, ILogService, IResultFactory } from "../../../services/infra/interfaces";
@@ -183,23 +183,23 @@ export class DeckRepository extends BaseRepository implements IDeckRepository {
     }
   }
 
-  public getDeckDetails(id: number): Promise<IResult<IDeckDetailsDto>> {
+  public getDeckDetails(id: number): Promise<IResult<IDeckDetailDto>> {
     try {
       return this.database
         .selectFrom("deck")
         .selectAll()
         .where("deck.id", "=", id)
-        .$castTo<IDeckDetailsDto>()
+        .$castTo<IDeckDetailDto>()
         .executeTakeFirst()
-        .then((dto: IDeckDetailsDto) => {
+        .then((dto: IDeckDetailDto) => {
           if (dto) {
-            return this.resultFactory.createSuccessResult<IDeckDetailsDto>(dto);
+            return this.resultFactory.createSuccessResult<IDeckDetailDto>(dto);
           } else {
             return this.resultFactory.createNotFoundResult<IDeckListDto>(`Deck with ID '${id}'`);
           }
         });
     } catch (err) {
-      return this.resultFactory.createExceptionResultPromise<IDeckDetailsDto>(err);
+      return this.resultFactory.createExceptionResultPromise<IDeckDetailDto>(err);
     }
   }
 

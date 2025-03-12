@@ -1,10 +1,10 @@
-import { IMtgCardSetDetailsDto, IMtgCardSetLanguageDto, ILanguageDto } from "../../../../common/dto";
+import { IMtgCardSetDetailDto, IMtgCardSetLanguageDto, ILanguageDto } from "../../../../common/dto";
 import { CardSetType } from "../../../../common/types";
 
 
 export class CardSetDetailsViewmodel {
   //#region Private fields ----------------------------------------------------
-  private _dtoCardSet: IMtgCardSetDetailsDto;
+  private _dtoCardSet: IMtgCardSetDetailDto;
   //#endregion
 
   //#region Public getters ----------------------------------------------------
@@ -81,7 +81,7 @@ export class CardSetDetailsViewmodel {
   //#endregion
 
   //#region Constructor & C° --------------------------------------------------
-  public constructor(dtoCardSetDetails: IMtgCardSetDetailsDto) {
+  public constructor(dtoCardSetDetails: IMtgCardSetDetailDto) {
     this._dtoCardSet = dtoCardSetDetails;
   }
   //#endregion

@@ -1,4 +1,4 @@
-import { IDeckCardListDto, IDeckDetailsDto, IDeckDto, IDeckFolderDto, IDeckListDto, IUpdateDeckCardQuantityDto } from "../../../../common/dto";
+import { IDeckCardListDto, IDeckDetailDto, IDeckDto, IDeckFolderDto, IDeckListDto, IUpdateDeckCardQuantityDto } from "../../../../common/dto";
 import { IResult } from "../../../services/base";
 
 
@@ -9,7 +9,7 @@ export interface IDeckRepository {
   getAllCardsOfDeck(deckId: number): Promise<IResult<Array<IDeckCardListDto>>>;
   getAllDecksInFolder(folderId: number): Promise<IResult<Array<IDeckListDto>>>;
   getAllFolders(): Promise<IResult<Array<IDeckFolderDto>>>;
-  getDeckDetails(id: number): Promise<IResult<IDeckDetailsDto>>;
+  getDeckDetails(id: number): Promise<IResult<IDeckDetailDto>>;
   patchDeck(deck: Partial<IDeckDto>): Promise<IResult<IDeckDto>>;
   updateDeckCardQuantity(deckCard: IUpdateDeckCardQuantityDto): Promise<IResult<IDeckCardListDto>>;
 }

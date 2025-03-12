@@ -1,5 +1,5 @@
 import { container, inject, singleton } from "tsyringe";
-import { IDeckCardListDto, IDeckDetailsDto, IDeckDto, IDeckFolderDto, IDeckListDto } from "../../../../common/dto";
+import { IDeckCardListDto, IDeckDetailDto, IDeckDto, IDeckFolderDto, IDeckListDto } from "../../../../common/dto";
 import { IDeckRepository } from "../../../database/repo/interfaces";
 import { BaseRouter, DeleteRouteCallback, IResult, IRouter, RouteCallback, RoutedRequest } from "../../base";
 import { ILogService, IResultFactory, IRouterService } from "../../infra/interfaces";
@@ -62,9 +62,9 @@ export class DeckRouter extends BaseRouter implements IRouter {
       );
   }
 
-  private getDeckDetails(request: RoutedRequest<void>): Promise<IResult<IDeckDetailsDto>> {
+  private getDeckDetails(request: RoutedRequest<void>): Promise<IResult<IDeckDetailDto>> {
     return this.parseIntegerUrlParameter(request.params["id"], "Deck ID")
-      .continueAsync<IDeckDetailsDto>(
+      .continueAsync<IDeckDetailDto>(
         (r: IResult<number>) => container.resolve<IDeckRepository>(REPOSITORIES.DeckRepository).getDeckDetails(r.data),
         (r: IResult<number>) => r.castAsync<IDeckListDto>(undefined)
       );

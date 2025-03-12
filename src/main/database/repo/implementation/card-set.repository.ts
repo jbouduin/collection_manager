@@ -1,7 +1,7 @@
 import { sql } from "kysely";
 import * as helpers from "kysely/helpers/sqlite";
 import { inject, injectable } from "tsyringe";
-import { IMtgCardSetDetailsDto, IMtgCardSetDto, IMtgCardSetLanguageDto } from "../../../../common/dto";
+import { IMtgCardSetDetailDto, IMtgCardSetDto, IMtgCardSetLanguageDto } from "../../../../common/dto";
 import { IResult } from "../../../services/base";
 import { IDatabaseService, IImageCacheService, ILogService, IResultFactory } from "../../../services/infra/interfaces";
 import { INFRASTRUCTURE } from "../../../services/service.tokens";
@@ -46,7 +46,7 @@ export class CardSetRepository extends BaseRepository implements ICardSetReposit
     }
   }
 
-  public getDetails(cardSetId: string): Promise<IResult<IMtgCardSetDetailsDto>> {
+  public getDetails(cardSetId: string): Promise<IResult<IMtgCardSetDetailDto>> {
     try {
       return this.database
         .selectFrom("card_set")
@@ -68,12 +68,12 @@ export class CardSetRepository extends BaseRepository implements ICardSetReposit
         ])
         .where("card_set.id", "=", cardSetId)
         // .$call(this.logCompilable)
-        .$castTo<IMtgCardSetDetailsDto>()
+        .$castTo<IMtgCardSetDetailDto>()
         .executeTakeFirst()
-        .then((r) => this.resultFactory.createSuccessResult<IMtgCardSetDetailsDto>(r)
+        .then((r) => this.resultFactory.createSuccessResult<IMtgCardSetDetailDto>(r)
         );
     } catch (err) {
-      return this.resultFactory.createExceptionResultPromise<IMtgCardSetDetailsDto>(err);
+      return this.resultFactory.createExceptionResultPromise<IMtgCardSetDetailDto>(err);
     }
   }
   //#endregion

@@ -1,12 +1,13 @@
+import { Section } from "@blueprintjs/core";
 import * as React from "react";
 import { MtgCardSetDto } from "../../../../../../common/dto";
 import { BaseLookupResult, GenericTextColumn, GenericTextLookupResult, IBaseColumn } from "../../../../../shared/components/base";
 import { CardSetColumn, CardSetLookupResult, CardTableView, CollectiorNumberColumn, ColorIdentityColumn, ManaCostColumn } from "../../../../../shared/components/card-table-view";
 import { CardSetContext } from "../../../../../shared/context";
-import { LeftPanelTopProps } from "./left-panel-top.props";
 import { DeckCardListViewmodel } from "../../../../viewmodels";
+import { CardTableSectionProps } from "./card-table-section.props";
 
-export function LeftPanelTop(props: LeftPanelTopProps) {
+export function CardTableSection(props: CardTableSectionProps) {
   //#region Context -----------------------------------------------------------
   const cardSetContext = React.useContext<Array<MtgCardSetDto>>(CardSetContext);
   //#endregion
@@ -85,21 +86,6 @@ export function LeftPanelTop(props: LeftPanelTopProps) {
     },
     []
   );
-  //#endregion
-
-  //#region Rendering ---------------------------------------------------------
-  /*
-   * NOW one table for deck and one table for sideboard (eventually put them in collapsibles)
-   */
-  return (
-    <CardTableView<DeckCardListViewmodel>
-      data={props.cards}
-      hideSplashScreen={undefined}
-      onDataSelected={(cards: Array<DeckCardListViewmodel>) => props.onCardsSelected(cards)}
-      showSplashScreen={undefined}
-      sortableColumnDefintions={sortableColumnDefinitions}
-    />
-  );
 
   function cardSetCallback(card: DeckCardListViewmodel): CardSetLookupResult {
     const cardSet = cardSetContext.find((set: MtgCardSetDto) => set.id == card.setId);
@@ -114,5 +100,27 @@ export function LeftPanelTop(props: LeftPanelTopProps) {
       textValue: card.language
     };
   }
+  //#endregion
+
+  //#region Rendering ---------------------------------------------------------
+  return (
+    <Section
+      className="deck-card-section"
+      collapseProps={{ isOpen: props.isOpen, onToggle: props.onToggleCollaps }}
+      collapsible={true}
+      compact={true}
+      rightElement={(<p>{props.cards.length} Cards</p>)}
+      style={props.isOpen ? {} : { height: "40px" }}
+      title={props.content == "deck" ? "Deck" : "Sideboard"}
+    >
+      <CardTableView<DeckCardListViewmodel>
+        data={props.cards}
+        hideSplashScreen={undefined}
+        onDataSelected={(cards: Array<DeckCardListViewmodel>) => props.onCardsSelected(cards)}
+        showSplashScreen={undefined}
+        sortableColumnDefintions={sortableColumnDefinitions}
+      />
+    </Section>
+  );
   //#endregion
 }

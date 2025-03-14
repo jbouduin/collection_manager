@@ -7,7 +7,7 @@ import { IScryfallConfigurationDto } from "./scryfall-configuration.dto";
 export interface IConfigurationDto {
   dataConfiguration: IDataConfigurationDto;
   rendererConfiguration: IRendererConfigurationDto;
-  // to be moved to the database
+  // TODO move scryfall at least partially to the database
   scryfallConfiguration: IScryfallConfigurationDto;
   syncAtStartupConfiguration: ISyncParamDto;
   /*
@@ -19,8 +19,11 @@ export interface IConfigurationDto {
 
   /*
    * TODO system configuration
+   * - image size to be used for caching "large" or "small"
    * - dump json files from Scryfall (not to be stored in the database)
    * - renderer debug level
    * - main debug level
+   * - database debug level -> maybe not required, as this is debug by default
+   * - sync debug level
    */
 }

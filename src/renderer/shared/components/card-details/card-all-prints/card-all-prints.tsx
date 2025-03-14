@@ -2,7 +2,7 @@ import { SectionCard, Tooltip } from "@blueprintjs/core";
 import classNames from "classnames";
 import * as React from "react";
 import { ILanguageDto, IMtgCardLanguageDto, IMtgCardOtherPrint, IMtgCardSetDto } from "../../../../../common/dto";
-import { CardSetContext, IpcProxyService, IpcProxyServiceContext, LanguagesContext } from "../../../context";
+import { CardSetContext, IIpcProxyService, IpcProxyServiceContext, LanguagesContext } from "../../../context";
 import { SvgProvider } from "../../svg-provider";
 import { compareClassNameProp, getRarityColorClassname } from "../../utils";
 import { CardAllPrintsProps } from "./card-all-prints.props";
@@ -15,7 +15,7 @@ export const CardAllPrints = React.memo(
     //#endregion
 
     //#region Context ---------------------------------------------------------------------
-    const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
+    const ipcProxyService = React.useContext<IIpcProxyService>(IpcProxyServiceContext);
     const cardSetContext = React.useContext<Array<IMtgCardSetDto>>(CardSetContext);
     const languagesContext = React.useContext<Array<ILanguageDto>>(LanguagesContext);
     //#endregion

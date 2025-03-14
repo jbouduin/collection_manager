@@ -4,7 +4,7 @@ import * as React from "react";
 import { ICatalogTypeDto, IColorDto, IGameFormatDto, IMtgCardSetDto } from "../../../../../../../../common/dto";
 import { CardRarity, MtgColor, MtgGameFormat } from "../../../../../../../../common/types";
 import { displayValueRecordToSelectOptions, handleBooleanChange, SelectOption } from "../../../../../../../shared/components/utils";
-import { CardSetContext, DisplayValueService, DisplayValueServiceContext, GameFormatContext, IpcProxyService, IpcProxyServiceContext } from "../../../../../../../shared/context";
+import { CardSetContext, DisplayValueService, DisplayValueServiceContext, GameFormatContext, IIpcProxyService, IpcProxyServiceContext } from "../../../../../../../shared/context";
 import { CardSearchViewmodel, CardSetViewmodel } from "../../../../../../viewmodels";
 import { CardSetSelect } from "./card-set-select";
 import { CatalogSelect } from "./catalog-select.";
@@ -56,7 +56,7 @@ export function SearchView(props: SearchViewProps) {
 
   //#region Context ---------------------------------------------------------------------
   const cardSetContext = React.useContext<Array<IMtgCardSetDto>>(CardSetContext);
-  const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
+  const ipcProxyService = React.useContext<IIpcProxyService>(IpcProxyServiceContext);
   const displayValueService = React.useContext<DisplayValueService>(DisplayValueServiceContext);
   const gameFormatContext = React.useContext<Array<IGameFormatDto>>(GameFormatContext);
   //#endregion

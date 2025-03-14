@@ -2,7 +2,7 @@ import { AnchorButton, Button, Dialog, DialogBody, DialogFooter, HTMLTable, Icon
 import * as React from "react";
 import { ILanguageDto, IMtgCardSetDetailDto, IMtgCardSetLanguageDto } from "../../../../../common/dto";
 import { SvgProvider } from "../../../../shared/components/svg-provider";
-import { DisplayValueService, DisplayValueServiceContext, IpcProxyService, IpcProxyServiceContext, LanguagesContext } from "../../../../shared/context";
+import { DisplayValueService, DisplayValueServiceContext, IIpcProxyService, IpcProxyServiceContext, LanguagesContext } from "../../../../shared/context";
 import { CardSetDetailsViewmodel } from "../../../viewmodels";
 import { CardSetDialogProps } from "./card-set-dialog.props";
 
@@ -14,7 +14,7 @@ export function CardSetDialog(props: CardSetDialogProps) {
 
   //#region Context -----------------------------------------------------------
   const displayValueService = React.useContext<DisplayValueService>(DisplayValueServiceContext);
-  const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
+  const ipcProxyService = React.useContext<IIpcProxyService>(IpcProxyServiceContext);
   //#endregion
 
   //#region Effects -----------------------------------------------------------

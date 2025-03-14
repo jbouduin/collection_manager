@@ -1,8 +1,16 @@
 import { ToastProps } from "@blueprintjs/core";
-import { EIpcStatus, IpcRequest, IpcResponse } from "../../../common/ipc";
+import { EIpcStatus, IpcChannel, IpcRequest, IpcResponse } from "../../../common/ipc";
 
+export interface IIpcProxyService {
+  logServerResponses: boolean;
+  deleteData(path: string): Promise<number>;
+  getData<T extends object | string>(path: string): Promise<T>;
+  postData<T extends object, U extends object>(path: string, data: T): Promise<U>;
+  putData<T extends object, U extends object>(path: string, data: T): Promise<U>;
+  patchData<T extends object, U extends object>(path: string, data: T): Promise<U>;
+}
 
-export class IpcProxyService {
+export class IpcProxyService implements IIpcProxyService {
   //#region Private fields ----------------------------------------------------
   private showToast: (props: ToastProps, key?: string) => void;
   private deleteRequestCounter = 0;
@@ -34,12 +42,12 @@ export class IpcProxyService {
       .then(
         (response: IpcResponse<number>) => {
           if (response.status >= EIpcStatus.BadRequest) {
-            return this.processIpcErrorResponse(response);
+            return this.processIpcErrorResponse("DELETE", response);
           } else {
             return this.processIpcResponse(response);
           }
         },
-        (reason: Error) => this.processIpcRejection(reason)
+        (reason: Error) => this.processIpcRejection("DELETE", reason)
       );
   }
 
@@ -52,12 +60,12 @@ export class IpcProxyService {
       .then(
         (response: IpcResponse<T>) => {
           if (response.status >= EIpcStatus.BadRequest) {
-            return this.processIpcErrorResponse(response);
+            return this.processIpcErrorResponse("GET", response);
           } else {
             return this.processIpcResponse(response);
           }
         },
-        (reason: Error) => this.processIpcRejection(reason)
+        (reason: Error) => this.processIpcRejection("GET", reason)
       );
   }
 
@@ -71,12 +79,12 @@ export class IpcProxyService {
       .then(
         (response: IpcResponse<U>) => {
           if (response.status >= EIpcStatus.BadRequest) {
-            return this.processIpcErrorResponse(response);
+            return this.processIpcErrorResponse("POST", response);
           } else {
             return this.processIpcResponse(response);
           }
         },
-        (reason: Error) => this.processIpcRejection<U>(reason)
+        (reason: Error) => this.processIpcRejection<U>("POST", reason)
       );
   }
 
@@ -90,12 +98,12 @@ export class IpcProxyService {
       .then(
         (response: IpcResponse<U>) => {
           if (response.status >= EIpcStatus.BadRequest) {
-            return this.processIpcErrorResponse(response);
+            return this.processIpcErrorResponse("PUT", response);
           } else {
             return this.processIpcResponse(response);
           }
         },
-        (reason: Error) => this.processIpcRejection(reason)
+        (reason: Error) => this.processIpcRejection("PUT", reason)
       );
   }
 
@@ -109,18 +117,18 @@ export class IpcProxyService {
       .then(
         (response: IpcResponse<U>) => {
           if (response.status >= EIpcStatus.BadRequest) {
-            return this.processIpcErrorResponse(response);
+            return this.processIpcErrorResponse("PATCH", response);
           } else {
             return this.processIpcResponse(response);
           }
         },
-        (reason: Error) => this.processIpcRejection(reason)
+        (reason: Error) => this.processIpcRejection("PATCH", reason)
       );
   }
   //#endregion
 
   //#region Auxiliary methods -------------------------------------------------
-  private processIpcErrorResponse<T>(response: IpcResponse<T>): Promise<never> {
+  private processIpcErrorResponse<T>(channel: IpcChannel, response: IpcResponse<T>): Promise<never> {
     let errorMessage: string = undefined;
     switch (response.status) {
       case EIpcStatus.BadRequest:
@@ -163,7 +171,7 @@ export class IpcProxyService {
           isCloseButtonShown: true,
           icon: "warning-sign"
         },
-        `POST-${this.getRequestCounter}`
+        `${channel}-${this.getRequestCounter}`
       );
     }
     return Promise.reject(new Error(`Server error: ${response.status}`));
@@ -177,7 +185,7 @@ export class IpcProxyService {
     return response.data;
   }
 
-  private processIpcRejection<T>(reason: Error): Promise<T> {
+  private processIpcRejection<T>(channel: IpcChannel, reason: Error): Promise<T> {
     void this.showToast(
       {
         message: reason.message ?? "Some error occurred",
@@ -185,7 +193,7 @@ export class IpcProxyService {
         isCloseButtonShown: true,
         icon: "warning-sign"
       },
-      `POST-${this.getRequestCounter}`
+      `${channel}-${this.getRequestCounter}`
     );
     return Promise.reject<T>(reason);
   }

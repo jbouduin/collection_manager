@@ -2,7 +2,7 @@ import { cloneDeep, noop } from "lodash";
 import * as React from "react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { IDeckDto, IDeckListDto } from "../../../../../../common/dto";
-import { IpcProxyService, IpcProxyServiceContext } from "../../../../../shared/context";
+import { IIpcProxyService, IpcProxyServiceContext } from "../../../../../shared/context";
 import { DeckFolderTreeViewmodel, DeckListViewmodel } from "../../../../viewmodels";
 import { CenterPanel } from "./center-panel/center-panel";
 import { DeckViewProps } from "./deck-view.props";
@@ -19,7 +19,7 @@ export function DeckView(props: DeckViewProps) {
   //#endregion
 
   //#region Context -----------------------------------------------------------
-  const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
+  const ipcProxyService = React.useContext<IIpcProxyService>(IpcProxyServiceContext);
   //#endregion
 
   React.useEffect(

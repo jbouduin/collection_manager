@@ -1,7 +1,7 @@
 import { H5, Section, SectionCard, Tab, Tabs } from "@blueprintjs/core";
 import * as React from "react";
 import { IMtgCardDetailDto, IMtgCardLanguageDto } from "../../../../common/dto";
-import { IpcProxyService, IpcProxyServiceContext } from "../../context";
+import { IIpcProxyService, IpcProxyServiceContext } from "../../context";
 import { MtgCardDetailViewmodel } from "../../viewmodels";
 import { CardSymbolRenderer } from "../card-symbol-renderer";
 import { CardDetailProps } from "./card-detail.props";
@@ -22,7 +22,7 @@ export function CardDetail(props: CardDetailProps) {
   //#endregion
 
   //#region Context ---------------------------------------------------------------------
-  const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
+  const ipcProxyService = React.useContext<IIpcProxyService>(IpcProxyServiceContext);
   //#endregion
 
   //#region Effects -----------------------------------------------------------

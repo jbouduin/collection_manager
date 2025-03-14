@@ -4,7 +4,7 @@ import { SyncParameterView } from "../../sync-parameter-view";
 import { DataConfigurationView } from "../data-configuration-view/data-configuration-view";
 import { DatabaseViewConfigurationView } from "../database-view-configuration-view/database-view-configuration-view";
 import { ConfigurationViewProps } from "./configuration-view.props";
-import { IpcProxyService, IpcProxyServiceContext } from "../../../context";
+import { IIpcProxyService, IpcProxyServiceContext } from "../../../context";
 import { ICatalogTypeDto } from "../../../../../common/dto";
 
 // LATER add logServerResponses and debuglevel (consider adding a different part in configurationdto for system settings)
@@ -14,7 +14,7 @@ export function ConfigurationView(props: ConfigurationViewProps) {
   //#endregion
 
   //#region Context -----------------------------------------------------------
-  const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
+  const ipcProxyService = React.useContext<IIpcProxyService>(IpcProxyServiceContext);
   //#endregion
 
   //#region Effects -----------------------------------------------------------

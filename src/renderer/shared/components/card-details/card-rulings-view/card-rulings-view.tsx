@@ -2,7 +2,7 @@ import { Classes, SectionCard } from "@blueprintjs/core";
 import classNames from "classnames";
 import * as React from "react";
 import { IOracleRulingLineDto } from "../../../../../common/dto";
-import { IpcProxyService, IpcProxyServiceContext } from "../../../context";
+import { IIpcProxyService, IpcProxyServiceContext } from "../../../context";
 import { compareClassNameProp } from "../../utils";
 import { CardRulingsViewProps } from "./card-rulings-view.props";
 
@@ -13,7 +13,7 @@ export const CardRulingsView = React.memo(
     //#endregion
 
     //#region Context ---------------------------------------------------------------------
-    const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
+    const ipcProxyService = React.useContext<IIpcProxyService>(IpcProxyServiceContext);
     //#endregion
 
     //#region Effects -----------------------------------------------------------

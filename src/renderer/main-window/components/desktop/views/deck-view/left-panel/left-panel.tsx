@@ -3,7 +3,7 @@ import { cloneDeep, noop } from "lodash";
 import * as React from "react";
 import { IDeckDto, IDeckFolderDto } from "../../../../../../../common/dto";
 import { BaseTreeView } from "../../../../../../shared/components/base/base-tree-view";
-import { IpcProxyService, IpcProxyServiceContext } from "../../../../../../shared/context";
+import { IIpcProxyService, IpcProxyServiceContext } from "../../../../../../shared/context";
 import { DeckFolderTreeViewmodel, DeckViewmodel, TreeConfigurationViewmodel } from "../../../../../viewmodels";
 import { DeckDialog } from "./deck-dialog/deck-dialog";
 import { DialogData } from "./dialog-data";
@@ -19,7 +19,7 @@ export function LeftPanel(props: LeftPanelProps) {
   //#endregion
 
   //#region Context -----------------------------------------------------------
-  const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
+  const ipcProxyService = React.useContext<IIpcProxyService>(IpcProxyServiceContext);
   //#endregion
 
   //#region Effects -----------------------------------------------------------

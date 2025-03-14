@@ -2,7 +2,7 @@ import { ButtonGroup, Menu, MenuItem } from "@blueprintjs/core";
 import * as React from "react";
 import { IConfigurationDto, ISyncParamDto } from "../../../../../common/dto";
 import { AfterSplashScreenClose } from "../../../../shared/components/base/collection-manager.props";
-import { IpcProxyService, IpcProxyServiceContext } from "../../../../shared/context";
+import { IIpcProxyService, IpcProxyServiceContext } from "../../../../shared/context";
 import { EDesktopView } from "../desktop-view.enum";
 import { SettingsDialog } from "../settings-dialog/settings-dialog";
 import { SyncDialog } from "../sync-dialog/sync-dialog";
@@ -23,7 +23,7 @@ export function ButtonBar(props: ButtonBarProps) {
   //#endregion
 
   //#region Context ---------------------------------------------------------------------
-  const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
+  const ipcProxyService = React.useContext<IIpcProxyService>(IpcProxyServiceContext);
   //#endregion
 
   //#region Event handling --------------------------------------------------------------

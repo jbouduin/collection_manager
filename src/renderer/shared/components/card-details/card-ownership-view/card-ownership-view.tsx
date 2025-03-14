@@ -4,7 +4,7 @@ import * as React from "react";
 import { ICardConditionDto, IOwnedCardQuantityDto } from "../../../../../common/dto";
 import { CardCondition } from "../../../../../common/types";
 import { OwnedCardQuantityViewmodel } from "../../../../main-window/viewmodels";
-import { CardConditionContext, IpcProxyService, IpcProxyServiceContext } from "../../../context";
+import { CardConditionContext, IIpcProxyService, IpcProxyServiceContext } from "../../../context";
 import { buildEditableState, OwnedCardDialog, OwnedCardTable } from "../../owned-card";
 import { CardOwnerShipViewProps } from "./card-ownership-view.props";
 
@@ -16,7 +16,7 @@ export function CardOwnerShipView(props: CardOwnerShipViewProps) {
   //#endregion
 
   //#region Context -----------------------------------------------------------
-  const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
+  const ipcProxyService = React.useContext<IIpcProxyService>(IpcProxyServiceContext);
   const cardConditionContext = React.useContext<Array<ICardConditionDto>>(CardConditionContext);
   //#endregion
 

@@ -1,6 +1,6 @@
 import { Button, Popover, Tooltip } from "@blueprintjs/core";
 import * as React from "react";
-import { IpcProxyService, IpcProxyServiceContext } from "../../../../shared/context";
+import { IIpcProxyService, IpcProxyServiceContext } from "../../../../shared/context";
 import { SvgProvider } from "../../../../shared/components/svg-provider/svg-provider";
 import { EButtonBarButtonType } from "./button-bar-button-type.enum";
 import { ButtonBarButtonProps } from "./button-bar-button.props";
@@ -12,7 +12,7 @@ export function ButtonBarButton(props: ButtonBarButtonProps) {
   //#endregion
 
   //#region Context ---------------------------------------------------------------------
-  const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
+  const ipcProxyService = React.useContext<IIpcProxyService>(IpcProxyServiceContext);
   //#endregion
 
   //#region Event handling ----------------------------------------------------

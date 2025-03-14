@@ -2,7 +2,7 @@ import { cloneDeep, noop } from "lodash";
 import * as React from "react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { IDeckCardListDto, IUpdateDeckCardQuantityDto } from "../../../../../common/dto";
-import { IpcProxyService, IpcProxyServiceContext } from "../../../../shared/context";
+import { IIpcProxyService, IpcProxyServiceContext } from "../../../../shared/context";
 import { DeckContentType } from "../../../types";
 import { DeckCardListViewmodel } from "../../../viewmodels";
 import { CardTableSection } from "./card-table-section/card-table-section";
@@ -16,7 +16,7 @@ export function LeftPanel(props: LeftPanelProps) {
   //#endregion
 
   //#region Context -----------------------------------------------------------
-  const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
+  const ipcProxyService = React.useContext<IIpcProxyService>(IpcProxyServiceContext);
   //#endregion
 
   //#region Effect ------------------------------------------------------------

@@ -3,7 +3,7 @@ import { cloneDeep } from "lodash";
 import * as React from "react";
 import { ICatalogTypeDto, IScryfallBulkDataItemDto } from "../../../../../common/dto";
 import { SyncParameterView } from "../../../../shared/components/sync-parameter-view";
-import { IpcProxyService, IpcProxyServiceContext } from "../../../../shared/context";
+import { IIpcProxyService, IpcProxyServiceContext } from "../../../../shared/context";
 import { SyncParamViewmodel } from "../../../../shared/viewmodels";
 import { SyncDialogProps } from "./sync-dialog.props";
 
@@ -31,7 +31,7 @@ export function SyncDialog(props: SyncDialogProps) {
   //#endregion
 
   //#region Context -----------------------------------------------------------
-  const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
+  const ipcProxyService = React.useContext<IIpcProxyService>(IpcProxyServiceContext);
   //#endregion
 
   //#region Effects -----------------------------------------------------------

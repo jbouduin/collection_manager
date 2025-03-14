@@ -27,7 +27,7 @@ export function BaseDesktop(props: BaseDesktopProps) {
   //#endregion
 
   //#region Context ---------------------------------------------------------------------
-  const ipcProxyService = React.useContext<Context.IpcProxyService>(Context.IpcProxyServiceContext);
+  const ipcProxyService = React.useContext<Context.IIpcProxyService>(Context.IpcProxyServiceContext);
   //#endregion
 
   //#region Effects -----------------------------------------------------------
@@ -142,7 +142,7 @@ export function BaseDesktop(props: BaseDesktopProps) {
               </Context.CardSymbolContext.Provider>
             </Context.LanguagesContext.Provider>
           </Context.DisplayValueServiceContext.Provider>
-        </Context.ConfigurationContext.Provider >
+        </Context.ConfigurationContext.Provider>
       }
     </>
   );

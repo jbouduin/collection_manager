@@ -5,7 +5,7 @@ import { ILanguageDto, IMtgCardLanguageDto, IMtgCardListDto, IMtgCardSetDto, IOw
 import { BaseLookupResult, GenericTextColumn, GenericTextLookupResult, IBaseColumn } from "../../../../../../shared/components/base";
 import { CardSetColumn, CardSetLookupResult, CardTableView, CollectiorNumberColumn, ColorIdentityColumn, ManaCostColumn } from "../../../../../../shared/components/card-table-view";
 import { OwnedCardDialog } from "../../../../../../shared/components/owned-card";
-import { CardSetContext, DisplayValueService, DisplayValueServiceContext, IpcProxyService, IpcProxyServiceContext, LanguagesContext } from "../../../../../../shared/context";
+import { CardSetContext, DisplayValueService, DisplayValueServiceContext, IIpcProxyService, IpcProxyServiceContext, LanguagesContext } from "../../../../../../shared/context";
 import { MtgCardListViewmodel } from "../../../../../viewmodels";
 import { CenterPanelProps } from "./center-panel.props";
 
@@ -20,7 +20,7 @@ export function CenterPanel(props: CenterPanelProps) {
   //#region Context -----------------------------------------------------------
   const cardSetContext = React.useContext<Array<IMtgCardSetDto>>(CardSetContext);
   const displayValueService = React.useContext<DisplayValueService>(DisplayValueServiceContext);
-  const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
+  const ipcProxyService = React.useContext<IIpcProxyService>(IpcProxyServiceContext);
   const languagesContext = React.useContext<Array<ILanguageDto>>(LanguagesContext);
   //#endregion
 

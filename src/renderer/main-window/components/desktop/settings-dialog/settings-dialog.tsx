@@ -3,7 +3,7 @@ import { noop } from "lodash";
 import * as React from "react";
 import { IConfigurationDto } from "../../../../../common/dto/";
 import { ConfigurationWrapper } from "../../../../shared/components/configuration";
-import { IpcProxyService, IpcProxyServiceContext } from "../../../../shared/context";
+import { IIpcProxyService, IpcProxyServiceContext } from "../../../../shared/context";
 import { ConfigurationViewModel } from "../../../../shared/viewmodels";
 import { SettingsDialogProps } from "./settings-dialog.props";
 
@@ -14,7 +14,7 @@ export function SettingsDialog(props: SettingsDialogProps) {
   //#endregion
 
   //#region Context ---------------------------------------------------------------------
-  const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
+  const ipcProxyService = React.useContext<IIpcProxyService>(IpcProxyServiceContext);
   //#endregion
 
   //#region Effect ----------------------------------------------------------------------

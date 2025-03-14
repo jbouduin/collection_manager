@@ -4,7 +4,7 @@ import { cloneDeep } from "lodash";
 import * as React from "react";
 import { ICatalogItemDto } from "../../../../../../../../common/dto";
 import { highlightText } from "../../../../../../../shared/components/utils";
-import { IpcProxyService, IpcProxyServiceContext } from "../../../../../../../shared/context";
+import { IIpcProxyService, IpcProxyServiceContext } from "../../../../../../../shared/context";
 import { CatalogSelectProps } from "./catalog-select.props";
 
 export function CatalogSelect(props: CatalogSelectProps) {
@@ -14,7 +14,7 @@ export function CatalogSelect(props: CatalogSelectProps) {
   //#endregion
 
   //#region Context -----------------------------------------------------------
-  const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
+  const ipcProxyService = React.useContext<IIpcProxyService>(IpcProxyServiceContext);
   //#endregion
 
   //#region Event handling ----------------------------------------------------

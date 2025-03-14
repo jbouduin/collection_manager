@@ -16,7 +16,7 @@ export function CenterPanel(props: CenterPanelProps) {
   //#region Context ---------------------------------------------------------------------
   const cardConditionContext = React.useContext<Array<ICardConditionDto>>(Context.CardConditionContext);
   const cardSetContext = React.useContext<Array<IMtgCardSetDto>>(Context.CardSetContext);
-  const ipcProxyService = React.useContext<Context.IpcProxyService>(Context.IpcProxyServiceContext);
+  const ipcProxyService = React.useContext<Context.IIpcProxyService>(Context.IpcProxyServiceContext);
   const languagesContext = React.useContext<Array<ILanguageDto>>(Context.LanguagesContext);
   //#endregion
 

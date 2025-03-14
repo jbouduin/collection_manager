@@ -2,7 +2,7 @@ import { ContextMenu, Icon, Menu, MenuDivider, MenuItem, TreeNodeInfo } from "@b
 import { cloneDeep, isEqual, noop } from "lodash";
 import * as React from "react";
 import { ICollectionDto } from "../../../../../../../common/dto";
-import { IpcProxyService, IpcProxyServiceContext } from "../../../../../../shared/context";
+import { IIpcProxyService, IpcProxyServiceContext } from "../../../../../../shared/context";
 import { CollectionTreeViewmodel, TreeConfigurationViewmodel } from "../../../../../viewmodels";
 import { BaseTreeView, BaseTreeViewProps } from "../../../../../../shared/components/base/base-tree-view";
 import { CollectionDialog } from "./collection-dialog/collection-dialog";
@@ -26,7 +26,7 @@ export function LeftPanel(props: LeftPanelProps) {
   //#endregion
 
   //#region Context -----------------------------------------------------------
-  const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
+  const ipcProxyService = React.useContext<IIpcProxyService>(IpcProxyServiceContext);
   //#endregion
 
   //#region Effects -----------------------------------------------------------

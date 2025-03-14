@@ -3,7 +3,7 @@ import { cloneDeep, noop } from "lodash";
 import * as React from "react";
 import { ICardConditionDto, ICollectionDto, IOwnedCardCollectionMapDto, IOwnedCardQuantityDto } from "../../../../common/dto";
 import { CardCondition } from "../../../../common/types";
-import { CardConditionContext, IpcProxyService, IpcProxyServiceContext } from "../../context";
+import { CardConditionContext, IIpcProxyService, IpcProxyServiceContext } from "../../context";
 import { OwnedCardQuantityViewmodel } from "../../viewmodels";
 import { buildEditableState } from "./build-editable-state";
 import { OwnedCardTable } from "./own-card-table";
@@ -19,7 +19,7 @@ export function OwnedCardDialog(props: OwnedCardDialogProps) {
 
   //#region Context -----------------------------------------------------------
   const cardConditionContext = React.useContext<Array<ICardConditionDto>>(CardConditionContext);
-  const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
+  const ipcProxyService = React.useContext<IIpcProxyService>(IpcProxyServiceContext);
   //#endregion
 
   //#region Effects -----------------------------------------------------------

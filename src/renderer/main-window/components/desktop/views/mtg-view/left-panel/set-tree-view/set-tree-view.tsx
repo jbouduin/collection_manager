@@ -3,7 +3,7 @@ import { cloneDeep, isEqual, upperFirst } from "lodash";
 import * as React from "react";
 import { IMtgCardSetDto, ISyncParamDto } from "../../../../../../../../common/dto";
 import { CardSetGroupBy, CardSetSort, CardSetType } from "../../../../../../../../common/types";
-import { IpcProxyService, IpcProxyServiceContext } from "../../../../../../../shared/context";
+import { IIpcProxyService, IpcProxyServiceContext } from "../../../../../../../shared/context";
 import { TreeConfigurationViewmodel } from "../../../../../../viewmodels";
 import { CardSetTreeViewmodel } from "../../../../../../viewmodels/card-set/card-set-tree.viewmodel";
 import { BaseTreeView, BaseTreeViewProps } from "../../../../../../../shared/components/base/base-tree-view";
@@ -26,7 +26,7 @@ export function SetTreeView(props: LeftPanelProps) {
   //#endregion
 
   //#region Context ---------------------------------------------------------------------
-  const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
+  const ipcProxyService = React.useContext<IIpcProxyService>(IpcProxyServiceContext);
   //#endregion
 
   //#region event handling ----------------------------------------------------

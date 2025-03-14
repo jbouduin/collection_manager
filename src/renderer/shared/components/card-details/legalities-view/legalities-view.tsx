@@ -1,7 +1,7 @@
 import { HTMLTable, Intent, Tag } from "@blueprintjs/core";
 import * as React from "react";
 import { IGameFormatDto, ILegalityDto } from "../../../../../common/dto";
-import { DisplayValueService, DisplayValueServiceContext, GameFormatContext, IpcProxyService, IpcProxyServiceContext } from "../../../context";
+import { DisplayValueService, DisplayValueServiceContext, GameFormatContext, IIpcProxyService, IpcProxyServiceContext } from "../../../context";
 import { compareClassNameProp } from "../../utils";
 import { LegalitiesViewProps } from "./legalities-view.props";
 
@@ -13,7 +13,7 @@ export const LegalitiesView = React.memo(
 
     //#region Context ---------------------------------------------------------------------
     const displayValueService = React.useContext<DisplayValueService>(DisplayValueServiceContext);
-    const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
+    const ipcProxyService = React.useContext<IIpcProxyService>(IpcProxyServiceContext);
     //#endregion
 
     //#region Effects -----------------------------------------------------------

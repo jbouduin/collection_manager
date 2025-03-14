@@ -8,8 +8,12 @@ export function selectedRegionTransformToRowSelection(region: Region): Region {
   }
 }
 
-export function onDataSelected<T>(selectedRegions: Array<Region>, data: Array<T>, callback: (selected: Array<T>) => void): void {
-  // NOW this gives the wrong result if columns have been sorted
+export function onDataSelected<T>(
+  selectedRegions: Array<Region>,
+  data: Array<T>,
+  sortedIndexMap: Array<number>,
+  callback: (selected: Array<T>) => void
+): void {
   const selectedData = new Array<T>();
   selectedRegions
     .filter((region: Region) => region.rows)
@@ -17,7 +21,12 @@ export function onDataSelected<T>(selectedRegions: Array<Region>, data: Array<T>
       const firstRow = region.rows[0];
       const lastRow = region.rows[1];
       for (let cnt = firstRow; cnt <= lastRow; cnt++) {
-        selectedData.push(data[cnt]);
+        let rowIndex = cnt;
+        const sortedRowIndex = sortedIndexMap[rowIndex];
+        if (sortedRowIndex != null) {
+          rowIndex = sortedRowIndex;
+        }
+        selectedData.push(data[rowIndex]);
       }
     });
   callback(selectedData);

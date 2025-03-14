@@ -14,6 +14,7 @@ export function CenterPanel(props: CenterPanelProps) {
   //#region State -------------------------------------------------------------
   const initialState = new Array<MtgCardListViewmodel>();
   const [cards, setCards] = React.useState<Array<MtgCardListViewmodel>>(initialState);
+  const [sortedIndexMap, setSortedIndexMap] = React.useState<Array<number>>(new Array<number>());
   const [showOwnerShipDialog, setShowOwnerShipDialog] = React.useState<string>(null);
   //#endregion
 
@@ -137,9 +138,11 @@ export function CenterPanel(props: CenterPanelProps) {
         bodyContextMenuRenderer={(context: MenuContext) => contextMenu(context)}
         data={cards}
         hideSplashScreen={undefined}
+        onColumnSorted={(changedSortedIndexMap: Array<number>) => setSortedIndexMap(changedSortedIndexMap)}
         onDataSelected={(cards?: Array<MtgCardListViewmodel>) => props.onCardsSelected(cards)}
         showSplashScreen={undefined}
         sortableColumnDefintions={sortableColumnDefinitions}
+        sortedIndexMap={sortedIndexMap}
       />
       {
         showOwnerShipDialog &&
@@ -153,8 +156,12 @@ export function CenterPanel(props: CenterPanelProps) {
   );
 
   function contextMenu(context: MenuContext): React.JSX.Element {
-    /* NOW once sorted this 'props.decks[context.getTarget().rows[0]]' is wrong */
-    const card: MtgCardListViewmodel = cards[context.getTarget().rows[0]];
+    let rowIndex = context.getTarget().rows[0];
+    const sortedRowIndex = sortedIndexMap[rowIndex];
+    if (sortedRowIndex != null) {
+      rowIndex = sortedRowIndex;
+    }
+    const card: MtgCardListViewmodel = cards[rowIndex];
     // TODO consider allowing increasing over the limit and coloring the value (or row) if too high
     return (
       <Menu>

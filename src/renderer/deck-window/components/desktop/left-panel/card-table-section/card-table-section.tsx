@@ -10,6 +10,10 @@ import { DeckCardListViewmodel } from "../../../../viewmodels";
 import { CardTableSectionProps } from "./card-table-section.props";
 
 export function CardTableSection(props: CardTableSectionProps) {
+  //#region State -------------------------------------------------------------
+  const [sortedIndexMap, setSortedIndexMap] = React.useState<Array<number>>(new Array<number>());
+  //#endregion
+
   //#region Context -----------------------------------------------------------
   const cardSetContext = React.useContext<Array<IMtgCardSetDto>>(CardSetContext);
   const displayValueService = React.useContext<DisplayValueService>(DisplayValueServiceContext);
@@ -117,10 +121,7 @@ export function CardTableSection(props: CardTableSectionProps) {
   }
   //#endregion
 
-  function totalCards(): number {
-    return props.cards
-      .reduce<number>((prev: number, card: DeckCardListViewmodel) => prev += props.content == "deck" ? card.deckQuantity : card.sideboardQuantity, 0);
-  }
+
   //#region Rendering ---------------------------------------------------------
   return (
     <Section
@@ -137,16 +138,27 @@ export function CardTableSection(props: CardTableSectionProps) {
         bodyContextMenuRenderer={(context: MenuContext) => contextMenu(context)}
         data={props.cards}
         hideSplashScreen={undefined}
+        onColumnSorted={(changedSortedIndexMap: Array<number>) => setSortedIndexMap(changedSortedIndexMap)}
         onDataSelected={(cards: Array<DeckCardListViewmodel>) => props.onCardsSelected(cards)}
         showSplashScreen={undefined}
         sortableColumnDefintions={sortableColumnDefinitions}
+        sortedIndexMap={sortedIndexMap}
       />
     </Section>
   );
 
+  function totalCards(): number {
+    return props.cards
+      .reduce<number>((prev: number, card: DeckCardListViewmodel) => prev += props.content == "deck" ? card.deckQuantity : card.sideboardQuantity, 0);
+  }
+
   function contextMenu(context: MenuContext): React.JSX.Element {
-    /* NOW once sorted this 'props.decks[context.getTarget().rows[0]]' is wrong */
-    const card: DeckCardListViewmodel = props.cards[context.getTarget().rows[0]];
+    let rowIndex = context.getTarget().rows[0];
+    const sortedRowIndex = sortedIndexMap[rowIndex];
+    if (sortedRowIndex != null) {
+      rowIndex = sortedRowIndex;
+    }
+    const card: DeckCardListViewmodel = props.cards[rowIndex];
     // TODO consider allowing increasing over the limit and coloring the value (or row) if too high
     return (
       <Menu>

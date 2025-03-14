@@ -66,7 +66,7 @@ export function CenterPanel(props: CenterPanelProps) {
         cellRendererDependencies={[props.decks, state]}
         children={sortableColumnDefinitions.map((c) => c.getColumn(getCellData, sortColumn))}
         numRows={props.decks.length}
-        onSelection={(selectedRegions: Array<Region>) => onDataSelected(selectedRegions, props.decks, (decks: Array<DeckListViewmodel>) => props.onDecksSelected(decks))}
+        onSelection={(selectedRegions: Array<Region>) => onDataSelected(selectedRegions, props.decks, state, (decks: Array<DeckListViewmodel>) => props.onDecksSelected(decks))}
         selectedRegionTransform={(region: Region) => selectedRegionTransformToRowSelection(region)}
         selectionModes={SelectionModes.ROWS_AND_CELLS}
       />
@@ -74,15 +74,19 @@ export function CenterPanel(props: CenterPanelProps) {
   );
 
   function contextMenu(context: MenuContext): React.JSX.Element {
+    let rowIndex = context.getTarget().rows[0];
+    const sortedRowIndex = state[rowIndex];
+    if (sortedRowIndex != null) {
+      rowIndex = sortedRowIndex;
+    }
     return (
       <Menu>
-        {/* NOW once sorted this 'props.decks[context.getTarget().rows[0]]' is wrong */}
         <MenuItem
-          onClick={() => props.onEditDeck(props.decks[context.getTarget().rows[0]])}
+          onClick={() => props.onEditDeck(props.decks[rowIndex])}
           text="Edit"
         />
         <MenuItem
-          onClick={() => props.onDeleteDeck(props.decks[context.getTarget().rows[0]])}
+          onClick={() => props.onDeleteDeck(props.decks[rowIndex])}
           text="Delete"
         />
       </Menu>

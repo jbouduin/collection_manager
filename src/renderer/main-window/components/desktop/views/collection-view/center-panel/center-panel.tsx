@@ -10,12 +10,13 @@ import { CenterPanelProps } from "./center-panel.props";
 export function CenterPanel(props: CenterPanelProps) {
   //#region State -------------------------------------------------------------
   const [cards, setCards] = React.useState(new Array<CollectionCardListViewmodel>());
-  const displayValueService = React.useContext<Context.DisplayValueService>(Context.DisplayValueServiceContext);
+  const [sortedIndexMap, setSortedIndexMap] = React.useState<Array<number>>(new Array<number>());
   //#endregion
 
   //#region Context ---------------------------------------------------------------------
   const cardConditionContext = React.useContext<Array<ICardConditionDto>>(Context.CardConditionContext);
   const cardSetContext = React.useContext<Array<IMtgCardSetDto>>(Context.CardSetContext);
+  const displayValueService = React.useContext<Context.DisplayValueService>(Context.DisplayValueServiceContext);
   const ipcProxyService = React.useContext<Context.IIpcProxyService>(Context.IpcProxyServiceContext);
   const languagesContext = React.useContext<Array<ILanguageDto>>(Context.LanguagesContext);
   //#endregion
@@ -77,9 +78,11 @@ export function CenterPanel(props: CenterPanelProps) {
     <CardTableView<CollectionCardListViewmodel>
       data={cards}
       hideSplashScreen={undefined}
+      onColumnSorted={(changedSortedIndexMap: Array<number>) => setSortedIndexMap(changedSortedIndexMap)}
       onDataSelected={(cards?: Array<CollectionCardListViewmodel>) => props.onCardsSelected(cards)}
       showSplashScreen={undefined}
       sortableColumnDefintions={sortableColumnDefinitions}
+      sortedIndexMap={sortedIndexMap}
     />
   );
   //#endregion

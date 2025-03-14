@@ -41,6 +41,7 @@ export const CardSymbolRenderer = React.memo(
     //#endregion
   },
   (prev: CardSymbolRendererProps, next: CardSymbolRendererProps) => {
-    return isEmpty(xor(prev.cardSymbols, next.cardSymbols) && compareClassNameProp(prev.className, next.className));
+    return isEmpty(xor(prev.cardSymbols || new Array<string>(), next.cardSymbols || new Array<string>())) &&
+      compareClassNameProp(prev.className, next.className);
   }
 );

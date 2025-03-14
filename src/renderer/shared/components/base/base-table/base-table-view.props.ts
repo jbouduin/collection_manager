@@ -8,5 +8,7 @@ export interface BaseTableViewProps<T> extends CollectionManagerProps {
   bodyContextMenuRenderer?: ContextMenuRenderer;
   data: Array<T>;
   sortableColumnDefintions: Array<IBaseColumn<unknown, BaseLookupResult>>;
-  onDataSelected(cards?: Array<T>): void;
+  sortedIndexMap: Array<number>;
+  onDataSelected: (cards?: Array<T>) => void;
+  onColumnSorted: (changedSortedIndexMap: Array<number>) => void;
 }

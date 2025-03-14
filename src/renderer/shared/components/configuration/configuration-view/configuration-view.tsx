@@ -83,6 +83,7 @@ export function ConfigurationView(props: ConfigurationViewProps) {
           panel={
             <SyncParameterView
               catalogs={state}
+              isConfigurationView={true}
               onSyncParamChanged={onSyncParamChanged}
               syncParam={props.configuration.syncParamViewmodel}
             />

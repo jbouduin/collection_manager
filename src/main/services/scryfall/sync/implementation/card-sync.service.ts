@@ -1,8 +1,10 @@
+import { createReadStream, existsSync } from "fs";
 import { DeleteResult, InsertResult, Transaction, UpdateResult, sql } from "kysely";
+import { join } from "path";
 import { inject, injectable } from "tsyringe";
 import { ICardSyncParam, IMtgCardImageDataDto, IdSelectResult } from "../../../../../common/dto";
 import { ProgressCallback } from "../../../../../common/ipc";
-import { ChangedImageStatusAction, MtgGameFormat, ImageStatus, MtgColor, MtgColorType, TimespanUnit } from "../../../../../common/types";
+import { ChangedImageStatusAction, ImageStatus, MtgColor, MtgColorType, MtgGameFormat, TimespanUnit } from "../../../../../common/types";
 import { isSingleCardFaceLayout, sqliteUTCTimeStamp } from "../../../../../common/util";
 import { DatabaseSchema } from "../../../../../main/database/schema";
 import { IConfigurationService, IDatabaseService, IImageCacheService, ILogService } from "../../../../../main/services/infra/interfaces";
@@ -17,15 +19,16 @@ import { CardColorMapAdapterParameter, CardFaceAdapterParameter, OracleAdapterPa
 import { CardfaceColorMapAdapterParameter } from "../../adapt/interface/param/cardface-color-map-adapter.param";
 import { OracleLegalityAdapterParameter } from "../../adapt/interface/param/oracle-legality-adapter.param";
 import { IScryfallClient } from "../../client/interfaces";
-import { ScryfallCard, ScryfallCardface, ScryfallLegalities } from "../../types";
+import { IScryfallCardDto, IScryfallCardfaceDto, ScryfallLegalities } from "../../dto";
 import { ICardSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
+import { CardTransformer } from "./card-transformer";
 import { GenericSyncTaskParameter } from "./generic-sync-task.parameter";
-import { logCompilable } from "../../../../database/log-compilable";
+
 
 type IdAndStatusSelectResult = IdSelectResult<string> & { image_status: ImageStatus };
 type PreSyncSelectResult = {
-  scryfallCards: Array<ScryfallCard>;
+  scryfallCards: Array<IScryfallCardDto>;
   cardIdsWithStatus: Array<IdAndStatusSelectResult>;
 };
 
@@ -80,21 +83,69 @@ export class CardSyncService extends BaseSyncService<ICardSyncParam> implements 
 
   //#region ICardSyncService methods ------------------------------------------
   public override async sync(syncParam: ICardSyncParam, progressCallback: ProgressCallback): Promise<void> {
-    return this.GetSyncData(syncParam, progressCallback)
-      .then(async (presync: PreSyncSelectResult) => {
-        this.dumpScryFallData("cards.json", presync.scryfallCards);
-        return this.processSync(presync.scryfallCards, progressCallback)
-          .then(async () => this.processChangedImages(syncParam.changedImageStatusAction, presync.cardIdsWithStatus, progressCallback));
-      })
-      .then(async () => {
-        if (syncParam.cardSyncType == "byCardSet") {
-          await this.database
-            .updateTable("card_set")
-            .set({ last_full_synchronization_at: sqliteUTCTimeStamp() })
-            .where("card_set.code", "=", syncParam.cardSetCodeToSyncCardsFor)
-            .executeTakeFirst();
+    if (syncParam.cardSyncType == "bulk") {
+      const fileName = syncParam.bulkSyncUrl.split("/").pop();
+      const targetDir = join(this.configurationService.configuration.dataConfiguration.cacheDirectory, "json");
+      const targetFile = join(targetDir, fileName);
+      /* eslint-disable-next-line no-async-promise-executor,  @typescript-eslint/no-misused-promises */
+      return await new Promise<void>(async (resolve, _reject) => {
+        if (existsSync(targetFile)) {
+          resolve();
+        } else {
+          progressCallback("Downloading file from Scryfall.");
+          await this.scryfallclient.downloadBulkData(syncParam.bulkSyncUrl, targetFile);
+          resolve();
         }
-      });
+      })
+        .then(async () => {
+          const cardStream = createReadStream(targetFile, { encoding: "utf-8", start: 1 })
+            .pipe(new CardTransformer({ decodeStrings: true }, this.logService));
+
+          return await new Promise<void>((resolve, reject) => {
+            /*
+             * TODO the await in on card is wrong!
+             * But, if we leave it out, the splash screen disappears before everything has been processed
+             */
+            cardStream
+              .on(
+                "data",
+                /* eslint-disable-next-line @typescript-eslint/no-misused-promises*/
+                async (card: IScryfallCardDto) => {
+                  await this.syncSingleCard(card, null, null, progressCallback);
+                  return;
+                }
+              )
+              .on("end", () => resolve())
+              .on("error", (err) => reject(err));
+          })
+            .then(
+              () => {
+                this.logService.debug("Main", "End of bulk load");
+                return Promise.resolve();
+              },
+              (err: Error) => {
+                this.logService.error("Main", "Error during bulk load", err);
+                return Promise.reject(err);
+              }
+            );
+        });
+    } else {
+      return this.GetSyncData(syncParam, progressCallback)
+        .then(async (presync: PreSyncSelectResult) => {
+          this.dumpScryFallData("cards.json", presync.scryfallCards);
+          return this.processSync(presync.scryfallCards, progressCallback)
+            .then(async () => this.processChangedImages(syncParam.changedImageStatusAction, presync.cardIdsWithStatus, progressCallback));
+        })
+        .then(async () => {
+          if (syncParam.cardSyncType == "byCardSet") {
+            await this.database
+              .updateTable("card_set")
+              .set({ last_full_synchronization_at: sqliteUTCTimeStamp() })
+              .where("card_set.code", "=", syncParam.cardSetCodeToSyncCardsFor)
+              .executeTakeFirst();
+          }
+        });
+    }
   }
   //#endregion
 
@@ -133,7 +184,7 @@ export class CardSyncService extends BaseSyncService<ICardSyncParam> implements 
           syncParam.cardSyncType == "collection",
           (eb) => eb.where("card.id", "in", syncParam.cardSelectionToSync)
         )
-        .$call((q) => logCompilable(this.logService, q))
+        // .$call((q) => logCompilable(this.logService, q))
         .execute()
         .then(async (results: Array<IdAndStatusSelectResult>) => {
           if (results.length > 0 || syncParam.cardSelectionToSync.length > 0) {
@@ -147,7 +198,7 @@ export class CardSyncService extends BaseSyncService<ICardSyncParam> implements 
             };
           } else {
             return {
-              scryfallCards: new Array<ScryfallCard>(),
+              scryfallCards: new Array<IScryfallCardDto>(),
               cardIdsWithStatus: results
             };
           }
@@ -158,23 +209,25 @@ export class CardSyncService extends BaseSyncService<ICardSyncParam> implements 
   //#endregion
 
   //#region Auxiliary sync methods --------------------------------------------
-  private async processSync(cards: Array<ScryfallCard>, progressCallback?: ProgressCallback): Promise<void> {
+  private async processSync(cards: Array<IScryfallCardDto>, progressCallback?: ProgressCallback): Promise<void> {
     const total = cards.length;
-    let cnt = 0;
     return Promise
-      .all(cards.map((card: ScryfallCard) => this.syncSingleCard(card, ++cnt, total, progressCallback)))
+      .all(cards.map((card: IScryfallCardDto, idx: number) => this.syncSingleCard(card, idx + 1, total, progressCallback)))
       .then(() => Promise.resolve());
   }
 
-  private async syncSingleCard(card: ScryfallCard, cnt: number, total: number, progressCallback?: ProgressCallback): Promise<void> {
+  private async syncSingleCard(card: IScryfallCardDto, cnt?: number, total?: number, progressCallback?: ProgressCallback): Promise<void> {
     return this.database
       .transaction()
       .execute(async (trx: Transaction<DatabaseSchema>) => {
         this.logService.debug("Main", `${card.name} ${card.lang} = start sync ======================================`);
         if (progressCallback) {
-          progressCallback(`Processing ${card.name} (${cnt}/${total})`);
+          if (cnt && total) {
+            progressCallback(`Processing ${card.name} (${cnt}/${total ?? "?"})`);
+          } else {
+            progressCallback(`Processing ${card.name}`);
+          }
         }
-        this.logService.debug("Main", `${card.name} ${card.lang} - single sync of card`);
         const insertOrUpdate: Promise<InsertResult | UpdateResult> = this.genericSingleSync(
           trx,
           "card",
@@ -182,7 +235,7 @@ export class CardSyncService extends BaseSyncService<ICardSyncParam> implements 
           this.cardAdapter,
           card
         );
-
+        // TODO when bulkloading we can skip the oracle stuff if that one has already been processed (question is how)
         return await insertOrUpdate
           .then(async () => await this.syncCardColorMap(trx, card))
           .then(async () => await this.syncCardCardMap(trx, card))
@@ -196,13 +249,13 @@ export class CardSyncService extends BaseSyncService<ICardSyncParam> implements 
       .then(
         () => this.logService.debug("Main", `${card.name} ${card.lang} = card synced =====================================`),
         (reason: Error) => {
-          this.logService.debug("Main", `${card.name} ${card.lang} = failed !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!`);
-          this.logService.debug("Main", reason.message);
+          this.logService.error("Main", `${card.name} ${card.lang} = failed !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!`);
+          this.logService.error("Main", reason.message, reason.stack);
         }
       );
   }
 
-  private async syncCardColorMap(trx: Transaction<DatabaseSchema>, scryfallCard: ScryfallCard): Promise<void> {
+  private async syncCardColorMap(trx: Transaction<DatabaseSchema>, scryfallCard: IScryfallCardDto): Promise<void> {
     const taskParameters = new Array<GenericSyncTaskParameter<"card_color_map", CardColorMapAdapterParameter>>();
     if (scryfallCard.colors?.length > 0) {
       taskParameters.push(this.createCardColorMapTaskParameter(trx, scryfallCard.id, "card", scryfallCard.colors));
@@ -225,9 +278,9 @@ export class CardSyncService extends BaseSyncService<ICardSyncParam> implements 
     );
   }
 
-  private async syncOracle(trx: Transaction<DatabaseSchema>, scryfallCard: ScryfallCard): Promise<InsertResult | UpdateResult | void> {
+  private async syncOracle(trx: Transaction<DatabaseSchema>, scryfallCard: IScryfallCardDto): Promise<InsertResult | UpdateResult | void> {
     if (isSingleCardFaceLayout(scryfallCard.layout)) {
-      this.logService.debug("Main", `${scryfallCard.name} ${scryfallCard.lang} - single sync of oracle`);
+      // this.logService.debug("Main", `${scryfallCard.name} ${scryfallCard.lang} - single sync of oracle`);
       return await this.genericSingleSync(
         trx,
         "oracle",
@@ -236,12 +289,12 @@ export class CardSyncService extends BaseSyncService<ICardSyncParam> implements 
         { oracleId: scryfallCard.oracle_id, sequence: 0, scryfallCard: scryfallCard }
       );
     } else {
-      this.logService.debug("Main", `${scryfallCard.name} ${scryfallCard.lang} - single sync of oracle for split card`);
+      // this.logService.debug("Main", `${scryfallCard.name} ${scryfallCard.lang} - single sync of oracle for split card`);
       const uniqueOracleIds = scryfallCard.layout != "reversible_card"
         ? scryfallCard.card_faces
-        : [...new Map(scryfallCard.card_faces.map((cardface: ScryfallCardface) => [cardface.oracle_id, cardface])).values()];
+        : [...new Map(scryfallCard.card_faces.map((cardface: IScryfallCardfaceDto) => [cardface.oracle_id, cardface])).values()];
       const taskParameters: Array<GenericSyncTaskParameter<"oracle", OracleAdapterParameter>> =
-        uniqueOracleIds.map((cardFace: ScryfallCardface, idx: number) => {
+        uniqueOracleIds.map((cardFace: IScryfallCardfaceDto, idx: number) => {
           const oracle_id = scryfallCard.layout == "reversible_card" ? cardFace.oracle_id : scryfallCard.oracle_id;
           return {
             trx: trx,
@@ -259,9 +312,9 @@ export class CardSyncService extends BaseSyncService<ICardSyncParam> implements 
     }
   }
 
-  private async syncOracleKeywords(trx: Transaction<DatabaseSchema>, scryfallCard: ScryfallCard): Promise<Array<DeleteResult> | InsertResult> {
+  private async syncOracleKeywords(trx: Transaction<DatabaseSchema>, scryfallCard: IScryfallCardDto): Promise<Array<DeleteResult> | InsertResult> {
     if (scryfallCard.keywords?.length > 0 && scryfallCard.oracle_id) { // TODO cover reversible_card here also
-      this.logService.debug("Main", `${scryfallCard.name} ${scryfallCard.lang} - delete and recreate oracle_keyword`);
+      // this.logService.debug("Main", `${scryfallCard.name} ${scryfallCard.lang} - delete and recreate oracle_keyword`);
       return await this.genericDeleteAndRecreate(
         trx,
         "oracle_keyword",
@@ -270,7 +323,7 @@ export class CardSyncService extends BaseSyncService<ICardSyncParam> implements 
         { oracle_id: scryfallCard.oracle_id, keywords: scryfallCard.keywords }
       );
     } else {
-      this.logService.debug("Main", `${scryfallCard.name} ${scryfallCard.lang} - delete oracle_keyword`);
+      // this.logService.debug("Main", `${scryfallCard.name} ${scryfallCard.lang} - delete oracle_keyword`);
       return await trx
         .deleteFrom("oracle_keyword")
         .where("oracle_keyword.oracle_id", "=", scryfallCard.oracle_id)
@@ -278,7 +331,7 @@ export class CardSyncService extends BaseSyncService<ICardSyncParam> implements 
     }
   }
 
-  private async syncOracleLegalities(trx: Transaction<DatabaseSchema>, scryfallCard: ScryfallCard): Promise<void | Array<DeleteResult>> {
+  private async syncOracleLegalities(trx: Transaction<DatabaseSchema>, scryfallCard: IScryfallCardDto): Promise<void | Array<DeleteResult>> {
     if (scryfallCard.legalities) {
       const taskParameters = new Array<GenericSyncTaskParameter<"oracle_legality", OracleLegalityAdapterParameter>>();
       Object.keys(scryfallCard.legalities).forEach((key: string) => {
@@ -296,9 +349,9 @@ export class CardSyncService extends BaseSyncService<ICardSyncParam> implements 
           });
         } else {
           const uniqueOracleIds = scryfallCard.layout != "reversible_card"
-            ? [...new Map(scryfallCard.card_faces.map((cardface: ScryfallCardface) => [cardface.oracle_id, cardface])).values()]
+            ? [...new Map(scryfallCard.card_faces.map((cardface: IScryfallCardfaceDto) => [cardface.oracle_id, cardface])).values()]
             : scryfallCard.card_faces;
-          uniqueOracleIds.forEach((cardface: ScryfallCardface) => taskParameters.push({
+          uniqueOracleIds.forEach((cardface: IScryfallCardfaceDto) => taskParameters.push({
             trx: trx,
             tableName: "oracle_legality",
             filter: (eb) => eb("oracle_legality.oracle_id", "=", cardface.oracle_id).and("oracle_legality.format", "=", key as MtgGameFormat),
@@ -324,9 +377,9 @@ export class CardSyncService extends BaseSyncService<ICardSyncParam> implements 
     }
   }
 
-  private async syncCardGames(trx: Transaction<DatabaseSchema>, scryfallCard: ScryfallCard): Promise<Array<DeleteResult> | InsertResult> {
+  private async syncCardGames(trx: Transaction<DatabaseSchema>, scryfallCard: IScryfallCardDto): Promise<Array<DeleteResult> | InsertResult> {
     if (scryfallCard.games?.length > 0) {
-      this.logService.debug("Main", `${scryfallCard.name} ${scryfallCard.lang} - delete and recreate card_game`);
+      // this.logService.debug("Main", `${scryfallCard.name} ${scryfallCard.lang} - delete and recreate card_game`);
       return await this
         .genericDeleteAndRecreate(
           trx,
@@ -336,7 +389,7 @@ export class CardSyncService extends BaseSyncService<ICardSyncParam> implements 
           { card_id: scryfallCard.id, games: scryfallCard.games }
         );
     } else {
-      this.logService.debug("Main", `${scryfallCard.name} ${scryfallCard.lang} - delete oracle_keyword`);
+      // this.logService.debug("Main", `${scryfallCard.name} ${scryfallCard.lang} - delete oracle_keyword`);
       return await trx
         .deleteFrom("card_game")
         .where("card_game.card_id", "=", scryfallCard.id)
@@ -344,7 +397,7 @@ export class CardSyncService extends BaseSyncService<ICardSyncParam> implements 
     }
   }
 
-  private async syncMultiverseIds(trx: Transaction<DatabaseSchema>, scryfallCard: ScryfallCard): Promise<Array<DeleteResult> | InsertResult> {
+  private async syncMultiverseIds(trx: Transaction<DatabaseSchema>, scryfallCard: IScryfallCardDto): Promise<Array<DeleteResult> | InsertResult> {
     if (scryfallCard.multiverse_ids?.length > 0) {
       return await this
         .genericDeleteAndRecreate(
@@ -362,7 +415,7 @@ export class CardSyncService extends BaseSyncService<ICardSyncParam> implements 
     }
   }
 
-  private async syncCardFaces(trx: Transaction<DatabaseSchema>, scryfallCard: ScryfallCard): Promise<void> {
+  private async syncCardFaces(trx: Transaction<DatabaseSchema>, scryfallCard: IScryfallCardDto): Promise<void> {
     // if layout is normal: scrfall does not return cardfaces, so we save the whole card a single cardface
     let cardfaceAdapterParameter: CardFaceAdapterParameter;
 
@@ -387,7 +440,7 @@ export class CardSyncService extends BaseSyncService<ICardSyncParam> implements 
       .then(async () => {
         if (!isSingleCardFaceLayout(scryfallCard.layout)) {
           const taskParameters = new Array<GenericSyncTaskParameter<"cardface_color_map", CardfaceColorMapAdapterParameter>>();
-          scryfallCard.card_faces.forEach((cardFace: ScryfallCardface, idx: number) => {
+          scryfallCard.card_faces.forEach((cardFace: IScryfallCardfaceDto, idx: number) => {
             if (cardFace.colors?.length > 0) {
               taskParameters.push(this.createCardFaceColorMapTaskParameter(trx, scryfallCard.id, idx, "card", cardFace.colors));
             }
@@ -441,9 +494,9 @@ export class CardSyncService extends BaseSyncService<ICardSyncParam> implements 
     };
   }
 
-  private async syncCardCardMap(trx: Transaction<DatabaseSchema>, scryfallCard: ScryfallCard): Promise<Array<DeleteResult> | InsertResult> {
+  private async syncCardCardMap(trx: Transaction<DatabaseSchema>, scryfallCard: IScryfallCardDto): Promise<Array<DeleteResult> | InsertResult> {
     if (scryfallCard.all_parts?.length > 0) {
-      this.logService.debug("Main", `${scryfallCard.name} ${scryfallCard.lang} - delete and recreate card_card_map`);
+      // this.logService.debug("Main", `${scryfallCard.name} ${scryfallCard.lang} - delete and recreate card_card_map`);
       return await this
         .genericDeleteAndRecreate(
           trx,
@@ -453,7 +506,7 @@ export class CardSyncService extends BaseSyncService<ICardSyncParam> implements 
           { cardId: scryfallCard.id, relatedCards: scryfallCard.all_parts }
         );
     } else {
-      this.logService.debug("Main", `${scryfallCard.name} ${scryfallCard.lang} - delete card_card_map`);
+      // this.logService.debug("Main", `${scryfallCard.name} ${scryfallCard.lang} - delete card_card_map`);
       return await trx
         .deleteFrom("card_card_map")
         .where("card_card_map.card_id", "=", scryfallCard.id)

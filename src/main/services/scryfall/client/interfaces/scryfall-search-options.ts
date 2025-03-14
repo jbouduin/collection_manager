@@ -1,6 +1,6 @@
 import { ScryfallUniqueStrategy } from "./scryfall-unique-strategy";
 
-export interface ScryfallSearchOptions {
+export interface IScryfallSearchOptionsDto {
   unique: ScryfallUniqueStrategy;
   include_extras?: boolean;
   include_multilingual?: boolean;

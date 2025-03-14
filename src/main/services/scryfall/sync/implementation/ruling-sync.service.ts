@@ -8,7 +8,7 @@ import { IConfigurationService, IDatabaseService, ILogService } from "../../../i
 import { INFRASTRUCTURE, SCRYFALL } from "../../../service.tokens";
 import { IOracleRulingAdapter, IOracleRulingLineAdapter } from "../../adapt/interface";
 import { IScryfallClient } from "../../client/interfaces";
-import { ScryfallRuling } from "../../types";
+import { IScryfallRulingDto } from "../../dto";
 import { IRulingSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
 import { logCompilable } from "../../../../database/log-compilable";
@@ -53,7 +53,7 @@ export class RulingSyncService extends BaseSyncService<IRulingSyncParam> impleme
       async (card: Selectable<CardTable>, index: number, total: number) => {
         progressCallback(`Processing ruling for oracle id ${card.oracle_id} (${index}/${total})`);
         return this.scryfallclient.getRulings(card.id)
-          .then((scryFall: Array<ScryfallRuling>) => {
+          .then((scryFall: Array<IScryfallRulingDto>) => {
             this.dumpScryFallData(`ruling-${card.oracle_id}.json`, scryFall);
             return this.processSync(card.id, scryFall);
           });
@@ -63,14 +63,14 @@ export class RulingSyncService extends BaseSyncService<IRulingSyncParam> impleme
   //#endregion
 
   //#region Auxiliary methods -------------------------------------------------
-  private async processSync(cardId: string, rulings: Array<ScryfallRuling>): Promise<void> {
+  private async processSync(cardId: string, rulings: Array<IScryfallRulingDto>): Promise<void> {
     if (rulings.length > 0) {
-      const groupByOracleid: Map<string, Array<ScryfallRuling>> = new Map<string, Array<ScryfallRuling>>();
-      rulings.forEach((ruling: ScryfallRuling) => {
+      const groupByOracleid: Map<string, Array<IScryfallRulingDto>> = new Map<string, Array<IScryfallRulingDto>>();
+      rulings.forEach((ruling: IScryfallRulingDto) => {
         if (groupByOracleid.has(ruling.oracle_id)) {
           groupByOracleid.get(ruling.oracle_id).push(ruling);
         } else {
-          groupByOracleid.set(ruling.oracle_id, new Array<ScryfallRuling>(ruling));
+          groupByOracleid.set(ruling.oracle_id, new Array<IScryfallRulingDto>(ruling));
         }
       });
       if (groupByOracleid.size > 1) {
@@ -87,12 +87,12 @@ export class RulingSyncService extends BaseSyncService<IRulingSyncParam> impleme
           .selectAll()
           .where("card.id", "=", cardId)
           .executeTakeFirst()
-          .then((card: Selectable<CardTable>) => this.syncRulingForSingleOracleId(trx, card.oracle_id, new Array<ScryfallRuling>()));
+          .then((card: Selectable<CardTable>) => this.syncRulingForSingleOracleId(trx, card.oracle_id, new Array<IScryfallRulingDto>()));
       });
     }
   }
 
-  private async syncRulingForSingleOracleId(trx: Transaction<DatabaseSchema>, oracleId: string, rulings: Array<ScryfallRuling>): Promise<InsertResult | void> {
+  private async syncRulingForSingleOracleId(trx: Transaction<DatabaseSchema>, oracleId: string, rulings: Array<IScryfallRulingDto>): Promise<InsertResult | void> {
     const rulingFilter: ExpressionOrFactory<DatabaseSchema, "oracle_ruling", SqlBool> = (eb) => eb("oracle_ruling.oracle_id", "=", oracleId);
     const existingRulingPromise = trx
       .selectFrom("oracle_ruling")
@@ -123,7 +123,7 @@ export class RulingSyncService extends BaseSyncService<IRulingSyncParam> impleme
 
     if (rulings.length > 0) {
       return deleteLinesPromise.then(() => {
-        const allRulingLines = rulings.map((ruling: ScryfallRuling) => this.rulingLineAdapter.toInsert(ruling));
+        const allRulingLines = rulings.map((ruling: IScryfallRulingDto) => this.rulingLineAdapter.toInsert(ruling));
         return trx
           .insertInto("oracle_ruling_line")
           .values(allRulingLines)

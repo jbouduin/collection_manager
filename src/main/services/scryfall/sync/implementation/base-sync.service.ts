@@ -1,7 +1,7 @@
-import * as fs from "fs";
+import { existsSync, mkdirSync, writeFileSync} from "fs";
 import { ExpressionOrFactory, InsertResult, Kysely, SqlBool, Transaction, UpdateResult } from "kysely";
 import { ExtractTableAlias } from "kysely/dist/cjs/parser/table-parser";
-import * as path from "path";
+import { join } from "path";
 import { ProgressCallback } from "../../../../../common/ipc";
 import { formatTimeStampedFileName } from "../../../../../common/util";
 import { DatabaseSchema } from "../../../../database/schema";
@@ -10,7 +10,6 @@ import { ITableAdapter } from "../../adapt/interface/table.adapter";
 import { IScryfallClient } from "../../client/interfaces";
 import { IBaseSyncService } from "../interface/base-sync.service";
 import { GenericSyncTaskParameter } from "./generic-sync-task.parameter";
-import { logCompilable } from "../../../../database/log-compilable";
 
 
 export abstract class BaseSyncService<T> implements IBaseSyncService<T> {
@@ -51,12 +50,12 @@ export abstract class BaseSyncService<T> implements IBaseSyncService<T> {
   //#region Protected auxiliary methods ---------------------------------------
   protected dumpScryFallData(unstampedFileName: string, data: unknown) {
     if (this.configurationService.configuration.scryfallConfiguration.dumpRetrievedData) {
-      const targetDir = path.join(this.configurationService.configuration.dataConfiguration.cacheDirectory, "json");
-      if (!fs.existsSync(targetDir)) {
-        fs.mkdirSync(targetDir, { recursive: true });
+      const targetDir = join(this.configurationService.configuration.dataConfiguration.cacheDirectory, "json");
+      if (!existsSync(targetDir)) {
+        mkdirSync(targetDir, { recursive: true });
       }
-      const targetPath = path.join(targetDir, formatTimeStampedFileName(unstampedFileName));
-      fs.writeFileSync(targetPath, JSON.stringify(data, null, 2));
+      const targetPath = join(targetDir, formatTimeStampedFileName(unstampedFileName));
+      writeFileSync(targetPath, JSON.stringify(data, null, 2));
     }
   }
 
@@ -113,7 +112,7 @@ export abstract class BaseSyncService<T> implements IBaseSyncService<T> {
       .then(async () => await trx
         .insertInto(tableName)
         .values(adapter.toInsert(scryfall))
-        .$call((q) => logCompilable(this.logService, q))
+        // .$call((q) => logCompilable(this.logService, q))
         .executeTakeFirstOrThrow());
   }
 

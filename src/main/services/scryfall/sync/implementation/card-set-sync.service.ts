@@ -7,7 +7,7 @@ import { IConfigurationService, IDatabaseService, IImageCacheService, ILogServic
 import { INFRASTRUCTURE, SCRYFALL } from "../../../service.tokens";
 import { ICardSetAdapter } from "../../adapt/interface";
 import { IScryfallClient } from "../../client/interfaces";
-import { ScryfallCardSet } from "../../types";
+import { IScryfallCardSetDto } from "../../dto";
 import { ICardSetSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
 
@@ -37,7 +37,7 @@ export class CardSetSyncService extends BaseSyncService<void> implements ICardSe
   public override async sync(_syncParam: void, progressCallback: ProgressCallback): Promise<void> {
     progressCallback("Synchronizing Card sets");
     return await this.scryfallclient.getCardSets(progressCallback)
-      .then((sets: Array<ScryfallCardSet>) => {
+      .then((sets: Array<IScryfallCardSetDto>) => {
         this.dumpScryFallData("card-sets.json", sets);
         return this.processSync(sets);
       })
@@ -56,13 +56,13 @@ export class CardSetSyncService extends BaseSyncService<void> implements ICardSe
   //#endregion
 
   //#region Private methods ---------------------------------------------------
-  public async processSync(cardSets: Array<ScryfallCardSet>): Promise<void> {
+  public async processSync(cardSets: Array<IScryfallCardSetDto>): Promise<void> {
     return await this.database
       .transaction()
       .execute(async (trx: Transaction<DatabaseSchema>) => {
-        await runSerial<ScryfallCardSet>(
+        await runSerial<IScryfallCardSetDto>(
           cardSets,
-          async (scryfallCardSet: ScryfallCardSet, _idx: number, _total: number) => {
+          async (scryfallCardSet: IScryfallCardSetDto, _idx: number, _total: number) => {
             await this.genericSingleSync(
               trx,
               "card_set",

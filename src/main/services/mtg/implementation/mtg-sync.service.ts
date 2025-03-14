@@ -8,6 +8,7 @@ import { BaseSyncService } from "../../scryfall/sync/implementation/base-sync.se
 import { INFRASTRUCTURE, SCRYFALL } from "../../service.tokens";
 import { IMtgSyncService } from "../interfaces";
 import { ILogService } from "../../infra/interfaces";
+import { ProgressCallback } from "../../../../common/ipc";
 
 
 interface SyncTaskParam<T> {
@@ -32,53 +33,57 @@ export class MtgSyncService implements IMtgSyncService {
   //#region IMtgSyncService methods -------------------------------------------
   public async synchronize(syncParam: ISyncParamDto, webContents: WebContents): Promise<void> {
     const taskParams = new Array<SyncTaskParam<unknown>>();
-    if (syncParam.cardSyncType != "none") {
-      taskParams.push({
-        displayName: "Cards",
-        syncParam: syncParam as ICardSyncParam,
-        webContents: webContents,
-        handler: container.resolve<ICardSyncService>(SCRYFALL.CardSyncService) as BaseSyncService<ICardSyncParam>
-      });
-    }
-    if (syncParam.rulingSyncType != "none") {
-      taskParams.push({
-        displayName: "Rulings",
-        syncParam: syncParam as IRulingSyncParam,
-        webContents: webContents,
-        handler: container.resolve<IRulingSyncService>(SCRYFALL.RulingSyncService) as BaseSyncService<IRulingSyncParam>
-      });
-    }
-    if (syncParam.syncCardSymbols) {
-      taskParams.push({
-        displayName: "CardSymbol",
-        syncParam: undefined,
-        webContents: webContents,
-        handler: container.resolve<ICardSymbolSyncService>(SCRYFALL.CardSymbolSyncService) as BaseSyncService<void>
-      });
-    }
-    if (syncParam.syncCardSets) {
-      taskParams.push({
-        displayName: "CardSets",
-        syncParam: undefined,
-        webContents: webContents,
-        handler: container.resolve<ICardSetSyncService>(SCRYFALL.CardSetSyncService) as BaseSyncService<void>
-      });
-    }
-    if (syncParam.catalogTypesToSync.length > 0) {
-      taskParams.push({
-        displayName: "Catalog",
-        syncParam: syncParam.catalogTypesToSync,
-        webContents: webContents,
-        handler: container.resolve<ICatalogSyncService>(SCRYFALL.CatalogSyncService) as BaseSyncService<Array<CatalogType>>
-      });
-    }
 
-    webContents.send("splash", "Start synchronization");
-    try {
-      /* eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-argument */
-      return await runSerial<SyncTaskParam<unknown>>(taskParams, this.handleTask.bind(this));
-    } catch (error: unknown) {
-      this.logService.error("Main", "error during handling sync task", error);
+    if (syncParam.cardSyncType == "bulk") {
+      return await this.syncAllCards(syncParam as ICardSyncParam, webContents);
+    } else {
+      if (syncParam.cardSyncType != "none") {
+        taskParams.push({
+          displayName: "Cards",
+          syncParam: syncParam as ICardSyncParam,
+          webContents: webContents,
+          handler: container.resolve<ICardSyncService>(SCRYFALL.CardSyncService) as BaseSyncService<ICardSyncParam>
+        });
+      }
+      if (syncParam.rulingSyncType != "none") {
+        taskParams.push({
+          displayName: "Rulings",
+          syncParam: syncParam as IRulingSyncParam,
+          webContents: webContents,
+          handler: container.resolve<IRulingSyncService>(SCRYFALL.RulingSyncService) as BaseSyncService<IRulingSyncParam>
+        });
+      }
+      if (syncParam.syncCardSymbols) {
+        taskParams.push({
+          displayName: "CardSymbol",
+          syncParam: undefined,
+          webContents: webContents,
+          handler: container.resolve<ICardSymbolSyncService>(SCRYFALL.CardSymbolSyncService) as BaseSyncService<void>
+        });
+      }
+      if (syncParam.syncCardSets) {
+        taskParams.push({
+          displayName: "CardSets",
+          syncParam: undefined,
+          webContents: webContents,
+          handler: container.resolve<ICardSetSyncService>(SCRYFALL.CardSetSyncService) as BaseSyncService<void>
+        });
+      }
+      if (syncParam.catalogTypesToSync.length > 0) {
+        taskParams.push({
+          displayName: "Catalog",
+          syncParam: syncParam.catalogTypesToSync,
+          webContents: webContents,
+          handler: container.resolve<ICatalogSyncService>(SCRYFALL.CatalogSyncService) as BaseSyncService<Array<CatalogType>>
+        });
+      }
+      webContents.send("splash", "Start synchronization");
+      try {
+        /* eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-argument */
+        return await runSerial<SyncTaskParam<unknown>>(taskParams, this.handleTask.bind(this));
+      } catch (error: unknown) {
+        this.logService.error("Main", "error during handling sync task", error);
+      }
     }
   }
   //#endregion
@@ -92,6 +97,29 @@ export class MtgSyncService implements IMtgSyncService {
         this.logService.debug("Main", value);
       }
     );
+  }
+
+  private async syncAllCards(param: ICardSyncParam, webContents: WebContents): Promise<void> {
+    const progressCallback: ProgressCallback = (value: string) => {
+      webContents.send("splash", value);
+      this.logService.debug("Main", value);
+    };
+    webContents.send("splash", "Start synchronizing card symbols");
+    return await container
+      .resolve<ICardSymbolSyncService>(SCRYFALL.CardSymbolSyncService)
+      .sync(null, progressCallback)
+      .then(async () => {
+        webContents.send("splash", "Start synchronizing card sets");
+        return await container
+          .resolve<ICardSetSyncService>(SCRYFALL.CardSetSyncService)
+          .sync(null, progressCallback);
+      })
+      .then(async () => {
+        webContents.send("splash", "Start synchronizing cards");
+        return await container
+          .resolve<ICardSyncService>(SCRYFALL.CardSyncService)
+          .sync(param, progressCallback);
+      });
   }
   //#endregion
 }

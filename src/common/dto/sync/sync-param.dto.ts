@@ -19,6 +19,7 @@ export interface ISyncParamDto {
    * Cards to sync
    */
   cardSyncType: CardSyncType;
+  bulkSyncUrl: string;
   cardSelectionToSync: Array<string>;
   cardImageStatusToSync: Array<ImageStatus>;
   syncCardsSyncedBeforeNumber: number;

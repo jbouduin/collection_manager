@@ -7,7 +7,7 @@ import { IConfigurationService, IDatabaseService, IImageCacheService, ILogServic
 import { INFRASTRUCTURE, SCRYFALL } from "../../../service.tokens";
 import { ICardSymbolAdapter, ICardSymbolAlternativeAdapter, ICardSymbolColorMapAdapter } from "../../adapt/interface";
 import { IScryfallClient } from "../../client/interfaces";
-import { ScryfallCardSymbol } from "../../types/card-symbol/scryfall-card-symbol";
+import { IScryfallCardSymbolDto } from "../../dto/card-symbol/scryfall-card-symbol.dto";
 import { ICardSymbolSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
 
@@ -44,7 +44,7 @@ export class CardSymbolSyncService extends BaseSyncService<void> implements ICar
   public override async sync(_syncParam: void, progressCallback: ProgressCallback): Promise<void> {
     progressCallback("Synchronizing card symbols");
     return await this.scryfallclient.getCardSymbols(progressCallback)
-      .then((all: Array<ScryfallCardSymbol>) => {
+      .then((all: Array<IScryfallCardSymbolDto>) => {
         this.dumpScryFallData("card-symbols.json", all);
         return this.processSync(all);
       })
@@ -64,11 +64,11 @@ export class CardSymbolSyncService extends BaseSyncService<void> implements ICar
   //#endregion
 
   //#region Private methods ---------------------------------------------------
-  private async processSync(symbols: Array<ScryfallCardSymbol>): Promise<void> {
+  private async processSync(symbols: Array<IScryfallCardSymbolDto>): Promise<void> {
     return await this.database.transaction().execute(async (trx: Transaction<DatabaseSchema>) => {
-      await runSerial<ScryfallCardSymbol>(
+      await runSerial<IScryfallCardSymbolDto>(
         symbols,
-        async (symbol: ScryfallCardSymbol, _idx: number, _total: number) => {
+        async (symbol: IScryfallCardSymbolDto, _idx: number, _total: number) => {
           const insertOrUpdate: Promise<InsertResult | UpdateResult> = super.genericSingleSync(
             trx,
             "card_symbol",

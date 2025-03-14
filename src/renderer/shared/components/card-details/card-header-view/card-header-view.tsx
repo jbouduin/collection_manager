@@ -35,6 +35,8 @@ export const CardHeaderView = React.memo(
     //#endregion
   },
   (prev: CardHeaderViewProps, next: CardHeaderViewProps) => {
-    return prev.card.cardName == next.card.cardName && compareClassNameProp(prev.className, next.className);
+    return prev.card.cardName == next.card.cardName &&
+      prev.card.setId == next.card.setId &&
+      compareClassNameProp(prev.className, next.className);
   }
 );

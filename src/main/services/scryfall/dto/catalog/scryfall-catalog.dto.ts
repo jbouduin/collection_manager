@@ -1,4 +1,4 @@
-export interface ScryfallCatalog {
+export interface IScryfallCatalogDto {
   /**
    * A link to the current catalog on Scryfall’s API
    *

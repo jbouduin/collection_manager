@@ -104,6 +104,7 @@ export class ConfigurationService extends BaseService implements IConfigurationS
 
   private createScryFallFactoryDefault(): IScryfallConfigurationDto {
     const endpoints: Record<ScryfallEndpoint, string> = {
+      bulk: "bulk-data",
       cards: "card/:id",
       cardSet: "sets",
       cardSymbol: "symbology",
@@ -130,6 +131,7 @@ export class ConfigurationService extends BaseService implements IConfigurationS
   private createSyncAtStartupFactoryDefault(): ISyncParamDto {
     const result: ISyncParamDto = {
       catalogTypesToSync: [],
+      bulkSyncUrl: undefined,
       syncCardSymbols: false,
       syncCardSets: false,
       rulingSyncType: "none",

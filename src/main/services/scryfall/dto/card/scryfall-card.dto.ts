@@ -1,13 +1,13 @@
 import { CardBorderColor, CardFinish, CardFrame, CardFrameEffect, CardLayout, CardPromoType, CardRarity, CardSecurityStamp, CardSetType, Game, ImageStatus, MtgColor, MtgLanguage } from "../../../../../common/types";
-import { ScryfallCardface } from "./scryfall-card-face";
-import { ScryfallLegalities } from "./scryfall-legalities";
-import { ScryfallPreviewInfo } from "./scryfall-preview-info";
-import { ScryfallPrices } from "./scryfall-prices";
-import { ScryfallPurchaseUris } from "./scryfall-purchase-uris";
-import { ScryfallRelatedCard } from "./scryfall-related-card";
-import { ScryfallRelatedUris } from "./scryfall-related-uris";
+import { IScryfallCardfaceDto } from "./scryfall-card-face.dto";
+import { ScryfallLegalities } from "./types";
+import { IScryfallPreviewInfoDto } from "./scryfall-preview-info.dto";
+import { IScryfallPricesDto } from "./scryfall-prices.dto";
+import { IScryfallPurchaseUrisDto } from "./scryfall-purchase-uris.dto";
+import { IScryfallRelatedCardDto } from "./scryfall-related-card.dto";
+import { IScryfallRelatedUrisDto } from "./scryfall-related-uris.dto";
 
-export interface ScryfallCard {
+export interface IScryfallCardDto {
   //#region Core fields -------------------------------------------------------
   /**
    * A unique ID for this card in Scryfall’s database.
@@ -108,7 +108,7 @@ export interface ScryfallCard {
   /**
    * If this card is closely related to other cards, this property will be an array with Related Card Objects.
    */
-  all_parts?: Array<ScryfallRelatedCard>;
+  all_parts?: Array<IScryfallRelatedCardDto>;
   /**
    * An object describing the legality of this card across play formats. Possible legalities are legal, not_legal, restricted, and banned.
    */
@@ -116,7 +116,7 @@ export interface ScryfallCard {
   /**
    * An array of Card Face objects, if this card is multifaced.
    */
-  card_faces: Array<ScryfallCardface>;
+  card_faces: Array<IScryfallCardfaceDto>;
 
   //#region Vanguard stats ----------------------------------------------------
   /**
@@ -285,7 +285,7 @@ export interface ScryfallCard {
   /**
    * An object containing daily price information for this card, including usd, usd_foil, usd_etched, eur, eur_foil, eur_etched, and tix prices, as strings.
    */
-  prices: ScryfallPrices;
+  prices: IScryfallPricesDto;
   /**
    * True if this card is a promotional print.
    */
@@ -297,7 +297,7 @@ export interface ScryfallCard {
   /**
    * An object providing URIs to this card’s listing on major marketplaces. Omitted if the card is unpurchaseable.
    */
-  purchase_uris?: ScryfallPurchaseUris;
+  purchase_uris?: IScryfallPurchaseUrisDto;
   /**
    * This card’s rarity.
    */
@@ -305,7 +305,7 @@ export interface ScryfallCard {
   /**
    * An object providing URIs to this card’s listing on other Magic: The Gathering online resources.
    */
-  related_uris: ScryfallRelatedUris;
+  related_uris: IScryfallRelatedUrisDto;
   /**
    * The date this card was first released.
    *
@@ -367,7 +367,7 @@ export interface ScryfallCard {
   /**
    * Preview information for this print, if any.
    */
-  preview?: ScryfallPreviewInfo;
+  preview?: IScryfallPreviewInfoDto;
   /**
    * The Scryfall ID for the card back design present on this card. Only for single sided cards
    *

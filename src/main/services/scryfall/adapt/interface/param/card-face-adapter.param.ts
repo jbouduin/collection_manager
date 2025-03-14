@@ -1,6 +1,6 @@
-import { ScryfallCard, ScryfallCardface } from "../../../types";
+import { IScryfallCardDto, IScryfallCardfaceDto } from "../../../dto";
 
 export type CardFaceAdapterParameter = {
-  scryfallCard: ScryfallCard;
-  scryfallCardfaces?: Array<ScryfallCardface>;
+  scryfallCard: IScryfallCardDto;
+  scryfallCardfaces?: Array<IScryfallCardfaceDto>;
 };

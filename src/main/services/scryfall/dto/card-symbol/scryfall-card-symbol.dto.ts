@@ -1,6 +1,6 @@
 import { MtgColor } from "../../../../../common/types";
 
-export interface ScryfallCardSymbol {
+export interface IScryfallCardSymbolDto {
   /**
    * The plaintext symbol. Often surrounded with curly braces {}. Note that not all symbols are ASCII text (for example, {∞}).
    */
@@ -28,7 +28,7 @@ export interface ScryfallCardSymbol {
    */
   mana_value?: number | null;
   /**
-   * @deprecated Use {@link ScryfallCardSymbol.mana_value} instead.
+   * @deprecated Use {@link IScryfallCardSymbolDto.mana_value} instead.
    *
    * @type Decimal
    */

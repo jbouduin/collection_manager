@@ -4,7 +4,7 @@ import { INFRASTRUCTURE } from "../../service.tokens";
 import { ILogService, IResultFactory, IRouterService, IWindowsService } from "../interfaces";
 
 @singleton()
-export class WindowsRouter extends BaseRouter implements IRouter {
+export class WindowRouter extends BaseRouter implements IRouter {
   //#region private fields ----------------------------------------------------
   private readonly windowsService: IWindowsService;
   //#endregion

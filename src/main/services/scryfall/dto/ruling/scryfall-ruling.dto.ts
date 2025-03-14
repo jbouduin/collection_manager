@@ -1,6 +1,6 @@
 import { RulingSource } from "../../../../../common/types";
 
-export interface ScryfallRuling {
+export interface IScryfallRulingDto {
   /**
    * The Oracle ID of the card this ruling is associated with.
    *

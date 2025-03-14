@@ -1,4 +1,4 @@
-import { CardLegality, CardRarity, CardSetGroupBy, CardSetSort, CardSetType, CardSyncType, ImageStatus, RulingSyncType, TimespanUnit } from "../../../common/types";
+import { CardLegality, CardRarity, CardSetGroupBy, CardSetSort, CardSetType, ImageStatus, RulingSyncType, TimespanUnit } from "../../../common/types";
 
 /**
  * The display service is using maps to make sure we add new display values if new key's are added
@@ -10,7 +10,6 @@ export class DisplayValueService {
   private readonly _cardSetGroupByDisplayValues: Record<CardSetGroupBy, string>;
   private readonly _cardSetSortDisplayValues: Record<CardSetSort, string>;
   private readonly _cardSetTypeDisplayValues: Record<CardSetType, string>;
-  private readonly _cardSyncTypeDisplayValues: Record<CardSyncType, string>;
   private readonly _imageStatusDisplayValues: Record<ImageStatus, string>;
   private readonly _rulingSyncTypeDisplayValues: Record<RulingSyncType, string>;
   private readonly _timespanUnitDisplayValues: Record<TimespanUnit, string>;
@@ -35,10 +34,6 @@ export class DisplayValueService {
 
   public get cardSetTypeDisplayValues(): Record<CardSetType, string> {
     return this._cardSetTypeDisplayValues;
-  }
-
-  public get cardSyncTypeDisplayValues(): Record<CardSyncType, string> {
-    return this._cardSyncTypeDisplayValues;
   }
 
   public get imageStatusDisplayValues(): Record<ImageStatus, string> {
@@ -110,15 +105,6 @@ export class DisplayValueService {
       token: "Token",
       treasure_chest: "Treasure chest",
       vanguard: "Vanguard"
-    };
-
-    this._cardSyncTypeDisplayValues = {
-      none: "Do not synchronize cards",
-      allCards: "All cards which have previously been synchronized",
-      byCardSet: undefined, // => not to be shown in the front end
-      byImageStatus: "Select by image status",
-      byLastSynchronized: "Last synchronized before",
-      collection: undefined // => not to be shown in the front end
     };
 
     this._imageStatusDisplayValues = {

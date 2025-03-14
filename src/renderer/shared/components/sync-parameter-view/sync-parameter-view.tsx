@@ -1,12 +1,59 @@
 import { Checkbox, Divider, FormGroup, H4, HTMLSelect, HTMLTable, NumericInput, SectionCard } from "@blueprintjs/core";
 import * as React from "react";
-import { ICatalogTypeDto } from "../../../../common/dto";
+import { ICatalogTypeDto, IScryfallBulkDataItemDto, ScryfallBulkDataType } from "../../../../common/dto";
 import { CardSyncType, ImageStatus, RulingSyncType, TimespanUnit } from "../../../../common/types";
 import { DisplayValueService, DisplayValueServiceContext } from "../../context";
 import { displayValueRecordToSelectOptions, handleBooleanChange, handleValueChange } from "../utils";
 import { SyncParameterViewProps } from "./sync-parameter-view.props";
 
 export function SyncParameterView(props: SyncParameterViewProps) {
+  //#region Memo --------------------------------------------------------------
+  const cardSyncTypeDisplayValues = React.useMemo<Record<CardSyncType, string>>(
+    () => {
+      return {
+        none: "Do not synchronize cards",
+        allCards: "All cards which have previously been synchronized",
+        byCardSet: undefined, // => not to be shown in the front end
+        byImageStatus: "Select by image status",
+        byLastSynchronized: "Last synchronized before",
+        bulk: props.isConfigurationView ? undefined : "Bulk",
+        collection: undefined // => not to be shown in the front end
+      };
+    },
+    [props.isConfigurationView]
+  );
+
+  const [bulkOptions, bulkDescriptions] = React.useMemo<[
+    Array<{ value: ScryfallBulkDataType; label: string }>,
+    Record<ScryfallBulkDataType, string>
+  ]>(
+    () => {
+      const options = new Array<{ value: ScryfallBulkDataType; label: string }>();
+      const descriptions: Record<ScryfallBulkDataType, string> = {
+        oracle_cards: "",
+        unique_artwork: "",
+        default_cards: "",
+        all_cards: "",
+        rulings: ""
+      };
+      const units = ["bytes", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
+      const niceBytes = (x: number) => {
+        let l = 0;
+        while (x >= 1024 && ++l) {
+          x = x / 1024;
+        }
+        return `${x.toFixed(x < 10 && l > 0 ? 1 : 0)} ${units[l]}`;
+      };
+      props.scryfallBulkItems?.forEach((o: IScryfallBulkDataItemDto) => {
+        options.push({ value: o.type, label: `${o.name} (${niceBytes(o.size)})` });
+        descriptions[o.type] = o.description;
+      });
+      return [options, descriptions];
+    },
+    [props.scryfallBulkItems]
+  );
+  //#endregion
+
   //#region Rendering --------------------------------------------------------------
   return (
     <DisplayValueServiceContext.Consumer>
@@ -21,10 +68,16 @@ export function SyncParameterView(props: SyncParameterViewProps) {
                 onChange={
                   handleValueChange((value: CardSyncType) => {
                     props.syncParam.cardSyncType = value;
+                    if (value == "bulk") {
+                      props.syncParam.syncCardSets = true;
+                      props.syncParam.syncCardSymbols = true;
+                      props.syncParam.rulingSyncType = "none";
+                      props.syncParam.clearCatalogsToSync();
+                    }
                     props.onSyncParamChanged(props.syncParam);
                   })
                 }
-                options={displayValueRecordToSelectOptions(displayValueService.cardSyncTypeDisplayValues)}
+                options={displayValueRecordToSelectOptions(cardSyncTypeDisplayValues)}
                 value={props.syncParam.cardSyncType}
               />
             </FormGroup>
@@ -72,8 +125,28 @@ export function SyncParameterView(props: SyncParameterViewProps) {
               </FormGroup>
             }
 
+            {
+              props.syncParam.cardSyncType == "bulk" &&
+              <FormGroup key="bulk-sync-option">
+                <HTMLSelect
+                  fill={true}
+                  minimal={true}
+                  onChange={
+                    handleValueChange((value: ScryfallBulkDataType) => {
+                      props.syncParam.setBulkDefinition(props.scryfallBulkItems.find((d: IScryfallBulkDataItemDto) => d.type == value));
+                      props.onSyncParamChanged(props.syncParam);
+                    })
+                  }
+                  options={bulkOptions}
+                  value={props.syncParam.bulkType}
+                />
+                <p>{bulkDescriptions[props.syncParam.bulkType]}</p>
+              </FormGroup>
+            }
+
             <FormGroup label="Rulings" labelFor="rulings-sync-type">
               <HTMLSelect
+                disabled={props.syncParam.cardSyncType == "bulk"}
                 id="rulings-sync-type"
                 minimal={true}
                 onChange={
@@ -92,6 +165,7 @@ export function SyncParameterView(props: SyncParameterViewProps) {
             <H4>Master data</H4>
             <Checkbox
               checked={props.syncParam.syncCardSets}
+              disabled={props.syncParam.cardSyncType == "bulk"}
               key="card-sets"
               label="Card set data"
               onChange={
@@ -103,6 +177,7 @@ export function SyncParameterView(props: SyncParameterViewProps) {
             />
             <Checkbox
               checked={props.syncParam.syncCardSymbols}
+              disabled={props.syncParam.cardSyncType == "bulk"}
               key="card-symbols"
               label="Card symbols"
               onChange={
@@ -146,6 +221,7 @@ export function SyncParameterView(props: SyncParameterViewProps) {
         <td key={`cell-${catalog.catalog_name}`} style={{ paddingLeft: "0px" }} >
           <Checkbox
             checked={props.syncParam.getCatalogToSync(catalog.catalog_name)}
+            disabled={props.syncParam.cardSyncType == "bulk"}
             key={catalog.catalog_name}
             labelElement={(
               <>

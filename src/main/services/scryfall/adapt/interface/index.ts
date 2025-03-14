@@ -1,4 +1,4 @@
-import { ScryfallCard, ScryfallCardSet, ScryfallCardSymbol, ScryfallRuling } from "../../types";
+import { IScryfallCardDto, IScryfallCardSetDto, IScryfallCardSymbolDto, IScryfallRulingDto } from "../../dto";
 import {
   CardCardMapAdapterParameter, CardFaceAdapterParameter, CardGameAdapterParameter, CardMultiversIdAdapterParameter,
   CardSymbolAlternativeAdapterParam, CardSymbolColorMapAdapterParam,
@@ -10,13 +10,13 @@ import { CardColorMapAdapterParameter } from "./param/card-color-map-adapter.par
 import { ITableAdapter } from "./table.adapter";
 
 
-export type ICardSetAdapter = ITableAdapter<"card_set", ScryfallCardSet>;
+export type ICardSetAdapter = ITableAdapter<"card_set", IScryfallCardSetDto>;
 export type ICatalogAdapter = ITableAdapter<"catalog_item", CatalogAdapterParam>;
-export type ICardSymbolAdapter = ITableAdapter<"card_symbol", ScryfallCardSymbol>;
+export type ICardSymbolAdapter = ITableAdapter<"card_symbol", IScryfallCardSymbolDto>;
 export type ICardSymbolAlternativeAdapter = ITableAdapter<"card_symbol_alternative", CardSymbolAlternativeAdapterParam>;
 export type ICardSymbolColorMapAdapter = ITableAdapter<"card_symbol_color_map", CardSymbolColorMapAdapterParam>;
 
-export type ICardAdapter = ITableAdapter<"card", ScryfallCard>;
+export type ICardAdapter = ITableAdapter<"card", IScryfallCardDto>;
 export type ICardColorMapAdapter = ITableAdapter<"card_color_map", CardColorMapAdapterParameter>;
 export type ICardGameAdapter = ITableAdapter<"card_game", CardGameAdapterParameter>;
 export type ICardMultiverseIdAdapter = ITableAdapter<"card_multiverse_id", CardMultiversIdAdapterParameter>;
@@ -29,4 +29,4 @@ export type IOracleAdapter = ITableAdapter<"oracle", OracleAdapterParameter>;
 export type IOracleKeywordAdapter = ITableAdapter<"oracle_keyword", OracleKeywordAdapterParameter>;
 export type IOracleLegalityAdapter = ITableAdapter<"oracle_legality", OracleLegalityAdapterParameter>;
 export type IOracleRulingAdapter = ITableAdapter<"oracle_ruling", string>;
-export type IOracleRulingLineAdapter = ITableAdapter<"oracle_ruling_line", ScryfallRuling>;
+export type IOracleRulingLineAdapter = ITableAdapter<"oracle_ruling_line", IScryfallRulingDto>;

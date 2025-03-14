@@ -3,12 +3,12 @@ import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser
 
 import { sqliteUTCTimeStamp } from "../../../../../common/util";
 import { DatabaseSchema } from "../../../../database/schema";
-import { ScryfallCardSymbol } from "../../types";
+import { IScryfallCardSymbolDto } from "../../dto";
 import { ICardSymbolAdapter } from "../interface";
 import { scryfallBooleanToNumber } from "./utils";
 
 export class CardSymbolAdapter implements ICardSymbolAdapter {
-  public toInsert(cardSymbol: ScryfallCardSymbol): InsertExpression<DatabaseSchema, "card_symbol"> {
+  public toInsert(cardSymbol: IScryfallCardSymbolDto): InsertExpression<DatabaseSchema, "card_symbol"> {
     const now = sqliteUTCTimeStamp();
     return {
       created_at: now,
@@ -28,7 +28,7 @@ export class CardSymbolAdapter implements ICardSymbolAdapter {
     };
   }
 
-  public toUpdate(cardSymbol: ScryfallCardSymbol): UpdateObjectExpression<DatabaseSchema, "card_symbol"> {
+  public toUpdate(cardSymbol: IScryfallCardSymbolDto): UpdateObjectExpression<DatabaseSchema, "card_symbol"> {
     return {
       is_appears_in_mana_costs: scryfallBooleanToNumber(cardSymbol.appears_in_mana_costs),
       cmc: cardSymbol.mana_value,

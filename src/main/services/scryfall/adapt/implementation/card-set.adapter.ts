@@ -3,13 +3,13 @@ import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser
 
 import { sqliteUTCTimeStamp } from "../../../../../common/util";
 import { DatabaseSchema } from "../../../../database/schema";
-import { ScryfallCardSet } from "../../types";
+import { IScryfallCardSetDto } from "../../dto";
 import { ICardSetAdapter } from "../interface";
 import { scryfallBooleanToNumber, scryfallDateToIsoString } from "./utils";
 
 export class CardSetAdapter implements ICardSetAdapter {
   //#region ICardSetAdapter ---------------------------------------------------
-  public toInsert(scryfall: ScryfallCardSet): InsertExpression<DatabaseSchema, "card_set"> {
+  public toInsert(scryfall: IScryfallCardSetDto): InsertExpression<DatabaseSchema, "card_set"> {
     const now = sqliteUTCTimeStamp();
     return {
       created_at: now,
@@ -38,7 +38,7 @@ export class CardSetAdapter implements ICardSetAdapter {
     };
   }
 
-  public toUpdate(scryfall: ScryfallCardSet): UpdateObjectExpression<DatabaseSchema, "card_set"> {
+  public toUpdate(scryfall: IScryfallCardSetDto): UpdateObjectExpression<DatabaseSchema, "card_set"> {
     return {
       arena_code: scryfall.arena_code,
       block: scryfall.block,

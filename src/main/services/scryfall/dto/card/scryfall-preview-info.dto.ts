@@ -1,4 +1,4 @@
-export interface ScryfallPreviewInfo {
+export interface IScryfallPreviewInfoDto {
   /**
    * The date this card was previewed.
    *

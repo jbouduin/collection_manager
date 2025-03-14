@@ -1,6 +1,6 @@
 import { CardRelatedCardComponent } from "../../../../../common/types";
 
-export interface ScryfallRelatedCard {
+export interface IScryfallRelatedCardDto {
   /**
    * An unique ID for this card in Scryfall’s database.
    *

@@ -1,7 +1,7 @@
 /**
- * Prices for a card in various treatments.
+ * Prices for a card in various finishes.
  */
-export interface ScryfallPrices {
+export interface IScryfallPricesDto {
   usd: string | null;
   usd_foil: string | null;
   usd_etched: string | null;

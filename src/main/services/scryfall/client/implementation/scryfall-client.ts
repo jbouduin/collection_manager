@@ -1,16 +1,19 @@
+import { createWriteStream } from "fs";
+import { Readable } from "stream";
+import { finished } from "stream/promises";
+import { ReadableStream } from "stream/web";
 import { inject, injectable } from "tsyringe";
-import { IMtgCardImageDataDto } from "../../../../../common/dto";
+import { IMtgCardImageDataDto, IScryfallBulkDataItemDto } from "../../../../../common/dto";
 import { IScryfallConfigurationDto } from "../../../../../common/dto/infra/scryfall-configuration.dto";
 import { ProgressCallback } from "../../../../../common/ipc";
 import { CatalogType } from "../../../../../common/types";
 import { IConfigurationService, ILogService } from "../../../../../main/services/infra/interfaces";
 import { runSerial } from "../../../../../main/services/infra/util";
 import { INFRASTRUCTURE } from "../../../service.tokens";
-import { ScryfallCard, ScryfallCardSet, ScryfallCatalog, ScryfallRuling } from "../../types";
-import { ScryfallCardSymbol } from "../../types/card-symbol/scryfall-card-symbol";
-import { ScryfallList } from "../../types/scryfall-list";
-import { IScryfallClient, ScryfallSearchOptions } from "../interfaces";
-
+import { IScryfallCardDto, IScryfallCardSetDto, IScryfallCatalogDto, IScryfallRulingDto } from "../../dto";
+import { IScryfallCardSymbolDto } from "../../dto/card-symbol/scryfall-card-symbol.dto";
+import { IScryfallListDto } from "../../dto/scryfall-list.dto";
+import { IScryfallClient, IScryfallSearchOptionsDto } from "../interfaces";
 
 @injectable()
 export class ScryfallClient implements IScryfallClient {
@@ -35,9 +38,35 @@ export class ScryfallClient implements IScryfallClient {
   //#endregion
 
   //#region IScryfallClient methods -------------------------------------------
+  public async downloadBulkData(uri: string, targetFile: string): Promise<void> {
+    const file = createWriteStream(targetFile);
+    const init: RequestInit = {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        content_encoding: "gzip"
+      }
+    };
+    return await fetch(uri, init)
+      .then((response: Response) => {
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+        return finished(Readable.fromWeb(response.body as ReadableStream<any>).pipe(file));
+      });
+  }
+
   public async fetchArrayBuffer(uri: string | URL): Promise<ArrayBuffer> {
     return this.tryFetch(uri)
       .then((response: Response) => response.arrayBuffer());
+  }
+
+  public async getAllCards(): Promise<Array<IScryfallCardDto>> {
+    return Promise.resolve(new Array<IScryfallCardDto>());
+  }
+
+  public getBulkDefinitions(): Promise<Array<IScryfallBulkDataItemDto>> {
+    const uri = `${this.scryfallConfiguration.scryfallApiRoot}/${this.scryfallConfiguration.scryfallEndpoints["bulk"]}`;
+    return this.fetchList<IScryfallBulkDataItemDto>(uri, new Array<IScryfallBulkDataItemDto>());
   }
 
   public getCardImage(card: IMtgCardImageDataDto): Promise<ArrayBuffer> {
@@ -55,30 +84,30 @@ export class ScryfallClient implements IScryfallClient {
     return this.fetchArrayBuffer(url);
   }
 
-  public async getCatalog(type: CatalogType, progressCallback: ProgressCallback): Promise<ScryfallCatalog> {
+  public async getCatalog(type: CatalogType, progressCallback: ProgressCallback): Promise<IScryfallCatalogDto> {
     progressCallback(`Fetching catalog '${type}' from Scryfall`);
     const uri = `${this.scryfallConfiguration.scryfallApiRoot}/${this.scryfallConfiguration.scryfallEndpoints.catalog}/${type}`;
     return this
       .tryFetch(uri)
-      .then((fetchResult: Response) => fetchResult.json() as Promise<ScryfallCatalog>);
+      .then((fetchResult: Response) => fetchResult.json() as Promise<IScryfallCatalogDto>);
   }
 
   // LATER use emitter in getCards or in getlist
-  public async getCardsForCardSet(cardSetCode: string, progressCallback: ProgressCallback): Promise<Array<ScryfallCard>> {
+  public async getCardsForCardSet(cardSetCode: string, progressCallback: ProgressCallback): Promise<Array<IScryfallCardDto>> {
     progressCallback("Fetching cards of from Scryfall");
-    const scryfallOptions: ScryfallSearchOptions = {
+    const scryfallOptions: IScryfallSearchOptionsDto = {
       unique: "prints",
       include_extras: true,
       include_multilingual: true,
       include_variations: true
     };
     const uri = this.buildCardBySetUri(cardSetCode, scryfallOptions);
-    return this.fetchList<ScryfallCard>(uri, new Array<ScryfallCard>());
+    return this.fetchList<IScryfallCardDto>(uri, new Array<IScryfallCardDto>());
   }
 
-  public async getCardCollections(cardIds: Array<string>, progressCallback: ProgressCallback): Promise<Array<ScryfallCard>> {
+  public async getCardCollections(cardIds: Array<string>, progressCallback: ProgressCallback): Promise<Array<IScryfallCardDto>> {
     progressCallback(`Fetching ${cardIds.length} cards from Scryfall`);
-    const result = new Array<ScryfallCard>();
+    const result = new Array<IScryfallCardDto>();
     // split array
     const chunks = cardIds.reduce(
       (resultArray: Array<Array<string>>, item, index) => {
@@ -112,21 +141,21 @@ export class ScryfallClient implements IScryfallClient {
     return result;
   }
 
-  public async getCardSets(progressCallback: ProgressCallback): Promise<Array<ScryfallCardSet>> {
+  public async getCardSets(progressCallback: ProgressCallback): Promise<Array<IScryfallCardSetDto>> {
     progressCallback("Fetching card set data from Scryfall");
     const uri = `${this.scryfallConfiguration.scryfallApiRoot}/${this.scryfallConfiguration.scryfallEndpoints["cardSet"]}`;
-    return this.fetchList<ScryfallCardSet>(uri, new Array<ScryfallCardSet>());
+    return this.fetchList<IScryfallCardSetDto>(uri, new Array<IScryfallCardSetDto>());
   }
 
-  public getCardSymbols(progressCallback: ProgressCallback): Promise<Array<ScryfallCardSymbol>> {
+  public getCardSymbols(progressCallback: ProgressCallback): Promise<Array<IScryfallCardSymbolDto>> {
     progressCallback("Fetching card symbol data from Scryfall");
     const uri = `${this.scryfallConfiguration.scryfallApiRoot}/${this.scryfallConfiguration.scryfallEndpoints["cardSymbol"]}`;
-    return this.fetchList<ScryfallCardSymbol>(uri, new Array<ScryfallCardSymbol>());
+    return this.fetchList<IScryfallCardSymbolDto>(uri, new Array<IScryfallCardSymbolDto>());
   }
 
-  public async getRulings(cardId: string): Promise<Array<ScryfallRuling>> {
+  public async getRulings(cardId: string): Promise<Array<IScryfallRulingDto>> {
     const uri = `${this.scryfallConfiguration.scryfallApiRoot}/${this.scryfallConfiguration.scryfallEndpoints["ruling"].replace(":id", cardId)}`;
-    return this.fetchList<ScryfallRuling>(uri, new Array<ScryfallRuling>());
+    return this.fetchList<IScryfallRulingDto>(uri, new Array<IScryfallRulingDto>());
   }
   //#endregion
 
@@ -147,7 +176,7 @@ export class ScryfallClient implements IScryfallClient {
       });
   }
 
-  private async tryPost(uri: string | URL, body: string): Promise<Array<ScryfallCard>> {
+  private async tryPost(uri: string | URL, body: string): Promise<Array<IScryfallCardDto>> {
     const now = Date.now();
     const sleepTime = this.nextQuery - now;
     this.nextQuery = now + this.scryfallConfiguration.minimumRequestTimeout;
@@ -164,7 +193,7 @@ export class ScryfallClient implements IScryfallClient {
       }))
       .then(async (response: Response) => {
         this.logService.debug("Main", `retrieved ${uri} -> status: ${response.status}`);
-        return ((await response.json()) as ScryfallList<ScryfallCard>).data;
+        return ((await response.json()) as IScryfallListDto<IScryfallCardDto>).data;
       });
   }
 
@@ -178,7 +207,7 @@ export class ScryfallClient implements IScryfallClient {
   private async fetchList<T extends object>(uri: string | URL, previousPages: Array<T>, progressCallback?: ProgressCallback): Promise<Array<T>> {
     return this.tryFetch(uri)
       .then(async (response: Response) => {
-        const fetchedList = (await response.json()) as ScryfallList<T>;
+        const fetchedList = (await response.json()) as IScryfallListDto<T>;
         previousPages.push(...fetchedList.data);
         if (fetchedList.has_more && fetchedList.next_page) {
           return this.fetchList(fetchedList.next_page, previousPages, progressCallback);
@@ -188,7 +217,7 @@ export class ScryfallClient implements IScryfallClient {
       });
   }
 
-  private buildCardBySetUri(cardSetCode: string, scryfallOptions: ScryfallSearchOptions): URL {
+  private buildCardBySetUri(cardSetCode: string, scryfallOptions: IScryfallSearchOptionsDto): URL {
     const result = new URL(`${this.scryfallConfiguration.scryfallApiRoot}/${this.scryfallConfiguration.scryfallEndpoints["search"]}`);
     result.searchParams.set("include_extras", scryfallOptions.include_extras ? "true" : "false");
     result.searchParams.set("unique", scryfallOptions.unique);

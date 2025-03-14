@@ -1,6 +1,6 @@
-import { ScryfallRelatedCard } from "../../../types";
+import { IScryfallRelatedCardDto } from "../../../dto";
 
 export type CardCardMapAdapterParameter = {
   cardId: string;
-  relatedCards: Array<ScryfallRelatedCard>;
+  relatedCards: Array<IScryfallRelatedCardDto>;
 };

@@ -1,7 +1,7 @@
 /**
  * Possible purchase URIs for a card.
  */
-export interface ScryfallPurchaseUris {
+export interface IScryfallPurchaseUrisDto {
   /**
    * This card's purchase page on TCGPlayer.
    *

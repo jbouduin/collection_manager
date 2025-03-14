@@ -64,6 +64,7 @@ export class CardRouter extends BaseRouter implements IRouter {
   }
   //#endregion
 
+  //#region Auxiliary methods -------------------------------------------------
   private extractQueryParam(queryParams: Record<string, string>, token: CardQueryParamToken): string | null {
     return queryParams[token];
   }
@@ -76,4 +77,5 @@ export class CardRouter extends BaseRouter implements IRouter {
     });
     return result;
   }
+  //#endregion
 }

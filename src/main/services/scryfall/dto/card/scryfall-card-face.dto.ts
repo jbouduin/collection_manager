@@ -1,6 +1,6 @@
 import { CardLayout, MtgColor } from "../../../../../common/types";
 
-export interface ScryfallCardface {
+export interface IScryfallCardfaceDto {
   /**
    * The colors in this card’s color indicator, if any. A null value for this field indicates the card does not have one.
    */

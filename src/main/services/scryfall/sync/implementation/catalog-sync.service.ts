@@ -9,7 +9,7 @@ import { runSerial } from "../../../../../main/services/infra/util";
 import { INFRASTRUCTURE, SCRYFALL } from "../../../service.tokens";
 import { ICatalogAdapter } from "../../adapt/interface";
 import { IScryfallClient } from "../../client/interfaces";
-import { ScryfallCatalog } from "../../types";
+import { IScryfallCatalogDto } from "../../dto";
 import { ICatalogSyncService } from "../interface";
 import { BaseSyncService } from "./base-sync.service";
 
@@ -53,14 +53,14 @@ export class CatalogSyncService extends BaseSyncService<Array<CatalogType>> impl
   private async syncSingleCatalog(parameter: SyncSingleCatalogParameter): Promise<void> {
     parameter.progressCallback(`Synchronizing catalog '${parameter.catalogType}'`);
 
-    const catalog: Promise<ScryfallCatalog> = this.scryfallclient.getCatalog(parameter.catalogType, parameter.progressCallback);
-    return catalog.then((fetched: ScryfallCatalog) => {
+    const catalog: Promise<IScryfallCatalogDto> = this.scryfallclient.getCatalog(parameter.catalogType, parameter.progressCallback);
+    return catalog.then((fetched: IScryfallCatalogDto) => {
       this.dumpScryFallData(`catalog-${parameter.catalogType}.json`, fetched);
       return this.processSync(parameter, fetched);
     });
   }
 
-  private async processSync(parameter: SyncSingleCatalogParameter, catalog: ScryfallCatalog): Promise<void> {
+  private async processSync(parameter: SyncSingleCatalogParameter, catalog: IScryfallCatalogDto): Promise<void> {
     if (parameter.progressCallback) {
       parameter.progressCallback(`Saving ${catalog.total_values} items for catalog '${parameter.catalogType}'`);
     }

@@ -4,7 +4,7 @@ import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser
 import { DatabaseSchema } from "../../../../database/schema";
 import { ICardfaceAdapter } from "../interface";
 import { CardFaceAdapterParameter } from "../interface/param";
-import { ScryfallCard, ScryfallCardface } from "../../types";
+import { IScryfallCardDto, IScryfallCardfaceDto } from "../../dto";
 
 export class CardfaceAdapter implements ICardfaceAdapter {
   //#region ICardFaceAdapter methods ------------------------------------------
@@ -22,7 +22,7 @@ export class CardfaceAdapter implements ICardfaceAdapter {
   //#region
 
   //#region Private methods ---------------------------------------------------
-  private toInsertSingleCardFace(scryfallCard: ScryfallCard): InsertExpression<DatabaseSchema, "cardface"> {
+  private toInsertSingleCardFace(scryfallCard: IScryfallCardDto): InsertExpression<DatabaseSchema, "cardface"> {
     return {
       card_id: scryfallCard.id,
       sequence: 0,
@@ -46,9 +46,9 @@ export class CardfaceAdapter implements ICardfaceAdapter {
     };
   }
 
-  private toInsertMultipleCardFaces(cardId: string, cardfaces: Array<ScryfallCardface>): InsertExpression<DatabaseSchema, "cardface"> {
+  private toInsertMultipleCardFaces(cardId: string, cardfaces: Array<IScryfallCardfaceDto>): InsertExpression<DatabaseSchema, "cardface"> {
     const result = new Array<InsertExpression<DatabaseSchema, "cardface">>();
-    cardfaces.map((cardface: ScryfallCardface, idx: number) => {
+    cardfaces.map((cardface: IScryfallCardfaceDto, idx: number) => {
       result.push({
         card_id: cardId,
         sequence: idx,

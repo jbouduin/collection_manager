@@ -4,6 +4,7 @@ import { LogSource } from "../../base";
 import { ILogService } from "../interfaces/log.service";
 
 
+// TODO have a loglevel for every logsource
 @singleton()
 export class LogService implements ILogService {
   //#region ILogService methods -----------------------------------------------
@@ -12,11 +13,11 @@ export class LogService implements ILogService {
   }
 
   public error(source: LogSource, message: string, ...args: Array<unknown>): void {
-    console.error(`[${source}] `.concat(message), ...args);
+    console.error(`\x1b[35m [${source}] `.concat(message).concat(" \x1b[0m"), ...args);
   }
 
   public warning(source: LogSource, message: string, ...args: Array<unknown>): void {
-    console.warn(`[${source}] `.concat(message), ...args);
+    console.warn(`\x1b[33m [${source}] `.concat(message).concat(" \x1b[0m"), ...args);
   }
 
   public debug(source: LogSource, message: string, ...args: Array<unknown>): void {

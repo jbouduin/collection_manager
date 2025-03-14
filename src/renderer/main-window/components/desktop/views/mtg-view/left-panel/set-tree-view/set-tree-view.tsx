@@ -61,6 +61,7 @@ export function SetTreeView(props: LeftPanelProps) {
     props.showSplashScreen();
     const params: ISyncParamDto = {
       catalogTypesToSync: [],
+      bulkSyncUrl: undefined,
       syncCardSymbols: false,
       syncCardSets: false,
       rulingSyncType: "none",

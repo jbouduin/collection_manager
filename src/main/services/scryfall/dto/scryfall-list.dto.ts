@@ -1,4 +1,4 @@
-export interface ScryfallList<T extends object> {
+export interface IScryfallListDto<T extends object> {
   /**
    * An array of the requested objects, in a specific order.
    */

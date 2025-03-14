@@ -1,5 +1,5 @@
 import { inject, singleton } from "tsyringe";
-import { IMtgCardSetDetailDto, IMtgCardSetDto, IMtgCardDetailDto } from "../../../../common/dto";
+import { IMtgCardSetDetailDto, IMtgCardSetDto } from "../../../../common/dto";
 import { ICardRepository, ICardSetRepository } from "../../../database/repo/interfaces";
 import { BaseRouter, IResult, IRouter, RouteCallback, RoutedRequest } from "../../base";
 import { ILogService, IResultFactory, IRouterService } from "../../infra/interfaces";
@@ -30,17 +30,12 @@ export class CardSetRouter extends BaseRouter implements IRouter {
   public setRoutes(router: IRouterService): void {
     router.registerGetRoute("/card-set", this.getAll.bind(this) as RouteCallback);
     router.registerGetRoute("/card-set/:id", this.getDetails.bind(this) as RouteCallback);
-    router.registerGetRoute("/card-set/:id/cards", this.getCards.bind(this) as RouteCallback);
   }
   //#endregion
 
   //#region Route callbacks ---------------------------------------------------
   private getAll(_request: RoutedRequest<void>): Promise<IResult<Array<IMtgCardSetDto>>> {
     return this.cardSetRepository.getAll();
-  }
-
-  private getCards(request: RoutedRequest<void>): Promise<IResult<IMtgCardDetailDto>> {
-    return this.cardRepository.getCardDetails(request.params["id"]);
   }
 
   private getDetails(request: RoutedRequest<void>): Promise<IResult<IMtgCardSetDetailDto>> {

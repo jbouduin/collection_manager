@@ -1,7 +1,7 @@
 /**
  * Related URIs for a card.
  */
-export interface ScryfallRelatedUris {
+export interface IScryfallRelatedUrisDto {
   /**
    * This card's Gatherer page.
    *

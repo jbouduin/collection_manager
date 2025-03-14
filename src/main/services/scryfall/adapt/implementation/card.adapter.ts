@@ -2,13 +2,13 @@ import { InsertExpression } from "kysely/dist/cjs/parser/insert-values-parser";
 import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser";
 
 import { DatabaseSchema } from "../../../../database/schema";
-import { ScryfallCard } from "../../types";
+import { IScryfallCardDto } from "../../dto";
 import { ICardAdapter } from "../interface";
 import { scryfallBooleanToNumber, scryfallDateToIsoString } from "./utils";
 import { sqliteUTCTimeStamp } from "../../../../../common/util";
 
 export class CardAdapter implements ICardAdapter {
-  public toInsert(scryfall: ScryfallCard): InsertExpression<DatabaseSchema, "card"> {
+  public toInsert(scryfall: IScryfallCardDto): InsertExpression<DatabaseSchema, "card"> {
     const now = sqliteUTCTimeStamp();
     return {
       created_at: now,
@@ -41,7 +41,7 @@ export class CardAdapter implements ICardAdapter {
     };
   }
 
-  public toUpdate(scryfall: ScryfallCard): UpdateObjectExpression<DatabaseSchema, "card"> {
+  public toUpdate(scryfall: IScryfallCardDto): UpdateObjectExpression<DatabaseSchema, "card"> {
     return {
       name: scryfall.name,
       oracle_id: scryfall.oracle_id,

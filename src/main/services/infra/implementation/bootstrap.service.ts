@@ -122,6 +122,7 @@ export class BootstrapService implements IBootstrapService {
   private firstUseSyncParam(): ISyncParamDto {
     const result: ISyncParamDto = {
       cardImageStatusToSync: [],
+      bulkSyncUrl: undefined,
       cardSelectionToSync: [],
       cardSetCodeToSyncCardsFor: undefined,
       cardSyncType: "none",

@@ -1,9 +1,11 @@
-import { ISyncParamDto } from "../../../../common/dto";
+import { IScryfallBulkDataItemDto, ISyncParamDto, ScryfallBulkDataType } from "../../../../common/dto";
 import { CardSyncType, CatalogType, ImageStatus, RulingSyncType, TimespanUnit } from "../../../../common/types";
 import { BaseViewmodel } from "../base.viewmodel";
 
 
 export class SyncParamViewmodel extends BaseViewmodel<ISyncParamDto> {
+  private _scryfallBulkDefinition?: IScryfallBulkDataItemDto;
+
   //#region Getters/Setters ---------------------------------------------------
   public get cardSyncType(): CardSyncType {
     return this._dto.cardSyncType;
@@ -11,6 +13,10 @@ export class SyncParamViewmodel extends BaseViewmodel<ISyncParamDto> {
 
   public set cardSyncType(value: CardSyncType) {
     this._dto.cardSyncType = value;
+  }
+
+  public get bulkType(): ScryfallBulkDataType {
+    return this._scryfallBulkDefinition.type;
   }
 
   public get rulingSyncType(): RulingSyncType {
@@ -55,8 +61,9 @@ export class SyncParamViewmodel extends BaseViewmodel<ISyncParamDto> {
   //#endregion
 
   //#region Constructor -------------------------------------------------------
-  public constructor(dtoSyncParam: ISyncParamDto) {
+  public constructor(dtoSyncParam: ISyncParamDto, scryfallBulkDefinition?: IScryfallBulkDataItemDto) {
     super(dtoSyncParam);
+    this._scryfallBulkDefinition = scryfallBulkDefinition;
   }
   //#endregion
 
@@ -74,6 +81,10 @@ export class SyncParamViewmodel extends BaseViewmodel<ISyncParamDto> {
     }
   }
 
+  public clearCatalogsToSync(): void {
+    this._dto.cardImageStatusToSync.splice(0);
+  }
+
   public getCatalogToSync(catalogType: CatalogType): boolean {
     return this._dto.catalogTypesToSync.indexOf(catalogType) >= 0;
   }
@@ -85,6 +96,11 @@ export class SyncParamViewmodel extends BaseViewmodel<ISyncParamDto> {
       this._dto.catalogTypesToSync = this._dto.catalogTypesToSync
         .filter((s: CatalogType) => s != catalogType);
     }
+  }
+
+  public setBulkDefinition(value: IScryfallBulkDataItemDto): void {
+    this._scryfallBulkDefinition = value;
+    this._dto.bulkSyncUrl = value.download_uri;
   }
   //#endregion
 }

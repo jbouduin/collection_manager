@@ -1,6 +1,6 @@
 import { CardSetType } from "../../../../../common/types";
 
-export interface ScryfallCardSet {
+export interface IScryfallCardSetDto {
   /**
    * A unique ID for this set on Scryfall that will not change.
    *

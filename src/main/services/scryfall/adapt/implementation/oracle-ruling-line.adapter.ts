@@ -3,11 +3,11 @@ import { UpdateObjectExpression } from "kysely/dist/cjs/parser/update-set-parser
 
 import { DatabaseSchema } from "../../../../database/schema";
 import { IOracleRulingLineAdapter } from "../interface";
-import { ScryfallRuling } from "../../types";
+import { IScryfallRulingDto } from "../../dto";
 import { scryfallDateToIsoString } from "./utils";
 
 export class OracleRulingLineAdapter implements IOracleRulingLineAdapter {
-  public toInsert(scryfall: ScryfallRuling): InsertExpression<DatabaseSchema, "oracle_ruling_line"> {
+  public toInsert(scryfall: IScryfallRulingDto): InsertExpression<DatabaseSchema, "oracle_ruling_line"> {
     return {
       oracle_id: scryfall.oracle_id,
       source: scryfall.source,

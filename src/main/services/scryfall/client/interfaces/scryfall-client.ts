@@ -1,17 +1,21 @@
-import { IMtgCardImageDataDto } from "../../../../../common/dto";
+import { IMtgCardImageDataDto, IScryfallBulkDataItemDto } from "../../../../../common/dto";
 import { ProgressCallback } from "../../../../../common/ipc";
 import { CatalogType } from "../../../../../common/types";
-import { ScryfallCard, ScryfallCardSet, ScryfallCatalog, ScryfallRuling } from "../../types";
-import { ScryfallCardSymbol } from "../../types/card-symbol/scryfall-card-symbol";
+import { IScryfallCardDto, IScryfallCardSetDto, IScryfallCatalogDto, IScryfallRulingDto } from "../../dto";
+import { IScryfallCardSymbolDto } from "../../dto/card-symbol/scryfall-card-symbol.dto";
 
 
 export interface IScryfallClient {
+  downloadBulkData(uri: string, targetFile: string): Promise<void>;
   fetchArrayBuffer(uri: string | URL): Promise<ArrayBuffer>;
+  getAllCards(): Promise<Array<IScryfallCardDto>>;
+  // LATER getAllRulings(): Promise<Array<ScryfallRuling>>;
+  getBulkDefinitions(): Promise<Array<IScryfallBulkDataItemDto>>;
   getCardImage(card: IMtgCardImageDataDto): Promise<ArrayBuffer>;
-  getCardsForCardSet(cardSetCode: string, progressCallback: ProgressCallback): Promise<Array<ScryfallCard>>;
-  getCardCollections(cardIds: Array<string>, progressCallback: ProgressCallback): Promise<Array<ScryfallCard>>;
-  getCardSets(progressCallback: ProgressCallback): Promise<Array<ScryfallCardSet>>;
-  getCardSymbols(progressCallback: ProgressCallback): Promise<Array<ScryfallCardSymbol>>;
-  getCatalog(type: CatalogType, progressCallback: ProgressCallback): Promise<ScryfallCatalog>;
-  getRulings(cardId: string): Promise<Array<ScryfallRuling>>;
+  getCardsForCardSet(cardSetCode: string, progressCallback: ProgressCallback): Promise<Array<IScryfallCardDto>>;
+  getCardCollections(cardIds: Array<string>, progressCallback: ProgressCallback): Promise<Array<IScryfallCardDto>>;
+  getCardSets(progressCallback: ProgressCallback): Promise<Array<IScryfallCardSetDto>>;
+  getCardSymbols(progressCallback: ProgressCallback): Promise<Array<IScryfallCardSymbolDto>>;
+  getCatalog(type: CatalogType, progressCallback: ProgressCallback): Promise<IScryfallCatalogDto>;
+  getRulings(cardId: string): Promise<Array<IScryfallRulingDto>>;
 }

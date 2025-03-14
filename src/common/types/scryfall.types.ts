@@ -23,9 +23,9 @@ export type CardSyncType =
   "byCardSet" |
   "byImageStatus" |
   "byLastSynchronized" |
-  "collection";
-// FEATURE  bulk
-
+  "collection" |
+  "bulk";
+// TODO cards I own
 export type ChangedImageStatusAction = "delete" | "replace";
 
 export type RulingSyncType =
@@ -37,6 +37,7 @@ export type RulingSyncType =
 // FEATURE byLastSynchronized
 
 export type ScryfallEndpoint =
+  "bulk" |
   "cards" |
   "cardSet" |
   "cardSymbol" |

@@ -14,6 +14,7 @@ export function OwnedCardDialog(props: OwnedCardDialogProps) {
   //#region State -------------------------------------------------------------
   const [viewmodels, setViewmodels] = React.useState<Map<number, Array<OwnedCardQuantityViewmodel>>>(null);
   const [collections, setCollections] = React.useState<Array<ICollectionDto>>(null);
+  const [expandedSection, setExpandedSection] = React.useState<number>(0);
   //#endregion
 
   //#region Context -----------------------------------------------------------
@@ -66,6 +67,14 @@ export function OwnedCardDialog(props: OwnedCardDialogProps) {
     const newState = cloneDeep(viewmodels);
     newState.get(collectionId).find((vm: OwnedCardQuantityViewmodel) => vm.conditionId == conditionId && vm.isFoil == isFoil).quantity = newQuantity;
     setViewmodels(newState);
+  }
+
+  function toggleExpandedSection(idx: number) {
+    if (idx == expandedSection) {
+      setExpandedSection(-1);
+    } else {
+      setExpandedSection(idx);
+    }
   }
   //#endregion
 
@@ -122,7 +131,7 @@ export function OwnedCardDialog(props: OwnedCardDialogProps) {
             return (
               <>
                 <Section
-                  collapseProps={{ defaultIsOpen: idx == 0 }}
+                  collapseProps={{ isOpen: idx == expandedSection, onToggle: () => toggleExpandedSection(idx)}}
                   collapsible={true}
                   compact={true}
                   icon="layers"

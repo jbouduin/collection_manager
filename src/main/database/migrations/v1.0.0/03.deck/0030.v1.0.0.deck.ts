@@ -67,5 +67,7 @@ function createV1_0_0_DeckCard(db: Kysely<any>) {
     .addColumn("deck_quantity", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
     .addColumn("sideboard_quantity", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())
     .addUniqueConstraint("UC_DECK_ID_CARD_ID", ["deck_id", "card_id"])
-    .execute();
+    .execute()
+    .then(async () => await db.schema.createIndex("deck_card_card_id_idx").on("deck_card").column("card_id").execute())
+    .then(async () => await db.schema.createIndex("deck_card_deck_id_idx").on("deck_card").column("deck_id").execute());
 }

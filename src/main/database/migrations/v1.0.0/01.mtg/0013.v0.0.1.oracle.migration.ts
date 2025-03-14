@@ -81,7 +81,8 @@ async function createV1_0_0_OracleLegality(db: Kysely<any>): Promise<void> {
 
   return createTable(db, options)
     .addColumn("legality", "text", (col: ColumnDefinitionBuilder) => col.notNull())
-    .execute();
+    .execute()
+    .then(async () => await db.schema.createIndex("oracle_legality_format_idx").on("oracle_legality").column("format").execute());
 }
 
 async function createV1_0_0_OracleKeyword(db: Kysely<any>): Promise<void> {
@@ -89,5 +90,6 @@ async function createV1_0_0_OracleKeyword(db: Kysely<any>): Promise<void> {
     .addColumn("oracle_id", "text", (col: ColumnDefinitionBuilder) => col.notNull())
     .addColumn("keyword", "text", (col: ColumnDefinitionBuilder) => col.notNull())
     .addPrimaryKeyConstraint("ORACLE_KEYWORD_PK", ["oracle_id", "keyword"])
-    .execute();
+    .execute()
+    .then(async () => await db.schema.createIndex("oracle_keyword_keyword_idx").on("oracle_keyword").column("keyword").execute());
 }

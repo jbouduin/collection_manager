@@ -145,7 +145,7 @@ export class DeckRepository extends BaseRepository implements IDeckRepository {
           $sideboardSize(eb.ref("deck.id")).as("sideboardSize"),
           helpers.jsonArrayFrom(
             eb.selectFrom("deck_card")
-              .innerJoin("card", "card.id", "deck_card.card_id")
+              // .innerJoin("card", "card.id", "deck_card.card_id")
               .leftJoin("card_color_map", "card_color_map.card_id", "deck_card.card_id")
               .innerJoin("color", "color.id", "card_color_map.color_id")
               .select(["color.mana_symbol", "color.sequence"])

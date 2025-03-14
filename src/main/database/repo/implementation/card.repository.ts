@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import { inject, injectable } from "tsyringe";
-import { ICardQueryDto, ICatalogItemDto, IMtgCardDetailDto, IMtgCardImageDataDto, IMtgCardListDto } from "../../../../common/dto";
+import { ICardQueryDto, ICatalogItemDto, IMtgCardDetailDto, IMtgCardImageDataDto, IMtgCardListDto, IMtgCardOtherPrint } from "../../../../common/dto";
 import { CatalogType, MtgColor } from "../../../../common/types";
 import { IResult } from "../../../services/base";
 import { IDatabaseService, ILogService, IResultFactory } from "../../../services/infra/interfaces";
@@ -72,6 +72,32 @@ export class CardRepository extends BaseRepository implements ICardRepository {
         });
     } catch (err) {
       return this.resultFactory.createExceptionResultPromise<IMtgCardImageDataDto>(err);
+    }
+  }
+
+  public async getAllPrints(cardId: string): Promise<IResult<Array<IMtgCardOtherPrint>>> {
+    try {
+      return await this.database
+        .selectFrom("card")
+        .innerJoin("oracle", "oracle.oracle_id", "card.oracle_id")
+        .innerJoin("card as src_card", "src_card.oracle_id", "oracle.oracle_id")
+        .innerJoin("card_set", "card_set.id", "src_card.set_id")
+        .select((eb) => [
+          ...CARD_TABLE_FIELDS,
+          "card_set.released_at",
+          $cardLanguages(eb.ref("card.set_id"), eb.ref("card.collector_number")).as("languages")
+        ])
+        .groupBy(["card.set_id", "card.collector_number"])
+        .where("src_card.id", "=", cardId)
+        .$castTo<IMtgCardOtherPrint>()
+        .$call((sqb) => logCompilable(this.logService, sqb))
+        .execute()
+        .then((qryResult: Array<IMtgCardOtherPrint>) => {
+          fs.writeFileSync("c:/data/new-assistant/json/get-other-prints.json", JSON.stringify(qryResult, null, 2));
+          return this.resultFactory.createSuccessResult<Array<IMtgCardOtherPrint>>(qryResult);
+        });
+    } catch (err) {
+      return this.resultFactory.createExceptionResultPromise<Array<IMtgCardOtherPrint>>(err);
     }
   }
 

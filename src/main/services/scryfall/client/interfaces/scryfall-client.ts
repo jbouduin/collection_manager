@@ -8,7 +8,6 @@ import { IScryfallCardSymbolDto } from "../../dto/card-symbol/scryfall-card-symb
 export interface IScryfallClient {
   downloadBulkData(uri: string, targetFile: string): Promise<void>;
   fetchArrayBuffer(uri: string | URL): Promise<ArrayBuffer>;
-  getAllCards(): Promise<Array<IScryfallCardDto>>;
   // LATER getAllRulings(): Promise<Array<ScryfallRuling>>;
   getBulkDefinitions(): Promise<Array<IScryfallBulkDataItemDto>>;
   getCardImage(card: IMtgCardImageDataDto): Promise<ArrayBuffer>;

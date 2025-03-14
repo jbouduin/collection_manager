@@ -13,6 +13,7 @@ import { CardOwnerShipView } from "./card-ownership-view";
 import { CardRulingsView } from "./card-rulings-view";
 import { LanguageButtonBar } from "./language-button-bar";
 import { LegalitiesView } from "./legalities-view";
+import { CardAllPrints } from "./card-all-prints/card-all-prints";
 
 
 export function CardDetail(props: CardDetailProps) {
@@ -116,21 +117,27 @@ export function CardDetail(props: CardDetailProps) {
           >
             <Tab
               id="Rulings"
-              key="Rulings"
+              key="rulings"
               panel={<CardRulingsView oracleId={cardViewState.card.oracleId} />}
               title="Rulings"
             />
             <Tab
               id="Legality"
-              key="Legality"
+              key="legality"
               panel={<LegalitiesView oracleId={cardViewState.card.oracleId} />}
               title="Legality"
             />
             <Tab
               id="Owned"
-              key="Owned"
+              key="owned"
               panel={<CardOwnerShipView cardId={cardViewState.card.cardId} className={props.className} collectionId={props.collectionId} />}
               title="Ownership"
+            />
+            <Tab
+              id="All prints"
+              key="all-prints"
+              panel={<CardAllPrints cardId={cardViewState.card.cardId} oracleId={cardViewState.card.oracleId} />}
+              title="All prints"
             />
           </Tabs>
         </SectionCard>

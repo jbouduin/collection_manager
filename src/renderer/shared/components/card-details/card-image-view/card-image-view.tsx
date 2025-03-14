@@ -66,7 +66,7 @@ export const CardImageView = React.memo(
           <SectionCard className="card-view-section-card" padded={false} style={{ display: "flex", flexFlow: "column" }} >
             <img
               className={classNames(cardImageState.rotationClass == "rotate-90" ? "card-image-landscape" : "card-image-portrait", "card-image", cardImageState.rotationClass)}
-              src={`cached-image://${props.cardId}/?size=normal&side=${cardImageState.currentDisplayedSide}`}
+              src={`cached-image://${props.cardId}/?size=large&side=${cardImageState.currentDisplayedSide}`}
             />
             <div style={{ display: "flex", flexFlow: "row", justifyContent: "center", margin: "5px" }}>
               {

@@ -128,7 +128,7 @@ export class ImageCacheService implements IImageCacheService {
 
     if (card.side == "front" || (card.side == "back" && !card.cardBackId)) {
       dirName = path.join(this.configurationService.configuration.dataConfiguration.cacheDirectory, "cards", card.setCode, card.language, card.imageType);
-      fileName = `${card.collectorNumber.padStart(3, "0")}.${card.side}.jpg`;
+      fileName = `${card.collectorNumber.padStart(6, "0")}.${card.side}.jpg`;
     } else {
       dirName = path.join(this.configurationService.configuration.dataConfiguration.cacheDirectory, "cards", "backsides");
       fileName = `${card.cardBackId}.jpg`;

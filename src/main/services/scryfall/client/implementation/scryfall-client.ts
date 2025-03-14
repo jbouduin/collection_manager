@@ -2,7 +2,7 @@ import { createWriteStream } from "fs";
 import { Readable } from "stream";
 import { finished } from "stream/promises";
 import { ReadableStream } from "stream/web";
-import { inject, injectable } from "tsyringe";
+import { inject, singleton } from "tsyringe";
 import { IMtgCardImageDataDto, IScryfallBulkDataItemDto } from "../../../../../common/dto";
 import { IScryfallConfigurationDto } from "../../../../../common/dto/infra/scryfall-configuration.dto";
 import { ProgressCallback } from "../../../../../common/ipc";
@@ -15,14 +15,13 @@ import { IScryfallCardSymbolDto } from "../../dto/card-symbol/scryfall-card-symb
 import { IScryfallListDto } from "../../dto/scryfall-list.dto";
 import { IScryfallClient, IScryfallSearchOptionsDto } from "../interfaces";
 
-@injectable()
+@singleton()
 export class ScryfallClient implements IScryfallClient {
-  //#region private readonly fields -------------------------------------------
+  //#region private fields ----------------------------------------------------
   private readonly scryfallConfiguration: IScryfallConfigurationDto;
   private readonly logService: ILogService;
-  //#endregion
-
-  //#region private fields ----------------------------------------------------
+  private readonly requestQueue: Array<() => Promise<void>>;
+  private isProcessingQueue: boolean;
   private nextQuery: number;
   //#endregion
 
@@ -31,6 +30,8 @@ export class ScryfallClient implements IScryfallClient {
     @inject(INFRASTRUCTURE.ConfigurationService) configurationService: IConfigurationService,
     @inject(INFRASTRUCTURE.LogService) logService: ILogService
   ) {
+    this.requestQueue = new Array<() => Promise<void>>();
+    this.isProcessingQueue = false;
     this.scryfallConfiguration = configurationService.configuration.scryfallConfiguration;
     this.logService = logService;
     this.nextQuery = Date.now() + this.scryfallConfiguration.minimumRequestTimeout;
@@ -56,12 +57,8 @@ export class ScryfallClient implements IScryfallClient {
   }
 
   public async fetchArrayBuffer(uri: string | URL): Promise<ArrayBuffer> {
-    return this.tryFetch(uri)
+    return await this.tryFetch(uri)
       .then((response: Response) => response.arrayBuffer());
-  }
-
-  public async getAllCards(): Promise<Array<IScryfallCardDto>> {
-    return Promise.resolve(new Array<IScryfallCardDto>());
   }
 
   public getBulkDefinitions(): Promise<Array<IScryfallBulkDataItemDto>> {
@@ -161,19 +158,12 @@ export class ScryfallClient implements IScryfallClient {
 
   //#region private methods ---------------------------------------------------
   private async tryFetch(uri: string | URL): Promise<Response> {
-    const now = Date.now();
-    const sleepTime = this.nextQuery - now;
-    this.nextQuery = now + this.scryfallConfiguration.minimumRequestTimeout;
-    return await this
-      .sleep(sleepTime)
-      .then(() => {
-        this.logService.debug("Main", `fetch ${uri}`);
-        return fetch(uri);
-      })
-      .then((result: Response) => {
-        this.logService.debug("Main", `retrieved ${uri} -> status: ${result.status}`);
-        return result;
-      });
+    return new Promise((resolve, reject) => {
+      this.requestQueue.push(() => this.processRequest(uri, resolve, reject));
+      if (!this.isProcessingQueue) {
+        void this.processQueue();
+      }
+    });
   }
 
   private async tryPost(uri: string | URL, body: string): Promise<Array<IScryfallCardDto>> {
@@ -198,7 +188,7 @@ export class ScryfallClient implements IScryfallClient {
   }
 
   private async sleep(ms: number): Promise<void> {
-    return new Promise((resolve) => {
+    return await new Promise((resolve) => {
       this.logService.debug("Main", `sleeping ${ms}`);
       setTimeout(resolve, ms);
     });
@@ -228,6 +218,33 @@ export class ScryfallClient implements IScryfallClient {
     query.push("lang=any");
     result.searchParams.set("q", query.join("+"));
     return result;
+  }
+
+  private async processRequest(uri: string | URL, resolve: (value: Response | PromiseLike<Response>) => void, reject: (reason?: unknown) => void) {
+    const now = Date.now();
+    const sleepTime = Math.max(this.nextQuery - now, 0);
+    this.nextQuery = now + this.scryfallConfiguration.minimumRequestTimeout;
+
+    await this.sleep(sleepTime);
+    this.logService.debug("Main", `fetch ${uri}`);
+    try {
+      const result = await fetch(uri);
+      this.logService.debug("Main", `retrieved ${uri} -> status: ${result.status}`);
+      resolve(result);
+    } catch (error) {
+      reject(error);
+    }
+  }
+
+  private async processQueue() {
+    this.isProcessingQueue = true;
+    while (this.requestQueue.length > 0) {
+      const request = this.requestQueue.shift();
+      if (request) {
+        await request();
+      }
+    }
+    this.isProcessingQueue = false;
   }
   //#endregion
 }

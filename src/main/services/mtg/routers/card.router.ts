@@ -1,5 +1,5 @@
 import { container, inject, singleton } from "tsyringe";
-import { ICardQueryDto, ICatalogItemDto, IMtgCardDetailDto, IMtgCardListDto, IOwnedCardQuantityDto, QUERY_PARAM_LIST_SEPARATOR, CardQueryParamToken } from "../../../../common/dto";
+import { ICardQueryDto, ICatalogItemDto, IMtgCardDetailDto, IMtgCardListDto, IOwnedCardQuantityDto, QUERY_PARAM_LIST_SEPARATOR, CardQueryParamToken, IMtgCardOtherPrint } from "../../../../common/dto";
 import { ICardRepository } from "../../../database/repo/interfaces";
 import { ICollectionRepository } from "../../../database/repo/interfaces/collection.repository";
 import { BaseRouter, IResult, IRouter, RouteCallback, RoutedRequest } from "../../base";
@@ -23,6 +23,7 @@ export class CardRouter extends BaseRouter implements IRouter {
   public setRoutes(router: IRouterService): void {
     // router.registerGetRoute("/card/:id/ruling", this.getRuling.bind(this) as RouteCallback);
     router.registerGetRoute("/card/:id/collection", this.getCardOwnerShip.bind(this) as RouteCallback);
+    router.registerGetRoute("/card/:id/all-prints", this.getAllPrints.bind(this) as RouteCallback);
     router.registerGetRoute("/card/query", this.queryCards.bind(this) as RouteCallback);
     router.registerGetRoute("/card/:id", this.getCard.bind(this) as RouteCallback);
     router.registerPostRoute("/card/:id/collection", this.updateQuantities.bind(this) as RouteCallback);
@@ -41,6 +42,10 @@ export class CardRouter extends BaseRouter implements IRouter {
 
   private getCardOwnerShip(request: RoutedRequest<void>): Promise<IResult<Array<IOwnedCardQuantityDto>>> {
     return container.resolve<ICollectionRepository>(REPOSITORIES.CollectionRepository).getCardQuantitiesForCard(request.params["id"]);
+  }
+
+  private getAllPrints(request: RoutedRequest<void>): Promise<IResult<Array<IMtgCardOtherPrint>>> {
+    return container.resolve<ICardRepository>(REPOSITORIES.CardRepository).getAllPrints(request.params["id"]);
   }
 
   private queryCards(request: RoutedRequest<void>): Promise<IResult<Array<IMtgCardListDto>>> {

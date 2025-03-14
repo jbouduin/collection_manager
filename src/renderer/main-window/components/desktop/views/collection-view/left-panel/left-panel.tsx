@@ -277,7 +277,7 @@ export function LeftPanel(props: LeftPanelProps) {
                 <>
                   <MenuDivider key="sep-1" />
                   <MenuItem
-                    key="Add folder"
+                    key="add-folder"
                     onClick={
                       (e) => {
                         e.preventDefault();
@@ -287,7 +287,7 @@ export function LeftPanel(props: LeftPanelProps) {
                     text="Add Folder"
                   />
                   <MenuItem
-                    key="Add Collection"
+                    key="add-collection"
                     onClick={
                       (e) => {
                         e.preventDefault();
@@ -303,7 +303,7 @@ export function LeftPanel(props: LeftPanelProps) {
                 <>
                   <MenuDivider key="sep-2" />
                   <MenuItem
-                    key="Delete"
+                    key="delete"
                     onClick={
                       (e) => {
                         e.preventDefault();
@@ -324,9 +324,13 @@ export function LeftPanel(props: LeftPanelProps) {
           }
           {
             !collection.isFolder &&
-            <SvgProvider height={16} svg={collectionSvg} width={16} />
+            <SvgProvider
+              height={16}
+              key="svg"
+              svg={collectionSvg}
+              width={16}
+            />
           }
-
           <div key="name" style={{ alignContent: "center" }}>
             {collection.name}
           </div>

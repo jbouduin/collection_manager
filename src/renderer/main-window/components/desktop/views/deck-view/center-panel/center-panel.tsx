@@ -2,8 +2,8 @@ import { Menu, MenuItem } from "@blueprintjs/core";
 import { MenuContext, Region, SelectionModes, Table2, Utils } from "@blueprintjs/table";
 import * as React from "react";
 import { IGameFormatDto } from "../../../../../../../common/dto";
-import { ColorIdentityColumn } from "../../../../../../shared/components/card-table-view";
 import { BaseLookupResult, GenericTextColumn, IBaseColumn, onDataSelected, selectedRegionTransformToRowSelection } from "../../../../../../shared/components/base";
+import { ColorIdentityColumn } from "../../../../../../shared/components/card-table-view";
 import { GameFormatContext } from "../../../../../../shared/context";
 import { DeckListViewmodel } from "../../../../../viewmodels";
 import { CenterPanelProps } from "./center-panel.props";
@@ -22,15 +22,16 @@ export function CenterPanel(props: CenterPanelProps) {
   const sortableColumnDefinitions = React.useMemo(
     () => {
       const result = new Array<IBaseColumn<unknown, BaseLookupResult>>();
+      let columNumber = 0;
       result.push(new GenericTextColumn<DeckListViewmodel>(
-        1,
+        columNumber++,
         "Name",
         (deck: DeckListViewmodel) => {
           return { defaultSortColumn: deck.name, textValue: deck.name };
         }
       ));
       result.push(new GenericTextColumn<DeckListViewmodel>(
-        2,
+        columNumber++,
         "Target format",
         (deck: DeckListViewmodel) => {
           return {
@@ -40,7 +41,7 @@ export function CenterPanel(props: CenterPanelProps) {
         }
       ));
       result.push(new ColorIdentityColumn<DeckListViewmodel>(
-        3,
+        columNumber++,
         "CI",
         (deck: DeckListViewmodel) => {
           return {

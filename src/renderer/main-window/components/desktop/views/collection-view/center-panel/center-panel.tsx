@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ICardConditionDto, ILanguageDto, IMtgCardSetDto, IOwnedCardDto, IOwnedCardListDto } from "../../../../../../../common/dto";
 import { BaseLookupResult, GenericTextColumn, GenericTextLookupResult, IBaseColumn } from "../../../../../../shared/components/base";
-import { CardTableView, CardSetColumn, CardSetLookupResult } from "../../../../../../shared/components/card-table-view";
+import { CardSetColumn, CardSetLookupResult, CardTableView } from "../../../../../../shared/components/card-table-view";
 import * as Context from "../../../../../../shared/context";
 import { CollectionCardListViewmodel } from "../../../../../viewmodels";
 import { CenterPanelProps } from "./center-panel.props";
@@ -10,6 +10,7 @@ import { CenterPanelProps } from "./center-panel.props";
 export function CenterPanel(props: CenterPanelProps) {
   //#region State -------------------------------------------------------------
   const [cards, setCards] = React.useState(new Array<CollectionCardListViewmodel>());
+  const displayValueService = React.useContext<Context.DisplayValueService>(Context.DisplayValueServiceContext);
   //#endregion
 
   //#region Context ---------------------------------------------------------------------
@@ -43,25 +44,27 @@ export function CenterPanel(props: CenterPanelProps) {
   const sortableColumnDefinitions = React.useMemo(
     () => {
       const result = new Array<IBaseColumn<CollectionCardListViewmodel, BaseLookupResult>>();
+      let columNumber = 0;
       result.push(new CardSetColumn<CollectionCardListViewmodel>(0, "Set", (card: CollectionCardListViewmodel) => cardSetCallback(card)));
       result.push(new GenericTextColumn<CollectionCardListViewmodel>(
-        1,
+        columNumber++,
         "Rarity",
         (card: CollectionCardListViewmodel) => {
-          return { defaultSortColumn: card.collectorNumberSortValue, textValue: card.rarity };
+          return { defaultSortColumn: card.collectorNumberSortValue, textValue: displayValueService.cardRarityDisplayValues[card.rarity] };
         }
       ));
       result.push(new GenericTextColumn<CollectionCardListViewmodel>(2, "Language", languageCallback));
       result.push(new GenericTextColumn<CollectionCardListViewmodel>(
-        3,
+        columNumber++,
         "Name",
         (card: CollectionCardListViewmodel) => {
           return { defaultSortColumn: card.collectorNumberSortValue, textValue: card.cardName };
         }
       ));
-      cardConditionContext.forEach((condition: ICardConditionDto, idx: number) => {
+      columNumber = columNumber + 4;
+      cardConditionContext.forEach((condition: ICardConditionDto) => {
         // TODO sort by foil / non foil / total
-        result.push(new GenericTextColumn<CollectionCardListViewmodel>(4 + idx, condition.expression, getQuantityCallback(condition.id)));
+        result.push(new GenericTextColumn<CollectionCardListViewmodel>(columNumber++, condition.expression, getQuantityCallback(condition.id)));
       });
       return result;
     },

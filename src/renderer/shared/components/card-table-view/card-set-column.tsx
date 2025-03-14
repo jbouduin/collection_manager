@@ -25,7 +25,7 @@ export class CardSetColumn<T> extends BaseColumn<T, CardSetLookupResult> {
       const cellValue = getCellData(rowIdx, this.valueCallBack);
       return (
         <Cell>
-          {cellValue.svg && <SvgProvider className={getRarityColorClassname(cellValue.rarity)} svg={cellValue.svg} />}
+          {cellValue.svg && <SvgProvider className={getRarityColorClassname(cellValue.rarity)} key="set-svg" svg={cellValue.svg} />}
           {cellValue.cardSetName}
         </Cell>
       );

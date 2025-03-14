@@ -5,13 +5,14 @@ import { IMtgCardSetDto } from "../../../../../../common/dto";
 import { BaseLookupResult, GenericTextColumn, GenericTextLookupResult, IBaseColumn } from "../../../../../shared/components/base";
 import { GenericNumericColumn } from "../../../../../shared/components/base/base-table/generic-numeric-column";
 import { CardSetColumn, CardSetLookupResult, CardTableView, CollectiorNumberColumn, ColorIdentityColumn, ManaCostColumn } from "../../../../../shared/components/card-table-view";
-import { CardSetContext } from "../../../../../shared/context";
+import { CardSetContext, DisplayValueService, DisplayValueServiceContext } from "../../../../../shared/context";
 import { DeckCardListViewmodel } from "../../../../viewmodels";
 import { CardTableSectionProps } from "./card-table-section.props";
 
 export function CardTableSection(props: CardTableSectionProps) {
   //#region Context -----------------------------------------------------------
   const cardSetContext = React.useContext<Array<IMtgCardSetDto>>(CardSetContext);
+  const displayValueService = React.useContext<DisplayValueService>(DisplayValueServiceContext);
   //#endregion
 
   //#region Sortable columns --------------------------------------------------
@@ -30,7 +31,7 @@ export function CardTableSection(props: CardTableSectionProps) {
         columNumber++,
         "Rarity",
         (card: DeckCardListViewmodel) => {
-          return { defaultSortColumn: card.collectorNumberSortValue, textValue: card.rarity };
+          return { defaultSortColumn: card.collectorNumberSortValue, textValue: displayValueService.cardRarityDisplayValues[card.rarity] };
         }
       ));
       result.push(new GenericTextColumn<DeckCardListViewmodel>(

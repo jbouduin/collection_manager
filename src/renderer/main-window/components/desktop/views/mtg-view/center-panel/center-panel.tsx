@@ -1,8 +1,11 @@
+import { Menu, MenuItem } from "@blueprintjs/core";
+import { MenuContext } from "@blueprintjs/table";
 import * as React from "react";
-import { ILanguageDto, IMtgCardLanguageDto, IMtgCardListDto, IMtgCardSetDto } from "../../../../../../../common/dto";
+import { ILanguageDto, IMtgCardLanguageDto, IMtgCardListDto, IMtgCardSetDto, IOwnedCardQuantityDto } from "../../../../../../../common/dto";
 import { BaseLookupResult, GenericTextColumn, GenericTextLookupResult, IBaseColumn } from "../../../../../../shared/components/base";
 import { CardSetColumn, CardSetLookupResult, CardTableView, CollectiorNumberColumn, ColorIdentityColumn, ManaCostColumn } from "../../../../../../shared/components/card-table-view";
-import { CardSetContext, IpcProxyService, IpcProxyServiceContext, LanguagesContext } from "../../../../../../shared/context";
+import { OwnedCardDialog } from "../../../../../../shared/components/owned-card";
+import { CardSetContext, DisplayValueService, DisplayValueServiceContext, IpcProxyService, IpcProxyServiceContext, LanguagesContext } from "../../../../../../shared/context";
 import { MtgCardListViewmodel } from "../../../../../viewmodels";
 import { CenterPanelProps } from "./center-panel.props";
 
@@ -11,10 +14,12 @@ export function CenterPanel(props: CenterPanelProps) {
   //#region State -------------------------------------------------------------
   const initialState = new Array<MtgCardListViewmodel>();
   const [cards, setCards] = React.useState<Array<MtgCardListViewmodel>>(initialState);
+  const [showOwnerShipDialog, setShowOwnerShipDialog] = React.useState<string>(null);
   //#endregion
 
   //#region Context -----------------------------------------------------------
   const cardSetContext = React.useContext<Array<IMtgCardSetDto>>(CardSetContext);
+  const displayValueService = React.useContext<DisplayValueService>(DisplayValueServiceContext);
   const ipcProxyService = React.useContext<IpcProxyService>(IpcProxyServiceContext);
   const languagesContext = React.useContext<Array<ILanguageDto>>(LanguagesContext);
   //#endregion
@@ -52,36 +57,37 @@ export function CenterPanel(props: CenterPanelProps) {
   const sortableColumnDefinitions = React.useMemo(
     () => {
       const result = new Array<IBaseColumn<MtgCardListViewmodel, BaseLookupResult>>();
+      let columNumber = 0;
       result.push(new CollectiorNumberColumn<MtgCardListViewmodel>(
-        0,
+        columNumber++,
         "Number",
         (card: MtgCardListViewmodel) => {
           return { defaultSortColumn: card.collectorNumberSortValue, displayValue: card.collectorNumber };
         }
       ));
       result.push(new GenericTextColumn<MtgCardListViewmodel>(
-        1,
+        columNumber++,
         "Rarity",
         (card: MtgCardListViewmodel) => {
-          return { defaultSortColumn: card.collectorNumberSortValue, textValue: card.rarity };
+          return { defaultSortColumn: card.collectorNumberSortValue, textValue: displayValueService.cardRarityDisplayValues[card.rarity] };
         }
       ));
       result.push(new GenericTextColumn<MtgCardListViewmodel>(
-        2,
+        columNumber++,
         "Name",
         (card: MtgCardListViewmodel) => {
           return { defaultSortColumn: card.collectorNumberSortValue, textValue: card.cardName };
         }
       ));
       result.push(new GenericTextColumn<MtgCardListViewmodel>(
-        3,
+        columNumber++,
         "Type",
         (card: MtgCardListViewmodel) => {
           return { defaultSortColumn: card.collectorNumberSortValue, textValue: card.cardTypeLine };
         }
       ));
       result.push(new ManaCostColumn<MtgCardListViewmodel>(
-        5,
+        columNumber++,
         "Mana cost",
         (card: MtgCardListViewmodel) => {
           return { defaultSortColumn: card.collectorNumberSortValue, convertedManaCost: card.convertedManaCostSortValue, symbols: card.cardManacost };
@@ -89,21 +95,21 @@ export function CenterPanel(props: CenterPanelProps) {
       ));
       result.push(new CardSetColumn<MtgCardListViewmodel>(6, "Set", (card: MtgCardListViewmodel) => cardSetCallback(card)));
       result.push(new GenericTextColumn<MtgCardListViewmodel>(
-        6,
+        columNumber++,
         "Power",
         (card: MtgCardListViewmodel) => {
           return { defaultSortColumn: card.collectorNumberSortValue, textValue: card.cardPower };
         }
       ));
       result.push(new GenericTextColumn<MtgCardListViewmodel>(
-        7,
+        columNumber++,
         "Thoughness",
         (card: MtgCardListViewmodel) => {
           return { defaultSortColumn: card.collectorNumberSortValue, textValue: card.cardThoughness };
         }
       ));
       result.push(new ColorIdentityColumn<MtgCardListViewmodel>(
-        8,
+        columNumber++,
         "CI",
         (card: MtgCardListViewmodel) => {
           return {
@@ -114,7 +120,7 @@ export function CenterPanel(props: CenterPanelProps) {
         }
       ));
       result.push(new GenericTextColumn<MtgCardListViewmodel>(
-        9,
+        columNumber++,
         "Languages",
         (card: MtgCardListViewmodel) => languageCallback(card)
       ));
@@ -126,14 +132,46 @@ export function CenterPanel(props: CenterPanelProps) {
 
   //#region Rendering ---------------------------------------------------------
   return (
-    <CardTableView<MtgCardListViewmodel>
-      data={cards}
-      hideSplashScreen={undefined}
-      onDataSelected={(cards?: Array<MtgCardListViewmodel>) => props.onCardsSelected(cards)}
-      showSplashScreen={undefined}
-      sortableColumnDefintions={sortableColumnDefinitions}
-    />
+    <>
+      <CardTableView<MtgCardListViewmodel>
+        bodyContextMenuRenderer={(context: MenuContext) => contextMenu(context)}
+        data={cards}
+        hideSplashScreen={undefined}
+        onDataSelected={(cards?: Array<MtgCardListViewmodel>) => props.onCardsSelected(cards)}
+        showSplashScreen={undefined}
+        sortableColumnDefintions={sortableColumnDefinitions}
+      />
+      {
+        showOwnerShipDialog &&
+        <OwnedCardDialog
+          cardId={showOwnerShipDialog}
+          className={props.className}
+          onClose={(_q: Array<IOwnedCardQuantityDto>) => setShowOwnerShipDialog(null)}
+        />
+      }
+    </>
   );
+
+  function contextMenu(context: MenuContext): React.JSX.Element {
+    /* NOW once sorted this 'props.decks[context.getTarget().rows[0]]' is wrong */
+    const card: MtgCardListViewmodel = cards[context.getTarget().rows[0]];
+    // TODO consider allowing increasing over the limit and coloring the value (or row) if too high
+    return (
+      <Menu>
+        <MenuItem
+          key="collection"
+          onClick={() => setShowOwnerShipDialog(card.cardId)}
+          text="Add to/remove from collections"
+        />
+        <MenuItem
+          disabled={true}
+          key="deck"
+          // onClick={() => props.onCardDecrease(card)}
+          text="Add to/remove from decks"
+        />
+      </Menu>
+    );
+  }
   //#endregion
 
   //#region Auxiliary methods -------------------------------------------------

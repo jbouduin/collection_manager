@@ -102,20 +102,28 @@ export class CardSyncService extends BaseSyncService<ICardSyncParam> implements 
             .pipe(new CardTransformer({ decodeStrings: true }, this.logService));
 
           return await new Promise<void>((resolve, reject) => {
-            /*
-             * TODO the await in on card is wrong!
-             * But, if we leave it out, the splash screen disappears before everything has been processed
-             */
+            const batchSize = 50;
+            let batch: Array<Promise<void>> = new Array<Promise<void>>();
             cardStream
-              .on(
-                "data",
-                /* eslint-disable-next-line @typescript-eslint/no-misused-promises*/
-                async (card: IScryfallCardDto) => {
-                  await this.syncSingleCard(card, null, null, progressCallback);
-                  return;
+              .on("data", (card: IScryfallCardDto) => {
+                const promise = this.syncSingleCard(card, null, null, progressCallback);
+                batch.push(promise);
+                if (batch.length >= batchSize) {
+                  cardStream.pause();
+                  void Promise.all(batch)
+                    .then(
+                      () => {
+                        batch = new Array<Promise<void>>();
+                        cardStream.resume();
+                      },
+                      () => {
+                        // TODO how will we handle this ?
+                        cardStream.resume();
+                      }
+                    );
                 }
-              )
-              .on("end", () => resolve())
+              })
+              .on("end", () => void Promise.all(batch).then(() => resolve(), () => resolve()))
               .on("error", (err) => reject(err));
           })
             .then(

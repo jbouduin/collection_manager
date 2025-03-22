@@ -137,10 +137,8 @@ export function CenterPanel(props: CenterPanelProps) {
       <CardTableView<MtgCardListViewmodel>
         bodyContextMenuRenderer={(context: MenuContext) => contextMenu(context)}
         data={cards}
-        hideSplashScreen={undefined}
         onColumnSorted={(changedSortedIndexMap: Array<number>) => setSortedIndexMap(changedSortedIndexMap)}
         onDataSelected={(cards?: Array<MtgCardListViewmodel>) => props.onCardsSelected(cards)}
-        showSplashScreen={undefined}
         sortableColumnDefintions={sortableColumnDefinitions}
         sortedIndexMap={sortedIndexMap}
       />

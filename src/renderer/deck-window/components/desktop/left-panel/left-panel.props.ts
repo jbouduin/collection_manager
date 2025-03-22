@@ -1,8 +1,8 @@
-import { CollectionManagerProps } from "../../../../shared/components/base/collection-manager.props";
+import { Props } from "@blueprintjs/core";
 import { DeckCardListViewmodel } from "../../../viewmodels";
 
 
-export interface LeftPanelProps extends CollectionManagerProps {
+export interface LeftPanelProps extends Props {
   deckId: number;
   onCardsSelected: (cards: Array<DeckCardListViewmodel>) => void;
 }

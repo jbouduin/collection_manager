@@ -137,10 +137,8 @@ export function CardTableSection(props: CardTableSectionProps) {
       <CardTableView<DeckCardListViewmodel>
         bodyContextMenuRenderer={(context: MenuContext) => contextMenu(context)}
         data={props.cards}
-        hideSplashScreen={undefined}
         onColumnSorted={(changedSortedIndexMap: Array<number>) => setSortedIndexMap(changedSortedIndexMap)}
         onDataSelected={(cards: Array<DeckCardListViewmodel>) => props.onCardsSelected(cards)}
-        showSplashScreen={undefined}
         sortableColumnDefintions={sortableColumnDefinitions}
         sortedIndexMap={sortedIndexMap}
       />

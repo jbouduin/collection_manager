@@ -3,12 +3,13 @@ import { IConfigurationDto } from "../../../../common/dto";
 import { BaseDesktop, DesktopContentProps } from "../../../shared/components/base";
 import { ButtonBar } from "./button-bar/button-bar";
 import { EDesktopView } from "./desktop-view.enum";
+import { MainWindowDesktopProps } from "./main-window-desktop.props";
 import { CollectionView } from "./views/collection-view/collection-view";
 import { DeckView } from "./views/deck-view/deck-view";
 import { MtgView } from "./views/mtg-view/mtg-view";
 
 
-export function MainWindowDesktop() {
+export function MainWindowDesktop(props: MainWindowDesktopProps) {
   //#region State -------------------------------------------------------------
   const [desktopView, setDesktopView] = React.useState<EDesktopView>(EDesktopView.Database);
   //#endregion
@@ -17,6 +18,7 @@ export function MainWindowDesktop() {
   return (
     <BaseDesktop
       desktopContent={(props: DesktopContentProps) => desktopContent(props)}
+      toastCall={props.toastCall}
     />
   );
 

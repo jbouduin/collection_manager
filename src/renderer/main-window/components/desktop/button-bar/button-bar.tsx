@@ -1,8 +1,7 @@
 import { ButtonGroup, Menu, MenuItem } from "@blueprintjs/core";
 import * as React from "react";
 import { IConfigurationDto, ISyncParamDto } from "../../../../../common/dto";
-import { AfterSplashScreenClose } from "../../../../shared/components/base/collection-manager.props";
-import { IIpcProxyService, IpcProxyServiceContext } from "../../../../shared/context";
+import { AfterSplashScreenClose, IIpcProxyService, IOverlayContext, IpcProxyServiceContext, OverlayContext } from "../../../../shared/context";
 import { EDesktopView } from "../desktop-view.enum";
 import { SettingsDialog } from "../settings-dialog/settings-dialog";
 import { SyncDialog } from "../sync-dialog/sync-dialog";
@@ -24,11 +23,12 @@ export function ButtonBar(props: ButtonBarProps) {
 
   //#region Context ---------------------------------------------------------------------
   const ipcProxyService = React.useContext<IIpcProxyService>(IpcProxyServiceContext);
+  const overlayContext = React.useContext<IOverlayContext>(OverlayContext);
   //#endregion
 
   //#region Event handling --------------------------------------------------------------
   function startSync(syncParam: ISyncParamDto): void {
-    props.showSplashScreen();
+    overlayContext.showSplashScreen();
     setState(initialState);
     void ipcProxyService
       .postData<ISyncParamDto, never>("/mtg-sync", syncParam)
@@ -42,12 +42,12 @@ export function ButtonBar(props: ButtonBarProps) {
             if (syncParam.syncCardSymbols) {
               afterSplashScreenClose.push("CardSymbols");
             }
-            props.hideSplashScreen(afterSplashScreenClose);
+            overlayContext.hideSplashScreen(afterSplashScreenClose);
           } else {
-            props.hideSplashScreen(null);
+            overlayContext.hideSplashScreen(null);
           }
         },
-        () => props.hideSplashScreen(null)
+        () => overlayContext.hideSplashScreen(null)
       );
   }
   //#endregion

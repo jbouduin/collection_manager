@@ -2,7 +2,7 @@ import { FocusStyleManager, OverlaysProvider, OverlayToaster, PortalProvider, Po
 import * as React from "react";
 import { createRoot } from "react-dom/client";
 import * as url from "url";
-import { IpcProxyService, IpcProxyServiceContext, ToastContext } from "../shared/context";
+import { IpcProxyService, IpcProxyServiceContext } from "../shared/context";
 import { DeckWindowDesktop } from "./components/desktop/deck-window-desktop";
 
 FocusStyleManager.onlyShowFocusOnTabs();
@@ -34,9 +34,10 @@ void (async () => {
     <OverlaysProvider>
       <PortalProvider>
         <IpcProxyServiceContext.Provider value={ipcProxyService}>
-          <ToastContext.Provider value={{ showToast: toastCall }} >
-            <DeckWindowDesktop deckId={deckId} />
-          </ToastContext.Provider>
+          <DeckWindowDesktop
+            deckId={deckId}
+            toastCall={toastCall}
+          />
         </IpcProxyServiceContext.Provider>
       </PortalProvider>
     </OverlaysProvider>

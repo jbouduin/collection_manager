@@ -1,10 +1,10 @@
 import React from "react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { BaseDesktop, DesktopContentProps } from "../../../shared/components/base";
+import { CardDetail } from "../../../shared/components/card-details";
+import { DeckCardListViewmodel } from "../../viewmodels";
 import { DeckWindowDesktopProps } from "./deck-window-desktop.props";
 import { LeftPanel } from "./left-panel/left-panel";
-import { DeckCardListViewmodel } from "../../viewmodels";
-import { CardDetail } from "../../../shared/components/card-details";
 
 
 export function DeckWindowDesktop(props: DeckWindowDesktopProps) {
@@ -16,6 +16,7 @@ export function DeckWindowDesktop(props: DeckWindowDesktopProps) {
   return (
     <BaseDesktop
       desktopContent={(props: DesktopContentProps) => desktopContent(props)}
+      toastCall={props.toastCall}
     />
   );
 

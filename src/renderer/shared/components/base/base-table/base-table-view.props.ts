@@ -1,10 +1,10 @@
+import { Props } from "@blueprintjs/core";
 import { ContextMenuRenderer } from "@blueprintjs/table";
-import { CollectionManagerProps } from "../collection-manager.props";
 import { IBaseColumn } from "./base-column";
 import { BaseLookupResult } from "./base-lookup-result";
 
 
-export interface BaseTableViewProps<T> extends CollectionManagerProps {
+export interface BaseTableViewProps<T> extends Props {
   bodyContextMenuRenderer?: ContextMenuRenderer;
   data: Array<T>;
   sortableColumnDefintions: Array<IBaseColumn<unknown, BaseLookupResult>>;

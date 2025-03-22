@@ -3,7 +3,7 @@ import { cloneDeep, isEqual, upperFirst } from "lodash";
 import * as React from "react";
 import { IMtgCardSetDto, ISyncParamDto } from "../../../../../../../../common/dto";
 import { CardSetGroupBy, CardSetSort, CardSetType } from "../../../../../../../../common/types";
-import { IIpcProxyService, IpcProxyServiceContext } from "../../../../../../../shared/context";
+import { IIpcProxyService, IOverlayContext, IpcProxyServiceContext, OverlayContext } from "../../../../../../../shared/context";
 import { TreeConfigurationViewmodel } from "../../../../../../viewmodels";
 import { CardSetTreeViewmodel } from "../../../../../../viewmodels/card-set/card-set-tree.viewmodel";
 import { BaseTreeView, BaseTreeViewProps } from "../../../../../../../shared/components/base/base-tree-view";
@@ -27,6 +27,7 @@ export function SetTreeView(props: LeftPanelProps) {
 
   //#region Context ---------------------------------------------------------------------
   const ipcProxyService = React.useContext<IIpcProxyService>(IpcProxyServiceContext);
+  const overlayContext = React.useContext<IOverlayContext>(OverlayContext);
   //#endregion
 
   //#region event handling ----------------------------------------------------
@@ -58,7 +59,7 @@ export function SetTreeView(props: LeftPanelProps) {
   };
 
   function synchronizeSet(code: string): void {
-    props.showSplashScreen();
+    overlayContext.showSplashScreen();
     const params: ISyncParamDto = {
       catalogTypesToSync: [],
       bulkSyncUrl: undefined,
@@ -76,8 +77,8 @@ export function SetTreeView(props: LeftPanelProps) {
     };
     void ipcProxyService.postData<ISyncParamDto, never>("/mtg-sync", params)
       .then(
-        () => props.hideSplashScreen(null),
-        () => props.hideSplashScreen(null)
+        () => overlayContext.hideSplashScreen(null),
+        () => overlayContext.hideSplashScreen(null)
       );
   }
   //#endregion

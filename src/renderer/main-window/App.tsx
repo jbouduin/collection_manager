@@ -10,7 +10,6 @@ FocusStyleManager.onlyShowFocusOnTabs();
 void (async () => {
   await import("./App.css");
 
-
   const appToaster = await OverlayToaster.createAsync(
     {
       className: "recipe-toaster",
@@ -20,7 +19,8 @@ void (async () => {
       domRenderer: (toaster, containerElement) => createRoot(containerElement).render(toaster)
     }
   );
-  const ipcProxyService = new IpcProxyService((props: ToastProps, key?: string) => appToaster.show(props, key));
+  const toastCall = (props: ToastProps, key?: string) => appToaster.show(props, key);
+  const ipcProxyService = new IpcProxyService(toastCall);
   const container = document.getElementById("root");
   const root = createRoot(container);
   /* eslint-disable @stylistic/function-paren-newline */
@@ -28,7 +28,7 @@ void (async () => {
     <OverlaysProvider>
       <PortalProvider>
         <IpcProxyServiceContext.Provider value={ipcProxyService}>
-          <MainWindowDesktop />
+          <MainWindowDesktop toastCall={toastCall} />
         </IpcProxyServiceContext.Provider>
       </PortalProvider>
     </OverlaysProvider>

@@ -4,10 +4,9 @@ import { cloneDeep, noop } from "lodash";
 import * as React from "react";
 import { ICardConditionDto, IConfigurationDto, IGameFormatDto, ILanguageDto, IMtgCardSetDto } from "../../../../../common/dto";
 import * as Context from "../../../../shared/context";
-import { AfterSplashScreenClose } from "../collection-manager.props";
+import { SplashScreen } from "../../splash/splash-screen";
 import { BaseDesktopProps } from "./base-desktop.props";
 import { BaseDesktopState } from "./base-desktop.state";
-import { SplashScreen } from "../../splash/splash-screen";
 
 
 export function BaseDesktop(props: BaseDesktopProps) {
@@ -66,8 +65,8 @@ export function BaseDesktop(props: BaseDesktopProps) {
   );
   //#endregion
 
-  //#region Event handling -> Splashscreen -----------------------------------
-  function hideSplashScreen(afterSplashScreenClose: Array<AfterSplashScreenClose>): void {
+  //#region Event handling ----------------------------------------------------
+  function hideSplashScreen(afterSplashScreenClose: Array<Context.AfterSplashScreenClose>): void {
     if (afterSplashScreenClose != null) {
       const newState = cloneDeep(desktopState);
       newState.splashScreenOpen = false;
@@ -98,7 +97,6 @@ export function BaseDesktop(props: BaseDesktopProps) {
     newState.splashScreenOpen = true;
     setDesktopState(newState);
   }
-  //#endregion
 
   function onConfigurationChanged(saved: IConfigurationDto): void {
     const newState = cloneDeep(desktopState);
@@ -106,6 +104,7 @@ export function BaseDesktop(props: BaseDesktopProps) {
     newState.themeClassName = saved.rendererConfiguration.useDarkTheme ? Classes.DARK : "";
     setDesktopState(newState);
   }
+  //#endregion
 
   //#region Rendering -------------------------------------------------------
   return (
@@ -119,23 +118,29 @@ export function BaseDesktop(props: BaseDesktopProps) {
                 <Context.CardSetContext.Provider value={desktopState.cardSets}>
                   <Context.CardConditionContext.Provider value={desktopState.cardConditions}>
                     <Context.GameFormatContext.Provider value={desktopState.gameFormats}>
-                      <Card className={classNames(desktopState.themeClassName, "desktop-wrapper")}>
-                        {props.desktopContent({
-                          className: desktopState.themeClassName,
-                          hideSplashScreen: (afterClose: Array<AfterSplashScreenClose>) => hideSplashScreen(afterClose),
-                          onConfigurationChanged: (newConfiguration: IConfigurationDto) => onConfigurationChanged(newConfiguration),
-                          showSplashScreen: () => openSplashScreen()
-                        })}
-                      </Card>
-                      {
-                        desktopState.splashScreenOpen &&
-                        <SplashScreen
-                          {...props}
-                          className={desktopState.themeClassName}
-                          isOpen={desktopState.splashScreenOpen}
-                          onDialogClose={noop}
-                        />
-                      }
+                      <Context.OverlayContext.Provider
+                        value={{
+                          hideSplashScreen: hideSplashScreen,
+                          showSplashScreen: openSplashScreen,
+                          showToast: props.toastCall
+                        }}
+                      >
+                        <Card className={classNames(desktopState.themeClassName, "desktop-wrapper")}>
+                          {props.desktopContent({
+                            className: desktopState.themeClassName,
+                            onConfigurationChanged: (newConfiguration: IConfigurationDto) => onConfigurationChanged(newConfiguration)
+                          })}
+                        </Card>
+                        {
+                          desktopState.splashScreenOpen &&
+                          <SplashScreen
+                            {...props}
+                            className={desktopState.themeClassName}
+                            isOpen={desktopState.splashScreenOpen}
+                            onDialogClose={noop}
+                          />
+                        }
+                      </Context.OverlayContext.Provider>
                     </Context.GameFormatContext.Provider>
                   </Context.CardConditionContext.Provider>
                 </Context.CardSetContext.Provider>

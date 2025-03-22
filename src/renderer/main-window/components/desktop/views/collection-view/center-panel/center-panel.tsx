@@ -77,10 +77,8 @@ export function CenterPanel(props: CenterPanelProps) {
   return (
     <CardTableView<CollectionCardListViewmodel>
       data={cards}
-      hideSplashScreen={undefined}
       onColumnSorted={(changedSortedIndexMap: Array<number>) => setSortedIndexMap(changedSortedIndexMap)}
       onDataSelected={(cards?: Array<CollectionCardListViewmodel>) => props.onCardsSelected(cards)}
-      showSplashScreen={undefined}
       sortableColumnDefintions={sortableColumnDefinitions}
       sortedIndexMap={sortedIndexMap}
     />

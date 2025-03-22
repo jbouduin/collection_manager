@@ -2,7 +2,7 @@ import React from "react";
 import { ICardConditionDto, IGameFormatDto, ILanguageDto, IMtgCardSetDto, IRendererConfigurationDto } from "../../../common/dto";
 import { DisplayValueService } from "./display-value.service";
 import { IIpcProxyService } from "./ipc-proxy.service";
-import { IToastContext } from "./toast-context";
+import { IOverlayContext } from "./overlay-context";
 
 
 export const CardConditionContext = React.createContext<Array<ICardConditionDto>>(new Array<ICardConditionDto>());
@@ -13,4 +13,4 @@ export const DisplayValueServiceContext = React.createContext<DisplayValueServic
 export const GameFormatContext = React.createContext<Array<IGameFormatDto>>(new Array<IGameFormatDto>());
 export const IpcProxyServiceContext = React.createContext<IIpcProxyService>(null);
 export const LanguagesContext = React.createContext<Array<ILanguageDto>>(new Array<ILanguageDto>());
-export const ToastContext = React.createContext<IToastContext>(null);
+export const OverlayContext = React.createContext<IOverlayContext>(null);

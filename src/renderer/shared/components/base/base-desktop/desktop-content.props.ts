@@ -1,6 +1,7 @@
+import { Props } from "@blueprintjs/core";
 import { IConfigurationDto } from "../../../../../common/dto";
-import { CollectionManagerProps } from "../collection-manager.props";
 
-export interface DesktopContentProps extends CollectionManagerProps {
+
+export interface DesktopContentProps extends Props {
   onConfigurationChanged: (newConfiguration: IConfigurationDto) => void;
 }

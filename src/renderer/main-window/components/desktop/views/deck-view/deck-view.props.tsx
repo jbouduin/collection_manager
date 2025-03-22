@@ -1,3 +1,4 @@
-import { CollectionManagerProps } from "../../../../../shared/components/base/collection-manager.props";
+import { Props } from "@blueprintjs/core";
 
-export type DeckViewProps = CollectionManagerProps;
+
+export type DeckViewProps = Props;

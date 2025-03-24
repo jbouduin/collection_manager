@@ -3,10 +3,9 @@ import { CardSetViewmodel } from "../../../../../../viewmodels";
 
 
 export interface CardSetSelectProps extends Props {
-  cardSets: Array<CardSetViewmodel>;
-  selectedCardSets: Array<string>;
-
-  onOptionAdded: (cardSetId: string) => void;
-  onOptionRemoved: (cardSetId: string) => void;
+  allCardSets: Array<CardSetViewmodel>;
   onClearOptions: () => void;
+  onOptionAdded: (cardSet: CardSetViewmodel) => void;
+  onOptionRemoved: (cardSetId: CardSetViewmodel) => void;
+  selectedCardSets: Array<CardSetViewmodel>;
 }

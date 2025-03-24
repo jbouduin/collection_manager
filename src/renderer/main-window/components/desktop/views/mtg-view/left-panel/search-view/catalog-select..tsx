@@ -1,6 +1,5 @@
 import { FormGroup, MenuItem } from "@blueprintjs/core";
 import { ItemRendererProps, MultiSelect } from "@blueprintjs/select";
-import { cloneDeep } from "lodash";
 import * as React from "react";
 import { ICatalogItemDto } from "../../../../../../../../common/dto";
 import { highlightText } from "../../../../../../../shared/components/utils";
@@ -9,47 +8,60 @@ import { CatalogSelectProps } from "./catalog-select.props";
 
 export function CatalogSelect(props: CatalogSelectProps) {
   //#region State -------------------------------------------------------------
-  const [state, setState] = React.useState(props.selectedItems);
   const [items, setItems] = React.useState(new Array<ICatalogItemDto>());
+  const [queryString, setQueryString] = React.useState<string>(null);
   //#endregion
 
   //#region Context -----------------------------------------------------------
   const ipcProxyService = React.useContext<IIpcProxyService>(IpcProxyServiceContext);
   //#endregion
 
+  //#region Effects -----------------------------------------------------------
+  React.useEffect(
+    () => {
+      if (queryString != null) {
+        const timeOutId = setTimeout(
+          () => {
+            void ipcProxyService
+              .getData<Array<ICatalogItemDto>>(`/catalog/${props.catalogType.catalog_name}?item=${queryString}`)
+              .then(
+                (r: Array<ICatalogItemDto>) => setItems(r),
+                (_r: Error) => setItems(new Array<ICatalogItemDto>())
+              );
+          },
+          500
+        );
+        return () => clearTimeout(timeOutId);
+      }
+    },
+    [queryString]
+  );
+  //#endregion
+
   //#region Event handling ----------------------------------------------------
   function onClear(): void {
-    props.onClearOptions();
-    setState(new Array<ICatalogItemDto>());
+    props.onClearSelectedCatalogItems();
   }
 
   function onRemove(item: ICatalogItemDto): void {
-    const newState = cloneDeep(state);
-    const indexOfSelected = newState.findIndex((f: ICatalogItemDto) => f.item == item.item);
-    newState.splice(indexOfSelected, 1);
-    props.onOptionRemoved(item);
-    setState(newState);
+    props.onCatalogItemRemoved(item);
   }
 
   function onSelect(item: ICatalogItemDto): void {
-    const newState = cloneDeep(state);
-    const indexOfSelected = newState.findIndex((f: ICatalogItemDto) => f.item == item.item);
+    const indexOfSelected = props.selectedCatalogItems.findIndex((f: ICatalogItemDto) => f.item == item.item);
     if (indexOfSelected >= 0) {
-      newState.splice(indexOfSelected, 1);
-      props.onOptionRemoved(item);
+      props.onCatalogItemRemoved(item);
     } else {
-      newState.push(item);
-      props.onOptionAdded(item);
+      props.onCatalogItemAdded(item);
     }
-    setState(newState);
   }
   //#endregion
 
   //#region Rendering ---------------------------------------------------------
   return (
     <FormGroup
-      key={props.catalog.catalog_name}
-      label={props.catalog.display_label}
+      key={props.catalogType.catalog_name}
+      label={props.catalogType.display_label}
     >
       <MultiSelect<ICatalogItemDto>
         initialContent={null}
@@ -57,7 +69,7 @@ export function CatalogSelect(props: CatalogSelectProps) {
         itemPredicate={filterOption}
         itemRenderer={(item: ICatalogItemDto, itemProps: ItemRendererProps) => itemRenderer(item, itemProps)}
         items={items}
-        key={props.catalog.catalog_name}
+        key={props.catalogType.catalog_name}
         noResults={<MenuItem disabled={true} roleStructure="listoption" text="No results." />}
         onClear={() => onClear()}
         onItemSelect={(item: ICatalogItemDto) => onSelect(item)}
@@ -65,7 +77,7 @@ export function CatalogSelect(props: CatalogSelectProps) {
         onRemove={(item: ICatalogItemDto) => onRemove(item)}
         popoverProps={{ matchTargetWidth: true, minimal: true }}
         resetOnSelect={true}
-        selectedItems={state}
+        selectedItems={props.selectedCatalogItems}
         tagRenderer={(item: ICatalogItemDto) => tagRenderer(item)}
       />
     </FormGroup>
@@ -84,7 +96,7 @@ export function CatalogSelect(props: CatalogSelectProps) {
         onFocus={itemProps.handleFocus}
         ref={itemProps.ref}
         roleStructure="listoption"
-        selected={props.selectedItems.includes(item)}
+        selected={props.selectedCatalogItems.includes(item)}
         shouldDismissPopover={false}
         text={(
           <div>
@@ -117,12 +129,7 @@ export function CatalogSelect(props: CatalogSelectProps) {
   }
 
   function onQueryChange(query: string, _event?: React.ChangeEvent<HTMLInputElement>): void {
-    void ipcProxyService
-      .getData<Array<ICatalogItemDto>>(`/catalog/${props.catalog.catalog_name}?item=${query}`)
-      .then(
-        (r: Array<ICatalogItemDto>) => setItems(r),
-        (_r: Error) => setItems(new Array<ICatalogItemDto>())
-      );
+    setQueryString(query);
   }
   //#endregion
 }

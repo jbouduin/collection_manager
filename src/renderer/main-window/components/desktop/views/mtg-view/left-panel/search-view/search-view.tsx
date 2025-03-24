@@ -1,8 +1,8 @@
 import { Button, Checkbox } from "@blueprintjs/core";
 import { cloneDeep } from "lodash";
 import * as React from "react";
-import { ICatalogTypeDto, IColorDto, IGameFormatDto, IMtgCardSetDto } from "../../../../../../../../common/dto";
-import { CardRarity, MtgColor, MtgGameFormat } from "../../../../../../../../common/types";
+import { ICatalogItemDto, ICatalogTypeDto, IColorDto, IGameFormatDto, IMtgCardSetDto } from "../../../../../../../../common/dto";
+import { CardRarity, MtgGameFormat } from "../../../../../../../../common/types";
 import { displayValueRecordToSelectOptions, handleBooleanChange, SelectOption } from "../../../../../../../shared/components/utils";
 import { CardSetContext, DisplayValueService, DisplayValueServiceContext, GameFormatContext, IIpcProxyService, IpcProxyServiceContext } from "../../../../../../../shared/context";
 import { CardSearchViewmodel, CardSetViewmodel } from "../../../../../../viewmodels";
@@ -12,40 +12,6 @@ import { ColorSelect } from "./color-select";
 import { SearchViewProps } from "./search-view.props";
 import { SelectSelectOption } from "./select-select-option";
 
-/* eslint-disable @stylistic/multiline-comment-style */
-/* TODO check why this did not work as expected
- do this when implementing saved searches, because there is something strange witht he selects anyway
- if there is no way to get it working -> rethink state in the selects
-
-const RaritySelectMemo = React.memo(
-  SelectSelectOption<CardRarity>,
-  (prev: SelectSelectOptionProps<CardRarity>, current: SelectSelectOptionProps<CardRarity>) => {
-    return isEmpty(xor(prev.items, current.items));
-  }
-);
-
-const GameFormatMemo = React.memo(
-  SelectSelectOption<GameFormat>,
-  (prev: SelectSelectOptionProps<GameFormat>, current: SelectSelectOptionProps<GameFormat>) => {
-    return isEmpty(xor(prev.items, current.items));
-  }
-);
-
-const CardSetMemo = React.memo(
-  CardSetSelect,
-  (prev: CardSetSelectProps, current: CardSetSelectProps) => {
-    return isEmpty(xor(prev.cardSets, current.cardSets));
-  }
-);
-
-const CatalogMemo = React.memo(
-  CatalogSelect,
-  (prev: CatalogSelectProps, current: CatalogSelectProps) => {
-    return prev.catalog === current.catalog;
-  }
-);
-*/
-/* eslint-enable @stylistic/multiline-comment-style */
 
 export function SearchView(props: SearchViewProps) {
   //#region State -----------------------------------------------------------------------
@@ -118,56 +84,56 @@ export function SearchView(props: SearchViewProps) {
         onChange={handleBooleanChange((value: boolean) => onSelectOptionEvent((v: CardSearchViewmodel) => v.ownedCards = value))}
       />
       <CardSetSelect
-        cardSets={cardSetContext.map((c: IMtgCardSetDto) => new CardSetViewmodel(c))}
+        allCardSets={cardSetContext.map((c: IMtgCardSetDto) => new CardSetViewmodel(c))}
         key="card-set-select"
         onClearOptions={() => onSelectOptionEvent((v: CardSearchViewmodel) => v.clearCardSetSelection())}
-        onOptionAdded={(cardSet: string) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addCardSet(cardSet))}
-        onOptionRemoved={(cardSet: string) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeCardSet(cardSet))}
-        selectedCardSets={state.selectedSets}
+        onOptionAdded={(cardSet: CardSetViewmodel) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addCardSet(cardSet))}
+        onOptionRemoved={(cardSet: CardSetViewmodel) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeCardSet(cardSet))}
+        selectedCardSets={state.selectedCardSets}
       />
       <ColorSelect
+        allColors={colors}
         colorType="card"
-        colors={colors}
         label="Card color"
         onClearOptions={() => onSelectOptionEvent((v: CardSearchViewmodel) => v.clearColorSelection("card"))}
-        onOptionAdded={(color: MtgColor) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addColor("card", color, colors))}
-        onOptionRemoved={(color) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeColor("card", color))}
+        onOptionAdded={(color: IColorDto) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addColor("card", color))}
+        onOptionRemoved={(color: IColorDto) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeColor("card", color))}
         selectedColors={state.selectedCardColors}
       />
       <ColorSelect
+        allColors={colors}
         colorType="produced_mana"
-        colors={colors}
         label="Produced mana color"
         onClearOptions={() => onSelectOptionEvent((v: CardSearchViewmodel) => v.clearColorSelection("produced_mana"))}
-        onOptionAdded={(color: MtgColor) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addColor("produced_mana", color, colors))}
-        onOptionRemoved={(color: MtgColor) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeColor("produced_mana", color))}
+        onOptionAdded={(color: IColorDto) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addColor("produced_mana", color))}
+        onOptionRemoved={(color: IColorDto) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeColor("produced_mana", color))}
         selectedColors={state.selectedProducedManaColors}
       />
       <ColorSelect
+        allColors={colors}
         colorType="identity"
-        colors={colors}
         label="Identity color"
         onClearOptions={() => onSelectOptionEvent((v: CardSearchViewmodel) => v.clearColorSelection("identity"))}
-        onOptionAdded={(color: MtgColor) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addColor("identity", color, colors))}
-        onOptionRemoved={(color: MtgColor) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeColor("identity", color))}
+        onOptionAdded={(color: IColorDto) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addColor("identity", color))}
+        onOptionRemoved={(color: IColorDto) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeColor("identity", color))}
         selectedColors={state.selectedIdentityColors}
       />
       <SelectSelectOption<CardRarity>
-        items={rarityItems}
+        allItems={rarityItems}
         key="rarity-select"
         label="Rarity"
         onClearOptions={() => onSelectOptionEvent((v: CardSearchViewmodel) => v.clearRaritiesSelection())}
-        onOptionAdded={(newOption) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addRarity(newOption))}
-        onOptionRemoved={(newOption) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeRarity(newOption))}
+        onOptionAdded={(option: SelectOption<CardRarity>) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addRarity(option))}
+        onOptionRemoved={(option: SelectOption<CardRarity>) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeRarity(option))}
         selectedItems={state.selectedRarities}
       />
       <SelectSelectOption<MtgGameFormat>
-        items={gameFormats}
+        allItems={gameFormats}
         key="game-format-select"
         label="Game Format"
         onClearOptions={() => onSelectOptionEvent((v: CardSearchViewmodel) => v.clearGameFormatSelection())}
-        onOptionAdded={(newOption) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addGameFormat(newOption))}
-        onOptionRemoved={(newOption) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeGameFormat(newOption))}
+        onOptionAdded={(option: SelectOption<MtgGameFormat>) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addGameFormat(option))}
+        onOptionRemoved={(option: SelectOption<MtgGameFormat>) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeGameFormat(option))}
         selectedItems={state.selectedGameFormats}
       />
       {
@@ -175,18 +141,17 @@ export function SearchView(props: SearchViewProps) {
           .map((c: ICatalogTypeDto) => {
             return (
               <CatalogSelect
-                catalog={c}
+                catalogType={c}
                 key={c.catalog_name}
-                onClearOptions={() => onSelectOptionEvent((v: CardSearchViewmodel) => v.clearCatalogSelection(c.catalog_name))}
-                onOptionAdded={(newItem) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addCatalogItem(newItem))}
-                onOptionRemoved={(removedItem) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeCatalogItem(removedItem))}
-                selectedItems={state.getSelectedCatalogItems(c.catalog_name)}
+                onCatalogItemAdded={(item: ICatalogItemDto) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addCatalogItem(item))}
+                onCatalogItemRemoved={(item: ICatalogItemDto) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeCatalogItem(item))}
+                onClearSelectedCatalogItems={() => onSelectOptionEvent((v: CardSearchViewmodel) => v.clearCatalogSelection(c.catalog_name))}
+                selectedCatalogItems={state.getSelectedCatalogItems(c.catalog_name)}
               />
             );
           })
       }
       <Button
-        disabled={!state.hasChanges}
         icon="search"
         onClick={onClickSearch}
       >

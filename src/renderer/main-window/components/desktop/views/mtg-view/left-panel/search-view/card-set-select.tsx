@@ -1,6 +1,5 @@
 import { FormGroup, MenuItem } from "@blueprintjs/core";
 import { ItemRendererProps, MultiSelect } from "@blueprintjs/select";
-import { cloneDeep } from "lodash";
 import * as React from "react";
 import { SvgProvider } from "../../../../../../../shared/components/svg-provider";
 import { highlightText } from "../../../../../../../shared/components/utils";
@@ -9,36 +8,22 @@ import { CardSetSelectProps } from "./card-set-select.props";
 
 
 export function CardSetSelect(props: CardSetSelectProps) {
-  //#region State -------------------------------------------------------------
-  const initialState = props.selectedCardSets.map((id: string) => props.cardSets.find((f: CardSetViewmodel) => f.id == id));
-  const [state, setState] = React.useState<Array<CardSetViewmodel>>(initialState);
-  //#endregion
-
   //#region Event handling ----------------------------------------------------
   function onClear(): void {
     props.onClearOptions();
-    setState(new Array<CardSetViewmodel>());
   }
 
   function onRemove(item: CardSetViewmodel): void {
-    const newState = cloneDeep(state);
-    const indexOfSelected = newState.findIndex((value: CardSetViewmodel) => value.id == item.id);
-    newState.splice(indexOfSelected, 1);
-    props.onOptionRemoved(item.id);
-    setState(newState);
+    props.onOptionRemoved(item);
   }
 
   function onSelect(item: CardSetViewmodel): void {
-    const newState = cloneDeep(state);
-    const indexOfSelected = newState.findIndex((value: CardSetViewmodel) => value.id == item.id);
+    const indexOfSelected = props.selectedCardSets.findIndex((value: CardSetViewmodel) => value.id == item.id);
     if (indexOfSelected >= 0) {
-      newState.splice(indexOfSelected, 1);
-      props.onOptionRemoved(item.id);
+      props.onOptionRemoved(item);
     } else {
-      newState.push(item);
-      props.onOptionAdded(item.id);
+      props.onOptionAdded(item);
     }
-    setState(newState);
   }
   //#endregion
 
@@ -53,7 +38,7 @@ export function CardSetSelect(props: CardSetSelectProps) {
         initialContent={null}
         itemPredicate={filterCardSet}
         itemRenderer={(item: CardSetViewmodel, itemProps: ItemRendererProps) => cardSetItemRenderer(item, itemProps)}
-        items={props.cardSets}
+        items={props.allCardSets}
         itemsEqual="id"
         key="card-sets-multi-select"
         noResults={<MenuItem disabled={true} roleStructure="listoption" text="No results." />}
@@ -62,7 +47,7 @@ export function CardSetSelect(props: CardSetSelectProps) {
         onRemove={(item: CardSetViewmodel) => onRemove(item)}
         popoverProps={{ matchTargetWidth: true, minimal: true }}
         resetOnSelect={true}
-        selectedItems={state}
+        selectedItems={props.selectedCardSets}
         tagRenderer={(item: CardSetViewmodel) => cardSetTagRenderer(item)}
       />
     </FormGroup>
@@ -82,7 +67,7 @@ export function CardSetSelect(props: CardSetSelectProps) {
         onFocus={itemProps.handleFocus}
         ref={itemProps.ref}
         roleStructure="listoption"
-        selected={state.includes(item)}
+        selected={props.selectedCardSets.includes(item)}
         shouldDismissPopover={false}
         text={(
           <div>

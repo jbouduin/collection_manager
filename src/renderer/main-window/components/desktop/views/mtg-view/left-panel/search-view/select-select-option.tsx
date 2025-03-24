@@ -1,41 +1,26 @@
 import { FormGroup, MenuItem } from "@blueprintjs/core";
 import { ItemRendererProps, MultiSelect } from "@blueprintjs/select";
-import { cloneDeep } from "lodash";
 import * as React from "react";
 import { highlightText, SelectOption } from "../../../../../../../shared/components/utils";
 import { SelectSelectOptionProps } from "./select-select-option.props";
 
 export function SelectSelectOption<T extends string>(props: SelectSelectOptionProps<T>) {
-  //#region State -------------------------------------------------------------
-  const initialState = props.selectedItems.map((id: T) => props.items.find((f: SelectOption<T>) => f.value == id));
-  const [state, setState] = React.useState(initialState);
-  //#endregion
-
   //#region Event handling ----------------------------------------------------
   function onClear(): void {
     props.onClearOptions();
-    setState(new Array<SelectOption<T>>());
   }
 
   function onRemove(item: SelectOption<T>): void {
-    const newState = cloneDeep(state);
-    const indexOfSelected = newState.findIndex((value: SelectOption<T>) => value.value == item.value);
-    newState.splice(indexOfSelected, 1);
-    props.onOptionRemoved(item.value);
-    setState(newState);
+    props.onOptionRemoved(item);
   }
 
   function onSelect(item: SelectOption<T>): void {
-    const newState = cloneDeep(state);
-    const indexOfSelected = newState.findIndex((value: SelectOption<T>) => value.value == item.value);
+    const indexOfSelected = props.selectedItems.findIndex((value: SelectOption<T>) => value.value == item.value);
     if (indexOfSelected >= 0) {
-      newState.splice(indexOfSelected, 1);
-      props.onOptionRemoved(item.value);
+      props.onOptionRemoved(item);
     } else {
-      newState.push(item);
-      props.onOptionAdded(item.value);
+      props.onOptionAdded(item);
     }
-    setState(newState);
   }
   //#endregion
 
@@ -49,7 +34,7 @@ export function SelectSelectOption<T extends string>(props: SelectSelectOptionPr
         initialContent={null}
         itemPredicate={filterOption}
         itemRenderer={(item: SelectOption<T>, itemProps: ItemRendererProps) => itemRenderer(item, itemProps)}
-        items={props.items}
+        items={props.allItems}
         key={props.label}
         noResults={<MenuItem disabled={true} roleStructure="listoption" text="No results." />}
         onClear={() => onClear()}
@@ -57,7 +42,7 @@ export function SelectSelectOption<T extends string>(props: SelectSelectOptionPr
         onRemove={(item: SelectOption<T>) => onRemove(item)}
         popoverProps={{ matchTargetWidth: true, minimal: true }}
         resetOnSelect={true}
-        selectedItems={state}
+        selectedItems={props.selectedItems}
         tagRenderer={(item: SelectOption<T>) => tagRenderer(item)}
       />
     </FormGroup>
@@ -76,7 +61,7 @@ export function SelectSelectOption<T extends string>(props: SelectSelectOptionPr
         onFocus={itemProps.handleFocus}
         ref={itemProps.ref}
         roleStructure="listoption"
-        selected={props.selectedItems.includes(item.value)}
+        selected={props.selectedItems.includes(item)}
         shouldDismissPopover={false}
         text={(
           <div>

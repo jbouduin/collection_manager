@@ -119,3 +119,14 @@ img.rotate-180 {
   padding-top: 375px;
   color: white;
 }
+
+.committable-input-wrapper {
+  display: flex;
+  flex-flow: column;
+}
+
+.committable-input-buttons {
+  display: flex;
+  flex-flow: row;
+  justify-content: flex-end;
+}

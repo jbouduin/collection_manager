@@ -1,9 +1,20 @@
 import { ICardQueryDto, ICatalogItemDto, IColorDto, QUERY_PARAM_LIST_SEPARATOR, CardQueryParamToken } from "../../../../common/dto";
 import { CardRarity, CatalogType, MtgGameFormat, MtgColor, MtgColorType } from "../../../../common/types";
+import { SelectOption } from "../../../shared/components/utils";
 import { BaseViewmodel } from "../../../shared/viewmodels";
+import { CardSetViewmodel } from "../card-set";
 
 
 export class CardSearchViewmodel extends BaseViewmodel<ICardQueryDto> {
+  //#region private fields ------------------------------------------------------
+  private _selectedCardSets: Array<CardSetViewmodel>;
+  private _selectedCardColors: Array<IColorDto>;
+  private _selectedGameFormats: Array<SelectOption<MtgGameFormat>>;
+  private _selectedIdentityColors: Array<IColorDto>;
+  private _selectedProducedManaColors: Array<IColorDto>;
+  private _selectedRarities: Array<SelectOption<CardRarity>>;
+  //#endregion
+
   //#region Getters - Setters ---------------------------------------------------
   public get ownedCards(): boolean {
     return this._dto.ownedCards;
@@ -13,28 +24,28 @@ export class CardSearchViewmodel extends BaseViewmodel<ICardQueryDto> {
     this._dto.ownedCards = value;
   }
 
-  public get selectedCardColors(): Array<MtgColor> {
-    return this._dto.selectedIdentityColors;
+  public get selectedCardColors(): Array<IColorDto> {
+    return this._selectedCardColors;
   }
 
-  public get selectedIdentityColors(): Array<MtgColor> {
-    return this._dto.selectedIdentityColors;
+  public get selectedIdentityColors(): Array<IColorDto> {
+    return this._selectedIdentityColors;
   }
 
-  public get selectedProducedManaColors(): Array<MtgColor> {
-    return this._dto.selectedProducedManaColors;
+  public get selectedProducedManaColors(): Array<IColorDto> {
+    return this._selectedProducedManaColors;
   }
 
-  public get selectedGameFormats(): Array<MtgGameFormat> {
-    return this._dto.selectedGameFormats;
+  public get selectedGameFormats(): Array<SelectOption<MtgGameFormat>> {
+    return this._selectedGameFormats;
   }
 
-  public get selectedRarities(): Array<CardRarity> {
-    return this._dto.selectedRarities;
+  public get selectedRarities(): Array<SelectOption<CardRarity>> {
+    return this._selectedRarities;
   }
 
-  public get selectedSets(): Array<string> {
-    return this._dto.selectedSets;
+  public get selectedCardSets(): Array<CardSetViewmodel> {
+    return this._selectedCardSets;
   }
   //#endregion
 
@@ -52,47 +63,62 @@ export class CardSearchViewmodel extends BaseViewmodel<ICardQueryDto> {
       selectedGameFormats: new Array<MtgGameFormat>(),
       selectedIdentityColors: new Array<MtgColor>(),
       selectedProducedManaColors: new Array<MtgColor>(),
-      selectedRarities: ["mythic", "rare", "uncommon", "common"],
+      selectedRarities: new Array<CardRarity>(),
       selectedSets: new Array<string>()
     };
     initial.selectedRarities.sort((a: CardRarity, b: CardRarity) => a.localeCompare(b));
     super(initial);
+    this._selectedCardSets = new Array<CardSetViewmodel>();
+    this._selectedCardColors = new Array<IColorDto>();
+    this._selectedGameFormats = new Array<SelectOption<MtgGameFormat>>();
+    this._selectedIdentityColors = new Array<IColorDto>();
+    this._selectedProducedManaColors = new Array<IColorDto>();
+    this._selectedRarities = new Array<SelectOption<CardRarity>>();
   }
   //#endregion
 
   //#region CardColors --------------------------------------------------------
-  public addColor(type: MtgColorType, color: MtgColor, allColors: Array<IColorDto>): void {
+  public addColor(type: MtgColorType, color: IColorDto): void {
     switch (type) {
       case "card":
-        this._dto.selectedCardColors.push(color);
-        this.sortColors(this._dto.selectedCardColors, allColors);
+        this._dto.selectedCardColors.push(color.id);
+        this._selectedCardColors.push(color);
+        this._selectedCardColors.sort((a: IColorDto, b: IColorDto) => a.sequence - b.sequence);
         break;
       case "identity":
-        this._dto.selectedIdentityColors.push(color);
-        this.sortColors(this._dto.selectedIdentityColors, allColors);
+        this._dto.selectedIdentityColors.push(color.id);
+        this._selectedIdentityColors.push(color);
+        this._selectedIdentityColors.sort((a: IColorDto, b: IColorDto) => a.sequence - b.sequence);
         break;
       case "produced_mana":
-        this._dto.selectedProducedManaColors.push(color);
-        this.sortColors(this._dto.selectedProducedManaColors, allColors);
+        this._dto.selectedProducedManaColors.push(color.id);
+        this._selectedProducedManaColors.push(color);
+        this._selectedProducedManaColors.sort((a: IColorDto, b: IColorDto) => a.sequence - b.sequence);
         break;
     }
   }
 
-  public removeColor(type: MtgColorType, color: MtgColor): void {
+  public removeColor(type: MtgColorType, color: IColorDto): void {
     switch (type) {
       case "card": {
-        const idx = this._dto.selectedCardColors.indexOf(color);
+        let idx = this._dto.selectedCardColors.indexOf(color.id);
         this._dto.selectedCardColors.splice(idx, 1);
+        idx = this._selectedCardColors.findIndex((c: IColorDto) => c.id == color.id);
+        this._selectedCardColors.splice(idx, 1);
         break;
       }
       case "identity": {
-        const idx = this._dto.selectedIdentityColors.indexOf(color);
+        let idx = this._dto.selectedIdentityColors.indexOf(color.id);
         this._dto.selectedIdentityColors.splice(idx, 1);
+        idx = this._selectedIdentityColors.findIndex((c: IColorDto) => c.id == color.id);
+        this._selectedIdentityColors.splice(idx, 1);
         break;
       }
       case "produced_mana": {
-        const idx = this._dto.selectedProducedManaColors.indexOf(color);
+        let idx = this._dto.selectedProducedManaColors.indexOf(color.id);
         this._dto.selectedProducedManaColors.splice(idx, 1);
+        idx = this._selectedProducedManaColors.findIndex((c: IColorDto) => c.id == color.id);
+        this._selectedProducedManaColors.splice(idx, 1);
         break;
       }
     }
@@ -102,62 +128,77 @@ export class CardSearchViewmodel extends BaseViewmodel<ICardQueryDto> {
     switch (type) {
       case "card":
         this._dto.selectedCardColors.splice(0);
+        this._selectedCardColors.splice(0);
         break;
       case "identity":
         this._dto.selectedIdentityColors.splice(0);
+        this._selectedIdentityColors.splice(0);
         break;
       case "produced_mana":
-        this._dto.selectedIdentityColors.splice(0);
+        this._dto.selectedProducedManaColors.splice(0);
+        this._selectedProducedManaColors.splice(0);
         break;
     }
   }
   //#endregion
 
   //#region GameFormat --------------------------------------------------------
-  public addGameFormat(gameFormat: MtgGameFormat): void {
-    this._dto.selectedGameFormats.push(gameFormat);
-    this._dto.selectedGameFormats.sort((a: MtgGameFormat, b: MtgGameFormat) => a.localeCompare(b));
+  public addGameFormat(gameFormat: SelectOption<MtgGameFormat>): void {
+    this._dto.selectedGameFormats.push(gameFormat.value);
+    this._selectedGameFormats.push(gameFormat);
+    this._selectedGameFormats.sort((a: SelectOption<MtgGameFormat>, b: SelectOption<MtgGameFormat>) => a.label.localeCompare(b.label));
   }
 
-  public removeGameFormat(gameFormat: MtgGameFormat): void {
-    const idx = this._dto.selectedGameFormats.indexOf(gameFormat);
+  public removeGameFormat(gameFormat: SelectOption<MtgGameFormat>): void {
+    let idx = this._dto.selectedGameFormats.indexOf(gameFormat.value);
     this._dto.selectedGameFormats.splice(idx, 1);
+    idx = this._selectedGameFormats.findIndex((g: SelectOption<MtgGameFormat>) => g.value == gameFormat.value);
+    this._selectedGameFormats.splice(idx, 1);
   }
 
   public clearGameFormatSelection(): void {
     this._dto.selectedGameFormats.splice(0);
+    this._selectedGameFormats.splice(0);
   }
   //#endregion
 
   //#region Rarity ------------------------------------------------------------
-  public addRarity(rarity: CardRarity): void {
-    this._dto.selectedRarities.push(rarity);
-    this._dto.selectedRarities.sort((a: CardRarity, b: CardRarity) => a.localeCompare(b));
+  public addRarity(rarity: SelectOption<CardRarity>): void {
+    this._dto.selectedRarities.push(rarity.value);
+    this._selectedRarities.push(rarity);
+    this._selectedRarities.sort((a: SelectOption<CardRarity>, b: SelectOption<CardRarity>) => a.label.localeCompare(b.label));
   }
 
-  public removeRarity(rarity: CardRarity): void {
-    const idx = this._dto.selectedRarities.indexOf(rarity);
+  public removeRarity(rarity: SelectOption<CardRarity>): void {
+    let idx = this._dto.selectedRarities.indexOf(rarity.value);
     this._dto.selectedRarities.splice(idx, 1);
+    idx = this.selectedRarities.findIndex((r: SelectOption<CardRarity>) => r.value == rarity.value);
+    this._selectedRarities.splice(idx, 1);
   }
 
   public clearRaritiesSelection(): void {
     this._dto.selectedRarities.splice(0);
+    this._selectedRarities.splice(0);
   }
   //#endregion
 
   //#region Card set ----------------------------------------------------------
-  public addCardSet(cardSetId: string): void {
-    this._dto.selectedSets.push(cardSetId);
+  public addCardSet(cardSet: CardSetViewmodel): void {
+    this._dto.selectedSets.push(cardSet.id);
     this._dto.selectedSets.sort((a: string, b: string) => a.localeCompare(b));
+    this._selectedCardSets.push(cardSet);
   }
 
-  public removeCardSet(cardSetId: string): void {
-    const idx = this._dto.selectedSets.indexOf(cardSetId);
+  public removeCardSet(cardSet: CardSetViewmodel): void {
+    let idx = this._dto.selectedSets.indexOf(cardSet.id);
     this._dto.selectedSets.splice(idx, 1);
+    idx = this._selectedCardSets.findIndex((vm: CardSetViewmodel) => vm.id == cardSet.id);
+    this._selectedCardSets.splice(idx, 1);
   }
 
   public clearCardSetSelection(): void {
     this._dto.selectedSets.splice(0);
+    this._selectedCardSets.splice(0);
   }
   //#endregion
 
@@ -237,10 +278,6 @@ export class CardSearchViewmodel extends BaseViewmodel<ICardQueryDto> {
   private appendToQueryParam(queryParts: Array<string>, token: CardQueryParamToken, values: Array<string>): Array<string> {
     queryParts.push(`${token}=${values.join(QUERY_PARAM_LIST_SEPARATOR)}`);
     return queryParts;
-  }
-
-  private sortColors(selectedColors: Array<MtgColor>, allColors: Array<IColorDto>): void {
-    selectedColors.sort((a: MtgColor, b: MtgColor) => allColors.find((f: IColorDto) => f.id == a).sequence - allColors.find((f: IColorDto) => f.id == b).sequence);
   }
   //#endregion
 }

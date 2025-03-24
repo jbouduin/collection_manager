@@ -1,6 +1,5 @@
 import { FormGroup, MenuItem } from "@blueprintjs/core";
 import { ItemRendererProps, MultiSelect } from "@blueprintjs/select";
-import { cloneDeep } from "lodash";
 import * as React from "react";
 import { IColorDto } from "../../../../../../../../common/dto";
 import { CardSymbolRenderer } from "../../../../../../../shared/components/card-symbol-renderer";
@@ -9,36 +8,22 @@ import { ColorSelectProps } from "./color-select.props ";
 
 
 export function ColorSelect(props: ColorSelectProps) {
-  //#region State -------------------------------------------------------------
-  const initialState = props.selectedColors.map((id: string) => props.colors.find((f: IColorDto) => f.id == id));
-  const [state, setState] = React.useState<Array<IColorDto>>(initialState);
-  //#endregion
-
   //#region Event handling ----------------------------------------------------
   function onClear(): void {
     props.onClearOptions();
-    setState(new Array<IColorDto>());
   }
 
   function onRemove(item: IColorDto): void {
-    const newState = cloneDeep(state);
-    const indexOfSelected = newState.findIndex((value: IColorDto) => value.id == item.id);
-    newState.splice(indexOfSelected, 1);
-    props.onOptionRemoved(item.id);
-    setState(newState);
+    props.onOptionRemoved(item);
   }
 
   function onSelect(item: IColorDto): void {
-    const newState = cloneDeep(state);
-    const indexOfSelected = newState.findIndex((value: IColorDto) => value.id == item.id);
+    const indexOfSelected = props.selectedColors.findIndex((value: IColorDto) => value.id == item.id);
     if (indexOfSelected >= 0) {
-      newState.splice(indexOfSelected, 1);
-      props.onOptionRemoved(item.id);
+      props.onOptionRemoved(item);
     } else {
-      newState.push(item);
-      props.onOptionAdded(item.id);
+      props.onOptionAdded(item);
     }
-    setState(newState);
   }
   //#endregion
 
@@ -53,7 +38,7 @@ export function ColorSelect(props: ColorSelectProps) {
         initialContent={null}
         itemPredicate={filterColor}
         itemRenderer={(item: IColorDto, itemProps: ItemRendererProps) => colorItemRenderer(item, itemProps)}
-        items={props.colors}
+        items={props.allColors}
         // itemsEqual="id"
         key="card-sets-multi-select"
         noResults={<MenuItem disabled={true} roleStructure="listoption" text="No results." />}
@@ -62,7 +47,7 @@ export function ColorSelect(props: ColorSelectProps) {
         onRemove={(item: IColorDto) => onRemove(item)}
         popoverProps={{ matchTargetWidth: true, minimal: true }}
         resetOnSelect={true}
-        selectedItems={state}
+        selectedItems={props.selectedColors}
         tagRenderer={(item: IColorDto) => colorTagRenderer(item)}
       />
     </FormGroup>
@@ -82,7 +67,7 @@ export function ColorSelect(props: ColorSelectProps) {
         onFocus={itemProps.handleFocus}
         ref={itemProps.ref}
         roleStructure="listoption"
-        selected={state.includes(item)}
+        selected={props.selectedColors.includes(item)}
         shouldDismissPopover={false}
         text={(
           <div style={{ display: "flex" }}>
@@ -98,7 +83,6 @@ export function ColorSelect(props: ColorSelectProps) {
     return (
       <div key={item.id}>
         <CardSymbolRenderer cardSymbols={[item.mana_symbol]} />
-        {/* {item.cardSetName} */}
       </div>
     );
   }

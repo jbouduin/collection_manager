@@ -12,7 +12,7 @@ import { DATABASE, INFRASTRUCTURE, MTG, REPOSITORIES } from "../../service.token
 import { IBootstrapService, IConfigurationService, IDatabaseService, IImageCacheService, IRouterService, IWindowsService } from "../interfaces";
 import { IMtgSyncService } from "../../mtg/interfaces";
 import { ICardRepository } from "../../../database/repo/interfaces";
-import { CardSide, ImageSize } from "../../../../common/types";
+import { CardSide, CatalogType, ECatalogType, ImageSize } from "../../../../common/types";
 
 
 @injectable()
@@ -63,10 +63,6 @@ export class BootstrapService implements IBootstrapService {
 
   //#region helper methods ----------------------------------------------------
   private async preboot(configurationService: IConfigurationService, routerService: IRouterService): Promise<void> {
-    const reactDevToolsPath = join(process.env.LOCALAPPDATA, "Google", "Chrome", "User Data", "Default", "Extensions", "fmkadmapgofadopljbjfkapdkoienihi", "5.2.0_0");
-    if (!app.isPackaged && existsSync(reactDevToolsPath)) {
-      await session.defaultSession.loadExtension(reactDevToolsPath);
-    }
     configurationService.loadSettings(app.getAppPath(), homedir(), nativeTheme.shouldUseDarkColors);
     container.resolveAll(INFRASTRUCTURE.Router).forEach((svc: IRouter) => svc.setRoutes(routerService));
     routerService.logRoutes();
@@ -126,8 +122,7 @@ export class BootstrapService implements IBootstrapService {
       cardSelectionToSync: [],
       cardSetCodeToSyncCardsFor: undefined,
       cardSyncType: "none",
-      // FEATURE Advanced search: add more catalogs to the array below when we need them to search
-      catalogTypesToSync: ["ability-words", "land-types", "artifact-types"],
+      catalogTypesToSync: Object.keys(ECatalogType) as Array<CatalogType>,
       changedImageStatusAction: undefined,
       oracleId: undefined,
       rulingSyncType: "none",

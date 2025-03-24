@@ -1,4 +1,6 @@
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, session } from "electron";
+import { existsSync } from "fs";
+import { join } from "path";
 import "reflect-metadata";
 import { container } from "tsyringe";
 import { updateElectronApp } from "update-electron-app/dist";
@@ -35,6 +37,17 @@ void app.whenReady().then(async () => {
       container.resolve<IWindowsService>(INFRASTRUCTURE.WindowsService).createMainWindow();
     }
   });
+
+  /*
+   * this used to be const reactDevToolsPath = join(process.env.LOCALAPPDATA, "Google", "Chrome", "User Data", "Default", "Extensions", "fmkadmapgofadopljbjfkapdkoienihi", "5.2.0_0");
+   * after putting latest build -> loading failed because electron can not handle V3 manifest
+   * so as a hack: downloaded an old version of the dev tools and use that one
+   */
+  const reactDevToolsPath = join(process.env.LOCALAPPDATA, "Google", "Chrome", "User Data", "Default", "Extensions", "react-dev-tools-hack");
+  if (!app.isPackaged && existsSync(reactDevToolsPath)) {
+    await session.defaultSession.loadExtension(reactDevToolsPath);
+  }
+
 });
 
 ipcMain.handle("ping", (_event: Electron.IpcMainEvent, ..._args: Array<unknown>) => Promise.resolve("pong"));

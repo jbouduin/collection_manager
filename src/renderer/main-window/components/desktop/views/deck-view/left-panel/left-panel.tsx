@@ -1,9 +1,9 @@
-import { ContextMenu, Icon, Menu, MenuDivider, MenuItem, TreeNodeInfo } from "@blueprintjs/core";
+import { AlertProps, ContextMenu, Icon, Menu, MenuDivider, MenuItem, TreeNodeInfo } from "@blueprintjs/core";
 import { cloneDeep, noop } from "lodash";
 import * as React from "react";
 import { IDeckDto, IDeckFolderDto } from "../../../../../../../common/dto";
 import { BaseTreeView } from "../../../../../../shared/components/base/base-tree-view";
-import { IIpcProxyService, IpcProxyServiceContext } from "../../../../../../shared/context";
+import { IIpcProxyService, IOverlayContext, IpcProxyServiceContext, OverlayContext } from "../../../../../../shared/context";
 import { DeckFolderTreeViewmodel, DeckViewmodel, TreeConfigurationViewmodel } from "../../../../../viewmodels";
 import { DeckDialog } from "./deck-dialog/deck-dialog";
 import { DialogData } from "./dialog-data";
@@ -20,6 +20,7 @@ export function LeftPanel(props: LeftPanelProps) {
 
   //#region Context -----------------------------------------------------------
   const ipcProxyService = React.useContext<IIpcProxyService>(IpcProxyServiceContext);
+  const overlayContext = React.useContext<IOverlayContext>(OverlayContext);
   //#endregion
 
   //#region Effects -----------------------------------------------------------
@@ -142,9 +143,28 @@ export function LeftPanel(props: LeftPanelProps) {
     setDialogData(newDialogData);
   }
 
-  function onDelete(id: number): void {
-    // TODO ask confirmation
-    void ipcProxyService.deleteData(`/collection/${id}`)
+  function onDelete(folder: DeckFolderTreeViewmodel): void {
+    const alertProps: AlertProps = {
+      cancelButtonText: "Cancel",
+      children: (
+        <>
+          <p>Are you sure you want to delete the folder <b>{folder.name}</b> and its contents?</p>
+          <p>This action can not be undone.</p>
+        </>
+      ),
+      className: props.className,
+      confirmButtonText: "Delete",
+      icon: "trash",
+      intent: "danger",
+      isOpen: true,
+      onCancel: () => overlayContext.hideAlert(),
+      onConfirm: () => onDeleteConfirm(folder.id)
+    };
+    overlayContext.showAlert(alertProps);
+  }
+
+  function onDeleteConfirm(id: number): void {
+    void ipcProxyService.deleteData(`/deck/${id}`)
       .then(
         (numDeletedRows: number) => {
           if (numDeletedRows > 0) {
@@ -158,6 +178,7 @@ export function LeftPanel(props: LeftPanelProps) {
              * which make the option not to allow delete if there are children also legit
              */
             setFolderDecks(newCollectionList);
+            overlayContext.hideAlert();
           }
         },
         noop
@@ -276,7 +297,7 @@ export function LeftPanel(props: LeftPanelProps) {
                     onClick={
                       (e) => {
                         e.preventDefault();
-                        void onDelete(deck.id);
+                        void onDelete(deck);
                       }
                     }
                     text="Delete"

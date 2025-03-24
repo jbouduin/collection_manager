@@ -177,7 +177,7 @@ export class CollectionRepository extends BaseRepository implements ICollectionR
             .executeTakeFirstOrThrow()
             .then((r: DeleteResult) => {
               if (r.numDeletedRows > 0) {
-                this.resultFactory.createSuccessResult<number>(Number(r.numDeletedRows));
+                return this.resultFactory.createSuccessResult<number>(Number(r.numDeletedRows));
               } else {
                 return this.resultFactory.createNotFoundResult(`Collection with id '${id}'`);
               }

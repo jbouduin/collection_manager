@@ -26,7 +26,7 @@ function createV1_0_0_Collection(db: Kysely<any>) {
     primaryKeyType: "integer"
   };
   return createTable(db, options)
-    .addColumn("parent_id", "integer", (cb: ColumnDefinitionBuilder) => cb.references("collection.id"))
+    .addColumn("parent_id", "integer", (cb: ColumnDefinitionBuilder) => cb.references("collection.id").onDelete("cascade"))
     .addColumn("name", "text", (cb: ColumnDefinitionBuilder) => cb.notNull())
     .addColumn("description", "text")
     .addColumn("is_system", "integer", (cb: ColumnDefinitionBuilder) => cb.notNull())

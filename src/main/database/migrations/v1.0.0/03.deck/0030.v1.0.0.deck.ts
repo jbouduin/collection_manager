@@ -28,7 +28,7 @@ function createV1_0_0_Deck(db: Kysely<any>) {
     primaryKeyType: "integer"
   };
   return createTable(db, options)
-    .addColumn("parent_id", "integer", (cb: ColumnDefinitionBuilder) => cb.references("deck.id"))
+    .addColumn("parent_id", "integer", (cb: ColumnDefinitionBuilder) => cb.references("deck.id").onDelete("cascade"))
     .addColumn("name", "text", (cb: ColumnDefinitionBuilder) => cb.notNull().unique())
     .addColumn("description", "text")
     .addColumn("target_format", "text")

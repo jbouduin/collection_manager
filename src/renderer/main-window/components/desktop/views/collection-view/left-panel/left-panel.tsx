@@ -1,8 +1,8 @@
-import { ContextMenu, Icon, Menu, MenuDivider, MenuItem, TreeNodeInfo } from "@blueprintjs/core";
+import { AlertProps, ContextMenu, Icon, Menu, MenuDivider, MenuItem, TreeNodeInfo } from "@blueprintjs/core";
 import { cloneDeep, isEqual, noop } from "lodash";
 import * as React from "react";
 import { ICollectionDto } from "../../../../../../../common/dto";
-import { IIpcProxyService, IpcProxyServiceContext } from "../../../../../../shared/context";
+import { IIpcProxyService, IOverlayContext, IpcProxyServiceContext, OverlayContext } from "../../../../../../shared/context";
 import { CollectionTreeViewmodel, TreeConfigurationViewmodel } from "../../../../../viewmodels";
 import { BaseTreeView, BaseTreeViewProps } from "../../../../../../shared/components/base/base-tree-view";
 import { CollectionDialog } from "./collection-dialog/collection-dialog";
@@ -27,6 +27,7 @@ export function LeftPanel(props: LeftPanelProps) {
 
   //#region Context -----------------------------------------------------------
   const ipcProxyService = React.useContext<IIpcProxyService>(IpcProxyServiceContext);
+  const overlayContext = React.useContext<IOverlayContext>(OverlayContext);
   //#endregion
 
   //#region Effects -----------------------------------------------------------
@@ -150,8 +151,34 @@ export function LeftPanel(props: LeftPanelProps) {
     setDialogData(newDialogData);
   }
 
-  function onDelete(id: number): void {
-    // TODO ask confirmation
+  function onDelete(collection: CollectionTreeViewmodel): void {
+    const alertProps: AlertProps = {
+      cancelButtonText: "Cancel",
+      children: (
+        <>
+          {
+            collection.isFolder &&
+            <p>Are you sure you want to delete the folder <b>{collection.name}</b> and its contents?</p>
+          }
+          {
+            !collection.isFolder &&
+            <p>Are you sure you want to delete the collection <b>{collection.name}</b>?</p>
+          }
+          <p>This action can not be undone.</p>
+        </>
+      ),
+      className: props.className,
+      confirmButtonText: "Delete",
+      icon: "trash",
+      intent: "danger",
+      isOpen: true,
+      onCancel: () => overlayContext.hideAlert(),
+      onConfirm: () => onDeleteConfirm(collection.id)
+    };
+    overlayContext.showAlert(alertProps);
+  }
+
+  function onDeleteConfirm(id: number): void {
     void ipcProxyService.deleteData(`/collection/${id}`)
       .then(
         (numDeletedRows: number) => {
@@ -166,6 +193,7 @@ export function LeftPanel(props: LeftPanelProps) {
              * which make the option not to allow delete if there are children also legit
              */
             setCollections(newCollectionList);
+            overlayContext.hideAlert();
           }
         },
         noop
@@ -307,7 +335,7 @@ export function LeftPanel(props: LeftPanelProps) {
                     onClick={
                       (e) => {
                         e.preventDefault();
-                        void onDelete(collection.id);
+                        void onDelete(collection);
                       }
                     }
                     text="Delete"

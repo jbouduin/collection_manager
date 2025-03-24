@@ -1,4 +1,4 @@
-import { Card, Classes } from "@blueprintjs/core";
+import { Alert, AlertProps, Card, Classes } from "@blueprintjs/core";
 import classNames from "classnames";
 import { cloneDeep, noop } from "lodash";
 import * as React from "react";
@@ -12,6 +12,7 @@ import { BaseDesktopState } from "./base-desktop.state";
 export function BaseDesktop(props: BaseDesktopProps) {
   //#region State -------------------------------------------------------------
   const initialState: BaseDesktopState = {
+    alertProps: null,
     initialized: false,
     cardConditions: new Array<ICardConditionDto>(),
     cardSets: new Array<IMtgCardSetDto>(),
@@ -65,7 +66,7 @@ export function BaseDesktop(props: BaseDesktopProps) {
   );
   //#endregion
 
-  //#region Event handling ----------------------------------------------------
+  //#region Splash ------------------------------------------------------------
   function hideSplashScreen(afterSplashScreenClose: Array<Context.AfterSplashScreenClose>): void {
     if (afterSplashScreenClose != null) {
       const newState = cloneDeep(desktopState);
@@ -97,7 +98,22 @@ export function BaseDesktop(props: BaseDesktopProps) {
     newState.splashScreenOpen = true;
     setDesktopState(newState);
   }
+  //#endregion
 
+  //#region Alert -------------------------------------------------------------
+  function hideAlert(): void {
+    const newState = cloneDeep(desktopState);
+    newState.alertProps = null;
+    setDesktopState(newState);
+  }
+  function showAlert(alertProps: AlertProps): void {
+    const newState = cloneDeep(desktopState);
+    newState.alertProps = alertProps;
+    setDesktopState(newState);
+  }
+  //#endregion
+
+  //#region Event handling ----------------------------------------------------
   function onConfigurationChanged(saved: IConfigurationDto): void {
     const newState = cloneDeep(desktopState);
     newState.rendererConfiguration = saved.rendererConfiguration;
@@ -120,7 +136,9 @@ export function BaseDesktop(props: BaseDesktopProps) {
                     <Context.GameFormatContext.Provider value={desktopState.gameFormats}>
                       <Context.OverlayContext.Provider
                         value={{
+                          hideAlert: hideAlert,
                           hideSplashScreen: hideSplashScreen,
+                          showAlert: showAlert,
                           showSplashScreen: openSplashScreen,
                           showToast: props.toastCall
                         }}
@@ -139,6 +157,10 @@ export function BaseDesktop(props: BaseDesktopProps) {
                             isOpen={desktopState.splashScreenOpen}
                             onDialogClose={noop}
                           />
+                        }
+                        {
+                          desktopState.alertProps &&
+                          <Alert {...desktopState.alertProps} isOpen={true} />
                         }
                       </Context.OverlayContext.Provider>
                     </Context.GameFormatContext.Provider>

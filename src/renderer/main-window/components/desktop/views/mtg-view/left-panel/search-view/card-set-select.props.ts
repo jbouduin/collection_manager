@@ -1,11 +1,11 @@
 import { Props } from "@blueprintjs/core";
-import { CardSetViewmodel } from "../../../../../../viewmodels";
+import { IMtgCardSetDto } from "../../../../../../../../common/dto";
 
 
 export interface CardSetSelectProps extends Props {
-  allCardSets: Array<CardSetViewmodel>;
+  allCardSets: Array<IMtgCardSetDto>;
   onClearOptions: () => void;
-  onOptionAdded: (cardSet: CardSetViewmodel) => void;
-  onOptionRemoved: (cardSetId: CardSetViewmodel) => void;
-  selectedCardSets: Array<CardSetViewmodel>;
+  onOptionAdded: (cardSet: IMtgCardSetDto) => void;
+  onOptionRemoved: (cardSetId: IMtgCardSetDto) => void;
+  selectedCardSets: Array<IMtgCardSetDto>;
 }

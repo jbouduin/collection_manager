@@ -4,9 +4,8 @@ import { IBaseTreeNodeViewmodel } from "./base-tree-node.viewmodel";
 
 
 export interface BaseTreeViewProps<TData extends IBaseTreeNodeViewmodel, TFilter> {
+  buildTree: (data: Array<TData>, filterProps: TFilter) => Array<TreeNodeInfo<TData | string>>;
   data: Array<TData>;
   filterProps: BaseTreeViewFilterProps<TData, TFilter>;
-
   onDataSelected: (selectedData: Array<TData>) => void;
-  buildTree: (data: Array<TData>, filterProps: TFilter) => Array<TreeNodeInfo<TData | string>>;
 }

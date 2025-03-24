@@ -1,13 +1,12 @@
-import { ICardQueryDto, ICatalogItemDto, IColorDto, QUERY_PARAM_LIST_SEPARATOR, CardQueryParamToken } from "../../../../common/dto";
+import { ICardQueryDto, ICatalogItemDto, IColorDto, QUERY_PARAM_LIST_SEPARATOR, CardQueryParamToken, IMtgCardSetDto } from "../../../../common/dto";
 import { CardRarity, CatalogType, MtgGameFormat, MtgColor, MtgColorType } from "../../../../common/types";
 import { SelectOption } from "../../../shared/components/utils";
 import { BaseViewmodel } from "../../../shared/viewmodels";
-import { CardSetViewmodel } from "../card-set";
 
 
 export class CardSearchViewmodel extends BaseViewmodel<ICardQueryDto> {
   //#region private fields ------------------------------------------------------
-  private _selectedCardSets: Array<CardSetViewmodel>;
+  private _selectedCardSets: Array<IMtgCardSetDto>;
   private _selectedCardColors: Array<IColorDto>;
   private _selectedGameFormats: Array<SelectOption<MtgGameFormat>>;
   private _selectedIdentityColors: Array<IColorDto>;
@@ -44,7 +43,7 @@ export class CardSearchViewmodel extends BaseViewmodel<ICardQueryDto> {
     return this._selectedRarities;
   }
 
-  public get selectedCardSets(): Array<CardSetViewmodel> {
+  public get selectedCardSets(): Array<IMtgCardSetDto> {
     return this._selectedCardSets;
   }
   //#endregion
@@ -68,7 +67,7 @@ export class CardSearchViewmodel extends BaseViewmodel<ICardQueryDto> {
     };
     initial.selectedRarities.sort((a: CardRarity, b: CardRarity) => a.localeCompare(b));
     super(initial);
-    this._selectedCardSets = new Array<CardSetViewmodel>();
+    this._selectedCardSets = new Array<IMtgCardSetDto>();
     this._selectedCardColors = new Array<IColorDto>();
     this._selectedGameFormats = new Array<SelectOption<MtgGameFormat>>();
     this._selectedIdentityColors = new Array<IColorDto>();
@@ -183,16 +182,16 @@ export class CardSearchViewmodel extends BaseViewmodel<ICardQueryDto> {
   //#endregion
 
   //#region Card set ----------------------------------------------------------
-  public addCardSet(cardSet: CardSetViewmodel): void {
+  public addCardSet(cardSet: IMtgCardSetDto): void {
     this._dto.selectedSets.push(cardSet.id);
     this._dto.selectedSets.sort((a: string, b: string) => a.localeCompare(b));
     this._selectedCardSets.push(cardSet);
   }
 
-  public removeCardSet(cardSet: CardSetViewmodel): void {
+  public removeCardSet(cardSet: IMtgCardSetDto): void {
     let idx = this._dto.selectedSets.indexOf(cardSet.id);
     this._dto.selectedSets.splice(idx, 1);
-    idx = this._selectedCardSets.findIndex((vm: CardSetViewmodel) => vm.id == cardSet.id);
+    idx = this._selectedCardSets.findIndex((cs: IMtgCardSetDto) => cs.id == cardSet.id);
     this._selectedCardSets.splice(idx, 1);
   }
 

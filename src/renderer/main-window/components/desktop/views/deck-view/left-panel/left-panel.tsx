@@ -164,7 +164,7 @@ export function LeftPanel(props: LeftPanelProps) {
       );
   }
 
-  function onCancelDialog(): void {
+  function onCancelDeckDialog(): void {
     setDialogData(null);
   }
   //#endregion
@@ -207,7 +207,7 @@ export function LeftPanel(props: LeftPanelProps) {
           deckSvg={deckSvg}
           dialogAction={dialogData.dialogAction}
           isOpen={true}
-          onCancel={onCancelDialog}
+          onCancel={onCancelDeckDialog}
           onSave={(deck: DeckViewmodel) => onSave(deck)}
         />
       }

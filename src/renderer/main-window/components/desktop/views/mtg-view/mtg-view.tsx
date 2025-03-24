@@ -4,7 +4,7 @@ import { IRendererConfigurationDto } from "../../../../../../common/dto";
 import { CardDetail } from "../../../../../shared/components/card-details";
 import { compareClassNameProp } from "../../../../../shared/components/utils";
 import { ConfigurationContext } from "../../../../../shared/context";
-import { CardSetViewmodel, MtgCardListViewmodel } from "../../../../viewmodels";
+import { CardSetTreeViewmodel, MtgCardListViewmodel } from "../../../../viewmodels";
 import { CenterPanel, CenterPanelProps } from "./center-panel";
 import { LeftPanel } from "./left-panel/left-panel";
 import { MtgViewProps } from "./mtg-view.props";
@@ -41,7 +41,7 @@ export function MtgView(props: MtgViewProps) {
                   {...props}
                   configuration={configuration.mtgSetTreeViewConfiguration}
                   onSearch={(queryString: string) => setState({queryString: queryString, selectedSet: null, selectedCards: null})}
-                  onSetsSelected={(sets: Array<CardSetViewmodel>) => setState({ selectedSet: sets[0], queryString: null, selectedCards: null })}
+                  onSetsSelected={(sets: Array<CardSetTreeViewmodel>) => setState({ selectedSet: sets[0], queryString: null, selectedCards: null })}
                 />
               </Panel>
               <PanelResizeHandle />

@@ -5,7 +5,7 @@ import { ICatalogItemDto, ICatalogTypeDto, IColorDto, IGameFormatDto, IMtgCardSe
 import { CardRarity, MtgGameFormat } from "../../../../../../../../common/types";
 import { displayValueRecordToSelectOptions, handleBooleanChange, SelectOption } from "../../../../../../../shared/components/utils";
 import { CardSetContext, DisplayValueService, DisplayValueServiceContext, GameFormatContext, IIpcProxyService, IpcProxyServiceContext } from "../../../../../../../shared/context";
-import { CardSearchViewmodel, CardSetViewmodel } from "../../../../../../viewmodels";
+import { CardSearchViewmodel } from "../../../../../../viewmodels";
 import { CardSetSelect } from "./card-set-select";
 import { CatalogSelect } from "./catalog-select.";
 import { ColorSelect } from "./color-select";
@@ -84,11 +84,11 @@ export function SearchView(props: SearchViewProps) {
         onChange={handleBooleanChange((value: boolean) => onSelectOptionEvent((v: CardSearchViewmodel) => v.ownedCards = value))}
       />
       <CardSetSelect
-        allCardSets={cardSetContext.map((c: IMtgCardSetDto) => new CardSetViewmodel(c))}
+        allCardSets={cardSetContext}
         key="card-set-select"
         onClearOptions={() => onSelectOptionEvent((v: CardSearchViewmodel) => v.clearCardSetSelection())}
-        onOptionAdded={(cardSet: CardSetViewmodel) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addCardSet(cardSet))}
-        onOptionRemoved={(cardSet: CardSetViewmodel) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeCardSet(cardSet))}
+        onOptionAdded={(cardSet: IMtgCardSetDto) => onSelectOptionEvent((v: CardSearchViewmodel) => v.addCardSet(cardSet))}
+        onOptionRemoved={(cardSet: IMtgCardSetDto) => onSelectOptionEvent((v: CardSearchViewmodel) => v.removeCardSet(cardSet))}
         selectedCardSets={state.selectedCardSets}
       />
       <ColorSelect

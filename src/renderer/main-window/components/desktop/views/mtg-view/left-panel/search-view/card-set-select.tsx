@@ -3,8 +3,8 @@ import { ItemRendererProps, MultiSelect } from "@blueprintjs/select";
 import * as React from "react";
 import { SvgProvider } from "../../../../../../../shared/components/svg-provider";
 import { highlightText } from "../../../../../../../shared/components/utils";
-import { CardSetViewmodel } from "../../../../../../viewmodels";
 import { CardSetSelectProps } from "./card-set-select.props";
+import { IMtgCardSetDto } from "../../../../../../../../common/dto";
 
 
 export function CardSetSelect(props: CardSetSelectProps) {
@@ -13,12 +13,12 @@ export function CardSetSelect(props: CardSetSelectProps) {
     props.onClearOptions();
   }
 
-  function onRemove(item: CardSetViewmodel): void {
+  function onRemove(item: IMtgCardSetDto): void {
     props.onOptionRemoved(item);
   }
 
-  function onSelect(item: CardSetViewmodel): void {
-    const indexOfSelected = props.selectedCardSets.findIndex((value: CardSetViewmodel) => value.id == item.id);
+  function onSelect(item: IMtgCardSetDto): void {
+    const indexOfSelected = props.selectedCardSets.findIndex((value: IMtgCardSetDto) => value.id == item.id);
     if (indexOfSelected >= 0) {
       props.onOptionRemoved(item);
     } else {
@@ -34,26 +34,26 @@ export function CardSetSelect(props: CardSetSelectProps) {
       label="Card Sets"
       labelFor="card-sets-multi-select"
     >
-      <MultiSelect<CardSetViewmodel>
+      <MultiSelect<IMtgCardSetDto>
         initialContent={null}
         itemPredicate={filterCardSet}
-        itemRenderer={(item: CardSetViewmodel, itemProps: ItemRendererProps) => cardSetItemRenderer(item, itemProps)}
+        itemRenderer={(item: IMtgCardSetDto, itemProps: ItemRendererProps) => cardSetItemRenderer(item, itemProps)}
         items={props.allCardSets}
         itemsEqual="id"
         key="card-sets-multi-select"
         noResults={<MenuItem disabled={true} roleStructure="listoption" text="No results." />}
         onClear={() => onClear()}
-        onItemSelect={(item: CardSetViewmodel) => onSelect(item)}
-        onRemove={(item: CardSetViewmodel) => onRemove(item)}
+        onItemSelect={(item: IMtgCardSetDto) => onSelect(item)}
+        onRemove={(item: IMtgCardSetDto) => onRemove(item)}
         popoverProps={{ matchTargetWidth: true, minimal: true }}
         resetOnSelect={true}
         selectedItems={props.selectedCardSets}
-        tagRenderer={(item: CardSetViewmodel) => cardSetTagRenderer(item)}
+        tagRenderer={(item: IMtgCardSetDto) => cardSetTagRenderer(item)}
       />
     </FormGroup>
   );
 
-  function cardSetItemRenderer(item: CardSetViewmodel, itemProps: ItemRendererProps): React.JSX.Element | null {
+  function cardSetItemRenderer(item: IMtgCardSetDto, itemProps: ItemRendererProps): React.JSX.Element | null {
     if (!itemProps.modifiers.matchesPredicate) {
       return null;
     }
@@ -62,7 +62,7 @@ export function CardSetSelect(props: CardSetSelectProps) {
         active={itemProps.modifiers.active}
         disabled={itemProps.modifiers.disabled}
         key={item.id}
-        label={item.setCode}
+        label={item.code}
         onClick={itemProps.handleClick}
         onFocus={itemProps.handleFocus}
         ref={itemProps.ref}
@@ -71,27 +71,27 @@ export function CardSetSelect(props: CardSetSelectProps) {
         shouldDismissPopover={false}
         text={(
           <div>
-            <SvgProvider svg={item.cardSetSvg} />
-            {highlightText(item.cardSetName, itemProps.query)}
+            <SvgProvider svg={item.svg} />
+            {highlightText(item.name, itemProps.query)}
           </div>
         )}
       />
     );
   }
 
-  function cardSetTagRenderer(item: CardSetViewmodel): React.ReactNode {
+  function cardSetTagRenderer(item: IMtgCardSetDto): React.ReactNode {
     return (
       <div key={item.id}>
-        <SvgProvider svg={item.cardSetSvg} />
-        {item.cardSetName}
+        <SvgProvider svg={item.svg} />
+        {item.name}
       </div>
     );
   }
   //#endregion
 
   //#region Auxiliary methods -------------------------------------------------
-  function filterCardSet(query: string, item: CardSetViewmodel, index?: number, exactMatch?: boolean): boolean {
-    const normalizedTitle = item.cardSetName.toLowerCase();
+  function filterCardSet(query: string, item: IMtgCardSetDto, _index?: number, exactMatch?: boolean): boolean {
+    const normalizedTitle = item.name.toLowerCase();
     const normalizedQuery = query.toLowerCase();
 
     if (exactMatch) {

@@ -1,4 +1,4 @@
-import { Classes, SectionCard } from "@blueprintjs/core";
+import { Button, Classes, DialogFooter, SectionCard } from "@blueprintjs/core";
 import classNames from "classnames";
 import * as React from "react";
 import { IOracleRulingLineDto } from "../../../../../common/dto";
@@ -33,20 +33,26 @@ export const CardRulingsView = React.memo(
     );
     //#endregion
 
-    //#region Rendering ---------------------------------------------------------
-    return rulings?.length > 0
-      ? renderSectionCard(rulings)
-      : undefined;
-
-    function renderSectionCard(rulings: Array<IOracleRulingLineDto>): React.JSX.Element {
-      return (
-        <SectionCard padded={false}>
-          {
-            rulings.map((ruling: IOracleRulingLineDto, idx: number) => renderSingleRulingLine(idx, ruling, idx == rulings.length - 1))
-          }
-        </SectionCard>
-      );
+    //#region Events ------------------------------------------------------------
+    function refreshRulings(): void {
+      void ipcProxyService.getData(`/oracle/${props.oracleId}/ruling/refresh`)
+        .then(
+          (queryResult: Array<IOracleRulingLineDto>) => setRulings(queryResult),
+          (_r: Error) => setRulings(null)
+        );
     }
+    //#endregion
+
+    //#region Rendering ---------------------------------------------------------
+    return (
+      <SectionCard padded={false}>
+        {
+          rulings?.length > 0 && rulings.map((ruling: IOracleRulingLineDto, idx: number) => renderSingleRulingLine(idx, ruling, idx == rulings.length - 1))
+        }
+        <DialogFooter actions={renderActions()} key="the_footer" />
+      </SectionCard>
+    );
+
 
     function renderSingleRulingLine(idx: number, ruling: IOracleRulingLineDto, isLast: boolean): React.JSX.Element {
       return (
@@ -58,6 +64,17 @@ export const CardRulingsView = React.memo(
             <p className={classNames("bp5-divider", "ruling-divider")} />
           }
         </div>
+      );
+    }
+
+    function renderActions(): React.JSX.Element {
+      return (
+        <Button
+          icon="refresh"
+          onClick={refreshRulings}
+        >
+          Refresh Rulings
+        </Button>
       );
     }
     //#endregion

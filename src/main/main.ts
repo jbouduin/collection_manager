@@ -47,7 +47,6 @@ void app.whenReady().then(async () => {
   if (!app.isPackaged && existsSync(reactDevToolsPath)) {
     await session.defaultSession.loadExtension(reactDevToolsPath);
   }
-
 });
 
 ipcMain.handle("ping", (_event: Electron.IpcMainEvent, ..._args: Array<unknown>) => Promise.resolve("pong"));

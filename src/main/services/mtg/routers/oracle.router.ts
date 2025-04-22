@@ -21,6 +21,7 @@ export class OracleRouter extends BaseRouter implements IRouter {
   //#region IRouteDestinationService methods ----------------------------------
   public setRoutes(router: IRouterService): void {
     router.registerGetRoute("/oracle/:id/legality", this.getLegalities.bind(this) as RouteCallback);
+    router.registerGetRoute("/oracle/:id/ruling/refresh", this.refreshRoutings.bind(this) as RouteCallback);
     router.registerGetRoute("/oracle/:id/ruling", this.getRulings.bind(this) as RouteCallback);
   }
   //#endregion
@@ -54,6 +55,25 @@ export class OracleRouter extends BaseRouter implements IRouter {
         } else {
           return queryResult.processResult((r: IResult<Array<IOracleRulingLineDto>>) => r.data = r.data.filter((line: IOracleRulingLineDto) => line.oracle_id !== null));
         }
+      });
+  }
+
+  private refreshRoutings(request: RoutedRequest<void>): Promise<IResult<Array<IOracleRulingLineDto>>> {
+    const oracleId = request.params["id"];
+    const oracleRepository = container.resolve<IOracleRepository>(REPOSITORIES.OracleRepository);
+    const syncParam: IRulingSyncParam = {
+      rulingSyncType: "oracleId",
+      cardSelectionToSync: null,
+      oracleId: oracleId
+    };
+    return container.resolve<IRulingSyncService>(SCRYFALL.RulingSyncService)
+      .sync(syncParam, (s: string) => this.logService.debug("Main", s))
+      .then(() => {
+        return oracleRepository
+          .getByOracleId(oracleId)
+          .then((afterSync: IResult<Array<IOracleRulingLineDto>>) => {
+            return afterSync.processResult((r: IResult<Array<IOracleRulingLineDto>>) => r.data = r.data.filter((line: IOracleRulingLineDto) => line.oracle_id !== null));
+          });
       });
   }
   //#endregion

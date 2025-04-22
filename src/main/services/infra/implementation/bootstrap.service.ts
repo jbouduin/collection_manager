@@ -1,18 +1,16 @@
-import { app, BrowserWindow, dialog, ipcMain, IpcMainEvent, nativeTheme, protocol, session } from "electron";
-import { existsSync } from "fs";
+import { app, BrowserWindow, dialog, ipcMain, IpcMainEvent, nativeTheme, protocol } from "electron";
 import { MigrationProvider } from "kysely";
 import { homedir } from "os";
-import { join } from "path";
 import { container, injectable } from "tsyringe";
 import { IMtgCardImageDataDto, ISyncParamDto } from "../../../../common/dto";
 import { IpcChannel, IpcRequest } from "../../../../common/ipc";
+import { CardSide, CatalogType, ECatalogType, ImageSize } from "../../../../common/types";
 import { MigrationDi } from "../../../database/migrations/migrations.di";
+import { ICardRepository } from "../../../database/repo/interfaces";
 import { IResult, IRouter } from "../../base";
+import { IMtgSyncService } from "../../mtg/interfaces";
 import { DATABASE, INFRASTRUCTURE, MTG, REPOSITORIES } from "../../service.tokens";
 import { IBootstrapService, IConfigurationService, IDatabaseService, IImageCacheService, IRouterService, IWindowsService } from "../interfaces";
-import { IMtgSyncService } from "../../mtg/interfaces";
-import { ICardRepository } from "../../../database/repo/interfaces";
-import { CardSide, CatalogType, ECatalogType, ImageSize } from "../../../../common/types";
 
 
 @injectable()
